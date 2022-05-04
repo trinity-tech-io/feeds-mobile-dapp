@@ -58,20 +58,15 @@ export class SigninPage implements OnInit {
 
   ionViewWillLeave() {}
 
-  learnMore() {
-    this.native.navigateForward('learnmore', {
-      queryParams: { showBack: 'back' },
-    });
-  }
-
-  signIn() {
+  async signIn() {
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    connectivity.setActiveConnector(null).then(() => {
-      this.doSignin();
+
+    connectivity.setActiveConnector(null).then(async () => {
+       await this.doSignin();
     }).catch((err)=>{
     });
   }
@@ -83,6 +78,7 @@ export class SigninPage implements OnInit {
           //此处切换成galleriahive 页面
           this.native.setRootRouter('galleriahive');
           return;
+        }else{
         }
       }).catch((err)=>{
         this.native.toastWarn(err);
