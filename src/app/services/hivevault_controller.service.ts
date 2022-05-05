@@ -1344,6 +1344,7 @@ export class HiveVaultController {
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Prepare Connection error', error);
+        this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail,{type:1});
         reject(error);
       }
     });

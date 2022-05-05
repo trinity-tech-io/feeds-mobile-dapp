@@ -499,9 +499,13 @@ export const en = {
     synchronizingComplete: "The synchronization is complete, Let's go",
     buttonTitle1: 'Try',
     welcomeHive: "Let's go",
-    titleFail: 'Failed to log in to Hive',
-    failDes0: 'Essentials authorization login hive failed',
-    failDes1: 'Please check the mobile network (scientific Internet access is recommended)'
+    titleFail: 'Failed to log in to hive',
+    failDes0: 'Essential authorization login hive failed',
+    failDes1: 'Please check the mobile network (scientific Internet access is recommended)',
+    authorization: 'Authorization',
+    description1: 'Connecting to Hive node...',
+    authorized: 'Authorized',
+    description2: 'Successful login to Hive node!'
   },
   ErrorInfo: {
     alreadyExists: 'Entity Already Exists',
