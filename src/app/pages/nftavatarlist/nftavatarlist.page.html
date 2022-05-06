@@ -1,0 +1,35 @@
+<app-titlebar></app-titlebar>
+<ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
+    <ion-row *ngIf="isLoading">
+    <ion-col size="12" class="loading">
+    <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>
+    <img *ngIf="theme.darkMode" class="loadingIcon" src="./assets/images/darkmode/nftloading.gif"/>
+    </ion-col>
+    <ion-col size="12" class="loading">
+    <p>{{'common.beingRefresh'|translate}}</p>
+    </ion-col>
+    </ion-row>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+        <ion-refresher-content
+          class="refresh"
+          pullingText="{{'common.releaseToRefresh'|translate}}"
+          spinner="src/assets/images/arrow-dropdown.svg"
+          refreshingSpinner="circles"
+          refreshingText="{{'common.beingRefresh'|translate}}">
+        </ion-refresher-content>
+      </ion-refresher>
+    <ion-grid>
+    <ion-row class="leftrightrow">
+        <ion-col
+        size="6"
+        class="nftavatarlistPage"
+        id = {{getProfileNftImagePage(item)}}
+        *ngFor="let item of nftAvatarList">
+            <div class="ion-activatable ripple"  *ngIf="item!=null"  [ngStyle]="styleObj" style="object-fit: contain;height: 200px;margin: 0 auto;">
+            <img src="./assets/icon/reserve.svg" (click)="clickItem(item)" id={{getChannelAvatarId(item)}}/>
+            <ion-ripple-effect></ion-ripple-effect>
+            </div>
+        </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>

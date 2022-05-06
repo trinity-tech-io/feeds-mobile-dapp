@@ -1,0 +1,19 @@
+.empty-container {
+    margin-top: 50px;
+}
+.radius_50 {
+    width:40px;
+    height:40px;
+    border-radius:20px;
+    -moz-border-radius:20px;
+    -webkit-border-radius:20px;
+    overflow:hidden;
+    border:1px #7624fe dashed;
+}
+
+.radius_50 img{
+    margin-left:11px;
+    margin-top:11px;
+    width: 16px;
+    height: 16px;
+}

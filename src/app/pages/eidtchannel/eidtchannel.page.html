@@ -1,0 +1,52 @@
+<app-titlebar></app-titlebar>
+<!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <ion-list>
+        <ion-item lines="none">
+            <ion-label position="stacked">{{ 'CreatenewfeedPage.name' | translate }}</ion-label>
+            <ion-input clearInput class="content-value" [placeholder]="'CreatenewfeedPage.inputName'|translate" [(ngModel)] ="channelName"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+            <ion-label position="stacked">{{ 'CreatenewfeedPage.description' | translate }}</ion-label>
+            <ion-input clearInput class="content-value" [placeholder]="'CreatenewfeedPage.inputFeedDesc'|translate" [(ngModel)] ="channelDes"></ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked">{{ 'CreatenewfeedPage.tippingAddress' | translate }}</ion-label>
+          <!-- <ion-col size="11" style="padding-top: 0px;"> -->
+            <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.tippingAddressDes'|translate}}"  [(ngModel)]="tippingAddress"></ion-input>
+            <img src="./assets/images/scan.svg" *ngIf="tippingAddress==='' || tippingAddress===null" (click)="scanWalletAddress()"
+            style="position: absolute;
+            right: 5px;
+            top: 38px;
+            height: 25px;
+            width: 25px;
+            z-index:10;">
+        </ion-item>
+
+        <ion-item lines="none" (click)="profileimage()" class="removeBorder">
+          <ion-row>
+            <ion-col>
+              <ion-label position="stacked">{{ 'CreatenewfeedPage.profileImage'|translate }}</ion-label>
+              <ion-avatar *ngIf="avatar != ''" style="margin-top: 5px;">
+                <img [src]="avatar">
+              </ion-avatar>
+            </ion-col>
+            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+          </ion-row>
+        </ion-item>
+    </ion-list>
+
+    <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode">
+      <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancel()">
+          <ion-label>{{ 'common.cancel' | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+      <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="confirm()">
+          <ion-label>{{ 'common.save' | translate }}</ion-label>
+          <ion-ripple-effect></ion-ripple-effect>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

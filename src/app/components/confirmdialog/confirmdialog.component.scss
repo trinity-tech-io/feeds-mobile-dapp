@@ -1,0 +1,130 @@
+.container {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 0;
+
+    .bigCircle{
+        margin:0 auto;
+        width: 203px;
+        height: 203px;
+        background-color:#F0E8FF;
+        border-radius:50%;
+        position: relative;
+    }
+
+    .smallCircle{
+         position:absolute;
+         left:50px;
+         top:50px;
+         width: 103px;
+         height: 103px;
+         background-color:#D8C1FF;
+         border-radius:50%;
+
+         img{
+           position: absolute;
+           top: 26px;
+           left: 28px;
+           width: 50px;
+           height: 50px;
+           object-fit:contain;
+        }
+    }
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+
+        h1 {
+            margin: 5px 0 0;
+            font-size: 20px;
+            font-weight: bold;
+            font-stretch: normal;
+            font-style: normal;
+            text-align: center;
+            color:#7624fe;
+            margin-bottom: 10px;
+        }
+    }
+
+    .message {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 15px;
+
+        p {
+            margin: 0px;
+            font-size: 16px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            text-align: center;
+            color: #000000;
+            word-break: break-all;
+            word-wrap: break-word;
+        }
+    }
+
+    .btns-row {
+        margin: 0;
+        padding: 15px;
+    }
+}
+
+
+.darkContainer {
+    background:#191a2f;
+
+    .message {
+        p {
+          color: #ffffff;
+        }
+    }
+
+    .btns-row {
+        .confirm {
+            box-shadow: none;
+        }
+    }
+
+    .btns-row .btn ion-label {
+        font-size: 14px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: center;
+        //color:#7624fe;
+    }
+
+    .bigCircle{
+        margin:0 auto;
+        width: 203px;
+        height: 203px;
+        background-color:#221B44;
+        border-radius:50%;
+        position: relative;
+    }
+
+    .smallCircle{
+         position:absolute;
+         left:50px;
+         top:50px;
+         width: 103px;
+         height: 103px;
+         background-color: #321C69;
+         border-radius:50%;
+
+         img{
+           position: absolute;
+           top: 26px;
+           left: 28px;
+           width: 50px;
+           height: 50px;
+           object-fit:contain;
+        }
+    }
+}

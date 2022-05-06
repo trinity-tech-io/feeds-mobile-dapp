@@ -1,0 +1,114 @@
+.my-custom-menu {
+    --width:226px;
+}
+
+.defaultAvatar{
+    width:43px;
+    height:43px;
+    border-radius: 50%;
+    background-color:#757575;
+    position: absolute;
+    z-index: -1
+  }
+
+ion-menu {
+    --ion-backdrop-color:#000;
+    ion-content {
+        .profile-card {
+            margin:0 auto;
+            width: 189px;
+            margin: 10px;
+            border-radius: 10px;
+            height: 116px;
+            margin: 0 auto;
+            margin-top: 45px;
+
+            .left-col, .right-col {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+
+                img {
+                    margin:0 auto;
+                    width: 43px;
+                    height: 43px;
+                    object-fit: cover;
+                    overflow: hidden;
+                    border-radius: 50%;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    margin-top: 13px;
+                    margin-bottom: 5px;
+                }
+
+                h1 {
+                    text-align: center;
+                    font-size: 12px;
+                    font-weight: 700;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #fff;
+                    overflow: auto;
+                    width: 100%;
+                    margin-top:0px;
+                }
+
+                .connectWallet{
+                    padding: 6px 10px;
+                    border-radius: 10px;
+                    border: solid 1px #ffffff;
+                    font-size: 8px !important;
+                    font-weight: normal;
+                    font-stretch: normal;
+                    color: #fff;
+                    margin: 0 auto;
+                }
+            }
+
+            .right-col {
+                justify-content: center;
+                align-items: flex-end;
+            }
+        }
+
+        ion-menu-toggle {
+            div {
+                display: flex;
+                align-items: center;
+                margin: 35px 0 0 25px;
+                width: 100%;
+
+                // img {
+                //     height:16px;
+                //     width:16px;
+                // }
+
+                h1 {
+                    margin: 0;
+                    margin-left: 12px;
+                    font-size: 20px;
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #000000;
+                }
+            }
+        }
+    }
+}
+
+.darkMenu {
+    --ion-backdrop-color:#fff;
+    ion-content {
+        ion-menu-toggle {
+            div {
+               h1{
+                color:#ffffff;
+               }
+
+            }
+        }
+    }
+
+
+}

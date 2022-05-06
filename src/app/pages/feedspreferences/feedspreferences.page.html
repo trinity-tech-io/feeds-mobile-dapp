@@ -1,0 +1,47 @@
+<!-- <ion-header> -->
+  <app-titlebar></app-titlebar>
+  <!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
+<!-- </ion-header> -->
+<ion-content>
+  <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
+    <ion-row class="section" (click)="newToggle()">
+      <ion-col size="9" class="title-col" (swipe)="newToggle()" [style.touch-action]="'pan-y'">
+          <h1>{{"FeedspreferencesPage.des" | translate }}</h1>
+          <h2 *ngIf="curFeedPublicStatus">{{ 'SettingsPage.on' | translate }}</h2>
+          <h2 *ngIf="!curFeedPublicStatus">{{ 'SettingsPage.off' | translate }}</h2>
+      </ion-col>
+      <ion-col size="3" class="arrow-col" (swipe)="newToggle()" [style.touch-action]="'pan-y'">
+        <ion-toggle style="pointer-events: none;"  mode="ios" color="success" [(ngModel)]="curFeedPublicStatus"></ion-toggle>
+      </ion-col>
+  </ion-row>
+
+  <ion-row class="section" (click)="setCollectible()">
+    <ion-col size="9" class="title-col" (swipe)="setCollectible()" [style.touch-action]="'pan-y'">
+        <h1>{{"FeedspreferencesPage.des1" | translate }}</h1>
+        <h2 *ngIf="curCollectibleStatus">{{ 'SettingsPage.on' | translate }}</h2>
+        <h2 *ngIf="!curCollectibleStatus">{{ 'SettingsPage.off' | translate }}</h2>
+    </ion-col>
+    <ion-col size="3" class="arrow-col" (swipe)="setCollectible()" [style.touch-action]="'pan-y'">
+      <ion-toggle style="pointer-events: none;"  mode="ios" color="success" [(ngModel)]="curCollectibleStatus"></ion-toggle>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="section" (click)="mintChannel()" *ngIf="isShowMint">
+    <ion-col size="9" class="title-col">
+        <h1>{{ "FeedspreferencesPage.des2" | translate }}</h1>
+    </ion-col>
+    <ion-col size="3" class="arrow-col">
+        <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+    </ion-col>
+  </ion-row>
+
+  </ion-grid>
+</ion-content>
+<app-nftloading
+ *ngIf="isLoading"
+ [loadingTitle] = "loadingTitle"
+ [loadingText] = "loadingText"
+ [loadingCurNumber] = "loadingCurNumber"
+ [loadingMaxNumber] = "loadingMaxNumber"
+>
+</app-nftloading>

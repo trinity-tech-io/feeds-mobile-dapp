@@ -1,0 +1,179 @@
+<app-titlebar></app-titlebar>
+ <!-- <ion-content style="max-height: 58px;"> -->
+  <ion-content>
+  <div class="search-container" [class.dark-search-container]="theme.darkMode" style="position:relative;width: 100%;padding:0px;">
+    <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
+    <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
+      <ion-searchbar #searchbar  [(ngModel)]="isSearch" inputmode=""  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
+    </form>
+  </div>
+</ion-content>
+  <!-- <ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+      <ion-refresher-content
+        class="refresh"
+        pullingText="{{'common.releaseToRefresh'|translate}}"
+        spinner="src/assets/images/arrow-dropdown.svg"
+        refreshingSpinner="circles"
+        refreshingText="{{'common.beingRefresh'|translate}}">
+      </ion-refresher-content>
+    </ion-refresher>
+
+    <ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode">
+       //adding Feed
+      <ion-item
+          *ngFor="let addingchannel of addingChanneList"
+          lines="none">
+          <ion-row class="channel-row ion-activatable ripple">
+            <ion-col
+              size="2.5"
+              class="left-col"
+              (click)="clickAddingchannel(addingchannel)"
+            >
+              <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+                <img src={{parseChannelAvatar(addingchannel.avatar)}}>
+                <div class="offline"></div>
+              </div>
+            </ion-col>
+            <ion-col
+              size="6.5"
+              class="middle-col"
+              (click)="clickAddingchannel(addingchannel)"
+            >
+              <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ addingchannel.feedName }}</ion-label>
+              <ion-row>
+                <p class="ownerName">{{getAddingFeedOwner(addingchannel)}}</p>
+              </ion-row>
+              <ion-row>
+                <p  class="des" [class.white]="theme.darkMode">{{getAddingFeedDes(addingchannel)}}</p>
+              </ion-row>
+            </ion-col>
+            <ion-col size="3" class="right-col">
+              <ion-button class="unsubscribed" fill="outline" (click)="handeleStatus(addingchannel)" [ngClass]="{'requested': addingchannel.status == 14 }">
+                <ion-label>{{ handleStatus(addingchannel) | translate }}</ion-label>
+              </ion-button>
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+            <ion-ripple-effect></ion-ripple-effect>
+          </ion-row>
+        </ion-item>
+        // channel Collection
+        <ion-item
+        *ngFor="let channelCollection of channelCollectionPageList"
+        class="channelCollectionFeeds"
+        id = {{handleChannelCollectionId(channelCollection)}}
+        lines="none">
+        <ion-row class="channel-row ion-activatable ripple">
+          <ion-col
+            size="2.5"
+            class="left-col"
+            (click)="clickChannelCollection(channelCollection)"
+          >
+            <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+              <img src="./assets/icon/reserve.svg" id={{handleCollectionImgId(channelCollection)}}>
+            </div>
+          </ion-col>
+          <ion-col
+            size="6.5"
+            class="middle-col"
+            (click)="clickChannelCollection(channelCollection)"
+          >
+            <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ channelCollection.name }}</ion-label>
+            <ion-row>
+              <p class="ownerName">@{{channelCollection.ownerName}}</p>
+            </ion-row>
+            <ion-row>
+              <p  class="des" [class.white]="theme.darkMode">{{ channelCollection.description }}</p>
+            </ion-row>
+          </ion-col>
+          <ion-col size="3" class="right-col">
+            <ion-button  class="unsubscribed" fill="outline" (click)="subscribeChannelCollection(channelCollection)">
+              <ion-label >{{'SearchPage.follow' | translate}}</ion-label>
+            </ion-button>
+          </ion-col>
+          <ion-ripple-effect></ion-ripple-effect>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+      </ion-item>
+      //unfollowedFeed
+      <ion-item
+      *ngFor="let feed of unfollowedFeed"
+      lines="none"
+    >
+      <ion-row class="channel-row ion-activatable ripple">
+        <ion-col
+          size="2.5"
+          class="left-col"
+          (click)="navTo(feed.nodeId,feed.id)"
+        >
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+            <img src={{parseChannelAvatar(feed.avatar)}}>
+          </div>
+        </ion-col>
+        <ion-col
+          size="6.5"
+          class="middle-col"
+          (click)="navTo(feed.nodeId,feed.id)"
+        >
+          <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ feed.name }}</ion-label>
+          <ion-row>
+            <p class="ownerName">{{getChannelOwner(feed.nodeId,feed.id)}}</p>
+          </ion-row>
+          <ion-row>
+            <p  class="des" [class.white]="theme.darkMode">{{getChannelDes(feed.nodeId,feed.id)}}</p>
+          </ion-row>
+
+        </ion-col>
+        <ion-col size="3" class="right-col">
+          <ion-button  class="unsubscribed" fill="outline" (click)="subscribe(feed.nodeId,feed.id)">
+            <ion-label >{{'SearchPage.follow' | translate}}</ion-label>
+          </ion-button>
+        </ion-col>
+        <ion-ripple-effect></ion-ripple-effect>
+      </ion-row>
+    </ion-item>
+
+      //discoverSquare Feed
+        <ion-item
+        class="discoverSquareFeed"
+        id = {{feed.feedsUrlHash}}
+        lines="none"
+        *ngFor="let feed of discoverSquareList"
+      >
+        <ion-row class="channel-row ion-activatable ripple">
+          <ion-col
+            size="2.5"
+            class="left-col"
+            (click)="clickItem(feed)"
+          >
+            <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+              <img src="./assets/icon/reserve.svg"  id={{handleId(feed)}}>
+            </div>
+          </ion-col>
+          <ion-col
+            size="6.5"
+            class="middle-col"
+            (click)="clickItem(feed)"
+          >
+            <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ feed.name }}</ion-label>
+            <ion-row>
+
+              <p class="ownerName">@{{feed.ownerName}}</p>
+            </ion-row>
+            <ion-row>
+              <p class="des" [class.white]="theme.darkMode">{{feed.description}}</p>
+            </ion-row>
+          </ion-col>
+          <ion-col size="3" class="right-col">
+            <ion-button class="unsubscribed" fill="outline" (click)="discoverSubscribe(feed)">
+              <ion-label >{{'SearchPage.follow' | translate}}</ion-label>
+            </ion-button>
+          </ion-col>
+          <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+      </ion-item>
+    </ion-list>
+
+
+
+  </ion-content> -->

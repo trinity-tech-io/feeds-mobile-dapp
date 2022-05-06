@@ -1,0 +1,135 @@
+.totalunread{
+  font-size: 13px;
+  --background:#7624fe;
+}
+
+.totalunread1{
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color:#7624fe;
+  left: calc(50% + 6px);
+  top: 11px;
+  position: absolute;
+}
+
+.home-tab{
+  width:20px;
+  height:20px;
+  content: url("../../../assets/images/home.svg");
+}
+
+.home-tab-selected{
+  width: 20px;
+  height: 20px;
+  content: url('../../../assets/images/home-s.svg');
+}
+
+.profile-tab{
+  width: 20px;
+  height: 20px;
+  content: url('../../../assets/images/user.svg');
+}
+
+.profile-tab{
+  width: 20px;
+  height: 20px;
+  content: url('../../../assets/images/user.svg');
+}
+
+.profile-tab-selected{
+  width: 20px;
+  height: 20px;
+  content: url('../../../assets/images/user-s.svg');
+}
+
+.notification-tab{
+  width:20px;
+  height:20px;
+  content: url('../../../assets/images/notification.svg');
+}
+
+.notification-tab-selected{
+  width:20px;
+  height:20px;
+  content: url('../../../assets/images/notification-s.svg');
+}
+
+.search-tab{
+  width: 20px;
+  height: 20px;
+  content: url('../../../assets/images/search.svg');
+}
+
+.search-tab-selected{
+  width: 20px;
+  height: 20px;
+  content: url('../../../assets/images/search-s.svg');
+}
+
+.tabs-line{
+  width: 100%;
+  height: 1px;
+  background-image: url('../../../assets/images/line.svg');
+  bottom: 0px;
+}
+
+.tabs-div{
+  height: 58.5px;
+  width: 100%;
+}
+
+.darkContainer{
+  .drak-line{
+    background-image: url('../../../assets/images/drak-line.svg');
+  }
+
+  .home-tab{
+    width:20px;
+    height:20px;
+    content: url("../../../assets/images/darkmode/home.svg");
+  }
+
+  .home-tab-selected{
+    width:20px;
+    height:20px;
+    content: url('../../../assets/images/darkmode/home-s.svg');
+  }
+
+  .profile-tab{
+    width: 20px;
+    height: 20px;
+    content: url('../../../assets/images/darkmode/user.svg');
+  }
+
+  .profile-tab-selected{
+    width: 20px;
+    height: 20px;
+    content: url('../../../assets/images/darkmode/user-s.svg');
+  }
+
+
+  .notification-tab{
+    width:20px;
+    height:20px;
+    content: url('../../../assets/images/darkmode/notification.svg');
+  }
+
+  .notification-tab-selected{
+    width:20px;
+    height:20px;
+    content: url('../../../assets/images/darkmode/notification-s.svg');
+  }
+
+  .search-tab{
+    width: 20px;
+    height: 20px;
+    content: url('../../../assets/images/darkmode/search.svg');
+  }
+
+  .search-tab-selected{
+    width: 20px;
+    height: 20px;
+    content: url('../../../assets/images/darkmode/search-s.svg');
+  }
+}

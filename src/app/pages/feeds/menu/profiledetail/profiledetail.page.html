@@ -1,0 +1,31 @@
+<app-titlebar></app-titlebar>
+<!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <!-- Did Info -->
+    <ion-row>
+      <ion-col size="12" style="padding:0px;" class="profile-header-title">
+          {{ 'ProfiledetailPage.didinfo' | translate }}
+      </ion-col>
+    </ion-row>
+    <div class="server-header">
+      <img class="profileFeeds" src="./assets/images/profile-feeds-logo.svg" />
+      <img class="elaLogo" src="./assets/images/elaLogo.svg" (click)="editProfile()"/>
+      <img [src]="handleImages()" class="didImg" (click)="editProfile()" />
+      <h1>{{ name }}</h1>
+      <p>{{ description }}</p>
+      <!-- <span class="connectWallet" (click)="connectWallet()">{{"common.connectWallet" | translate}}</span> -->
+    </div>
+    <div *ngFor="let profile of profileDetails">
+      <ion-row *ngIf="profile.details" class="detail-row">
+        <ion-col size="12" class="left-col">
+            <h1>{{ profile.type | translate}}</h1>
+            <h2 *ngIf="profile.type === 'ProfiledetailPage.did' || profile.type === 'NodeId'; else inputid" (press)="copytext(profile.details)" [style.touch-action]="'pan-y'">{{ profile.details }}</h2>
+            <ng-template #inputid>
+              <h2>{{ profile.details }}</h2>
+            </ng-template>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ion-grid>
+</ion-content>

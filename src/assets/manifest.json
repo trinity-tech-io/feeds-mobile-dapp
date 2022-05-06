@@ -1,0 +1,58 @@
+{
+  "id": "io.trinity-tech.dapp.feeds",
+  "did": "did:elastos:iqtWRVjz7gsYhyuQEb1hYNNmWQt1Z9geXg",
+  "version": "2.1.2",
+  "version_code": 20102,
+  "name": "Feeds",
+  "short_name": "Feeds",
+  "short_description": "New social dApp with DID access, multiple choices to service, and ownership of all your social data",
+  "description": "",
+  "start_url": "index.html",
+  "type": "app",
+  "start_visible": "hide",
+  "category": "social",
+  "icons": [
+    {
+      "src": "assets/images/dapplogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/images/dapplogo.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ],
+  "author": {
+    "name": "Trinity Tech Co., Ltd.",
+    "email": "feeds@trinity-tech.io",
+    "website": "https://trinity-feeds.app"
+  },
+  "default_locale": "en",
+  "plugins": [
+    "CarrierPlugin",
+    "Device",
+    "Clipboard",
+    "SplashScreen",
+    "NetworkStatus",
+    "InAppBrowser",
+    "DIDPlugin",
+    "Camera",
+    "Capture",
+    "File",
+    "VideoEditor"
+  ],
+  "urls": [
+    "https://www.trinity-tech.io/*",
+    "https://*",
+    "http://*"
+  ],
+  "background_color": "#4e8ef7",
+  "theme_display": "show",
+  "theme_color": "#4e8ef7",
+  "intent_filters": [
+    {
+        "action": "addsource"
+    }
+  ]
+}

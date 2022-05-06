@@ -1,0 +1,80 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <ion-row class="channel-header">
+        <ion-col size="12" style="padding:0px;">
+          <div class="feedAvatar">
+            <img src="./assets/icon/reserve.svg"  id="feedsInfoAvatar">
+          </div>
+          <div class="feedName">
+            <span>{{name}}</span>
+          </div>
+          <!-- <div class="channelOwner">
+            <span>@{{channelOwner}}</span>
+          </div> -->
+
+          <div class="channeldes">
+            <span>{{des}}</span>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" class="channel-btns-row" style="padding: 0px;" *ngIf="type===''">
+          <span class="channelSubscribes">
+            <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'">
+            {{ channelSubscribes }} {{ 'common.followers' | translate }} </span>
+          <ion-button *ngIf="!followStatus" class="unsubscribed" fill="outline" (click)="subscribe()">
+            <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+          </ion-button>
+
+          <ion-button *ngIf="followStatus" class="subscribed" (click)="unsubscribe()">
+            <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
+            <ion-ripple-effect></ion-ripple-effect>
+          </ion-button>
+        </ion-col>
+    </ion-row>
+    <ion-row *ngIf="tippingAddress!=''" class="elaAdressRow">
+      <ion-col size="1.5" style="text-align: right;">
+        <img [src]="!theme.darkMode ? './assets/images/dashang.svg' : './assets/images/darkmode/tip.svg'">
+      </ion-col>
+      <ion-col size="10.5" class="elaAdress" style="text-align: left;">
+        {{tippingAddress}}
+      </ion-col>
+    </ion-row>
+
+    <ion-ripple-effect></ion-ripple-effect>
+
+    <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(nodeId)" [style.touch-action]="'pan-y'">
+      <ion-col size="12" class="left-col">
+          <h1>NodeId</h1>
+          <h2>{{nodeId}}</h2>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="detail-row" *ngIf="developerMode&&type!='discover'">
+      <ion-col size="12" class="left-col">
+          <h1>{{'ServerInfoPage.version'|translate}}</h1>
+          <h2>{{severVersion}}</h2>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="detail-row" *ngIf="developerMode" (press)="copyText(serverInfo['did'])" [style.touch-action]="'pan-y'">
+      <ion-col size="12" class="left-col">
+          <h1>{{'ServerInfoPage.did'|translate}}</h1>
+          <h2>{{serverDid}}</h2>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="detail-row removeBorder" *ngIf="qrcodeString!=null">
+      <ion-col size="12" class="left-col">
+          <h1  style="text-align:center">{{'DiscoverfeedinfoPage.feedsQrcode'|translate}}</h1>
+          <div class="qr-container" style="margin-top:10px;" (click)="showPreviewQrcode(qrcodeString)" (press)="menuMore(qrcodeString)" [style.touch-action]="'pan-y'">
+            <div class="qrcode">
+              <qrcode [qrdata]="qrcodeString" [size]="150" [level]="'M'" allowEmptyString="true"></qrcode>
+            </div>
+          </div>
+          <h1 style="text-align:center;margin-top: 15px;">{{name}}</h1>
+      </ion-col>
+    </ion-row>
+</ion-grid>
+</ion-content>

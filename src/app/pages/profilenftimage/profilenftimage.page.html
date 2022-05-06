@@ -1,0 +1,32 @@
+<app-titlebar></app-titlebar>
+<ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+        <ion-refresher-content
+          class="refresh"
+          pullingText="{{'common.releaseToRefresh'|translate}}"
+          spinner="src/assets/images/arrow-dropdown.svg"
+          refreshingSpinner="circles"
+          refreshingText="{{'common.beingRefresh'|translate}}">
+        </ion-refresher-content>
+      </ion-refresher>
+      <ion-grid>
+        <ion-row class="leftrightrow">
+            <ion-col size="6"
+            class="profileNftImagePage"
+            id = {{getProfileNftImagePage(item)}}
+            *ngFor="let item of nftImageList">
+              <div class="ion-activatable ripple"  [ngStyle]="styleObj" style="object-fit: contain;height: 200px;margin: 0 auto;">
+                <img src="./assets/icon/reserve.svg" (click)="clickItem(item)" id={{getChannelAvatarId(item)}}/>
+              <ion-ripple-effect></ion-ripple-effect>
+              </div>
+            </ion-col>
+           </ion-row>
+      </ion-grid>
+      <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+        <ion-infinite-scroll-content
+          class="ion-padding-top"
+          loadingSpinner="circles"
+        >
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+</ion-content>

@@ -1,0 +1,57 @@
+<div class="donghua">
+<div id="sharemenuMask" class="backdrop backdropdonghua" (click)="clickItem('cancel')" [class.darkbackdrop]="theme.darkMode" [class.lightbackdrop]="!theme.darkMode">
+</div>
+<div class="feedlist feedlistbackdropdonghua" [class.darkfeedlist]="theme.darkMode" [class.lightfeedlist]="!theme.darkMode">
+    <ion-grid style="padding:0px;">
+      <ion-row class="shareTitle" *ngIf="isShowTitle">
+        <ion-col size="12">
+          {{channelName}}
+        </ion-col>
+      </ion-row>
+
+      <div   [class.qr-container]="theme.darkMode" [class.light-qr-container]="!theme.darkMode" class="" *ngIf="isShowQrcode">
+            <div class="qrcode">
+                <qrcode [qrdata]="qrCodeString" [size]="200" [level]="'M'" allowEmptyString="true"></qrcode>
+            </div>
+      </div>
+
+      <ion-row (click)="clickItem('share')" class="share">
+        <ion-col
+        size="12">
+        <ion-icon name="share"></ion-icon><span>{{"common.share"|translate}}</span>
+      </ion-col>
+      </ion-row>
+
+      <ion-row (click)="clickItem('info')" class="share bordertop" *ngIf="isShowInfo">
+        <ion-col
+        size="12">
+        <ion-icon name="information-circle"></ion-icon><span>{{"common.details"|translate}}</span>
+      </ion-col>
+      </ion-row>
+
+      <!-- <ion-row (click)="clickItem('preferences')" class="share bordertop" *ngIf="isPreferences">
+        <ion-col
+        size="12" style="margin-top: -2px;">
+        <ion-icon name="settings"></ion-icon><span>{{"common.preferences"|translate}}</span>
+      </ion-col>
+      </ion-row> -->
+
+      <ion-row (click)="clickItem('unfollow')" class="share bordertop" *ngIf="isShowUnfollow">
+        <ion-col
+        size="12" style="margin-top: -2px;">
+        <ion-icon name="person-remove" class="unfollowColor"></ion-icon><span class="unfollowColor">{{"common.unsubscribe"|translate}}</span>
+      </ion-col>
+      </ion-row>
+    </ion-grid>
+</div>
+<div [class.feedcancel]="!theme.darkMode" [class.darkfeedcancel]="theme.darkMode">
+  <ion-grid>
+  <ion-row (click)="clickItem('cancel')">
+    <ion-col
+    size="12">
+    <ion-icon name="close-circle"></ion-icon><span>{{"common.cancel"|translate}}</span>
+  </ion-col>
+  </ion-row>
+</ion-grid>
+</div>
+</div>

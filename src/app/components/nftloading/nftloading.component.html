@@ -1,0 +1,12 @@
+<div class="nftLoading" [class.darkNftLoading]="theme.darkMode">
+  <div class="mask"></div>
+  <div class="loadingContent">
+     <div class="loadingTitle">{{ loadingTitle | translate }}</div>
+     <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>
+     <img *ngIf="theme.darkMode" class="loadingIcon" src="./assets/images/darkmode/nftloading.gif"/>
+     <div class="loadingText">
+      {{ loadingText | translate }}
+     </div>
+    <div class="loadingNum" *ngIf="loadingCurNumber&&loadingMaxNumber">{{loadingCurNumber}}/{{loadingMaxNumber}}</div>
+  </div>
+</div>

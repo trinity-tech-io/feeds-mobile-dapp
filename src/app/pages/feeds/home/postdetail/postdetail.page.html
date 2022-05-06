@@ -1,0 +1,218 @@
+<app-titlebar></app-titlebar>
+<ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      class="refresh"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
+      spinner="src/assets/images/arrow-dropdown.svg"
+      refreshingSpinner="circles"
+      refreshingText="{{'common.beingRefresh'|translate}}" >
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="container" [class.blur]="!hideComment">
+
+    <!---------------- POST DETAILS ---------------->
+    <ion-grid class="postDetail-grid ion-activatable ripple" [class.dark-postDetail-grid]="theme.darkMode">
+      <ion-row class="top-row">
+        <ion-col class="left-col" size="2.25">
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(destDid, channelId)">
+            <img src={{channelAvatar}}>
+          </div>
+        </ion-col>
+        <ion-col class="mid-col" size="8" (press)="pressName()" (click)="navTo(destDid, channelId)" [style.touch-action]="'pan-y'">
+          <ion-label>
+            {{ channelName }}
+          </ion-label>
+           <!-- <p>@{{ channelOwnerName }}</p> -->
+        </ion-col>
+        <ion-col class="right-col" size="1.5">
+          <img *ngIf="postStatus!=1"
+            [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
+            (click)="menuMore()"
+          >
+        </ion-col>
+      </ion-row>
+      <ion-row class="mid-row">
+        <ion-col>
+          <h2 *ngIf="postStatus===1">
+            <pre>{{'common.deleted' | translate}}</pre>
+          </h2>
+          <h2 *ngIf="postStatus!=1" (press)="pressContent()" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
+            <pre [ngStyle]="styleObj" [innerHTML]="postContent | html"></pre>
+          </h2>
+
+          <div style="position:relative;width: 100%;">
+            <app-percentageloading
+            *ngIf="isImgPercentageLoading"
+            [ngStyle]="imgloadingStyleObj"
+            [percent]="imgPercent"
+            [rotateNum]="imgRotateNum"
+            >
+            </app-percentageloading>
+
+          <app-roundloading
+          *ngIf="isImgLoading"
+          [ngStyle]="imgloadingStyleObj"
+          >
+          </app-roundloading>
+            <img
+            id=postdetail-img-{{destDid}}-{{channelId}}-{{postId}}
+            *ngIf="postStatus != 1&&mediaType===1&&postImage!= ''"
+            [src]="postImage"
+            class="post-img"
+            (click)="showBigImage(destDid,channelId,postId)"
+            />
+          </div>
+
+          <!---video-->
+        <div *ngIf="postStatus != 1&&mediaType===2&&posterImg!=''" style="width:100%;height:200px;margin-top:10px;position: relative;" id=postdetail-video-{{destDid}}-{{channelId}}-{{postId}}>
+
+          <app-roundloading
+          *ngIf="isVideoLoading"
+          [ngStyle]="videoloadingStyleObj"
+          >
+          </app-roundloading>
+
+          <app-percentageloading
+            *ngIf="isVideoPercentageLoading"
+            [ngStyle]="videoloadingStyleObj"
+            [percent]="videoPercent"
+            [rotateNum]="videoRotateNum"
+          >
+          </app-percentageloading>
+
+        <vg-player>
+          <vg-overlay-play id={{destDid+channelId+postId}}vgoverlayplaypostdetail></vg-overlay-play>
+          <vg-controls id={{destDid+channelId+postId}}vgcontrolspostdetail style="display:none;">
+            <img class="vgfullscreen" id={{destDid+channelId+postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg" />
+            </vg-controls>
+
+            <video #media [vgMedia]="media" poster="assets/images/loading.png" id={{destDid+channelId+postId}}postdetailvideo
+              playsinline webkit-playsinline>
+              <source type="video/mp4" id={{destDid+channelId+postId}}postdetailsource />
+              </video>
+        </vg-player>
+      </div>
+        </ion-col>
+      <ion-col size="12">
+        <span style="font-size: 10px;font-weight: 500;color: #8888b0;">{{ handleUpdateDate(updatedTime) }}</span>
+      </ion-col>
+      </ion-row>
+      <ion-row class="bottom-row">
+        <ion-col size="1.75" (click)="like()">
+          <img [src]="isLike ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
+          <img [src]="isLike ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
+          <ion-label [class.liked]="isLike">{{ likesNum }}</ion-label>
+        </ion-col>
+        <ion-col size="1.75" (click)="showComment(null)">
+          <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
+          <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode">
+          <ion-label>{{ commentsNum }}</ion-label>
+        </ion-col>
+        <ion-col (click)="clickDashang()" *ngIf="isAndroid">
+          <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
+          <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
+        </ion-col>
+        <ion-col>
+          <ion-label class="status" *ngIf="postStatus === 2">{{ 'common.edit' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="postStatus === 11">{{ 'common.sending' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="postStatus === 12">{{ 'common.sendFail' | translate}} </ion-label>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="postStatus === 12" class="bottom-row">
+          <ion-col size="2.25">
+          </ion-col>
+          <ion-col size="2.25">
+          </ion-col>
+          <ion-col>
+          </ion-col>
+          <ion-col>
+              <ion-icon  style="right: 67px;top:0px;position:absolute; color: #7171bd;" name="refresh"></ion-icon>
+              <ion-button (click)="retry(destDid, channelId, postId)" class="retrybutton">{{ "common.retry" | translate }}</ion-button>
+          </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!---------------- COMMENTS ---------------->
+    <div *ngFor="let comment of captainCommentList let i=index">
+    <ion-grid  class="post-grid ion-activatable ripple captainComment" [class.darkPostGrid]="theme.darkMode"
+    id={{comment.destDid}}-{{comment.channelId}}-{{comment.postId}}-{{comment.commentId}}-{{comment.createrDid}}
+    >
+      <ion-row class="post-row">
+        <ion-col class="right-col" size="1.5"  *ngIf="comment.status != 1 && isOwnComment[comment.commentId]">
+          <img (click)="openEditTool(comment)"
+            [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
+          >
+        </ion-col>
+        <ion-col class="img-col" size="2.5" (click)="clickComment(comment)">
+          <img *ngIf="comment.destDid === comment.createrDid" class="comment-avatar" style="border: none;" [src]="channelAvatar">
+          <img *ngIf="comment.destDid != comment.createrDid" class="comment-avatar" src='./assets/images/default-contact.svg'>
+        </ion-col>
+        <ion-col class="content-col" size="8">
+          <ion-row class="top-row">
+            <ion-col class="left-col" size="10.5" (click)="clickComment(comment)">
+              <ion-label (press)="pressContent(comment.createrDid)" [style.touch-action]="'pan-y'">
+                @{{ userNameMap[comment.createrDid]}}
+                <span> {{ handleDisplayTime(comment.updatedAt) }}</span>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+
+          <ion-label>
+            <p (click)="clickComment(comment)" (press)="pressContent(channelOwner)"><span style="color:#7624fe;">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ userNameMap[channelOwner] }}</p>
+          </ion-label>
+          <h2 *ngIf="comment.status === 1" (click)="clickComment(comment)">
+            <pre>{{'common.cdeleted' | translate}}</pre>
+          </h2>
+          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)<=maxTextSize" (click)="clickComment(comment,$event)" (press)="pressContent(comment.content)" [style.touch-action]="'pan-y'">
+            <pre [ngStyle]="dstyleObj"  [innerHTML]="comment.content | html"></pre>
+          </h2>
+          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)>maxTextSize&&!isFullContent[comment.commentId]" (press)="pressContent(comment.content)" [style.touch-action]="'pan-y'">
+            <pre [ngStyle]="dstyleObj" (click)="clickComment(comment,$event)" [innerHTML]="handleCommentContent(comment.content) | html"></pre>
+            <pre [ngStyle]="styleObj" style="color:#368bff;" (click)="showFullContent(comment.commentId)">{{"common.showmore" | translate }}</pre>
+          </h2>
+          <h2 *ngIf="comment.status != 1&&getPostContentTextSize(comment.content)>maxTextSize&&isFullContent[comment.commentId]" (press)="pressContent(comment.content)" [style.touch-action]="'pan-y'">
+            <pre [ngStyle]="dstyleObj" (click)="clickComment(comment,$event)" [innerHTML]="comment.content | html"></pre>
+            <pre [ngStyle]="styleObj" style="color:#368bff;" (click)="hideFullContent(comment.commentId)">{{"common.showless" | translate }}</pre>
+          </h2>
+          <ion-row class="bottom-row">
+            <ion-col size="2.25" (click)="likeComment(comment)">
+              <img [src]="likedCommentMap[comment.commentId] === 'like' ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
+              <img [src]="likedCommentMap[comment.commentId] === 'like' ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
+              <ion-label [class.liked]="likedCommentMap[comment.commentId] === 'like' ">{{ likedCommentNum[comment.commentId] }}</ion-label>
+            </ion-col>
+            <ion-col size="2.25" (click)="showComment(comment)">
+              <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
+              <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode"> <ion-label>{{ commentNum[comment.commentId] }}</ion-label>
+            </ion-col>
+            <ion-col (click)="clickComment(comment)">
+              <ion-label class="status" style="right:-7px;" *ngIf="comment.status === 2">{{ 'common.edit' | translate}}</ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-grid>
+    </div>
+
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content
+      class="ion-padding-top"
+      loadingSpinner="circles">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+</ion-content>
+
+<!---------------- ADD COMMENT FOOTER ---------------->
+<app-comment
+  *ngIf="!hideComment"
+  [postId]="postId"
+  [destDid]="destDid"
+  [channelId]="channelId"
+  [refcommentId]="refcommentId"
+  [channelAvatar]="commentAvatar"
+  [channelName]="commentName"
+  (hideComment)="hideComponent($event)"
+></app-comment>

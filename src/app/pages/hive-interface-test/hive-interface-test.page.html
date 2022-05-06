@@ -1,0 +1,513 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+  <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
+
+    <ion-row class="section" (click)="createCollection()">
+      <ion-col size="9" class="title-col">
+          <h1>createCollection</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="registeScripting()">
+        <ion-col size="9" class="title-col">
+            <h1>registeScripting</h1>
+        </ion-col>
+        <ion-col size="3" class="arrow-col">
+            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+        </ion-col>
+    </ion-row>
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="createChannel()">
+      <ion-col size="9" class="title-col">
+          <h1>createChannel</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="updateChannel()">
+      <ion-col size="9" class="title-col">
+          <h1>updateChannel</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+    
+    <ion-row class="section" (click)="queryChannelInfo()">
+      <ion-col size="9" class="title-col">
+          <h1>queryChannelInfo</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="publishPost()">
+      <ion-col size="9" class="title-col">
+          <h1>publishPost</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="updatePost()">
+      <ion-col size="9" class="title-col">
+          <h1>updatePost</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="deletePost()">
+      <ion-col size="9" class="title-col">
+          <h1>deletePost</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="queryPostByChannelId()">
+      <ion-col size="9" class="title-col">
+          <h1>queryPostByChannelId</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="queryPostById()">
+      <ion-col size="9" class="title-col">
+          <h1>queryPostById</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="subscribeChannel()">
+      <ion-col size="9" class="title-col">
+          <h1>subscribeChannel</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="unSubscribeChannel()">
+      <ion-col size="9" class="title-col">
+          <h1>unSubscribeChannel</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="querySubscrptionInfoByChannelId()">
+      <ion-col size="9" class="title-col">
+          <h1>querySubscrptionInfoByChannelId</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="querySubscriptionInfoByUserDID()">
+      <ion-col size="9" class="title-col">
+          <h1>querySubscriptionInfoByUserDID</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+    
+    <ion-row class="section" (click)="createComment()">
+      <ion-col size="9" class="title-col">
+          <h1>createComment</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="updateComment()">
+      <ion-col size="9" class="title-col">
+          <h1>updateComment</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="deleteComment()">
+      <ion-col size="9" class="title-col">
+          <h1>deleteComment</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="queryCommentByPostId()">
+      <ion-col size="9" class="title-col">
+          <h1>queryCommentByPostId</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="queryCommentByID()">
+      <ion-col size="9" class="title-col">
+          <h1>queryCommentByID</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="queryLikeByChannel()">
+      <ion-col size="9" class="title-col">
+          <h1>queryLikeByChannel</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="queryLikeById()">
+      <ion-col size="9" class="title-col">
+          <h1>queryLikeById</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="queryLikeByPost()">
+      <ion-col size="9" class="title-col">
+          <h1>queryLikeByPost</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="addLike()">
+      <ion-col size="9" class="title-col">
+          <h1>addLike</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="removeLike()">
+      <ion-col size="9" class="title-col">
+          <h1>removeLike</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="section" (click)="downloadCustomeAvatar()">
+      <ion-col size="9" class="title-col">
+          <h1>downloadCustomeAvatar</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="downloadEssAvatar()">
+      <ion-col size="9" class="title-col">
+          <h1>downloadEssAvatar</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="uploadMediaData()">
+      <ion-col size="9" class="title-col">
+          <h1>uploadMediaData</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="syncSelfChannel()">
+      <ion-col size="9" class="title-col">
+          <h1>syncSelfChannel</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="syncSelfPost()">
+      <ion-col size="9" class="title-col">
+          <h1>syncSelfPost</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="writeData()">
+      <ion-col size="9" class="title-col">
+          <h1>writeData</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="readData()">
+      <ion-col size="9" class="title-col">
+          <h1>readData</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="getSubscriptionChannel()">
+      <ion-col size="9" class="title-col">
+          <h1>getSubscriptionChannel</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="createTables()">
+      <ion-col size="9" class="title-col">
+          <h1>createTables</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="section" (click)="queryPostData()">
+      <ion-col size="9" class="title-col">
+          <h1>queryPostData</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="section" (click)="queryPostDataByID()">
+      <ion-col size="9" class="title-col">
+          <h1>queryPostDataByID</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+
+    <ion-row class="section" (click)="insertPostData()">
+      <ion-col size="9" class="title-col">
+          <h1>insertPostData</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="queryPostDataByTime()">
+      <ion-col size="9" class="title-col">
+          <h1>queryPostDataByTime</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="updatePostData()">
+      <ion-col size="9" class="title-col">
+          <h1>updatePostData</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="queryPostDataByTime()">
+      <ion-col size="9" class="title-col">
+          <h1>queryPostDataByTime</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="getDisplayName()">
+      <ion-col size="9" class="title-col">
+          <h1>getDisplayName</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+    
+    <ion-row class="section" (click)="querySubscription()">
+      <ion-col size="9" class="title-col">
+          <h1>querySubscription</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+    
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row class="section" (click)="queryRemotePostByTime()">
+      <ion-col size="9" class="title-col">
+          <h1>queryRemotePostByTime</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row class="section" (click)="backupSubscribedChannel()">
+      <ion-col size="9" class="title-col">
+          <h1>backupSubscribedChannel</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+    <ion-row class="section" (click)="queryBackupData()">
+      <ion-col size="9" class="title-col">
+          <h1>queryBackupData</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+    <ion-row class="section" (click)="removeBackupData()">
+      <ion-col size="9" class="title-col">
+          <h1>removeBackupData</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" >
+      <ion-col size="12" class="title-col">
+          <h1>-----------------------</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="queryCommentsFromPosts()">
+      <ion-col size="9" class="title-col">
+          <h1>queryCommentsFromPosts</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+    
+    <ion-row class="section" (click)="loadMoreLocalData()">
+      <ion-col size="9" class="title-col">
+          <h1>loadMoreLocalData</h1>
+      </ion-col>
+      <ion-col size="3" class="arrow-col">
+          <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>

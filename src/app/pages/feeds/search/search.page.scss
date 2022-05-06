@@ -1,0 +1,77 @@
+.empty-container {
+  margin-top: 130px;
+  justify-content: flex-start;
+}
+
+.defaultAvatar{
+  width:40px;
+  height:40px;
+  border-radius: 50%;
+  background-color:#757575;
+  z-index: -1;
+}
+
+ion-searchbar {
+    margin-top: 0;
+    padding-right:0px;
+    --icon-color:#7624fe;
+}
+
+.scanService{
+  width: 22px;
+  height:22px;
+  position: absolute;
+  top: 20px;
+  z-index: 2;
+}
+
+.scanImage{
+  width: 22px;
+  height:22px;
+  position: absolute;
+  top: 31px;
+  z-index: 2;
+}
+
+.channel-list ion-item .channel-row .middle-col p, .channel-list ion-item .channel-row .middle-col .des{
+  font-size: 12px;
+  font-stretch: normal;
+  font-style: normal;
+  color: #000;
+  font-weight: normal;
+  margin-top: 5px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.channel-list ion-item .channel-row .middle-col p, .channel-list ion-item .channel-row .middle-col .ownerName{
+  font-size: 12px;
+  font-stretch: normal;
+  font-style: normal;
+  color: #9ca0a4;
+  font-weight:bold;
+  margin-top: 5px;
+  font-weight:bold;
+}
+
+.channel-list ion-item .channel-row .left-col {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 7px;
+}
+
+.channel-list ion-item .channel-row .middle-col p, .channel-list ion-item .channel-row .middle-col .white{
+  color:#fff;
+}
+
+.channel-list ion-item .channel-row .right-col .requested{
+  --background:#f1e9ff;
+  --background-activated:#f1e9ff;
+}
+
+.darkChannelList ion-item .channel-row .right-col .requested{
+  --background:#313244;
+  --background-activated:#313244;
+}

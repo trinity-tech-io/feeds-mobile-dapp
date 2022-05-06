@@ -1,0 +1,135 @@
+.notificationContainer {
+    padding: 5px 0;
+    padding-left: 15px;
+
+    ion-item {
+        --background: transparent;
+        --padding-top: 0px;
+        --padding-start: 0px;
+        --inner-padding-end: 0px;
+        // margin: 0 20px;
+
+        ion-row {
+            width: 100%;
+            padding:10px 0px;
+            .left-col {
+                display: flex;
+                justify-content:center;
+                align-items: flex-start;
+                img {
+                    width: 40px;
+                    height: 40px;
+                    object-fit: cover;
+                    overflow: hidden;
+                    border-radius: 50%;
+                    border: 1.25px solid #368bff;
+                }
+            }
+
+            .right-col {
+                flex-direction: column;
+                align-items: flex-start;
+
+                h1, p, h2 {
+                    margin: 0;
+                }
+
+                h1 {
+                    font-size: 14px;
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #000000;
+                    margin-top: 4px;
+                    margin-left: -11px;
+
+                    .notificationTime {
+                        position: relative;
+                        bottom: 0px;
+                        font-stretch: normal;
+                        font-style: normal;
+                        font-size: 10px;
+                        font-weight: 500;
+                        color: #9ca0a4;
+                    }
+                }
+
+                .behaviorText{
+                    font-size: 12px;
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #7624fe;
+                    margin-left: -10px;
+                }
+
+                h2 {
+                    font-size: 12px;
+                    font-weight:normal;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #111111;
+                    margin-top: 2px;
+                    margin-left: -11px;
+                    img{
+                       vertical-align:middle;
+                       width:21px;
+                       height:21px;
+                    }
+                    span{
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        width: 80%;
+                        vertical-align: middle;
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+
+        .moremenuclick{
+            width:20px;
+            height:20px;
+            overflow: visible;
+            position: absolute;
+            right: 12px;
+            top: 28px;
+            z-index:999;
+        }
+
+    }
+}
+
+.darkContainer {
+    ion-item {
+        ion-row {
+            .right-col {
+                h1 {
+                    font-size: 14px;
+                    font-weight: bold;
+                    font-stretch: normal;
+                    font-style: normal;
+                    color: #fff;
+
+
+                    .notificationTime {
+                        color: #fff;
+                    }
+                }
+
+                h2 {
+                    color:#fff;
+                    span{
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 80%;
+                    vertical-align: middle;
+                    display: inline-block;
+                    }
+                }
+            }
+        }
+    }
+}

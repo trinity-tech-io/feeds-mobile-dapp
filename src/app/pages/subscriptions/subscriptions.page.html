@@ -1,0 +1,28 @@
+<app-titlebar></app-titlebar>
+<ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+    <ion-refresher-content
+      class="refresh"
+      pullingText="{{'common.releaseToRefresh'|translate}}"
+      spinner="src/assets/images/arrow-dropdown.svg"
+      refreshingSpinner="circles"
+      refreshingText="{{'common.beingRefresh'|translate}}">
+    </ion-refresher-content>
+  </ion-refresher>
+   <app-following [followingList] = "followingList" (fromChild)="showMenuMore($event)" (toFollowPage)="toPage($event)"></app-following>
+</ion-content>
+<!---------------- ADD share menu---------------->
+<app-sharemenu
+ *ngIf="hideSharMenuComponent"
+ [destDid] = "shareDestDid"
+ [channelId] = "shareChannelId"
+ [isShowTitle] = "isShowTitle"
+ [isShowQrcode] = "isShowQrcode"
+ [isShowUnfollow] = "isShowUnfollow"
+ [isShowInfo] = "isShowInfo"
+ [isPreferences]="isPreferences"
+ [channelName] = "channelName"
+ [qrCodeString]="qrCodeString"
+ (hideShareMenu)="hideShareMenu($event)"
+>
+</app-sharemenu>

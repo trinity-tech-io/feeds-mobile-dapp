@@ -1,0 +1,202 @@
+.container {
+  padding: 0px 20px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  ion-button{
+    --background:#7624fe;
+    --background-activated:#7624fe;
+  }
+
+  .arrow_box {
+    font-family:Arial !important;
+    position: absolute;
+    z-index: 999;
+    width: 198px;
+    //height: 68px;
+    background: #f6f5f6;
+    border: 1px solid #f6f5f6;
+    font-size: 14px;
+    font-weight: 400;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.4;
+    color: #a1a1a1;
+    border-radius: 10px;
+    padding: 0px 10px;
+  }
+
+
+  .dark-arrow_box {
+    font-family:Arial !important;
+    position: absolute;
+    z-index: 999;
+    width: 198px;
+    // height: 68px;
+    background: #2e2f4e;
+    border: 1px solid #2e2f4e;
+    font-size: 14px;
+    font-weight: 400;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.4;
+    color: #fff;
+    border-radius: 10px;
+    padding: 0px 10px;
+  }
+
+  ion-list {
+
+      .section {
+          padding-top: 20px;
+          padding-bottom: 5px;
+          margin-right: 20px;
+          ion-col {
+            padding: 0;
+          }
+
+          .title-col {
+            h1, h2 {
+              margin: 0;
+            }
+
+            h1 {
+              font-size: 16px;
+              font-weight: bold;
+              font-stretch: normal;
+              font-style: normal;
+              color: #000000;
+              margin-top: 14px;
+            }
+
+            h2 {
+              font-size: 14px;
+              font-weight: normal;
+              font-stretch: normal;
+              font-style: normal;
+              color: #9ca0a4;
+              margin-left:20px;
+            }
+          }
+
+          .arrow-col {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+
+            ion-img {
+              width: 7.7px;
+              height: 13.3px;
+            }
+
+            ion-toggle {
+                --background: #ddd;
+                margin-left: 30px;
+            }
+          }
+
+        }
+
+        .dev-mode {
+          border: none;
+          margin-right: 5px;
+        }
+      width: 100%;
+      background: transparent;
+
+      ion-item {
+          --background: transparent;
+          --padding-top: 10px;
+          --padding-bottom: 10px;
+          --padding-start: 0px;
+          margin: 0px 10px;
+          border-bottom: 1px solid #f5f4f8;
+
+          ion-row {
+              width: 100%;
+              padding: 0;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+
+              ion-col {
+                  padding: 0;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+                  align-items: flex-start;
+              }
+          }
+
+          ion-label {
+              margin: 0;
+              padding: 7.5px 0 0;
+              font-size: 16px;
+              font-weight: bold;
+              font-stretch: normal;
+              font-style: normal;
+              color: #000000;
+          }
+
+          ion-input{
+            --placeholder-color:#9ca0a4;
+            font-size: 14px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            color: #9ca0a4;
+            margin: 0;
+            --padding-start:20px;
+            word-break: break-all;
+          }
+          h2 {
+              font-size: 14px;
+              font-weight: normal;
+              font-stretch: normal;
+              font-style: normal;
+              color: #9ca0a4;
+              margin: 0;
+              padding: 7.5px 0;
+              word-break: break-all;
+          }
+      }
+
+      .removeBorder {
+          border-bottom: none;
+      }
+  }
+
+  .btn-row {
+      margin-top: 25px;
+      width: 95%;
+  }
+}
+
+.darkContainer {
+  ion-list {
+      ion-item {
+          border-bottom: 1px solid #2e2f4e;
+
+          ion-label {
+              color: #ffffff;
+          }
+      }
+
+      .section {
+        .title-col {
+          h1 {
+            color:#ffffff;
+          }
+          h2 {
+            color: #9ca0a4;
+          }
+        }
+      }
+
+        .dev-mode {
+          border: none;
+        }
+  }
+}

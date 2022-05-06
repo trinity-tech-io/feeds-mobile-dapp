@@ -1,0 +1,587 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "~@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import '~@ionic/angular/css/display.css';
+
+/* Optional CSS utils that can be commented out */
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+
+@import "~@elastosfoundation/elastos-connectivity-sdk-cordova/dist/bundle.css";
+@import "~@elastosfoundation/elastos-connector-localidentity-cordova/dist/bundle.css";
+
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 400;
+  font-style: normal;
+  src: url('assets/fonts/montserrat/Montserrat-Regular.ttf');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 500;
+  font-style: normal;
+  src: url('assets/fonts/montserrat/Montserrat-Medium.ttf');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 600;
+  font-style: normal;
+  src: url('assets/fonts/montserrat/Montserrat-SemiBold.ttf');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 700;
+  font-style: normal;
+  src: url('assets/fonts/montserrat/Montserrat-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 900;
+  font-style: normal;
+  src: url('assets/fonts/montserrat/Montserrat-Black.ttf');
+}
+
+@font-face {
+  font-family: 'SourceSansPro';
+  font-weight: 400;
+  font-style: normal;
+  src: url('assets/fonts/sourcesanspro/SourceSansPro-Light.ttf');
+}
+@font-face {
+  font-family: 'SourceSansPro';
+  font-weight: 500;
+  font-style: normal;
+  src: url('assets/fonts/sourcesanspro/SourceSansPro-Regular.ttf');
+}
+@font-face {
+  font-family: 'SourceSansPro';
+  font-weight: 600;
+  font-style: normal;
+  src: url('assets/fonts/sourcesanspro/SourceSansPro-SemiBold.ttf');
+}
+@font-face {
+  font-family: 'SourceSansPro';
+  font-weight: 700;
+  font-style: normal;
+  src: url('assets/fonts/sourcesanspro/SourceSansPro-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'SourceSansPro';
+  font-weight: 900;
+  font-style: normal;
+  src: url('assets/fonts/sourcesanspro/SourceSansPro-Black.ttf');
+}
+
+* {
+  font-family: 'Montserrat' !important;
+}
+
+:root {
+  ion-tab-button.tab-selected {
+    ion-icon, ion-label {
+      color: var(--ion-color-primary) !important;
+      --ion-color-base: var(--ion-color-primary) !important;
+    }
+  }
+}
+
+ion-button {
+  height: 45px;
+  width: 100%;
+  --border-radius: 8px;
+
+  ion-label {
+      text-transform: none;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.43px;
+  }
+}
+
+ion-input {
+  height: 45px;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+/** ion-refresher **/
+.refresh {
+  .refresher-pulling-text,
+  .refresher-refreshing-text,
+  .refresher-refreshing-icon,
+  .refresher-pulling-icon {
+    font-weight: 500;
+  }
+}
+
+/** Ripple for clickable items **/
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+/** Page filter when popup is showing **/
+.blur {
+  filter: blur(2.5px);
+  --ion-backdrop-color:#000000;
+}
+
+/** Swipe notification **/
+.notification-swipe {
+  --background: transparent;
+  width: 100%;
+}
+
+/****************** donate Component ******************/
+.PaypromptComponent {
+  // animation: animate;
+  // animation-duration: 300ms;
+  // animation-fill-mode: forwards;
+
+  // @keyframes animate {
+  //   0% { bottom: -1000px }
+  //   100% { bottom: 0px }
+  // }
+
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width: 85vw !important;
+    }
+  }
+}
+
+.dark .PaypromptComponent{
+
+  .popover-wrapper{
+    .popover-content {
+       background: #191a2f !important;
+    }
+
+    .popover-arrow.sc-ion-popover-ios:after{
+       background: #191a2f !important;
+    }
+}
+}
+
+/****************** confirmdialog Component ******************/
+.ConfirmdialogComponent {
+  border-radius: 12px;
+
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width:85vw  !important;
+    }
+  }
+}
+
+.dark .ConfirmdialogComponent{
+
+  .popover-wrapper{
+    .popover-content {
+       background: #191a2f !important;
+    }
+
+    .popover-arrow.sc-ion-popover-ios:after{
+       background: #191a2f !important;
+    }
+}
+}
+
+/********* OLD *********/
+
+.ion-img-viewer{
+   img{
+    width:100%;
+    max-width: 100%;
+    height:100%;
+    max-height: 100%;
+   }
+
+   ion-header{
+    display:none;
+  }
+
+  ion-slides{
+    ion-slide{
+      --width:100%;
+    }
+    .swiper-slide{
+      padding:0px;
+    }
+  }
+}
+
+.circlePosition{
+  position: absolute;
+  bottom:0px;
+  right:5px;
+}
+
+.chancecirclePosition{
+  position: absolute;
+  bottom:5px;
+  right:7px;
+}
+
+.loading-class{
+  color:#000000;
+}
+
+.editPost .action-sheet-group {
+   //background:#ff0000 !important;
+  .action-sheet-button{
+    border-bottom: 1px solid  rgba(34, 34, 34, 0.07);
+  }
+
+  .action-sheet-destructive .action-sheet-button-inner{
+    color:#ff0000;
+  }
+
+  .action-sheet-button-inner{
+    justify-content: left;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
+    vertical-align: middle;
+
+    .action-sheet-icon{
+      margin-top:-4px;
+      margin-left:14px;
+      margin-right:10px;
+    }
+  }
+}
+
+
+.dark .editPost .action-sheet-group{
+  --background:#2e2f4e !important;
+ .action-sheet-button{
+   border-bottom: 1px solid  rgba(255,255,255, 0.07);
+ }
+
+ .action-sheet-destructive .action-sheet-button-inner{
+  color:#E77978;
+  .action-sheet-icon{
+    margin-top:-4px;
+    margin-left:14px;
+    margin-right:10px;
+    color: #E77978;
+    // filter: drop-shadow(#E77978 0px 0);
+    // transform: translateX(0px);
+    // overflow:hidden;
+  }
+ }
+
+ .action-sheet-button-inner{
+   justify-content: left;
+   font-size: 14px;
+   font-weight: 600;
+   color: #fff;
+   vertical-align: middle;
+
+   .action-sheet-icon{
+     margin-top:-4px;
+     margin-left:14px;
+     margin-right:10px;
+     color: #fff;
+    //  filter: drop-shadow(#fff 80px 0);
+    //  transform: translateX(-80px);
+    //  overflow:hidden;
+   }
+ }
+}
+
+.dark .editPost .action-sheet-group-cancel .action-sheet-cancel.sc-ion-action-sheet-ios {
+  background:#2e2f4e !important;
+  font-weight: 600;
+  --button-background-selected-opacity:0;
+}
+
+.status{
+  position:absolute;
+  right:20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8888b0;
+}
+
+.editToolPopup {
+  .popover-wrapper{
+    .popover-content {
+       background: #FFF !important;
+    }
+
+    .popover-arrow.sc-ion-popover-ios:after{
+      background: #FFF !important;
+    }
+
+    .popover-translucent.sc-ion-popover-ios-h .popover-arrow.sc-ion-popover-ios:after, .popover-translucent.sc-ion-popover-ios-h .popover-content.sc-ion-popover-ios {
+      background:#fff !important;
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      backdrop-filter: saturate(180%) blur(20px);
+    }
+  }
+
+  .popover-translucent.sc-ion-popover-ios-h .popover-arrow.sc-ion-popover-ios:after, .popover-translucent.sc-ion-popover-ios-h .popover-content.sc-ion-popover-ios {
+    background:#fff !important;
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+  }
+}
+
+.dark .editToolPopup {
+  .popover-wrapper{
+    .popover-content {
+       background: #191a2f !important;
+    }
+
+    .popover-arrow.sc-ion-popover-ios:after{
+       background: #191a2f !important;
+    }
+  }
+}
+
+.genericPopup {
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width:85vw  !important;
+      background: #FFF !important;
+    }
+  }
+}
+
+.dark .genericPopup {
+  .popover-wrapper{
+    .popover-content {
+      position: relative !important;
+      margin: 0 auto !important;
+      left: auto !important;
+      top: auto !important;
+      width:85vw  !important;
+      background:#191a2f  !important;
+    }
+  }
+}
+
+.totaltime{
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  height: 50px;
+  width: 60px;
+  cursor: pointer;
+  color: white;
+  line-height: 50px;
+  pointer-events: none;
+}
+
+.lefttopostdetailimg{
+  width: 27%;
+  display:inline-block;
+  height: 191px;
+  position: absolute;
+  left:-25%;
+}
+
+.topostdetailimg{
+  width: 24px;
+  display:inline-block;
+  height: 191px;
+  position: absolute;
+  right:-19px;
+}
+
+
+.lefttopostdetailvideo{
+  width: 27%;
+  display:inline-block;
+  height:200px;
+  position: absolute;
+  left:-25%;
+}
+
+
+.topostdetailvideo{
+  width:24px;
+  display:inline-block;
+  height: 200px;
+  position: absolute;
+  right:-19px;
+}
+
+.post-grid .post-row .content-col .top-row .moremenuclick{
+  width:20px;
+  height:20px;
+  overflow: visible;
+  position: absolute;
+  right: 1px;
+  top: 16px;
+}
+
+.httpSpan{
+  color: #3b88c8;
+  font-family: SourceSansPro!important;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+
+.profileCardBg0{
+  background-image: linear-gradient(to right, rgb(132, 9, 227), rgb(121, 21, 228), rgb(111, 32, 229), rgb(100, 44, 230), rgb(89, 56, 231), rgb(78, 67, 232), rgb(68, 79, 232), rgb(57, 90, 233), rgb(46, 102, 234), rgb(35, 114, 235), rgb(25, 125, 236), rgb(14, 137, 237));
+}
+
+.bidLogoImg{
+  position: absolute;
+  z-index: 999;
+  top:55.5px;
+  display:none;
+}
+
+.avatarImg{
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 999;
+  display:none;
+}
+
+.buyContainer{
+  height: 52.5px;
+  opacity:0.92;
+  background-color: #efefef;
+  position: absolute;
+  z-index: 999;
+  bottom: 4px;
+  left: 0px;
+  width:100%;
+  display:none;
+  border-bottom-left-radius:11px;
+  border-bottom-right-radius:11px;
+
+  ion-button{
+    --background:#7624fe;
+    --background-activated:#7624fe;
+    height:36px;
+  }
+
+  .pricecol{
+    text-align:left;
+  .price{
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: 700;
+    font-stretch: normal;
+    font-style: normal;
+    color: #7624fe;
+    display: inline-block;
+  }
+
+  .quantity{
+    font-size: 14px;
+    font-weight: 700;
+    font-stretch: normal;
+    font-style: normal;
+    color: #000;
+  }
+
+  .darkQuantity{
+    color: #000;
+  }
+
+  .darkPrice{
+    color: #000;
+  }
+  }
+
+  .buyLabel{
+    font-weight:bold;
+    font-stretch:normal;
+    font-style:normal;
+    color:#ffffff;
+  }
+}
+
+.swiper-pagination {
+  bottom: 0px !important;
+  // bottom: calc(env(safe-area-inset-bottom) + 0px) !important;
+  --swiper-pagination-color:#7624fe;
+}
+
+.add-tab{
+  position: absolute;
+  bottom: 20px;
+  right: 31px;
+  width: 50px;
+  height: 50px;
+}
+
+.add-nft{
+  bottom: 20px;
+  right: 31px;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  background: #7624fe;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  text-align:center;
+  color:#fff;
+
+  span{
+    display:inline-block;
+    margin-top: 11px;
+  }
+}
+
+.dark{
+  .my-custom-class .alert-wrapper{
+    --background: #2e2f4e;
+   }
+}
+
+// 这个方式兼容所有版本的谷歌浏览器
+audio::-webkit-media-controls {
+  overflow: hidden !important
+}
+
+.transparentBody {
+  --background: none transparent !important;
+}
+
+.scanHide{
+  display: none;
+}
+

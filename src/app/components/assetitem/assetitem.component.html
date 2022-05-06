@@ -1,0 +1,37 @@
+<div class="addAssets ion-activatable ripple" [ngStyle]="styleObj" [class.light]="!theme.darkMode" [class.dark]="theme.darkMode">
+  <div *ngIf="assetItem === null">
+    <img src="assets/images/loading.png" style="object-fit:contain;"/>
+    <div class="des">&nbsp;</div>
+    <div class="des1">&nbsp;</div>
+    <div class="des2">&nbsp;</div>
+    <div class="like">
+      <span>&nbsp;</span>
+    </div>
+    <ion-ripple-effect></ion-ripple-effect>
+  </div>
+  <div *ngIf="assetItem != null ">
+    <img src="assets/images/avatar.svg" *ngIf="assetItem['type']==='avatar' && assetItem['fixedAmount'] === null" style="position:absolute;bottom:7px;right:5px;width:17.5px;height:30px;"/>
+    <img src="assets/images/avatar.svg" *ngIf="assetItem['type']==='avatar' && assetItem['fixedAmount'] != null" style="position:absolute;bottom:11px;right:5px;width:17.5px;height:30px;"/>
+    <img src="assets/images/videoTypeIcon.svg" *ngIf="assetItem['type']==='video' && assetItem['fixedAmount'] === null" style="position:absolute;bottom:7px;right:5px;width:17.5px;height:30px;"/>
+    <img src="assets/images/videoTypeIcon.svg" *ngIf="assetItem['type']==='video' && assetItem['fixedAmount'] != null" style="position:absolute;bottom:11px;right:5px;width:17.5px;height:30px;"/>
+    <img src="assets/images/audioTypeIcon.svg" *ngIf="assetItem['type']==='audio' && assetItem['fixedAmount'] === null" style="position:absolute;bottom:7px;right:5px;width:17.5px;height:30px;"/>
+    <img src="assets/images/audioTypeIcon.svg" *ngIf="assetItem['type']==='audio' && assetItem['fixedAmount'] != null" style="position:absolute;bottom:11px;right:5px;width:17.5px;height:30px;"/>
+    <div style="height:132px;padding: 0px 5px;display:flex;justify-content:center;align-items: center;">
+    <img src="{{imgUri}}" (click)="clickItem()" style="object-fit:contain;" id={{thumbImageId}}-{{thumbImageName}}/>
+    </div>
+    <div class="des" [class.black]="!theme.darkMode" [class.white]="theme.darkMode">{{assetItem['name']}}</div>
+    <div class="des1" [class.black]="!theme.darkMode" [class.white]="theme.darkMode">{{assetItem['description']}}</div>
+    <div class="des2">{{"MintnftPage.nftQuantity"|translate}}: {{handleCurQuantity(assetItem)}}/{{assetItem['quantity']}}</div>
+    <div class="like" *ngIf="assetItem['fixedAmount'] != null">
+      <span class="price">{{hanldePrice(assetItem['fixedAmount'])}} ELA  <img style="vertical-align:middle;margin-top: 7px;" src="assets/images/purpleblue.svg"/></span>
+      <span class="priceUsd" *ngIf="elaPrice!=null">≈USD {{hanldeUsdPrice(assetItem['fixedAmount'])}}</span>
+    </div>
+    <div class="like" (click)="onSale()" *ngIf="assetItem['fixedAmount'] === null">
+      <span class="onSale">{{'CollectionsPage.sale'|translate}}</span>
+    </div>
+    <div class="moremenu1">
+      <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'" (click)="more()"/>
+    </div>
+    <ion-ripple-effect></ion-ripple-effect>
+  </div>
+</div>

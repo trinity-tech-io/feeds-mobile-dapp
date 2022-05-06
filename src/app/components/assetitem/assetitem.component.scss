@@ -1,0 +1,146 @@
+addAssets{
+    position:relative;
+    margin: 0 auto;
+    width: 160px;
+    height: 252px;
+    border-radius: 10px;
+    text-align: center;
+}
+.light{
+    background-color: #fff;
+    border: solid 1px #f5f4f8;
+}
+.dark{
+    background-color:#191a2f;
+    border: solid 1px #2e2f4e;
+}
+
+.addAssets{
+
+.white{
+  color:#fff;
+}
+
+.black{
+ color:#000;
+}
+
+img{
+    margin-top: 19px;
+    max-height: 132px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    width: auto;
+}
+
+.des{
+    margin-left:13.1px;
+    font-size: 12px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    text-align: left;
+    width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 23px;
+    height:18px;
+}
+
+.des1{
+    margin-left:13.1px;
+    font-size: 6px !important;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    text-align: left;
+    width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height:18px;
+}
+
+.des2{
+    margin-left:13.1px;
+    font-size: 6px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    text-align: left;
+    color: #9ca0a4;
+    margin-bottom: 7px;
+    height: 12px;
+}
+
+.des3{
+    margin-left:38px;
+    font-size: 12px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    text-align: left;
+    color: #000000;
+    height: 16px;
+}
+
+.like{
+    .price{
+        display:block;
+        font-size: 13px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: left;
+        color: #7624fe;
+        margin-top: 9px;
+        margin-left: 13.1px;
+    }
+
+    .priceUsd{
+        display:block;
+        font-size: 8px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        text-align: left;
+        margin-top: -5px;
+        margin-left: 13.1px;
+        color: #9ca0a4;
+    }
+    .onSale{
+        display: inline-block;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        /* text-align: left; */
+        color: #7624fe;
+        border: solid 1px #7624fe;
+        border-radius: 10px;
+        padding: 5px 15px;
+        text-align: center;
+        font-size: 16px;
+    }
+    text-align: center;
+    img{
+        width:16px;
+        height:16px;
+        margin-top: 0px;
+        vertical-align: middle;
+    }
+}
+
+.moremenu1{
+    text-align:right;
+    margin-right: 11px;
+
+    img{
+        width: 38px;
+        height: 18px;
+        position: absolute;
+        right: -6px;
+        bottom: 47px;
+    }
+}
+}
