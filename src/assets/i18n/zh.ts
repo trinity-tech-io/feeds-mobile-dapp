@@ -240,7 +240,7 @@ export const zh = {
   HomePage: {
     allempty: '你的时间线是空的',
     emptyDes: '添加新频道或查找要订阅的新频道！',
-    subscribeToChannels: '订阅频道',
+    exploreFeeds: '探索 Feeds',
     minutesAgo: '分钟前',
     hoursAgo: '小时前',
     daysAgo: '天前',
@@ -259,7 +259,8 @@ export const zh = {
     Oldest: '最早的',
     priceLowToHigh: '价格：从低到高',
     priceHightoLow: '价格：从高到低',
-    search: '搜索'
+    search: '搜索',
+    addChannel: 'Add Channel'
   },
   ProfilePage: {
     myFeeds: '频道',

@@ -240,7 +240,7 @@ export const en = {
   HomePage: {
     allempty: 'Your timeline is empty',
     emptyDes: 'Add new channel or find new channels to subscribe!',
-    subscribeToChannels: 'Subscribe to Channels',
+    exploreFeeds: 'Explore Feeds',
     minutesAgo: 'm',
     hoursAgo: 'h',
     daysAgo: 'd',
@@ -259,7 +259,8 @@ export const en = {
     Oldest: 'Oldest',
     priceLowToHigh: 'Price: Low to High',
     priceHightoLow: 'Price: High to Low',
-    search: 'Search'
+    search: 'Search',
+    addChannel: 'Add Channel'
   },
   ProfilePage: {
     myFeeds: 'Channels',

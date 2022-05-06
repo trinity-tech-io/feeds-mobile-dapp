@@ -67,17 +67,18 @@
     </ion-col>
   </ion-row>
   <!-- NO POSTS -->
-  <div *ngIf="postList.length === 0 && !this.isPostLoading && syncHiveDataStatus === 6" class="home-empty-container" style="margin-top:86.85px;">
+  <div *ngIf="postList.length === 0 && !this.isPostLoading && syncHiveDataStatus === 6" class="home-empty-container" style="margin-top:60px;">
     <img src="./assets/images/homeEmpty.svg">
     <h1>{{ 'HomePage.allempty' | translate }}</h1>
     <p>{{ "HomePage.emptyDes"| translate }}</p>
-    <ion-row class="btn-row">
-      <ion-button (click)="exploreFeeds()">
-        <ion-label>
-          {{ "HomePage.subscribeToChannels" | translate }}
-        </ion-label>
-      </ion-button>
-    </ion-row>
+
+    <div class="btn-row-empty" style="margin-top:10px;" (click)="addChannel()">
+      {{ "HomePage.addChannel" | translate }}
+    </div>
+
+    <div class="btn-row-empty" style="margin-top:29px;" (click)="exploreFeeds()">
+      {{ "HomePage.exploreFeeds" | translate }}
+    </div>
   </div>
 
   <!-- HAS POSTS  -->
