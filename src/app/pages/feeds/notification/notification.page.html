@@ -11,13 +11,13 @@
       </ion-refresher-content>
     </ion-refresher>
 
-    <div *ngIf="notificationList.length == 0" class="empty-container">
+    <div *ngIf="notificationList.length == 0" class="new-empty-container">
       <img src="./assets/images/no-Notifications.svg">
       <h1>{{ 'NotificationPage.allempty' | translate }}</h1>
       <p>{{ 'NotificationPage.emptyDes' | translate }}</p>
     </div>
 
-    <div class="notificationContainer" [class.darkContainer]="theme.darkMode">
+    <div class="notificationContainer" [class.darkContainer]="theme.darkMode" *ngIf="notificationList.length > 0">
       <!-- <ion-item-sliding> -->
         <ion-item lines="none"  *ngFor="let notification of notificationList let i=index">
           <ion-row>

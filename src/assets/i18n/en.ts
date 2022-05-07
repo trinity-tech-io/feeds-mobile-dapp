@@ -292,7 +292,8 @@ export const en = {
   },
   SearchPage: {
     title: 'Channels',
-    emptyDes: 'No channels yet',
+    allempty: 'No channels found',
+    emptyDes: 'No channels available on Explore Feeds. Please come back later!',
     follow: 'Subscribe',
     following: 'Subscribed',
     searchFeeds: 'Search',
@@ -325,8 +326,8 @@ export const en = {
     viewall: 'View all',
   },
   NotificationPage: {
-    allempty: 'No Notifications',
-    emptyDes: "You don't have any notifications right now",
+    allempty: 'Nothing to find here',
+    emptyDes: 'Don’t worry though, all your notifications will show up here!',
     followedFeed: 'subscribed to your channel',
     likedPost: 'liked your post',
     commentPost: 'Commented on your post',

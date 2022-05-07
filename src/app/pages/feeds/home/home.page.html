@@ -1,8 +1,11 @@
 <app-titlebar id="homeTittleBar"></app-titlebar>
 <ion-row [class.darkExploreTabs]="theme.darkMode" [class.exploreTabs]="!theme.darkMode" id="homeTab">
-  <ion-col size="6" class="des" [ngClass]="{'select-bottom':tabType==='feeds','select-color':tabType==='feeds','no-select-color':tabType!='feeds'}"
+  <ion-col size="1.25" class="des"></ion-col>
+  <ion-col size="4.5" class="des colBorder" [ngClass]="{'select-colBorder':tabType==='feeds','select-color':tabType==='feeds','no-select-color':tabType!='feeds'}"
    (click)="clickTab('feeds')">{{'FeedsPage.tabTitle5'|translate}}</ion-col>
-  <ion-col size="6" class="des"  [ngClass]="{'select-bottom':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
+  <ion-col size="0.5" class="des"></ion-col>
+  <ion-col size="4.5" class="des colBorder"  [ngClass]="{'select-colBorder':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
+  <ion-col size="1.25" class="des"></ion-col>
 </ion-row>
 <ion-row *ngIf="tabType==='pasar'" style="margin-top: 28px;">
   <ion-col size="1">
@@ -67,12 +70,12 @@
     </ion-col>
   </ion-row>
   <!-- NO POSTS -->
-  <div *ngIf="postList.length === 0 && !this.isPostLoading && syncHiveDataStatus === 6" class="home-empty-container" style="margin-top:60px;">
+  <div *ngIf="postList.length === 0 && !this.isPostLoading && syncHiveDataStatus === 6" class="new-empty-container" style="margin-top:60px;">
     <img src="./assets/images/homeEmpty.svg">
     <h1>{{ 'HomePage.allempty' | translate }}</h1>
     <p>{{ "HomePage.emptyDes"| translate }}</p>
 
-    <div class="btn-row-empty" style="margin-top:10px;" (click)="addChannel()">
+    <div class="btn-row-empty" style="margin-top:10px;" (click)="create()">
       {{ "HomePage.addChannel" | translate }}
     </div>
 

@@ -1,11 +1,17 @@
 <app-titlebar></app-titlebar>
  <!-- <ion-content style="max-height: 58px;"> -->
   <ion-content>
-  <div class="search-container" [class.dark-search-container]="theme.darkMode" style="position:relative;width: 100%;padding:0px;">
+  <div class="search-container" [class.dark-search-container]="theme.darkMode" style="position:absolute;width: 100%;padding:0px;">
     <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
     <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
       <ion-searchbar #searchbar  [(ngModel)]="isSearch" inputmode=""  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
     </form>
+  </div>
+
+  <div class="new-empty-container">
+    <img src="./assets/images/no-Explore.svg">
+    <h1>{{ 'SearchPage.allempty' | translate }}</h1>
+    <p>{{ 'SearchPage.emptyDes' | translate }}</p>
   </div>
 </ion-content>
   <!-- <ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">

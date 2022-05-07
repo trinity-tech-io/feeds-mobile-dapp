@@ -292,7 +292,8 @@ export const zh = {
   },
   SearchPage: {
     title: '频道',
-    emptyDes: '没有可订阅的频道',
+    allempty: '没有找到频道',
+    emptyDes: 'Explore Feed上没有可用的频道。请稍后再来！',
     follow: '订阅',
     following: '已订阅',
     searchFeeds: '搜索',
@@ -325,8 +326,8 @@ export const zh = {
     viewall: '查看全部',
   },
   NotificationPage: {
-    allempty: '空空如也',
-    emptyDes: '您现在没有任何通知',
+    allempty: '这里什么都找不到',
+    emptyDes: '不过别担心，你所有的通知都会显示在这里！',
     followedFeed: '订阅了您的频道',
     likedPost: '赞了微说',
     commentPost: '在微说留了言',

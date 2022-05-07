@@ -1,22 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="118" height="101" viewBox="0 0 118 101">
-  <g id="Group_33" data-name="Group 33" transform="translate(3931 -3271)">
-    <rect id="Rectangle_216" data-name="Rectangle 216" width="16" height="16" transform="translate(-3880 3271)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-2" data-name="Rectangle 216" width="16" height="16" transform="translate(-3914 3339)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-3" data-name="Rectangle 216" width="16" height="16" transform="translate(-3880 3356)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-4" data-name="Rectangle 216" width="16" height="16" transform="translate(-3846 3339)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-5" data-name="Rectangle 216" width="16" height="16" transform="translate(-3897 3339)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-6" data-name="Rectangle 216" width="16" height="16" transform="translate(-3829 3322)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-7" data-name="Rectangle 216" width="16" height="16" transform="translate(-3914 3305)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-8" data-name="Rectangle 216" width="16" height="16" transform="translate(-3846 3305)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-9" data-name="Rectangle 216" width="16" height="16" transform="translate(-3931 3322)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-10" data-name="Rectangle 216" width="16" height="16" transform="translate(-3863 3339)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-11" data-name="Rectangle 216" width="16" height="16" transform="translate(-3897 3271)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-12" data-name="Rectangle 216" width="16" height="16" transform="translate(-3863 3271)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-13" data-name="Rectangle 216" width="16" height="16" transform="translate(-3880 3356)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-14" data-name="Rectangle 216" width="16" height="16" transform="translate(-3880 3339)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-15" data-name="Rectangle 216" width="16" height="16" transform="translate(-3931 3339)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-16" data-name="Rectangle 216" width="16" height="16" transform="translate(-3829 3339)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-17" data-name="Rectangle 216" width="16" height="16" transform="translate(-3914 3288)" fill="#9ca0a4"/>
-    <rect id="Rectangle_216-18" data-name="Rectangle 216" width="16" height="16" transform="translate(-3846 3288)" fill="#9ca0a4"/>
-  </g>
+<svg width="141" height="146" viewBox="0 0 141 146" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M65.5659 145.952C68.3286 145.888 70.9797 144.85 73.0504 143.02C75.1211 141.19 76.4779 138.686 76.8808 135.953H53.8125C54.2268 138.761 55.6471 141.323 57.8091 143.162C59.9711 145.001 62.7277 145.993 65.5659 145.952Z" fill="url(#paint0_linear_255_4283)"/>
+<path d="M129.2 117.665C124.971 113.895 121.268 109.573 118.192 104.816C114.834 98.2483 112.821 91.0765 112.272 83.7208V62.0559C112.254 59.4243 112.019 56.7987 111.57 54.2057C108.118 53.5157 104.8 52.2716 101.746 50.5218C102.91 54.2708 103.502 58.1741 103.5 62.0998V83.7647C104.038 92.7377 106.506 101.489 110.737 109.42C113.764 114.218 117.357 118.636 121.437 122.577H9.12206C13.2025 118.636 16.7951 114.218 19.8229 109.42C24.0533 101.489 26.5217 92.7377 27.0592 83.7647V62.0559C27.0361 56.9804 28.0144 51.9502 29.9381 47.2533C31.8618 42.5564 34.693 38.285 38.2697 34.6839C41.8465 31.0827 46.0984 28.2224 50.7821 26.2668C55.4658 24.3112 60.4892 23.2986 65.5648 23.2872C72.993 23.2931 80.2544 25.4898 86.4403 29.6024C85.7583 27.0982 85.3756 24.522 85.3 21.9276V19.1647C80.7208 16.9121 75.8014 15.4303 70.7398 14.7791V9.25322C70.7398 7.70044 70.123 6.21125 69.025 5.11326C67.927 4.01528 66.4378 3.39844 64.885 3.39844C63.3322 3.39844 61.8431 4.01528 60.7451 5.11326C59.6471 6.21125 59.0303 7.70044 59.0303 9.25322V14.9984C47.6966 16.5972 37.324 22.2423 29.8275 30.8915C22.3309 39.5407 18.2166 50.6101 18.2441 62.0559V83.7208C17.6948 91.0765 15.682 98.2483 12.3236 104.816C9.30135 109.562 5.65829 113.884 1.49111 117.665C1.0233 118.076 0.648374 118.582 0.391272 119.149C0.134171 119.717 0.000788515 120.332 0 120.955V126.919C0 128.082 0.462053 129.198 1.28451 130.02C2.10697 130.843 3.22247 131.305 4.38561 131.305H126.305C127.469 131.305 128.584 130.843 129.407 130.02C130.229 129.198 130.691 128.082 130.691 126.919V120.955C130.69 120.332 130.557 119.717 130.3 119.149C130.043 118.582 129.668 118.076 129.2 117.665Z" fill="url(#paint1_linear_255_4283)"/>
+<path d="M118.192 43.8561C130.303 43.8561 140.12 34.0385 140.12 21.928C140.12 9.81751 130.303 0 118.192 0C106.082 0 96.2642 9.81751 96.2642 21.928C96.2642 34.0385 106.082 43.8561 118.192 43.8561Z" fill="url(#paint2_linear_255_4283)"/>
+<defs>
+<linearGradient id="paint0_linear_255_4283" x1="56.6112" y1="140.543" x2="72.4983" y2="140.543" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7624FE"/>
+<stop offset="1" stop-color="#368BFF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_255_4283" x1="15.856" y1="62.114" x2="105.862" y2="62.114" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7624FE"/>
+<stop offset="1" stop-color="#368BFF"/>
+</linearGradient>
+<linearGradient id="paint2_linear_255_4283" x1="101.585" y1="20.1322" x2="131.788" y2="20.1322" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7624FE"/>
+<stop offset="1" stop-color="#368BFF"/>
+</linearGradient>
+</defs>
 </svg>
