@@ -229,7 +229,7 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.queryCommentsFromPosts(targetDid, postIds);
   }
 
-  queryLikeByIdAndUser(targetDid: string, channelId: string, likeId: string) {
-    return this.hiveVaultHelper.queryLikeByIdAndUser(targetDid, channelId, likeId);
+  querySelfLikeById(targetDid: string, channelId: string, likeId: string) {
+    return this.hiveVaultHelper.querySelfLikeById(targetDid, channelId, likeId);
   }
 }

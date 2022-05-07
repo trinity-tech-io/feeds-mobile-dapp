@@ -101,8 +101,11 @@ export class HiveVaultController {
           const destDid = subscribedChannel.destDid;
           const channelId = subscribedChannel.channelId;
 
-          const comments = await this.queryCommentByChannel(destDid, channelId);
-          commentList.push(comments);
+          try {
+            const comments = await this.queryCommentByChannel(destDid, channelId);
+            commentList.push(comments);
+          } catch (error) {
+          }
         }
         resolve(commentList);
       } catch (error) {
@@ -182,8 +185,11 @@ export class HiveVaultController {
           const destDid = subscribedChannel.destDid;
           const channelId = subscribedChannel.channelId;
 
-          const likes = await this.syncLikeDataFromChannel(destDid, channelId);
-          likeList.push(likes);
+          try {
+            const likes = await this.syncLikeDataFromChannel(destDid, channelId);
+            likeList.push(likes);
+          } catch (error) {
+          }
         }
 
         resolve(likeList);
@@ -869,7 +875,7 @@ export class HiveVaultController {
         const createrDid = (await this.dataHelper.getSigninData()).did;
         const likeId = UtilService.generateLikeId(postId, commentId, createrDid);
 
-        const result = await this.hiveVaultApi.queryLikeByIdAndUser(destDid, channelId, likeId);
+        const result = await this.hiveVaultApi.querySelfLikeById(destDid, channelId, likeId);
         const likeList = await this.handleLikeResult(destDid, result) || [];
 
         let like = likeList[0];

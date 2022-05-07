@@ -62,7 +62,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_UPDATE_LIKE = "script_update_like";
     public static readonly SCRIPT_SOMETIME_LIKE = "script_sometime_like";
 
-    public static readonly SCRIPT_QUERY_LIKE_BY_ID_AND_USER = "script_query_like_by_id_and_user";
+    public static readonly SCRIPT_QUERY_SELF_LIKE_BY_ID = "script_query_self_like_by_id";
 
     public static readonly SCRIPT_QUERY_COMMENT_FROM_POSTS = "script_query_comment_from_posts";
     public static readonly SCRIPT_QUERY_COMMENT_COUNTS = "script_query_comment_counts";
@@ -114,7 +114,7 @@ export class HiveVaultHelper {
 
                 const p23 = this.registerQueryCommentsFromPostsScripting();
 
-                const p24 = this.registerQueryLikeByIdAndUserScripting();
+                const p24 = this.registerQuerySelfLikeByIdScripting();
                 const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
@@ -1302,7 +1302,7 @@ export class HiveVaultHelper {
 
 
     /** query like by id and user start */
-    private registerQueryLikeByIdAndUserScripting(): Promise<string> {
+    private registerQuerySelfLikeByIdScripting(): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
                 let conditionFilter = {
@@ -1313,13 +1313,13 @@ export class HiveVaultHelper {
 
                 const executableFilter = {
                     "like_id": "$params.like_id",
-                    "creater_did": "$params.create_did",
+                    "creater_did": "$caller_did",
                     "status": "$params.status"
                 };
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID_AND_USER, executable, condition, false);
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SELF_LIKE_BY_ID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(error)
@@ -1328,7 +1328,7 @@ export class HiveVaultHelper {
         })
     }
 
-    private callQueryLikeByIdAndUser(targetDid: string, channelId: string, likeId: string, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
+    private callQuerySelfLikeById(targetDid: string, channelId: string, likeId: string, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
@@ -1336,7 +1336,7 @@ export class HiveVaultHelper {
                     "like_id": likeId,
                     "status": status
                 }
-                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID_AND_USER, params);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SELF_LIKE_BY_ID, params);
                 Logger.log("Query like from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -1346,8 +1346,8 @@ export class HiveVaultHelper {
         });
     }
 
-    queryLikeByIdAndUser(targetDid: string, channelId: string, likeId: string): Promise<any> {
-        return this.callQueryLikeByIdAndUser(targetDid, channelId, likeId);
+    querySelfLikeById(targetDid: string, channelId: string, likeId: string): Promise<any> {
+        return this.callQuerySelfLikeById(targetDid, channelId, likeId);
     }
     /** query like by id and user end */
 
