@@ -40,8 +40,11 @@ export class HiveVaultController {
 
           this.dataHelper.cleanOldestPostV3();
 
-          const posts = await this.queryRemotePostWithTime(destDid, channelId, endTime);
-          postList = _.differenceWith(postList, posts);
+          try {
+            const posts = await this.queryRemotePostWithTime(destDid, channelId, endTime);
+            postList = _.differenceWith(postList, posts);
+          } catch (error) {
+          }
         }
         resolve(postList);
       } catch (error) {
@@ -69,9 +72,11 @@ export class HiveVaultController {
 
           this.dataHelper.cleanOldestPostV3();
 
-          const posts = await this.queryRemotePostWithTime(destDid, channelId, UtilService.getCurrentTimeNum());
-
-          postList.push(posts);
+          try {
+            const posts = await this.queryRemotePostWithTime(destDid, channelId, UtilService.getCurrentTimeNum());
+            postList.push(posts);
+          } catch (error) {
+          }
         }
         resolve(postList);
       } catch (error) {
