@@ -636,6 +636,12 @@ export class HiveVaultController {
         }
         await this.dataHelper.addSubscribedChannel(subscribedChannel);
         this.backupSubscribedChannel(targetDid, channelId);//async
+
+        try {
+          await this.queryRemotePostWithTime(targetDid, channelId, UtilService.getCurrentTimeNum());
+        } catch (error) {
+        }
+
         resolve(subscribedChannel);
       } catch (error) {
         Logger.error(TAG, error);
