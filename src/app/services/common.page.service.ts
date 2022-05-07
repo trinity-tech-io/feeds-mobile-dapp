@@ -44,7 +44,7 @@ export class CommonPageService {
         let userDid = arr[4];
         let isInit = isInitUserNameMap[commentId] || '';
         if (isInit === '') {
-          if(userDid === destDid){
+          if (userDid === destDid) {
             isInitUserNameMap[commentId] = "11";
             userNameMap[userDid] = channelName;
             return;
@@ -81,80 +81,80 @@ export class CommonPageService {
     hiveVaultController: any,
     dataHelper: DataHelper
   ) {
-    new Promise((resolve,reject)=>{
-        try {
+    new Promise((resolve, reject) => {
+      try {
 
-          let destDid = comment.destDid;
-          let channelId = comment.channelId;
-          let postId = comment.postId;
-          let commentId = comment.commentId;
-          let isLike = likedCommentMap[commentId] || '';
-          let isLikeLoading = isloadingLikeMap[commentId] || ''
-          if (isLikeLoading === "loading") {
-            return;
-          }
-          if (isLike === '') {
-            try {
-              isloadingLikeMap[commentId] = "loading";
-              likedCommentMap[commentId] = "like";
-              likedCommentNum[commentId] = likedCommentNum[commentId] + 1;
+        let destDid = comment.destDid;
+        let channelId = comment.channelId;
+        let postId = comment.postId;
+        let commentId = comment.commentId;
+        let isLike = likedCommentMap[commentId] || '';
+        let isLikeLoading = isloadingLikeMap[commentId] || ''
+        if (isLikeLoading === "loading") {
+          return;
+        }
+        if (isLike === '') {
+          try {
+            isloadingLikeMap[commentId] = "loading";
+            likedCommentMap[commentId] = "like";
+            likedCommentNum[commentId] = likedCommentNum[commentId] + 1;
 
-              hiveVaultController.like(destDid, channelId, postId, commentId).then(() => {
-                isloadingLikeMap[commentId] = "";
-                dataHelper.cacheLikeStatus(postId, commentId, true);
-                let likedNum = dataHelper.getCachedLikeNum(postId,  commentId) || 0;
-                likedNum = likedNum + 1;
-                dataHelper.cacheLikeNum(postId,  commentId, likedNum)
-                resolve("sucess");
-              }).catch(() => {
-                likedCommentMap[commentId] = "";
-                if (likedCommentNum[commentId] > 0) {
-                  likedCommentNum[commentId] = likedCommentNum[commentId] - 1;
-                }
-                isloadingLikeMap[commentId] = "";
-              });
-            } catch (err) {
+            hiveVaultController.like(destDid, channelId, postId, commentId).then(() => {
+              isloadingLikeMap[commentId] = "";
+              dataHelper.cacheLikeStatus(postId, commentId, true);
+              let likedNum = dataHelper.getCachedLikeNum(postId, commentId) || 0;
+              likedNum = likedNum + 1;
+              dataHelper.cacheLikeNum(postId, commentId, likedNum)
+              resolve("sucess");
+            }).catch(() => {
               likedCommentMap[commentId] = "";
               if (likedCommentNum[commentId] > 0) {
                 likedCommentNum[commentId] = likedCommentNum[commentId] - 1;
               }
               isloadingLikeMap[commentId] = "";
-            }
-            return;
-          }
-
-          if (likedCommentMap[commentId] === "like") {
-
-            try {
-              isloadingLikeMap[commentId] = "loading";
+            });
+          } catch (err) {
+            likedCommentMap[commentId] = "";
+            if (likedCommentNum[commentId] > 0) {
               likedCommentNum[commentId] = likedCommentNum[commentId] - 1;
-              likedCommentMap[commentId] = "";
-              hiveVaultController.removeLike(destDid, channelId, postId, commentId).then(() => {
-                isloadingLikeMap[commentId] = "";
-                       //update cached
-                dataHelper.cacheLikeStatus(postId,  commentId, false);
-                let likedNum = dataHelper.getCachedLikeNum(postId, commentId) || 0;
-                if (likedNum > 0) {
-                likedNum = likedNum - 1;
-                }
-                dataHelper.cacheLikeNum(postId,  commentId, likedNum);
-                resolve("sucess");
-              }).catch(() => {
-                likedCommentMap[commentId] = "like";
-                likedCommentNum[commentId] = likedCommentNum[commentId] + 1;
-                isloadingLikeMap[commentId] = "";
+            }
+            isloadingLikeMap[commentId] = "";
+          }
+          return;
+        }
 
-              });
-            } catch (error) {
-              likedCommentMap[postId] = "like";
+        if (likedCommentMap[commentId] === "like") {
+
+          try {
+            isloadingLikeMap[commentId] = "loading";
+            likedCommentNum[commentId] = likedCommentNum[commentId] - 1;
+            likedCommentMap[commentId] = "";
+            hiveVaultController.removeLike(destDid, channelId, postId, commentId).then(() => {
+              isloadingLikeMap[commentId] = "";
+              //update cached
+              dataHelper.cacheLikeStatus(postId, commentId, false);
+              let likedNum = dataHelper.getCachedLikeNum(postId, commentId) || 0;
+              if (likedNum > 0) {
+                likedNum = likedNum - 1;
+              }
+              dataHelper.cacheLikeNum(postId, commentId, likedNum);
+              resolve("sucess");
+            }).catch(() => {
+              likedCommentMap[commentId] = "like";
               likedCommentNum[commentId] = likedCommentNum[commentId] + 1;
               isloadingLikeMap[commentId] = "";
-            }
+
+            });
+          } catch (error) {
+            likedCommentMap[postId] = "like";
+            likedCommentNum[commentId] = likedCommentNum[commentId] + 1;
+            isloadingLikeMap[commentId] = "";
           }
-
-        } catch (error) {
-
         }
+
+      } catch (error) {
+
+      }
     });
   }
 
@@ -168,7 +168,7 @@ export class CommonPageService {
     hiveVaultController: HiveVaultController,
     dataHelper: DataHelper,
   ) {
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve, reject) => {
       let isLoading = isLoadingLikeMap[postId] || '';
       if (isLoading === "loading") {
         return;
@@ -187,7 +187,7 @@ export class CommonPageService {
               let likedNum = dataHelper.getCachedLikeNum(postId, '0') || 0;
               likedNum = likedNum + 1;
               dataHelper.cacheLikeNum(postId, '0', likedNum)
-                resolve("sucess");
+              resolve("sucess");
             }).catch(err => {
               isLoadingLikeMap[postId] = "";
               likeMap[postId] = "";
@@ -216,14 +216,14 @@ export class CommonPageService {
           hiveVaultController.removeLike(
             destDid, channelId, postId, '0').then(() => {
               isLoadingLikeMap[postId] = "";
-                //update cached
-            dataHelper.cacheLikeStatus(postId, '0', false);
-            let likedNum = dataHelper.getCachedLikeNum(postId, '0') || 0;
-            if (likedNum > 0) {
-            likedNum = likedNum - 1;
-            }
-            dataHelper.cacheLikeNum(postId, '0', likedNum);
-            resolve("sucess");
+              //update cached
+              dataHelper.cacheLikeStatus(postId, '0', false);
+              let likedNum = dataHelper.getCachedLikeNum(postId, '0') || 0;
+              if (likedNum > 0) {
+                likedNum = likedNum - 1;
+              }
+              dataHelper.cacheLikeNum(postId, '0', likedNum);
+              resolve("sucess");
             }).catch(() => {
               isLoadingLikeMap[postId] = "";
               likeMap[postId] = "like";
@@ -428,7 +428,7 @@ export class CommonPageService {
     try {
       isloadingLikeMap[commentId] = "loading"
       hiveVaultController.getLikeStatus(postId, commentId)
-      .then((status: boolean) => {
+        .then((status: boolean) => {
           if (status) {
             likedCommentMap[commentId] = "like";
           } else {

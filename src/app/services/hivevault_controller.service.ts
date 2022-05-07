@@ -458,11 +458,11 @@ export class HiveVaultController {
   }
 
   async createCollectionAndRregisteScript(callerDid: string) {
-      try {
-        await this.hiveVaultApi.createAllCollections()
-      } catch (error) {
-        // ignore
-      }
+    try {
+      await this.hiveVaultApi.createAllCollections()
+    } catch (error) {
+      // ignore
+    }
     await this.hiveVaultApi.registeScripting()
   }
 
@@ -856,16 +856,17 @@ export class HiveVaultController {
         //1.query
         //2.if null add else update ,toast warn
         const createrDid = (await this.dataHelper.getSigninData()).did;
-        const result = await this.hiveVaultApi.queryLikeByUser(destDid, channelId, postId, commentId, createrDid);
-        const likeList = await this.handleLikeResult(destDid, result);
+        const likeId = UtilService.generateLikeId(postId, commentId, createrDid);
+
+        const result = await this.hiveVaultApi.queryLikeByIdAndUser(destDid, channelId, likeId);
+        const likeList = await this.handleLikeResult(destDid, result) || [];
 
         let like = likeList[0];
         let updatedAt = 0;
         let createdAt = 0;
 
-        const likeId = UtilService.generateLikeId(postId, commentId, createrDid);
         if (like) {
-          const updateResult = await this.hiveVaultApi.updateLike(destDid, channelId, postId, commentId, FeedsData.PostCommentStatus.available);
+          const updateResult = await this.hiveVaultApi.updateLike(destDid, likeId, FeedsData.PostCommentStatus.available);
           createdAt = like.createdAt;
           updatedAt = updateResult.updatedAt;
         } else {
@@ -915,7 +916,7 @@ export class HiveVaultController {
           resolve(null);
           return;
         }
-        const result = await this.updateLike(destDid, channelId, postId, commentId, FeedsData.PostCommentStatus.deleted);
+        const result = await this.hiveVaultApi.updateLike(destDid, like.likeId, FeedsData.PostCommentStatus.deleted);
         Logger.log('Remove like result', result);
         if (!result) {
           resolve(null);
@@ -930,10 +931,6 @@ export class HiveVaultController {
         reject(error);
       }
     });
-  }
-
-  updateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
-    return this.hiveVaultApi.updateLike(targetDid, channelId, postId, commentId, status);
   }
 
   unSubscribeChannel(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {

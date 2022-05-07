@@ -163,8 +163,8 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.removeLike(targetDid, channelId, postId, commentId);
   }
 
-  updateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
-    return this.hiveVaultHelper.updateLike(targetDid, channelId, postId, commentId, status);
+  updateLike(targetDid: string, likeId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
+    return this.hiveVaultHelper.updateLike(targetDid, likeId, status);
   }
 
   /** Download data */
@@ -227,5 +227,9 @@ export class HiveVaultApi {
 
   queryCommentsFromPosts(targetDid: string, postIds: string[]): Promise<any> {
     return this.hiveVaultHelper.queryCommentsFromPosts(targetDid, postIds);
+  }
+
+  queryLikeByIdAndUser(targetDid: string, channelId: string, likeId: string) {
+    return this.hiveVaultHelper.queryLikeByIdAndUser(targetDid, channelId, likeId);
   }
 }

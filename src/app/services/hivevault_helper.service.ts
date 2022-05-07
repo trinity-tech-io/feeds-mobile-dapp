@@ -62,6 +62,8 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_UPDATE_LIKE = "script_update_like";
     public static readonly SCRIPT_SOMETIME_LIKE = "script_sometime_like";
 
+    public static readonly SCRIPT_QUERY_LIKE_BY_ID_AND_USER = "script_query_like_by_id_and_user";
+
     public static readonly SCRIPT_QUERY_COMMENT_FROM_POSTS = "script_query_comment_from_posts";
     public static readonly SCRIPT_QUERY_COMMENT_COUNTS = "script_query_comment_counts";
 
@@ -112,7 +114,8 @@ export class HiveVaultHelper {
 
                 const p23 = this.registerQueryCommentsFromPostsScripting();
 
-                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23] as const
+                const p24 = this.registerQueryLikeByIdAndUserScripting();
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
                 }, reason => {
@@ -1297,6 +1300,57 @@ export class HiveVaultHelper {
     }
     /** query like by id end */
 
+
+    /** query like by id and user start */
+    private registerQueryLikeByIdAndUserScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let conditionFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$caller_did",
+                };
+                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+
+                const executableFilter = {
+                    "like_id": "$params.like_id",
+                    "creater_did": "$params.create_did",
+                    "status": "$params.status"
+                };
+
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID_AND_USER, executable, condition, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(error)
+                reject(error)
+            }
+        })
+    }
+
+    private callQueryLikeByIdAndUser(targetDid: string, channelId: string, likeId: string, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const params = {
+                    "channel_id": channelId,
+                    "like_id": likeId,
+                    "status": status
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID_AND_USER, params);
+                Logger.log("Query like from scripting , result is", result);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query like from scripting , error:', error);
+                reject(error);
+            }
+        });
+    }
+
+    queryLikeByIdAndUser(targetDid: string, channelId: string, likeId: string): Promise<any> {
+        return this.callQueryLikeByIdAndUser(targetDid, channelId, likeId);
+    }
+    /** query like by id and user end */
+
     /** query like by channel start */
     private registerQueryLikeByChannelScripting(): Promise<string> {
         return new Promise(async (resolve, reject) => {
@@ -1549,8 +1603,8 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 const conditionfilter = {
-                    "channel_id": "$params.channel_id",
-                    "user_did": "$caller_did",
+                    "like_id": "$params.like_id",
+                    "creater_did": "$caller_did",
                 };
 
                 const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_LIKES, conditionfilter, null);
@@ -1559,9 +1613,7 @@ export class HiveVaultHelper {
                     "updated_at": "$params.updated_at",
                 };
                 const filter = {
-                    "channel_id": "$params.channel_id",
-                    "post_id": "$params.post_id",
-                    "comment_id": "$params.comment_id",
+                    "like_id": "$params.like_id",
                 };
                 let update = { "$set": set };
                 let options = { "bypass_document_validation": false, "upsert": true };
@@ -1575,15 +1627,13 @@ export class HiveVaultHelper {
         })
     }
 
-    private callUpdateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
+    private callUpdateLike(targetDid: string, likeId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const updatedAt = UtilService.getCurrentTimeNum();
                 const params = {
-                    "channel_id": channelId,
-                    "post_id": postId,
-                    "comment_id": commentId,
                     "updated_at": updatedAt,
+                    "like_id": likeId,
                     "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UPDATE_LIKE, params);
@@ -1596,8 +1646,8 @@ export class HiveVaultHelper {
         });
     }
 
-    updateLike(targetDid: string, channelId: string, postId: string, commentId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
-        return this.callUpdateLike(targetDid, channelId, postId, commentId, status)
+    updateLike(targetDid: string, likeId: string, status: FeedsData.PostCommentStatus): Promise<{ updatedAt: number }> {
+        return this.callUpdateLike(targetDid, likeId, status)
     }
     /** update like end */
 

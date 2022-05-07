@@ -63,7 +63,7 @@ export class MyApp {
   public loadingText: string = null;
   public loadingCurNumber: string = null;
   public loadingMaxNumber: string = null;
-  private localVersion = "1.0"
+  private localVersion = "1.0.1"
 
   constructor(
     private actionSheetController: ActionSheetController,
@@ -778,7 +778,7 @@ export class MyApp {
         let syncHiveData7 = { status: 7, describe: "GalleriahivePage.synchronizingComplete" }
         this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData7)
         this.dataHelper.setSyncHiveData(syncHiveData7);
-      }else{
+      } else {
         let syncHiveData6 = { status: 6, describe: "GalleriahivePage.synchronizingComplete" }
         this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData6)
         this.dataHelper.setSyncHiveData(syncHiveData6);
