@@ -410,7 +410,7 @@ export class HiveVaultHelper {
             }
 
             try {
-                const insertResult = this.hiveService.insertDBData(HiveVaultHelper.TABLE_POSTS, doc)
+                const insertResult = await this.hiveService.insertDBData(HiveVaultHelper.TABLE_POSTS, doc)
                 Logger.log(TAG, 'insert postData result', insertResult)
                 resolve(insertResult)
             } catch (error) {
