@@ -810,4 +810,12 @@ export class UtilService {
       }
     })
   }
+  //did:elastos:icZdMxZ...PhjC
+  public static userDidDisplay(userDid: string) {
+    if(userDid === ''){
+       return '';
+    }
+    let len = userDid.length;
+    return userDid = userDid.substring(0,19)+'...'+userDid.substring(len-4,len);
+  }
 }

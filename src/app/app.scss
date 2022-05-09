@@ -1,5 +1,62 @@
 .my-custom-menu {
-    --width:226px;
+    --width:100%;
+}
+
+.menuClose {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    z-index: 10;
+}
+
+.avatar{
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    left: 37px;
+    top: 95px;
+    border-radius: 60px;
+    border: 2px solid transparent;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(to right, #170F25, #170F25), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+    align-items: center;
+    display: flex;
+    img{
+    width: 80px;
+    height: 80px;
+    border-radius: 60px;
+    margin: 0 auto;
+    }
+}
+
+.name {
+    position: absolute;
+    left: 144px;
+    top: 116px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 25px;
+    color: #FFFFFF;
+    white-space: normal;
+    text-overflow: ellipsis;
+}
+
+.did {
+    white-space: normal;
+    text-overflow: ellipsis;
+    position: absolute;
+    left: 144px;
+    top: 150px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    color: #FFFFFF;
 }
 
 .defaultAvatar{
@@ -14,15 +71,12 @@
 ion-menu {
     --ion-backdrop-color:#000;
     ion-content {
+        --background:linear-gradient(180deg, #000000 0%, #A067FF 99.09%);
         .profile-card {
-            margin:0 auto;
-            width: 189px;
-            margin: 10px;
-            border-radius: 10px;
-            height: 116px;
+            position: relative;
+            width: 100%;
+            height: 221px;
             margin: 0 auto;
-            margin-top: 45px;
-
             .left-col, .right-col {
                 display: flex;
                 flex-direction: column;
@@ -71,35 +125,44 @@ ion-menu {
             }
         }
 
-        ion-menu-toggle {
-            div {
-                display: flex;
-                align-items: center;
-                margin: 35px 0 0 25px;
-                width: 100%;
+        .kuang{
+            width: 100%;
+            height: calc(100% - 221px);
+            background: #161C24;
+            border-radius: 20px 20px 0px 0px;
 
-                // img {
-                //     height:16px;
-                //     width:16px;
-                // }
+            ion-menu-toggle {
+                div {
+                    display: flex;
+                    align-items: center;
+                    padding: 35px 0 0 25px;
+                    width: 100%;
 
-                h1 {
-                    margin: 0;
-                    margin-left: 12px;
-                    font-size: 20px;
-                    font-weight: bold;
-                    font-stretch: normal;
-                    font-style: normal;
-                    color: #000000;
+                    // img {
+                    //     height:16px;
+                    //     width:16px;
+                    // }
+
+                    h1 {
+                        margin: 0;
+                        margin-left: 21.55px;
+                        color: #000000;
+                        font-style: normal;
+                        font-weight: 400;
+                        font-size: 25px;
+                    }
                 }
             }
         }
+
+
     }
 }
 
 .darkMenu {
     --ion-backdrop-color:#fff;
     ion-content {
+        .kuang{
         ion-menu-toggle {
             div {
                h1{
@@ -109,6 +172,5 @@ ion-menu {
             }
         }
     }
-
-
+    }
 }

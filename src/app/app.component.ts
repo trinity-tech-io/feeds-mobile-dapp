@@ -52,7 +52,7 @@ export class MyApp {
   public wName: string = '';
   public popover: any = null;
   public sService: any = null;
-  private userDid: string = '';
+  public userDid: string = '';
   private localIdentityConnector = new LocalIdentityConnector();
   private essentialsConnector = new EssentialsConnector();
   public walletAddress: string = '';
@@ -65,6 +65,7 @@ export class MyApp {
   public loadingMaxNumber: string = null;
   private scriptVersion = "1.0.1"
   private LOCAL_VERSION = "localScriptVersion"
+  public userDidDisplay: string = '';
 
   constructor(
     private actionSheetController: ActionSheetController,
@@ -93,7 +94,8 @@ export class MyApp {
     private keyboard: Keyboard,
     private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController,
-    private sqliteHelper: FeedsSqliteHelper
+    private sqliteHelper: FeedsSqliteHelper,
+    private menu: MenuController
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -487,6 +489,7 @@ export class MyApp {
         if (signInData == null || signInData == undefined) return;
         this.wName = signInData.nickname || signInData.name || '';
         this.userDid = signInData.did || "";
+        this.userDidDisplay = UtilService.userDidDisplay(this.userDid);
         this.name = UtilService.moreNanme(this.wName, 15);
       },
       error => { },
@@ -597,9 +600,9 @@ export class MyApp {
     this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
   }
 
-  copyWalletAddr() {
+  copyText(text: string) {
     this.native
-      .copyClipboard(this.walletAddress)
+      .copyClipboard(text)
       .then(() => {
         this.native.toast_trans('common.textcopied');
       })
@@ -818,5 +821,9 @@ export class MyApp {
       localVersion = this.scriptVersion
       localStorage.setItem(userDid + this.LOCAL_VERSION, localVersion)
     }
+  }
+
+  async closeMenu() {
+    await this.menuController.close();
   }
 }
