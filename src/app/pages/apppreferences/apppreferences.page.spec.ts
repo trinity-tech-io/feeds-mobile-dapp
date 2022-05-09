@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { SelectIpfsNetPage } from './select-ipfs-net.page';
+import { ApppreferencesPage } from './apppreferences.page';
 
-describe('SelectIpfsNetPage', () => {
-  let component: SelectIpfsNetPage;
-  let fixture: ComponentFixture<SelectIpfsNetPage>;
+describe('ApppreferencesPage', () => {
+  let component: ApppreferencesPage;
+  let fixture: ComponentFixture<ApppreferencesPage>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ SelectIpfsNetPage ],
+      declarations: [ ApppreferencesPage ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SelectIpfsNetPage);
+    fixture = TestBed.createComponent(ApppreferencesPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

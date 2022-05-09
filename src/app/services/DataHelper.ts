@@ -23,6 +23,7 @@ export class DataHelper {
   private selsectNftImage: string = "";
   private nftFirstdisclaimer: string = "";
   private pasarListGrid: boolean = false;
+  private originalPasarListGrid: boolean = false;
   private elaUsdPrice: string = "";
   public channelsMapV3: { [key: string]: FeedsData.ChannelV3 } = {};
   public subscribedChannelMapV3: { [key: string]: FeedsData.SubscribedChannelV3 } = {};
@@ -35,6 +36,7 @@ export class DataHelper {
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
   private publishedActivePanelList: any = [];
   private isShowAdult: boolean = true;
+  private originalAdultStatus: boolean = true;
   private nftDidList: any = null;
   private feedsSortType: FeedsData.SortType = FeedsData.SortType.TIME_ORDER_LATEST;
   private channelsMap: { [nodeChannelId: string]: FeedsData.Channels } = {};
@@ -89,6 +91,7 @@ export class DataHelper {
 
   private developerMode = false;
   private hideDeletedPosts = false;
+  private originalHideDeletedPosts = false;
   private hideDeletedComments = false;
   private hideOfflineFeeds = false;
   private currentLang = '';
@@ -2058,6 +2061,15 @@ export class DataHelper {
     return this.hideDeletedPosts;
   }
 
+  ////hideDeletedPosts
+  setOriginalHideDeletedPosts(originalHideDeletedPosts: boolean) {
+    this.originalHideDeletedPosts = originalHideDeletedPosts;
+  }
+
+  getOriginalHideDeletedPosts(): boolean {
+    return this.originalHideDeletedPosts;
+  }
+
   ////hideDeletedComments
   setHideDeletedComments(hideDeletedComments: boolean) {
     this.hideDeletedComments = hideDeletedComments;
@@ -2750,6 +2762,14 @@ export class DataHelper {
 
   getAdultStatus() {
     return this.isShowAdult;
+  }
+
+  changeOriginalAdultStatus(originalAdultStatus: boolean) {
+    this.originalAdultStatus = originalAdultStatus;
+  }
+
+  getOriginalAdultStatus() {
+    return this.originalAdultStatus;
   }
 
   //Mapper did data
@@ -3929,6 +3949,14 @@ export class DataHelper {
 
   getPasarListGrid() {
     return this.pasarListGrid;
+  }
+
+  setOriginalPasarListGrid(originalPasarListGrid: boolean) {
+    this.originalPasarListGrid = originalPasarListGrid;
+  }
+
+  getOriginalPasarListGrid() {
+    return this.originalPasarListGrid;
   }
 
   setNftFirstdisclaimer(nftFirstdisclaimer: string) {

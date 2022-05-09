@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { SelectIpfsNetPage } from './select-ipfs-net.page';
+import { ApppreferencesPage } from './apppreferences.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: SelectIpfsNetPage
+    component: ApppreferencesPage
   }
 ];
 
@@ -14,4 +14,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SelectIpfsNetPageRoutingModule {}
+export class ApppreferencesPageRoutingModule {}

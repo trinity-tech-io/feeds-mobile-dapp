@@ -400,6 +400,12 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.hideAdult, () => {
       this.zone.run(async () => {
+        let pasarListGrid = this.dataHelper.getPasarListGrid();
+        if (!pasarListGrid) {
+          this.styleType = "grid";
+        } else {
+          this.styleType = "list";
+        }
         await this.native.showLoading('common.waitMoment');
         await this.refreshPasarList();
         this.isShowSearchField = false;

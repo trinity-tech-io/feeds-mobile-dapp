@@ -46,10 +46,9 @@ export class SelectNetPage implements OnInit {
   initTitle() {
     this.titleBarService.setTitle(
       this.titleBar,
-      this.translate.instant('SettingsPage.choose-network'),
+      this.translate.instant('SettingsPage.configure-network'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   selectItem(selectedNetwork:string){

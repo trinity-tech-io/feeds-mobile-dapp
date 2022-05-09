@@ -147,10 +147,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/select-net/select-net.module').then(m => m.SelectNetPageModule)
   },
   {
-    path: 'select-ipfs-net',
-    loadChildren: () => import('./pages/select-ipfs-net/select-ipfs-net.module').then(m => m.SelectIpfsNetPageModule)
-  },
-  {
     path: 'nftavatarlist',
     loadChildren: () => import('./pages/nftavatarlist/nftavatarlist.module').then(m => m.NftavatarlistPageModule)
   },
@@ -181,6 +177,10 @@ const routes: Routes = [
   {
     path: 'galleriahive',
     loadChildren: () => import('./pages/galleriahive/galleriahive.module').then(m => m.GalleriahivePageModule)
+  },
+  {
+    path: 'apppreferences',
+    loadChildren: () => import('./pages/apppreferences/apppreferences.module').then( m => m.ApppreferencesPageModule)
   },
 ];
 

@@ -56,7 +56,6 @@ export class HiveInterfaceTestPage implements OnInit {
       'Interface Test'
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   createCollection() {

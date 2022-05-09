@@ -1,14 +1,16 @@
-<!-- <ion-header> -->
-  <app-titlebar></app-titlebar>
-<!-- </ion-header> -->
+<app-titlebar></app-titlebar>
 <ion-content>
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
     <ion-row *ngFor="let language of languageList" class="section" (click)="selectLanguage(language)">
-        <ion-col size="9" class="title-col">
-            <h2>{{ language.name }}</h2>
+      <ion-col size="2.5" class="left-col">
+         <img *ngIf="language.code == 'en'"  src="assets/images/darkmode/language/en.svg"/>
+         <img *ngIf="language.code == 'zh'"  src="assets/images/darkmode/language/cn.svg"/>
+      </ion-col>
+      <ion-col size="6.5" class="title-col">
+            <h1>{{ language.name }}</h1>
         </ion-col>
         <ion-col size="3" class="arrow-col">
-          <ion-icon *ngIf="currentLang == language.code" name="checkmark"></ion-icon>
+          <img *ngIf="currentLang == language.code"  src="assets/images/darkmode/settings/duihao.svg"/>
         </ion-col>
     </ion-row>
   </ion-grid>

@@ -40,7 +40,6 @@ export class MigrationdataPage implements OnInit {
       this.translate.instant('common.migrateFeedsServiceData'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   cleanPasarData() {

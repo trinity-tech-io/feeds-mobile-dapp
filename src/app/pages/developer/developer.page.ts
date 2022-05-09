@@ -9,6 +9,7 @@ import { Logger, LogLevel } from 'src/app/services/logger';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { GlobalService } from 'src/app/services/global.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
 
 @Component({
   selector: 'app-developer',
@@ -17,6 +18,7 @@ import { GlobalService } from 'src/app/services/global.service';
 })
 export class DeveloperPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  public developerMode: boolean = false;
   public openLog: boolean = false;
   public selectedNetwork: any = "MainNet";
   public popover: any = null;
@@ -29,7 +31,8 @@ export class DeveloperPage implements OnInit {
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
     public popupProvider: PopupProvider,
-    private globalService: GlobalService
+    private globalService: GlobalService,
+    private ipfsService: IPFSService
   ) { }
 
   ngOnInit() {
@@ -37,6 +40,7 @@ export class DeveloperPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
+    this.developerMode = this.dataHelper.getDeveloperMode();
     this.selectedNetwork = this.dataHelper.getDevelopNet();
     this.openLog = this.dataHelper.getDevelopLogMode();
   }
@@ -44,10 +48,9 @@ export class DeveloperPage implements OnInit {
   initTitle() {
     this.titleBarService.setTitle(
       this.titleBar,
-      this.translate.instant('SettingsPage.developer-setting'),
+      this.translate.instant('SettingsPage.developer'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   navToConfigureNetwork() {
@@ -117,5 +120,18 @@ export class DeveloperPage implements OnInit {
      that.native.hideLoading();
      alert("====error==="+JSON.stringify(error));
    }
+  }
+
+  toggleDeveloperMode() {
+    this.zone.run(() => {
+      this.developerMode = !this.developerMode;
+    });
+    this.dataHelper.setDeveloperMode(this.developerMode);
+    this.dataHelper.saveData('feeds.developerMode', this.developerMode);
+    if (this.developerMode) {
+      this.ipfsService.setTESTMode(true);
+    } else {
+      this.ipfsService.setTESTMode(false);
+    }
   }
 }

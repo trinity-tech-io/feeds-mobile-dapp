@@ -595,25 +595,27 @@ export const zh = {
     darkMode: '主题',
     drak: '深色',
     light: '浅色',
-    'elastos-api-provider': 'Elastos API 提供商',
-    'elastos-api-provider-des': '为所有Elastos相关服务选择您的首选提供商',
-    'elastos-io-des':
-      '该组 Elastos API 服务节点由 Gelaxy 团队部署和维护，Gelaxy 团队也被称为 Elastos 区块链团队。',
-    'trinity-tech-cn-des':
-      '该组 Elastos API 服务节点由 Trinity Tech 团队负责和维护，Trinity Tech 团队同时负责 Elastos SDK 和 Essentials 钱包开发。',
+    'elastos-api-provider': 'API 提供商',
+    'elastos-api-provider-des': 'Elastos & IPFS API 提供商',
+    'elastos-io-des': "Gelaxy",
+    'trinity-tech-cn-des': "Trinity Tech",
     'ipfs-provider': 'IPFS API 提供商',
-    'ipfs0-provider-des': '用于存储数据的主要 IPFS 节点',
-    'ipfs1-provider-des': '用于存储数据的辅助 IPFS 节点',
-    'ipfs2-provider-des': '用于存储数据的辅助 IPFS 节点',
+    'ipfs0-provider-des': 'Primary gateway',
+    'ipfs1-provider-des': 'Secondary gateway',
+    'ipfs2-provider-des': 'Tertiary gateway',
     'assistPasar-provider': 'Assist API 提供商',
     /*********** Elastos API provider page ***********/
-    elastosapiprovider: 'Elastos API',
+    elastosapiprovider: 'API Provider',
     'developer-setting': '开发者选项',
     'advanced-setting': '高级设置',
     'configure-network': '启用中网络',
     'choose-network': '选择网络',
     'setPasarListGrid': '列表视图-Pasar',
-    hideAdult: '安全模式'
+    hideAdult: '安全模式',
+    appPreferences: 'App首选项',
+    appPreferencesDes: 'Feeds & Pasar Lite首选项',
+    developer: '开发者模式',
+    developerDes: '环境设置',
   },
   // DiscoverfeedPage: {
   //   title: '探索广场',
@@ -857,5 +859,8 @@ export const zh = {
     noQrErr: '在所选图片中未检测到二维码。 请再试一次。',
     scanErr: '扫描您选择的照片时出了点问题。 请再试一次。',
     galleryErr: '访问图库时出了点问题。 请再试一次。',
+  },
+  ApppreferencesPage: {
+    title: "App首选项",
   }
 };

@@ -2,11 +2,15 @@
 <ion-content>
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
     <ion-row class="section" *ngFor="let networkTemplate of availableNetworkTemplates" (click)="selectItem(networkTemplate)">
-        <ion-col size="9" class="title-col">
+        <ion-col size="2.5" class="left-col">
+          <img *ngIf="networkTemplate == 'MainNet'"  src="assets/images/darkmode/network/mn.svg"/>
+          <img *ngIf="networkTemplate == 'TestNet'"  src="assets/images/darkmode/network/tn.svg"/>
+        </ion-col>
+        <ion-col size="6.5" class="title-col">
             <h1>{{ networkTemplate | translate }}</h1>
         </ion-col>
         <ion-col size="3" class="arrow-col">
-          <ion-icon *ngIf="selectedNetwork === networkTemplate" name="checkmark"></ion-icon>
+          <img *ngIf="selectedNetwork === networkTemplate"  src="assets/images/darkmode/settings/duihao.svg"/>
         </ion-col>
     </ion-row>
   </ion-grid>

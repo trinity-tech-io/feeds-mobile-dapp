@@ -594,25 +594,27 @@ export const en = {
     darkMode: 'Theme',
     drak: 'Dark',
     light: 'Light',
-    'elastos-api-provider': 'Elastos API Provider',
-    'elastos-api-provider-des': 'Select your preferred provider for all Elastos related services',
-    'elastos-io-des':
-      "Set of Elastos APIs deployed and maintained by the Gelaxy team, also known as the Elastos blockchain team.",
-    'trinity-tech-cn-des':
-      "Set of Elastos APIs deployed and maintained by the Trinity Tech team, responsible for Elastos SDKs and Essentials developments.",
+    'elastos-api-provider': 'API Provider',
+    'elastos-api-provider-des': 'Elastos & IPFS API provider',
+    'elastos-io-des': "Gelaxy",
+    'trinity-tech-cn-des': "Trinity Tech",
     'ipfs-provider': 'IPFS API Provider',
-    'ipfs0-provider-des': 'The primary IPFS gateway node to store the collectibles data',
-    'ipfs1-provider-des': 'The secondary IPFS gateway node to store the collectibles data',
-    'ipfs2-provider-des': 'The secondary IPFS gateway node to store the collectibles data',
+    'ipfs0-provider-des': 'Primary gateway',
+    'ipfs1-provider-des': 'Secondary gateway',
+    'ipfs2-provider-des': 'Tertiary gateway',
     'assistPasar-provider': 'Assist API provider',
     /*********** Elastos API provider page ***********/
-    elastosapiprovider: 'Elastos API',
+    elastosapiprovider: 'API Provider',
     'developer-setting': 'Developer Options',
     'advanced-setting': 'Advanced Settings',
     'configure-network': 'Active Network',
     'choose-network': 'Choose Network',
     'setPasarListGrid': 'List view - Pasar',
-    hideAdult: 'Safe Mode'
+    hideAdult: 'Safe Mode',
+    appPreferences: 'App Preferences',
+    appPreferencesDes: 'Feeds & Pasar Lite preferences',
+    developer: 'Developer',
+    developerDes: 'Environment settings',
   },
   // DiscoverfeedPage: {
   //   title: 'Discovery Square',
@@ -852,5 +854,8 @@ export const en = {
     noQrErr: 'No QR code was detected in the selected picture. Please try again.',
     scanErr: 'Something went wrong while scanning your selected picture. Please try again.',
     galleryErr: 'Something went wrong while accessing your photo library. Please try again.',
+  },
+  ApppreferencesPage: {
+    title: " App Preferences",
   }
 };

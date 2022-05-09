@@ -21,20 +21,9 @@ import _ from 'lodash';
 export class SettingsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode: boolean = false;
-  public hideDeletedPosts: boolean = false;
-  public hideDeletedComments: boolean = false;
-  public hideOfflineFeeds: boolean = true;
   public popover: any = null;
   public languageName: string = null;
   public curApiProviderName = 'elastos.io';
-  public pasarListGrid: boolean = false;
-  public isHideDeveloperMode: boolean = false;
-  public curIPFSApiProviderName = 'ipfs0.trinity-feeds.app';
-  public curAssistApiProviderName = '';
-  private isListGrid: boolean = false;
-  public isShowAdult: boolean = true;
-  private isClickAdult: boolean = false;
-  private isHideDeletedPosts: boolean = false;
   constructor(
     private languageService: LanguageService,
     private events: Events,
@@ -58,47 +47,13 @@ export class SettingsPage implements OnInit {
       this.translate.instant('app.settings'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   ionViewWillEnter() {
-    this.loadIpfsShowName();
     //this.loadAssistShowName();
-    this.pasarListGrid = this.dataHelper.getPasarListGrid();
     this.curApiProviderName = this.dataHelper.getApiProvider();
     this.languageName = this.getCurlanguageName();
-    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
-    this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
-    this.hideOfflineFeeds = this.dataHelper.getHideOfflineFeeds();
-    this.developerMode = this.dataHelper.getDeveloperMode();
-    this.isShowAdult = this.dataHelper.getAdultStatus();
     this.initTitle();
-  }
-
-  loadIpfsShowName() {
-    let localIPFSApiProviderName = localStorage.getItem("selectedIpfsNetwork");
-    if (localIPFSApiProviderName === 'https://ipfs0.trinity-feeds.app/') {
-      this.curIPFSApiProviderName = 'ipfs0.trinity-feeds.app'
-    }
-    else if (localIPFSApiProviderName === 'https://ipfs1.trinity-feeds.app/') {
-      this.curIPFSApiProviderName = 'ipfs1.trinity-feeds.app'
-    }
-    else {
-      this.curIPFSApiProviderName = 'ipfs2.trinity-feeds.app'
-    }
-  }
-
-  loadAssistShowName() {
-    let selectedAssistPasarNetwork = localStorage.getItem("selectedAssistPasarNetwork");
-    if (selectedAssistPasarNetwork === 'https://assist0.trinity-feeds.app/') {
-      this.curAssistApiProviderName = 'assist0.trinity-feeds.app'
-    }
-    else if (selectedAssistPasarNetwork === 'https://assist1.trinity-feeds.app/') {
-      this.curAssistApiProviderName = 'assist1.trinity-feeds.app'
-    }
-    else {
-      this.curAssistApiProviderName = 'assist2.trinity-feeds.app'
-    }
   }
 
   getCurlanguageName() {
@@ -113,50 +68,35 @@ export class SettingsPage implements OnInit {
   ionViewDidEnter() { }
 
   ionViewWillLeave() {
+
     if (this.popover != null) {
       this.popoverController.dismiss();
     }
-    if (this.isListGrid) {
-      this.events.publish(FeedsEvent.PublishType.pasarListGrid);
-      this.isListGrid = false;
-    }
+   let hideDeletedPosts =  this.dataHelper.getHideDeletedPosts();
+   let originalHideDeletedPosts =  this.dataHelper.getOriginalHideDeletedPosts();
 
-    if (this.isClickAdult) {
-      this.events.publish(FeedsEvent.PublishType.hideAdult);
-      this.isClickAdult = false;
-    }
 
-    if(this.isHideDeletedPosts){
+    if(originalHideDeletedPosts != hideDeletedPosts){
       this.events.publish(FeedsEvent.PublishType.hideDeletedPosts);
-      this.isHideDeletedPosts = false;
+      this.dataHelper.setOriginalHideDeletedPosts(hideDeletedPosts);
     }
-  }
 
-  toggleHideDeletedPosts() {
-    this.isHideDeletedPosts = true;
-    this.zone.run(() => {
-      this.hideDeletedPosts = !this.hideDeletedPosts;
-    });
-    this.dataHelper.setHideDeletedPosts(this.hideDeletedPosts);
-    this.dataHelper.saveData('feeds.hideDeletedPosts', this.hideDeletedPosts);
-  }
+    let originalAdultStatus = this.dataHelper.getOriginalAdultStatus();
+    let adultStatus = this.dataHelper.getAdultStatus();
 
-  toggleHideDeletedComments() {
-    this.zone.run(() => {
-      this.hideDeletedComments = !this.hideDeletedComments;
-    });
-    this.dataHelper.setHideDeletedComments(this.hideDeletedComments);
-    this.dataHelper.saveData(
-      'feeds.hideDeletedComments',
-      this.hideDeletedComments,
-    );
-  }
+    if (originalAdultStatus != adultStatus) {
+      this.events.publish(FeedsEvent.PublishType.hideAdult);
+      this.dataHelper.changeOriginalAdultStatus(adultStatus);
+      return;
+    }
 
-  toggleHideOfflineFeeds() {
-    this.hideOfflineFeeds = !this.hideOfflineFeeds;
-    this.dataHelper.setHideOfflineFeeds(this.hideOfflineFeeds);
-    this.events.publish(FeedsEvent.PublishType.hideOfflineFeeds);
-    this.dataHelper.saveData('feeds.hideOfflineFeeds', this.hideOfflineFeeds);
+    let originalPasarListGrid  = this.dataHelper.getOriginalPasarListGrid();
+    let pasarListGrid = this.dataHelper.getPasarListGrid();
+    if (originalPasarListGrid != pasarListGrid) {
+      this.events.publish(FeedsEvent.PublishType.pasarListGrid);
+      this.dataHelper.setOriginalPasarListGrid(pasarListGrid);
+    }
+
   }
 
   toggleDeveloperMode() {
@@ -214,19 +154,8 @@ export class SettingsPage implements OnInit {
     this.native.getNavCtrl().navigateForward(['/language']);
   }
 
-  setDarkMode() {
-    // this.zone.run(() => {
-    //   this.theme.darkMode = !this.theme.darkMode;
-    //   this.theme.setTheme(this.theme.darkMode);
-    // });
-  }
-
   navElastosApiProvider() {
     this.native.getNavCtrl().navigateForward(['/elastosapiprovider']);
-  }
-
-  navIPFSProvider() {
-    this.native.getNavCtrl().navigateForward(['/select-ipfs-net']);
   }
 
   navDeveloper() {
@@ -245,25 +174,11 @@ export class SettingsPage implements OnInit {
     this.native.getNavCtrl().navigateForward(['/migrationdata']);
   }
 
-  setPasarListGrid() {
-    this.zone.run(() => {
-      this.pasarListGrid = !this.pasarListGrid;
-    });
-    this.dataHelper.setPasarListGrid(this.pasarListGrid);
-    this.dataHelper.saveData('feeds.pasarListGrid', this.pasarListGrid);
-    this.isListGrid = true;
-  }
-
   navAssistPasarProvider() {
     this.native.getNavCtrl().navigateForward(['/assistpasar']);
   }
 
-  toggleHideAdult() {
-    this.zone.run(() => {
-      this.isShowAdult = !this.isShowAdult;
-    });
-    this.isClickAdult = true;
-    this.dataHelper.changeAdultStatus(this.isShowAdult);
-    this.dataHelper.saveData('feeds.hideAdult', this.isShowAdult);
+  navAppPreferences() {
+    this.native.navigateForward(['/apppreferences'],{});
   }
 }

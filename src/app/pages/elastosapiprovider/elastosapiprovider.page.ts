@@ -7,9 +7,8 @@ import { FeedService } from 'src/app/services/FeedService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Config } from 'src/app/services/config';
 import { PopupProvider } from 'src/app/services/popup';
-import { PopoverController } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { GlobalService } from 'src/app/services/global.service';
+import { ApiUrl } from 'src/app/services/ApiUrl';
 
 @Component({
   selector: 'app-elastosapiprovider',
@@ -32,6 +31,27 @@ export class ElastosapiproviderPage implements OnInit {
       description: this.translate.instant('SettingsPage.trinity-tech-cn-des'),
     },
   ];
+
+  public availableIpfsNetworkTemplates: any = [
+    {
+      key: 'https://ipfs0.trinity-feeds.app/',
+      name: 'ipfs0.trinity-feeds.app',
+      description:'SettingsPage.ipfs0-provider-des',
+    },
+    {
+      key: 'https://ipfs1.trinity-feeds.app/',
+      name: 'ipfs1.trinity-feeds.app',
+      description:'SettingsPage.ipfs1-provider-des',
+    },
+    {
+      key: 'https://ipfs2.trinity-feeds.app/',
+      name: 'ipfs2.trinity-feeds.app',
+      description:'SettingsPage.ipfs2-provider-des',
+    }
+  ];
+
+  public selectedIpfsNetwork: string = '';
+
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -39,8 +59,6 @@ export class ElastosapiproviderPage implements OnInit {
     private feedsService: FeedService,
     private dataHelper: DataHelper,
     public popupProvider: PopupProvider,
-    private popoverController: PopoverController,
-    private splashScreen: SplashScreen,
     private globalService: GlobalService
   ) {}
 
@@ -50,6 +68,7 @@ export class ElastosapiproviderPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.curApiProviderName = this.dataHelper.getApiProvider();
+    this.selectedIpfsNetwork = localStorage.getItem("selectedIpfsNetwork");
   }
 
   initTitle() {
@@ -58,7 +77,6 @@ export class ElastosapiproviderPage implements OnInit {
       this.translate.instant('SettingsPage.elastosapiprovider'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   useProvider(provider: any) {
@@ -92,5 +110,12 @@ export class ElastosapiproviderPage implements OnInit {
       that.feedsService.destroyCarrier();
       that.globalService.restartApp();
     }
+  }
+
+  selectIpfs(selectedIpfsNetwork: any) {
+    this.selectedIpfsNetwork = selectedIpfsNetwork.key;
+    localStorage.setItem("selectedIpfsNetwork",this.selectedIpfsNetwork);
+    ApiUrl.setIpfs(selectedIpfsNetwork.key)
+    this.globalService.refreshBaseNFTIPSFUrl();
   }
 }

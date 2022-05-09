@@ -5,123 +5,70 @@
 <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
 
     <ion-row class="section" (click)="navToSelectLanguage()">
-        <ion-col size="9" class="title-col">
+        <ion-col size="2.5" class="left-col">
+          <img src="assets/images/darkmode/settings/language.svg"/>
+        </ion-col>
+        <ion-col size="6.5" class="title-col">
             <h1>{{"SettingsPage.language-setting" | translate }}</h1>
             <h2>{{ languageName }}</h2>
         </ion-col>
         <ion-col size="3" class="arrow-col">
-            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+            <img src="assets/images/darkmode/settings/right-arrow.svg"/>
         </ion-col>
     </ion-row>
 
     <ion-row class="section" (click)="navElastosApiProvider()">
-        <ion-col size="9" class="title-col">
+        <ion-col size="2.5" class="left-col">
+            <img src="assets/images/darkmode/settings/api.svg"/>
+          </ion-col>
+        <ion-col size="6.5" class="title-col">
             <h1>{{ "SettingsPage.elastos-api-provider" | translate }}</h1>
             <h2>{{ curApiProviderName }}</h2>
         </ion-col>
         <ion-col size="3" class="arrow-col">
-            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+            <img src="assets/images/darkmode/settings/right-arrow.svg"/>
         </ion-col>
     </ion-row>
 
-    <ion-row class="section" (click)="navIPFSProvider()">
-        <ion-col size="9" class="title-col">
-            <h1>{{ "SettingsPage.ipfs-provider" | translate }}</h1>
-            <h2>{{ curIPFSApiProviderName }}</h2>
+    <ion-row class="section" (click)="navAppPreferences()">
+        <ion-col size="2.5" class="left-col">
+            <img src="assets/images/darkmode/settings/appPreferences.svg"/>
+          </ion-col>
+        <ion-col size="6.5" class="title-col">
+            <h1>{{ "SettingsPage.appPreferences" | translate }}</h1>
+            <h2>{{ "SettingsPage.appPreferencesDes" | translate }}</h2>
         </ion-col>
         <ion-col size="3" class="arrow-col">
-            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+            <img src="assets/images/darkmode/settings/right-arrow.svg"/>
         </ion-col>
     </ion-row>
 
-    <!-- <ion-row class="section" (click)="navAssistPasarProvider()">
-        <ion-col size="9" class="title-col">
-            <h1>{{ "SettingsPage.assistPasar-provider" | translate }}</h1>
-            <h2>{{ curAssistApiProviderName }}</h2>
+    <ion-row class="section" (click)="navDeveloper()">
+        <ion-col size="2.5" class="left-col">
+            <img src="assets/images/darkmode/settings/developer.svg"/>
+          </ion-col>
+        <ion-col size="6.5" class="title-col">
+            <h1>{{ "SettingsPage.developer" | translate }}</h1>
+            <h2>{{ "SettingsPage.developerDes" | translate }}</h2>
         </ion-col>
         <ion-col size="3" class="arrow-col">
-            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+            <img src="assets/images/darkmode/settings/right-arrow.svg"/>
         </ion-col>
-    </ion-row> -->
+    </ion-row>
 
-    <ion-row class="section" (click)="navWhiteList()">
-        <ion-col size="9" class="title-col">
-            <h1>{{ "WhitelistPage.title" | translate }}</h1>
+    <ion-row class="section" (click)="navMigrationData()">
+        <ion-col size="2.5" class="left-col">
+            <img src="assets/images/darkmode/settings/migration.svg"/>
+          </ion-col>
+        <ion-col size="6.5" class="title-col">
+            <h1>{{ "common.migrateFeedsServiceData" | translate }}</h1>
         </ion-col>
         <ion-col size="3" class="arrow-col">
-            <ion-img src="assets/icons/right-arrow.svg"></ion-img>
+            <img src="assets/images/darkmode/settings/right-arrow.svg"/>
         </ion-col>
     </ion-row>
 
-
-    <ion-row class="section" (click)="setDarkMode()">
-        <ion-col size="9" class="title-col" (swipe)="setDarkMode()" [style.touch-action]="'pan-y'">
-            <h1>{{"SettingsPage.darkMode" | translate }}</h1>
-            <h2 *ngIf="theme.darkMode">{{ 'SettingsPage.drak' | translate }}</h2>
-            <h2 *ngIf="!theme.darkMode">{{ 'SettingsPage.light' | translate }}</h2>
-        </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="setDarkMode()" [style.touch-action]="'pan-y'">
-            <ion-toggle mode="ios" color="success" [(ngModel)]="theme.darkMode" style="pointer-events:none;"></ion-toggle>
-        </ion-col>
-    </ion-row>
-
-    <ion-row class="section" (click)="setPasarListGrid()">
-        <ion-col size="9" class="title-col" (swipe)="setPasarListGrid()" [style.touch-action]="'pan-y'">
-            <h1>{{"SettingsPage.setPasarListGrid" | translate }}</h1>
-            <h2 *ngIf="pasarListGrid">{{ 'SettingsPage.on' | translate }}</h2>
-            <h2 *ngIf="!pasarListGrid">{{ 'SettingsPage.off' | translate }}</h2>
-        </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="setPasarListGrid()" [style.touch-action]="'pan-y'">
-            <ion-toggle mode="ios" color="success" [(ngModel)]="pasarListGrid" style="pointer-events:none;"></ion-toggle>
-        </ion-col>
-    </ion-row>
-
-    <ion-row class="section" (click)="toggleHideDeletedPosts()">
-        <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedPosts()" [style.touch-action]="'pan-y'">
-            <h1>{{"SettingsPage.hidedeletepost" | translate }}</h1>
-            <h2 *ngIf="hideDeletedPosts">{{ 'SettingsPage.on' | translate }}</h2>
-            <h2 *ngIf="!hideDeletedPosts">{{ 'SettingsPage.off' | translate }}</h2>
-        </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedPosts()" [style.touch-action]="'pan-y'">
-            <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedPosts" style="pointer-events:none;"></ion-toggle>
-        </ion-col>
-    </ion-row>
-
-    <ion-row class="section" (click)="toggleHideDeletedComments()">
-        <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedComments()" [style.touch-action]="'pan-y'">
-            <h1>{{"SettingsPage.hidedeletecomment" | translate }}</h1>
-            <h2 *ngIf="hideDeletedComments">{{ 'SettingsPage.on' | translate }}</h2>
-            <h2 *ngIf="!hideDeletedComments">{{ 'SettingsPage.off' | translate }}</h2>
-        </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedComments()" [style.touch-action]="'pan-y'">
-            <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedComments" style="pointer-events:none;"></ion-toggle>
-        </ion-col>
-    </ion-row>
-
-    <ion-row class="section" (click)="toggleHideAdult()">
-        <ion-col size="9" class="title-col" (swipe)="toggleHideAdult()" [style.touch-action]="'pan-y'">
-            <h1>{{"SettingsPage.hideAdult" | translate }}</h1>
-            <h2 *ngIf="isShowAdult">{{ 'SettingsPage.on' | translate }}</h2>
-            <h2 *ngIf="!isShowAdult">{{ 'SettingsPage.off' | translate }}</h2>
-        </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="toggleHideAdult()" [style.touch-action]="'pan-y'">
-            <ion-toggle mode="ios" color="success" [(ngModel)]="isShowAdult" style="pointer-events:none;"></ion-toggle>
-        </ion-col>
-    </ion-row>
-
-
-   <ion-row class="section dev-mode" (click)="toggleDeveloperMode()" *ngIf="!isHideDeveloperMode">
-        <ion-col size="9" class="title-col" (swipe)="toggleDeveloperMode()" [style.touch-action]="'pan-y'">
-            <h1>{{"SettingsPage.devmode" | translate }}</h1>
-            <h2 *ngIf="developerMode">{{ 'SettingsPage.on' | translate }}</h2>
-            <h2 *ngIf="!developerMode">{{ 'SettingsPage.off' | translate }}</h2>
-        </ion-col>
-        <ion-col size="3" class="arrow-col" (swipe)="toggleDeveloperMode()" [style.touch-action]="'pan-y'">
-            <ion-toggle  mode="ios" color="success" [(ngModel)]="developerMode" style="pointer-events:none;"></ion-toggle>
-        </ion-col>
-   </ion-row>
-
-    <ion-row class="section" (click)="navDeveloper()" *ngIf="developerMode">
+    <!-- <ion-row class="section" (click)="navDeveloper()" *ngIf="developerMode">
         <ion-col size="9" class="title-col">
             <h1>{{ "SettingsPage.developer-setting" | translate }}</h1>
             <h2>{{ "SettingsPage.advanced-setting" | translate }}</h2>
@@ -129,24 +76,24 @@
         <ion-col size="3" class="arrow-col">
             <ion-img src="assets/icons/right-arrow.svg"></ion-img>
         </ion-col>
-    </ion-row>
+    </ion-row> -->
 
-    <ion-row class="section" (click)="navDataStorage()">
+    <!-- <ion-row class="section" (click)="navDataStorage()">
         <ion-col size="9" class="title-col">
             <h1>{{ "common.dataStorage" | translate }}</h1>
         </ion-col>
         <ion-col size="3" class="arrow-col">
             <ion-img src="assets/icons/right-arrow.svg"></ion-img>
         </ion-col>
-    </ion-row>
+    </ion-row> -->
 
-    <ion-row class="section" (click)="navMigrationData()">
+    <!-- <ion-row class="section" (click)="navWhiteList()">
         <ion-col size="9" class="title-col">
-            <h1>{{ "common.migrateFeedsServiceData" | translate }}</h1>
+            <h1>{{ "WhitelistPage.title" | translate }}</h1>
         </ion-col>
         <ion-col size="3" class="arrow-col">
             <ion-img src="assets/icons/right-arrow.svg"></ion-img>
         </ion-col>
-    </ion-row>
+    </ion-row> -->
 </ion-grid>
 </ion-content>

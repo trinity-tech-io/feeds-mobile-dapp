@@ -1,0 +1,120 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+<ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
+
+    <!-- Feeds -->
+  <ion-row class="section">
+    <ion-col size="12" class="title-col">
+        <h1>Feeds</h1>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="section" (click)="toggleHideDeletedPosts()">
+    <ion-col size="2" class="left-col">
+        <img  src="assets/images/darkmode/appPreferences/posts.svg"/>
+    </ion-col>
+    <ion-col size="7" class="title-col" (swipe)="toggleHideDeletedPosts()" [style.touch-action]="'pan-y'">
+        <h2>{{"SettingsPage.hidedeletepost" | translate }}</h2>
+        <h3 *ngIf="hideDeletedPosts">{{ 'SettingsPage.on' | translate }}</h3>
+        <h3 *ngIf="!hideDeletedPosts">{{ 'SettingsPage.off' | translate }}</h3>
+    </ion-col>
+    <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedPosts()" [style.touch-action]="'pan-y'">
+        <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedPosts" style="pointer-events:none;"></ion-toggle>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="section" (click)="toggleHideDeletedComments()">
+    <ion-col size="2" class="left-col">
+        <img  src="assets/images/darkmode/appPreferences/comments.svg"/>
+    </ion-col>
+    <ion-col size="7" class="title-col" (swipe)="toggleHideDeletedComments()" [style.touch-action]="'pan-y'">
+        <h2>{{"SettingsPage.hidedeletecomment" | translate }}</h2>
+        <h3 *ngIf="hideDeletedComments">{{ 'SettingsPage.on' | translate }}</h3>
+        <h3 *ngIf="!hideDeletedComments">{{ 'SettingsPage.off' | translate }}</h3>
+    </ion-col>
+    <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedComments()" [style.touch-action]="'pan-y'">
+        <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedComments" style="pointer-events:none;"></ion-toggle>
+    </ion-col>
+</ion-row>
+
+  <!-- Pasar Lite -->
+  <ion-row class="section">
+    <ion-col size="12" class="title-col">
+      <h1>Pasar Lite</h1>
+    </ion-col>
+  </ion-row>
+
+   <ion-row class="section" (click)="setPasarListGrid()">
+      <ion-col size="2" class="left-col">
+        <img  src="assets/images/darkmode/appPreferences/list.svg"/>
+      </ion-col>
+      <ion-col size="7" class="title-col" (swipe)="setPasarListGrid()" [style.touch-action]="'pan-y'">
+          <h2>{{"SettingsPage.setPasarListGrid" | translate }}</h2>
+          <h3 *ngIf="pasarListGrid">{{ 'SettingsPage.on' | translate }}</h3>
+          <h3 *ngIf="!pasarListGrid">{{ 'SettingsPage.off' | translate }}</h3>
+      </ion-col>
+      <ion-col size="3" class="arrow-col" (swipe)="setPasarListGrid()" [style.touch-action]="'pan-y'">
+          <ion-toggle mode="ios" color="success" [(ngModel)]="pasarListGrid" style="pointer-events:none;"></ion-toggle>
+      </ion-col>
+  </ion-row>
+
+  <ion-row class="section" (click)="toggleHideAdult()">
+    <ion-col size="2" class="left-col">
+        <img  src="assets/images/darkmode/appPreferences/safeMode.svg"/>
+    </ion-col>
+    <ion-col size="7" class="title-col" (swipe)="toggleHideAdult()" [style.touch-action]="'pan-y'">
+        <h1>{{"SettingsPage.hideAdult" | translate }}</h1>
+        <h2 *ngIf="isShowAdult">{{ 'SettingsPage.on' | translate }}</h2>
+        <h2 *ngIf="!isShowAdult">{{ 'SettingsPage.off' | translate }}</h2>
+    </ion-col>
+    <ion-col size="3" class="arrow-col" (swipe)="toggleHideAdult()" [style.touch-action]="'pan-y'">
+        <ion-toggle mode="ios" color="success" [(ngModel)]="isShowAdult" style="pointer-events:none;"></ion-toggle>
+    </ion-col>
+</ion-row>
+
+  <!--<ion-row class="section" (click)="toggleHideDeletedPosts()">
+      <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedPosts()" [style.touch-action]="'pan-y'">
+          <h1>{{"SettingsPage.hidedeletepost" | translate }}</h1>
+          <h2 *ngIf="hideDeletedPosts">{{ 'SettingsPage.on' | translate }}</h2>
+          <h2 *ngIf="!hideDeletedPosts">{{ 'SettingsPage.off' | translate }}</h2>
+      </ion-col>
+      <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedPosts()" [style.touch-action]="'pan-y'">
+          <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedPosts" style="pointer-events:none;"></ion-toggle>
+      </ion-col>
+  </ion-row>
+
+  <ion-row class="section" (click)="toggleHideDeletedComments()">
+      <ion-col size="9" class="title-col" (swipe)="toggleHideDeletedComments()" [style.touch-action]="'pan-y'">
+          <h1>{{"SettingsPage.hidedeletecomment" | translate }}</h1>
+          <h2 *ngIf="hideDeletedComments">{{ 'SettingsPage.on' | translate }}</h2>
+          <h2 *ngIf="!hideDeletedComments">{{ 'SettingsPage.off' | translate }}</h2>
+      </ion-col>
+      <ion-col size="3" class="arrow-col" (swipe)="toggleHideDeletedComments()" [style.touch-action]="'pan-y'">
+          <ion-toggle mode="ios" color="success" [(ngModel)]="hideDeletedComments" style="pointer-events:none;"></ion-toggle>
+      </ion-col>
+  </ion-row>
+
+  <ion-row class="section" (click)="toggleHideAdult()">
+      <ion-col size="9" class="title-col" (swipe)="toggleHideAdult()" [style.touch-action]="'pan-y'">
+          <h1>{{"SettingsPage.hideAdult" | translate }}</h1>
+          <h2 *ngIf="isShowAdult">{{ 'SettingsPage.on' | translate }}</h2>
+          <h2 *ngIf="!isShowAdult">{{ 'SettingsPage.off' | translate }}</h2>
+      </ion-col>
+      <ion-col size="3" class="arrow-col" (swipe)="toggleHideAdult()" [style.touch-action]="'pan-y'">
+          <ion-toggle mode="ios" color="success" [(ngModel)]="isShowAdult" style="pointer-events:none;"></ion-toggle>
+      </ion-col>
+  </ion-row> -->
+
+    <!-- <ion-row class="section" (click)="setDarkMode()">
+      <ion-col size="9" class="title-col" (swipe)="setDarkMode()" [style.touch-action]="'pan-y'">
+          <h2>{{"SettingsPage.darkMode" | translate }}</h2>
+          <h3 *ngIf="theme.darkMode">{{ 'SettingsPage.drak' | translate }}</h3>
+          <h3 *ngIf="!theme.darkMode">{{ 'SettingsPage.light' | translate }}</h3>
+      </ion-col>
+      <ion-col size="3" class="arrow-col" (swipe)="setDarkMode()" [style.touch-action]="'pan-y'">
+          <ion-toggle mode="ios" color="success" [(ngModel)]="theme.darkMode" style="pointer-events:none;"></ion-toggle>
+      </ion-col>
+  </ion-row> -->
+
+</ion-grid>
+</ion-content>
