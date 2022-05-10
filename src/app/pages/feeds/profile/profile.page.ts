@@ -685,6 +685,7 @@ export class ProfilePage implements OnInit {
         try {
           const did = (await this.dataHelper.getSigninData()).did;
           const selfchannels = await this.hiveVaultController.syncSelfChannel(did);
+          await this.hiveVaultController.syncSubscribedChannelFromBackup();
           await this.initMyFeeds(selfchannels);
           event.target.complete();
         } catch (error) {
@@ -921,8 +922,8 @@ export class ProfilePage implements OnInit {
           }
         }
       } catch (error) {
-          this.myFeedsIsLoadimage[id] = '';
-          delete this.myFeedsAvatarImageMap[id];
+        this.myFeedsIsLoadimage[id] = '';
+        delete this.myFeedsAvatarImageMap[id];
       }
 
     }
@@ -1237,7 +1238,7 @@ export class ProfilePage implements OnInit {
                 this.downPostAvatarMap[fileName] = "";
                 for (let key in this.avatarImageMap) {
                   let uri = this.avatarImageMap[key] || "";
-                  if (uri === avatarUri && this.isLoadAvatarImage[key]=== "11") {
+                  if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
                     let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
                     if (newPostAvatar != null) {
                       newPostAvatar.setAttribute('src', realImage);
@@ -1261,7 +1262,7 @@ export class ProfilePage implements OnInit {
               this.downPostAvatarMap[fileName] = "";
               for (let key in this.avatarImageMap) {
                 let uri = this.avatarImageMap[key] || "";
-                if (uri === avatarUri && this.isLoadAvatarImage[key]=== "11") {
+                if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
                   this.isLoadAvatarImage[key] = '13';
                   delete this.avatarImageMap[key];
                 }
@@ -1404,7 +1405,7 @@ export class ProfilePage implements OnInit {
       if (value === '13') {
         let videoElement: any = document.getElementById(id + 'videolike') || '';
         if (videoElement != '') {
-            videoElement.setAttribute('poster',"./assets/images/loading.png"); // empty source
+          videoElement.setAttribute('poster', "./assets/images/loading.png"); // empty source
         }
         let source: any = document.getElementById(id + 'sourcelike') || '';
         let sourcesrc = '';
@@ -1446,7 +1447,7 @@ export class ProfilePage implements OnInit {
       if (value === '13') {
         let imgElement: any = document.getElementById(id + 'postimglike') || '';
         if (imgElement != '') {
-          imgElement.setAttribute('src','assets/images/loading.png');
+          imgElement.setAttribute('src', 'assets/images/loading.png');
         }
       }
     }

@@ -2893,6 +2893,16 @@ export class DataHelper {
   }
   //// New data type
 
+  addSubscribedChannels(newSubscribedChannels: FeedsData.SubscribedChannelV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      for (let index = 0; index < newSubscribedChannels.length; index++) {
+        const subscibedChannel = newSubscribedChannels[index];
+        await this.addSubscribedChannel(subscibedChannel);
+      }
+      resolve('FINISH');
+    });
+  }
+
   addSubscribedChannel(newSubscribedChannel: FeedsData.SubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2951,6 +2961,19 @@ export class DataHelper {
     });
   }
 
+  cleanSubscribedChannelData(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.cleanSubscribedChannelData(selfDid);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Remove subscribed channel error', error);
+        reject(error);
+      }
+    });
+  }
+
   getSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2963,6 +2986,19 @@ export class DataHelper {
         reject(error)
       }
     })
+  }
+
+  resetSubscribedChannelV3(subscribedChannels: FeedsData.SubscribedChannelV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.cleanSubscribedChannelData();
+        await this.addSubscribedChannels(subscribedChannels);
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Reset subscribed channel error', error);
+        reject(error)
+      }
+    });
   }
 
   private async filterSubscribedChannelV3(list: FeedsData.SubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.SubscribedChannelV3[]> {

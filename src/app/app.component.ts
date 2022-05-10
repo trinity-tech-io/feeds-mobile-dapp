@@ -747,7 +747,7 @@ export class MyApp {
       this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData2);
       this.dataHelper.setSyncHiveData(syncHiveData2);
 
-      await this.hiveVaultController.queryBackupSubscribedChannel();
+      await this.hiveVaultController.syncSubscribedChannelFromBackup();
 
       let syncHiveData3 = { status: 3, describe: "GalleriahivePage.synchronizingPostData" }
       this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData3);

@@ -459,6 +459,21 @@ export class FeedsSqliteHelper {
     });
   }
 
+  cleanSubscribedChannelData(dbUserDid: string,): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL;
+        const params = [];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Clean subscribed channel data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'delete subscriptionChannel Data error', error);
+        reject(error);
+      }
+    });
+  }
+
   // SubscriptionV3
   private createSubscriptionTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {

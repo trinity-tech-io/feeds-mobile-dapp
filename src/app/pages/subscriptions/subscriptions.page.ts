@@ -157,11 +157,12 @@ export class SubscriptionsPage implements OnInit {
   }
 
   async doRefresh(event: any) {
-    try{
-     await this.hiveVaultController.syncAllChannelInfo();
+    try {
+      await this.hiveVaultController.syncSubscribedChannelFromBackup();
+      await this.hiveVaultController.syncAllChannelInfo();
       this.initFollowing();
       event.target.complete();
-    }catch(err){
+    } catch (err) {
       event.target.complete();
     }
   }
@@ -342,7 +343,7 @@ export class SubscriptionsPage implements OnInit {
             let fileName: string = avatarUri.split("@")[0];
             this.followingAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
             let isDown = this.downFollowingAvatarMap[fileName] || "";
-            if(isDown != ''){
+            if (isDown != '') {
               continue;
             }
             this.downFollowingAvatarMap[fileName] = fileName;
@@ -351,21 +352,21 @@ export class SubscriptionsPage implements OnInit {
                 this.downFollowingAvatarMap[fileName] = '';
                 let srcData = data || "";
                 if (srcData != "") {
-                  for(let key in this.followingAvatarImageMap){
+                  for (let key in this.followingAvatarImageMap) {
                     let uri = this.followingAvatarImageMap[key] || "";
-                    if(uri === avatarUri  && this.followingIsLoadimage[key] === '11'){
+                    if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
                       this.followingIsLoadimage[key] = '13';
                       let newAvatarImage = document.getElementById(key + '-followingAvatar') || null;
-                       if(newAvatarImage != null){
+                      if (newAvatarImage != null) {
                         newAvatarImage.setAttribute("src", data);
-                       }
-                       delete this.followingAvatarImageMap[key];
+                      }
+                      delete this.followingAvatarImageMap[key];
                     }
                   }
-                }else{
-                  for(let key in this.followingAvatarImageMap){
+                } else {
+                  for (let key in this.followingAvatarImageMap) {
                     let uri = this.followingAvatarImageMap[key] || "";
-                    if(uri === avatarUri && this.followingIsLoadimage[key] === '11'){
+                    if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
                       this.followingIsLoadimage[key] = '13';
                       delete this.followingAvatarImageMap[key];
                     }
@@ -374,9 +375,9 @@ export class SubscriptionsPage implements OnInit {
               });
             }).catch((err) => {
               this.downFollowingAvatarMap[fileName] = '';
-              for(let key in this.followingAvatarImageMap){
+              for (let key in this.followingAvatarImageMap) {
                 let uri = this.followingAvatarImageMap[key] || "";
-                if(uri === avatarUri && this.followingIsLoadimage[key] === '11'){
+                if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
                   this.followingIsLoadimage[key] = '13';
                   delete this.followingAvatarImageMap[key];
                 }
@@ -395,8 +396,8 @@ export class SubscriptionsPage implements OnInit {
           }
         }
       } catch (error) {
-          this.followingIsLoadimage[id] = '';
-          delete this.followingAvatarImageMap[id];
+        this.followingIsLoadimage[id] = '';
+        delete this.followingAvatarImageMap[id];
       }
 
     }
