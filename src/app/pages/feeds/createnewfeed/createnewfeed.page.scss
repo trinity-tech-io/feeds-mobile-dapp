@@ -1,14 +1,76 @@
+ion-content{
+  --background:linear-gradient(180deg, #000000 0%, #A067FF 99.09%);
+}
+.card{
+  position: relative;
+  width: 100%;
+  height: 200px;
+
+  .cardTitle{
+    margin-left: 37px;
+    margin-top: 26px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 15px;
+    color: #FFFFFF;
+  }
+
+  .cardImg{
+    position: absolute;
+    width: 100%;
+    display: flex;
+    top: 55px;
+    justify-content: center;
+    .avatar{
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+    }
+
+    .eidtAvatar{
+      top: 65px;
+      position: absolute;
+      left: calc(50% + 14px);
+    }
+  }
+}
 .container {
+  overflow: auto;
+  height: calc(100% - 200px);
+  background: #161C24;
+  border-radius: 40px 40px 0px 0px;
   padding: 0px 20px;
   margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  ion-button{
-    --background:#7624fe;
-    --background-activated:#7624fe;
+  .qrCodeLine{
+    position: absolute;
+    right: 5px;
+    top: 38px;
+    height: 25px;
+    width: 25px;
+    z-index:10;
   }
+
+  ion-button {
+     --background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+     --background-activated:linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+     border-radius: 20px;
+     width: 239px;
+     height: 61px;
+     margin-top: 40px;
+
+     ion-label {
+      text-transform: none;
+      letter-spacing: -.43px;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 15px;
+    }
+  }
+
 
   .arrow_box {
     font-family:Arial !important;
@@ -48,7 +110,7 @@
   }
 
   ion-list {
-
+      margin-top: 20px;
       .section {
           padding-top: 20px;
           padding-bottom: 5px;

@@ -358,7 +358,7 @@ export const zh = {
     feedNum: '您最多可以创建5个频道',
     des1: '在 探索Feeds 中显示频道，以供用户发现和订阅。',
     tippingAddress: '打赏地址',
-    tippingAddressDes: '请输入打赏地址',
+    tippingAddressDes: '输入打赏地址',
 
   },
   ProfileimagePage: {

@@ -83,7 +83,6 @@ export class CreatenewfeedPage implements OnInit {
       this.translate.instant('CreatenewfeedPage.createNewFeed'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
   // 创建频道
   async createChannel(name: HTMLInputElement, desc: HTMLInputElement) {

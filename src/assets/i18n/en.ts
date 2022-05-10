@@ -358,7 +358,7 @@ export const en = {
     feedNum: 'You can create up to 5 channels',
     des1: 'Show channel in the Explore Feeds for users to discover.',
     tippingAddress: 'Tipping Address',
-    tippingAddressDes: 'Please enter the Tipping address',
+    tippingAddressDes: 'Enter tipping address',
   },
   ProfileimagePage: {
     title: 'Choose Avatar',

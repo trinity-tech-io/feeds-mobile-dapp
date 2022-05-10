@@ -1,5 +1,83 @@
-.container {
+.bg{
+    --background:linear-gradient(180deg, #000000 0%, #A067FF 99.09%);
+}
 
+.card {
+    position: relative;
+    width: 100%;
+    height: 200px;
+
+    .cardImg{
+        position: absolute;
+        width: 100%;
+        display: flex;
+        top: 20px;
+        justify-content: center;
+        .avatar{
+          width: 90px;
+          height: 90px;
+          border-radius: 50%;
+        }
+    }
+
+    .cardTitle{
+        position: absolute;
+        width: 100%;
+        display: flex;
+        top: 95px;
+        justify-content: center;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 25px;
+        color: #FFFFFF;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .connectWallet{
+        display: flex;
+        position: absolute;
+        width: 150px;
+        height: 35px;
+        background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+        border-radius: 20px;
+        justify-content: center;
+        align-items: center;
+        top: 128px;
+    }
+
+    .card-subtitle{
+        display: flex;
+        position: absolute;
+        width: 170px;
+        height: 35px;
+        background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+        border-radius: 20px;
+        justify-content: center;
+        align-items: center;
+        top: 128px;
+
+        span {
+            font-style: normal;
+            font-weight: 700;
+            font-size: 15px;
+            color: #FFFFFF;
+            margin-left: 17px;
+        }
+
+        img {
+            margin-left: 8px;
+            vertical-align:middle;
+            margin-left:5px;
+        }
+    }
+}
+.container {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 200px);
+    background: #161c24;
+    border-radius: 40px 40px 0px 0px;
     .defaultAvatar{
         width:56px;
         height:56px;
@@ -59,74 +137,9 @@
     }
 
     padding: 20px 0;
-    min-height: 100%;
     .ripple {
         position: relative;
         overflow: hidden;
-    }
-    /********** Tabs *********/
-    .tab-container {
-        height: 36.3px;
-        margin: 25px 31px 5px;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-
-        .left-tab, .middle-tab, .right-tab {
-            padding: 12px 6px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            .numberText{
-                font-size: 14px;
-                font-weight: bold;
-                font-stretch: normal;
-                font-style: normal;
-                text-align:center;
-                color: #000000;
-                margin-bottom:6px;
-            }
-
-            span {
-                font-size: 14px;
-                font-weight: bold;
-                font-stretch: normal;
-                font-style: normal;
-                text-align:center;
-                color: #000000;
-                padding-bottom: 5.5px;
-            }
-        }
-
-        .left-tab {
-            width: 30%;
-        }
-
-        .middle-tab {
-            width: 30%;
-        }
-
-        .right-tab {
-            width: 30%;
-        }
-
-        .tab-active {
-            transform: scale(1.1);
-            span {
-                transform: scale(0.9);
-                color: #7624fe;
-            }
-
-            .numberText{
-                transform: scale(0.9);
-                color: #7624fe;
-            }
-        }
-
-        .tab-active-bottom-border{
-            border-bottom:solid 2px #7624fe;
-        }
     }
 
     /******* number-container ******/
@@ -199,69 +212,6 @@
         margin-bottom: 0;
     }
 
-    ion-card {
-        position: relative;
-        //margin: 0px 20px 20px 20px;
-        margin: 0 auto;
-        width: 292px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #ffffff;
-        border-radius: 10px;
-        height: 148px;
-
-        ion-card-title {
-            font-size: 20px;
-            font-weight: bold;
-            font-stretch: normal;
-            font-style: normal;
-            color: #ffffff;
-            line-height: 1.5;
-        }
-
-        ion-card-subtitle{
-            font-size: 10px;
-            font-weight: bold;
-            font-stretch: normal;
-            font-style: normal;
-            line-height: 1.3;
-            color: #ffffff;
-        }
-
-        img {
-            width:100%;
-            height:100%;
-            border: 1px solid #f8f2ff;
-            object-fit: cover;
-            overflow: hidden;
-            border-radius: 50%;
-        }
-
-        .profileFeeds{
-            position: absolute;
-            top: 12px;
-            left: 10px;
-            width: 24px;
-            height: 22px;
-            -o-object-fit: contain;
-            object-fit: contain;
-            border: none;
-        }
-
-        .moremenu{
-            position: absolute;
-            top: 12px;
-            right: 10px;
-            width: 20px;
-            height: 20px;
-            -o-object-fit: contain;
-            object-fit: contain;
-            border: none;
-        }
-    }
 }
 .darkContainer{
     .number-container{
@@ -271,18 +221,6 @@
             }
         }
 
-        .tab-active {
-            transform: scale(1.1);
-            span {
-                transform: scale(0.9);
-                color: #7624fe;
-            }
-
-            .numberText{
-                transform: scale(0.9);
-                color: #7624fe;
-            }
-        }
     }
 
     .tab-container {
@@ -305,9 +243,78 @@
             }
         }
     }
-
-    ion-card {
-        box-shadow: 0 3px 15px 0 #151626;
-        background-color: #2e2f4e;
-      }
 }
+
+.exploreTabs{
+    position: absolute;
+    top: 14px;
+    left: 0px;
+    height: 34px;
+    width: 100%;
+    background-color: #ffffff;
+    z-index: 99;
+    border-radius: 40px 40px 0 0;
+     .select-bottom{
+        border-bottom:1px solid #7624fe;
+     }
+
+     .select-color{
+        color:#7624fe;
+     }
+
+     .no-select-color{
+       color:#000000;
+     }
+
+     .des{
+      font-size: 14px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      text-align:center;
+     }
+   }
+
+
+   .darkExploreTabs{
+    position: absolute;
+    top: 14px;
+    left: 0px;
+    height: 35px;
+    width: 100%;
+    background-color: #161C24;
+    border-radius: 40px 40px 0 0;
+    z-index: 99;
+    .colBorder{
+      border: 1px solid #E5E5E5;
+    }
+    .select-colBorder{
+       border: 2px solid transparent;
+       background-clip: padding-box, border-box;
+       background-origin: padding-box, border-box;
+       background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+    }
+
+    .select-color{
+       font-style: normal;
+       font-weight: 700;
+       font-style: normal;
+       color:#fff;
+       font-size: 15px;
+    }
+
+    .des{
+       display: flex;
+       text-align: center;
+       justify-content: center;
+       align-items: center;
+       border-radius: 20px;
+    }
+
+    .no-select-color{
+       font-style: normal;
+       font-weight: 400;
+       font-size: 15px;
+       color: #C4C4C4;
+     }
+   }
