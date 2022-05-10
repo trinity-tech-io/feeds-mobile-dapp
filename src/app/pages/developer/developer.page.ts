@@ -106,7 +106,7 @@ export class DeveloperPage implements OnInit {
         await that.dataHelper.removeData("feeds.syncHiveData");
         const signinData = await this.dataHelper.getSigninData();
         let userDid = signinData.did
-        localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
+     localStorage.removeItem(userDid + "localScriptVersion");
         that.native.hideLoading();
         alert("sucess");
    }else{

@@ -63,7 +63,8 @@ export class MyApp {
   public loadingText: string = null;
   public loadingCurNumber: string = null;
   public loadingMaxNumber: string = null;
-  private localVersion = "1.0.1"
+  private scriptVersion = "1.0.1"
+  private LOCAL_VERSION = "localScriptVersion"
 
   constructor(
     private actionSheetController: ActionSheetController,
@@ -100,6 +101,7 @@ export class MyApp {
 
       try {
         await this.hiveVaultController.prepareConnection();
+        await this.initRegisterScript(true)
       } catch (error) {
         Logger.error(TAG, error)
       }
@@ -262,7 +264,15 @@ export class MyApp {
             this.intentService.dispatchIntent(intent);
           },
         );
-      });
+      }).then(async () => {
+        try {
+          //HIVE
+          this.initRegisterScript(false)
+        }
+        catch (error) {
+          console.log("initRegisterScript error === ", error)
+        }
+      })
   }
 
   initConnector() {
@@ -709,38 +719,6 @@ export class MyApp {
     this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData0);
     this.dataHelper.setSyncHiveData(syncHiveData0);
     this.sqliteHelper.createTables(userDid);
-    let regist_scripting = false;
-    let lasterVersion = '';
-    let preVersion = '';
-
-    try {
-      let result = await this.hiveVaultController.queryFeedsScripting();
-      regist_scripting = result[0]["regist_scripting"];
-      lasterVersion = result[0]["laster_version"];
-      preVersion = result[0]["pre_version"];
-    }
-    catch (error) {
-      if (error["code"] === 404) {
-        regist_scripting = true
-      }
-    }
-    if (this.localVersion !== lasterVersion) {
-
-      try {
-        //this.description = this.translate.instant('GalleriahivePage.creatingScripting');
-        let syncHiveData1 = { status: 1, describe: "GalleriahivePage.creatingScripting" }
-        this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData1);
-        this.dataHelper.setSyncHiveData(syncHiveData1);
-        await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
-        preVersion = lasterVersion
-        lasterVersion = this.localVersion
-        regist_scripting = false
-        //update
-        await this.hiveVaultController.updateFeedsScripting(lasterVersion, preVersion, regist_scripting)
-      } catch (error) {
-        console.log(error)
-      }
-    }
     try {
 
       let syncHiveData2 = { status: 1, describe: "GalleriahivePage.synchronizingChannelData" }
@@ -774,7 +752,6 @@ export class MyApp {
 
     } catch (error) {
       if (error["code"] === 404) {
-        localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
         let syncHiveData7 = { status: 7, describe: "GalleriahivePage.synchronizingComplete" }
         this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData7)
         this.dataHelper.setSyncHiveData(syncHiveData7);
@@ -783,6 +760,63 @@ export class MyApp {
         this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData6)
         this.dataHelper.setSyncHiveData(syncHiveData6);
       }
+    }
+  }
+
+  async initRegisterScript(isForce: boolean) {
+    let regist_scripting = false;
+    let lasterVersion = '';
+    let preVersion = '';
+    const signinData = await this.dataHelper.getSigninData();
+    let userDid = signinData.did;
+    if (userDid === '' || userDid === undefined || userDid === null) {
+      return
+    }
+    let localVersion = localStorage.getItem(userDid + this.LOCAL_VERSION) || ''
+    if (localVersion == "" && isForce === false) {
+      return
+    }
+    if (localVersion != this.scriptVersion) {
+      try {
+        if (localVersion === '') {
+          let result = await this.hiveVaultController.queryFeedsScripting();
+          regist_scripting = result[0]["regist_scripting"];
+          lasterVersion = result[0]["laster_version"];
+          preVersion = result[0]["pre_version"];
+        }
+        else {
+
+        }
+      }
+      catch (error) {
+        if (error["code"] === 404) {
+          regist_scripting = true
+        }
+      }
+    }
+    else {
+      // 不需要注册 return
+      return
+    }
+    if (this.scriptVersion !== lasterVersion) {
+      try {
+        let syncHiveData1 = { status: 1, describe: "GalleriahivePage.creatingScripting" }
+        this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData1);
+        this.dataHelper.setSyncHiveData(syncHiveData1);
+        await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
+        preVersion = lasterVersion === '' ? localVersion : lasterVersion
+        lasterVersion = this.scriptVersion
+        regist_scripting = false
+        localVersion = lasterVersion
+        //update
+        await this.hiveVaultController.updateFeedsScripting(lasterVersion, preVersion, regist_scripting)
+        localStorage.setItem(userDid + this.LOCAL_VERSION, localVersion)
+      } catch (error) {
+        console.log(error)
+      }
+    } else if (localVersion === '' && this.scriptVersion === lasterVersion) {
+      localVersion = this.scriptVersion
+      localStorage.setItem(userDid + this.LOCAL_VERSION, localVersion)
     }
   }
 }

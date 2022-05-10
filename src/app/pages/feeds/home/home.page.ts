@@ -2272,7 +2272,7 @@ export class HomePage implements OnInit {
     }
     const signinData = await this.dataHelper.getSigninData();
     let userDid = signinData.did
-    localStorage.removeItem(userDid + HiveVaultController.CREATEALLCollECTION);
+    localStorage.removeItem(userDid + "localScriptVersion");
     this.dataHelper.setSyncHiveData({ status: this.syncHiveDataStatus, describe: this.syncHiveDataDes });
     this.events.publish(FeedsEvent.PublishType.initHiveData);
   }

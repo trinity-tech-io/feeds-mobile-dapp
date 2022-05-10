@@ -235,6 +235,7 @@ export class HiveVaultHelper {
                 await this.deleteCollection(HiveVaultHelper.TABLE_COMMENTS);
                 await this.deleteCollection(HiveVaultHelper.TABLE_LIKES);
                 await this.deleteCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
+                await this.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
                 resolve("true")
             } catch (error) {
                 Logger.error(TAG, 'delete Collections error', error);
