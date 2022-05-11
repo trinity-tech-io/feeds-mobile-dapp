@@ -14,9 +14,26 @@
         top: 20px;
         justify-content: center;
         .avatar{
-          width: 90px;
-          height: 90px;
-          border-radius: 50%;
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border-radius: 60px;
+        background-color: #161C24;
+        border: 2px solid transparent;
+        background-clip: padding-box, border-box;
+        background-origin: padding-box, border-box;
+        background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+        }
+
+        img{
+        width: 80px;
+        height: 80px;
+        border-radius: 60px;
+        object-fit: cover;
+        overflow: hidden;
         }
     }
 

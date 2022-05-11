@@ -279,6 +279,9 @@ export const en = {
     emptyDes: "Let's change that, get started with your first channel!",
     createFeed: 'Add Channel',
     exploreFeeds: 'Explore Feeds',
+    des: 'slots left',
+    des1: 'channels subscribed'
+
   },
   FollowingComponent: {
     allempty: 'No Subscriptions Yet',

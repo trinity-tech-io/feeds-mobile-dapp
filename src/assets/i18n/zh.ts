@@ -279,6 +279,8 @@ export const zh = {
     emptyDes: '让我们改变现状，开始你的第一个频道！',
     createFeed: '添加频道',
     exploreFeeds: '探索Feeds',
+    des: '个频道可以创建',
+    des1: '个频道已订阅'
   },
   FollowingComponent: {
     allempty: '空空如也',

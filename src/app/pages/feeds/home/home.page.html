@@ -91,12 +91,12 @@
       [class.removeBorder]="post === postList[postList.length - 1]" [class.blur]="!hideComment"
       id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}>
       <ion-row class="post-row">
-        <ion-col class="img-col" size="2">
+        <ion-col class="img-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(post.destDid,post.channelId,post.postId)">
             <img id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-homeChannelAvatar src="./assets/icon/reserve.svg">
           </div>
         </ion-col>
-        <ion-col class="content-col" size="10">
+        <ion-col class="content-col" size="9.5">
           <ion-row class="top-row">
             <ion-col class="left-col" size="11">
               <ion-label  *ngIf="hannelNameMap[post.postId] === '' || hannelNameMap[post.postId] === undefined">

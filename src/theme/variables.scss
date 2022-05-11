@@ -510,15 +510,23 @@ ion-row {
 .feedAvatar {
   display: flex;
   align-items: center;
+  justify-content: center;
   position: relative;
-  border-radius: 50%;
+  border-radius: 60px;
+  width: 60px;
+  height: 60px;
+  background-color: #161C24;
+  border: 2px solid transparent;
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+  background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
 
   img {
     border-radius: 50%;
     object-fit: cover;
     overflow: hidden;
-    height: 40px;
-    width: 40px;
+    height: 50px;
+    width: 50px;
   }
 
   .offline {
@@ -568,10 +576,9 @@ ion-row {
         justify-content: center;
 
           ion-label {
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            font-stretch: normal;
+            margin-top: 3px;
+            font-size: 15px;
+            font-weight: 700;
             font-style: normal;
             color: #000000;
             width: 100%;
@@ -579,18 +586,18 @@ ion-row {
 
           p {
             margin: 0;
-            font-size: 12px;
-            font-weight: bold;
-            font-stretch: normal;
+            margin-top: 7px;
+            font-size: 15px;
+            font-weight: 400;
             font-style: normal;
-            color: #9ca0a4;
+            color: #C4C4C4;
+            font-style: normal;
 
             span {
-              font-size: 12px;
-              font-weight: bold;
-              font-stretch: normal;
+              font-size: 15px;
+              font-weight: 400;
               font-style: normal;
-              color: #9ca0a4;
+              color: #C4C4C4;
             }
           }
 
@@ -616,8 +623,6 @@ ion-row {
         align-items: center;
 
         img {
-          width: 20px;
-          height: 20px;
           object-fit: contain;
         }
 
@@ -683,10 +688,9 @@ ion-row {
         justify-content: center;
 
           ion-label {
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            font-stretch: normal;
+            margin-top: 3px;
+            font-size: 15px;
+            font-weight: 700;
             font-style: normal;
             color: #fff;
             width: 100%;
@@ -1034,4 +1038,10 @@ ion-header {
       }
     }
   }
+}
+
+.textNotWrap {
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }

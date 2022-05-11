@@ -1,6 +1,6 @@
-<div *ngIf="followingList.length === 0" class="empty-container">
-  <img src="./assets/images/empty-feeds-icon.svg">
-  <h1>{{ 'FollowingComponent.allempty' | translate }}</h1>
+<div *ngIf="followingList.length === 0" class="new-empty-container">
+  <img src="./assets/images/profile-no-channel.svg">
+  <h1 style="margin-top: 20px;">{{ 'FollowingComponent.allempty' | translate }}</h1>
   <p>{{ 'FollowingComponent.emptyDes' | translate }}</p>
 </div>
 
@@ -12,7 +12,7 @@
   >
     <ion-row class="channel-row ion-activatable ripple ionRowFollowing" id={{channel.destDid}}-{{channel.channelId}}>
       <ion-col
-        size="2.5"
+        size="2.8"
         class="left-col"
         (click)="navTo(channel.destDid, channel.channelId)"
       >
@@ -21,15 +21,15 @@
         </div>
       </ion-col>
       <ion-col
-        size="8"
+        size="7.7"
         class="middle-col"
         (click)="navTo(channel.destDid, channel.channelId)"
       >
         <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0px;">{{ channel.name }}</ion-label>
-        <!-- <ion-row>
-          <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
-          <p><span>{{ channel.subscribers }}</span> {{ 'common.followers' | translate }}</p>
-        </ion-row> -->
+        <ion-row>
+          <br>
+          <p><span>{{ 0 }}</span> {{ 'common.followers' | translate }}</p>
+        </ion-row>
       </ion-col>
       <ion-col size="1.5" class="right-col" (click)="menuMore(channel)">
         <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">

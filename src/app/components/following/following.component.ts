@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FeedService } from '../../services/FeedService';
+import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from '../../services/theme.service';
 import { UtilService } from '../../services/utilService';
 import { ViewHelper } from '../../services/viewhelper.service';
@@ -14,9 +14,9 @@ export class FollowingComponent implements OnInit {
   @Input() followingList: any = [];
   @Output() toFollowPage = new EventEmitter();
   constructor(
-    private feedService: FeedService,
     public theme: ThemeService,
     private viewHelper: ViewHelper,
+    private native: NativeService
   ) {}
 
   ngOnInit() {}

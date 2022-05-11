@@ -1,5 +1,5 @@
-<svg id="Union_1" data-name="Union 1" xmlns="http://www.w3.org/2000/svg" width="3" height="16" viewBox="0 0 3 16">
-  <circle id="Ellipse_3" data-name="Ellipse 3" cx="1.5" cy="1.5" r="1.5" fill="#fff"/>
-  <circle id="Ellipse_4" data-name="Ellipse 4" cx="1.5" cy="1.5" r="1.5" transform="translate(0 6.5)" fill="#fff"/>
-  <circle id="Ellipse_5" data-name="Ellipse 5" cx="1.5" cy="1.5" r="1.5" transform="translate(0 13)" fill="#fff"/>
+<svg width="4" height="22" viewBox="0 0 4 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.93333 3.86667C3.00108 3.86667 3.86667 3.00108 3.86667 1.93333C3.86667 0.865583 3.00108 0 1.93333 0C0.865583 0 0 0.865583 0 1.93333C0 3.00108 0.865583 3.86667 1.93333 3.86667Z" fill="#fff"/>
+<path d="M1.93333 12.6001C3.00108 12.6001 3.86667 11.7345 3.86667 10.6667C3.86667 9.59898 3.00108 8.7334 1.93333 8.7334C0.865583 8.7334 0 9.59898 0 10.6667C0 11.7345 0.865583 12.6001 1.93333 12.6001Z" fill="#fff"/>
+<path d="M1.93333 21.3335C3.00108 21.3335 3.86667 20.4679 3.86667 19.4001C3.86667 18.3324 3.00108 17.4668 1.93333 17.4668C0.865583 17.4668 0 18.3324 0 19.4001C0 20.4679 0.865583 21.3335 1.93333 21.3335Z" fill="#fff"/>
 </svg>

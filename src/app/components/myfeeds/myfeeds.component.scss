@@ -1,19 +1,25 @@
-.empty-container {
-    margin-top: 50px;
-}
-.radius_50 {
-    width:40px;
-    height:40px;
-    border-radius:20px;
-    -moz-border-radius:20px;
-    -webkit-border-radius:20px;
-    overflow:hidden;
-    border:1px #7624fe dashed;
+.radius_60_dashed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: url('../../../assets/images/dashed.svg') no-repeat;
 }
 
-.radius_50 img{
-    margin-left:11px;
-    margin-top:11px;
-    width: 16px;
-    height: 16px;
+
+.radius_60_solid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 60px;
+    width: 60px;
+    height: 60px;
+    background-color: #161C24;
+    border: 2px solid transparent;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
 }

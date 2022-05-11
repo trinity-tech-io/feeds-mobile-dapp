@@ -15,12 +15,12 @@
     <!---------------- POST DETAILS ---------------->
     <ion-grid class="postDetail-grid ion-activatable ripple" [class.dark-postDetail-grid]="theme.darkMode">
       <ion-row class="top-row">
-        <ion-col class="left-col" size="2.25">
+        <ion-col class="left-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(destDid, channelId)">
             <img src={{channelAvatar}}>
           </div>
         </ion-col>
-        <ion-col class="mid-col" size="8" (press)="pressName()" (click)="navTo(destDid, channelId)" [style.touch-action]="'pan-y'">
+        <ion-col class="mid-col" size="7.5" (press)="pressName()" (click)="navTo(destDid, channelId)" [style.touch-action]="'pan-y'">
           <ion-label>
             {{ channelName }}
           </ion-label>
