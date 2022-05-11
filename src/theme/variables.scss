@@ -424,16 +424,15 @@ ion-row {
     align-items: center;
 
     .btn {
-        height: 45px;
+        height: 61px;
         display: flex;
         justify-content: center;
         align-items: center;
-        border-radius: 10px;
+        border-radius: 20px;
 
         ion-label {
-          font-size: 14px;
-          font-weight: bold;
-          font-stretch: normal;
+          font-size: 15px;
+          font-weight: 700;
           font-style: normal;
           text-align: center;
           color: #ffffff;
@@ -442,37 +441,41 @@ ion-row {
 
     // Cancel Option #1 - Transparent background, blue label and border
     .cancel {
-        background-color:#fff;
-        border: solid 1px #7624fe;
+        background-color:#161C24;
+        border-radius: 20px;
+        border: 2px solid transparent;
+        background-clip: padding-box, border-box;
+        background-origin: padding-box, border-box;
+        background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
         ion-label {
-          font-size: 14px;
-          font-weight: bold;
-          font-stretch: normal;
+          font-size: 15px;
+          font-weight: 700;
           font-style: normal;
-          color: #7624fe;
+          color: #fff;
         }
     }
 
     // Cancel Option #2 - White button, black label
     .cancel2 {
-      background-color: #ffffff;
-      border: solid 1px #7624fe;
+      background-color: #161C24;
+      border: 2px solid transparent;
+      background-clip: padding-box, border-box;
+      background-origin: padding-box, border-box;
+      background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
 
       ion-label {
-        font-size: 14px;
-        font-weight: bold;
-        font-stretch: normal;
+        font-size: 15px;
+        font-weight: 700;
         font-style: normal;
-        color: #7624fe;
+        color: #ffffff;
       }
     }
 
     .confirm {
-        background-color: #7624fe;
+        background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);;
         ion-label {
-          font-size: 14px;
-          font-weight: bold;
-          font-stretch: normal;
+          font-size: 15px;
+          font-weight: 700;
           font-style: normal;
           color: #ffffff;
         }
@@ -481,23 +484,25 @@ ion-row {
 
 .dark-btns-row {
   .cancel {
-    background-color:#191a2f;
+    background-color:#161C24;
     ion-label {
-      color: #7624fe;
+      color: #fff;
     }
   }
 
   // Cancel Option #2 - Dark button, white label
   .cancel2 {
-    background-color: #191a2f;
+    background-color: #161C24;
 
     ion-label {
-      color: #7624fe;
+      color: #fff;
     }
   }
 
   .confirm {
-    box-shadow: 0 3px 15px 0 #151626;
+    ion-label {
+      color: #fff;
+    }
   }
 }
 

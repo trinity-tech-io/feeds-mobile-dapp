@@ -13,6 +13,7 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { Events } from 'src/app/services/events.service';
 import _ from 'lodash';
 import { CommonPageService } from 'src/app/services/common.page.service';
+import { FeedsPage } from 'src/app/pages/feeds/feeds.page';
 
 @Component({
   selector: 'app-likes',
@@ -61,7 +62,8 @@ export class LikesComponent implements OnInit {
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
-    private events: Events
+    private events: Events,
+    private feedspage: FeedsPage
   ) { }
 
   ngOnInit() {
@@ -318,5 +320,15 @@ export class LikesComponent implements OnInit {
      if(name != ''){
        return name;
      }
+  }
+
+  timeline() {
+    this.native.setRootRouter(['/tabs/home']);
+    this.feedspage.home();
+  }
+
+  exploreFeeds() {
+    this.native.setRootRouter(['/tabs/search']);
+    this.feedspage.search();
   }
 }

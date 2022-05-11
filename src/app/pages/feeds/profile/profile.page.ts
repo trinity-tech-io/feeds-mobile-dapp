@@ -29,6 +29,7 @@ import { HiveService } from 'src/app/services/HiveService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { CommonPageService } from 'src/app/services/common.page.service';
+import { FeedsPage } from '../feeds.page';
 
 let TAG: string = 'Feeds-profile';
 
@@ -205,7 +206,8 @@ export class ProfilePage implements OnInit {
     private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
     private hiveVaultController: HiveVaultController,
-    private feedService: FeedService
+    private feedService: FeedService,
+    private feedspage: FeedsPage
   ) {
   }
 
@@ -2402,5 +2404,10 @@ export class ProfilePage implements OnInit {
   prepareSaveCollectiblesData(address: string) {
     if (this.refreshNotSaleOrderFinish && this.refreshSaleOrderFinish)
       this.saveCollectiblesToCache(address);
+  }
+
+  exploreMarketplace() {
+    this.native.setRootRouter(['/tabs/home']);
+    this.feedspage.home();
   }
 }

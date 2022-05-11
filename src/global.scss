@@ -189,8 +189,10 @@ ion-input {
 
 /****************** confirmdialog Component ******************/
 .ConfirmdialogComponent {
-  border-radius: 12px;
-
+  border-radius: 20px;
+  .popover-content.sc-ion-popover-ios {
+    border-radius: 20px;
+  }
   .popover-wrapper{
     .popover-content {
       position: relative !important;
@@ -202,15 +204,22 @@ ion-input {
   }
 }
 
+
+
 .dark .ConfirmdialogComponent{
+
+  .popover-content.sc-ion-popover-ios {
+    border-radius: 20px;
+  }
 
   .popover-wrapper{
     .popover-content {
-       background: #191a2f !important;
+       background: #161C24 !important;
     }
 
     .popover-arrow.sc-ion-popover-ios:after{
-       background: #191a2f !important;
+       background: #161C24!important;
+       border-radius: 20px;
     }
 }
 }
@@ -546,7 +555,7 @@ ion-input {
 .add-tab{
   position: absolute;
   bottom: 20px;
-  right: 31px;
+  right: 10px;
   width: 50px;
   height: 50px;
 }

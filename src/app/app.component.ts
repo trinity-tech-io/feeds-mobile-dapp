@@ -479,7 +479,8 @@ export class MyApp {
       'ConfirmdialogComponent.signoutMessage',
       this.cancel,
       this.confirm,
-      './assets/images/signout.svg',
+      './assets/images/signOutDialog.svg',
+      'common.yes'
     );
   }
 

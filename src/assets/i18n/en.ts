@@ -198,7 +198,8 @@ export const en = {
     subscribeSuccess: 'Subscription succeeded',
     subscribeFail: 'Subscription failed',
     didSigninError1: 'credaccess error',
-    didSigninError2: 'Use didManager VerifiablePresentationBuilder error'
+    didSigninError2: 'Use didManager VerifiablePresentationBuilder error',
+    yes: 'Yes'
   },
   app: {
     profileDetails: 'Profile Details',
@@ -269,22 +270,25 @@ export const en = {
     moreinfo: 'More Info',
     collectibles: 'Collectibles',
     createCollectible: 'Create Collectibles',
-    allempty: 'No collectibles yet',
-    emptyDes: 'Create a collectible to get started'
+    allempty: 'No collectibles found',
+    emptyDes: 'Create a collectible or buy one from Pasar Lite marketplace!',
+    exploreMarketplace:'Explore Marketplace'
   },
   MyfeedsComponent: {
-    allempty: 'No Channels Yet',
-    emptyDes: 'Create a channel to get started',
-    createFeed: 'Create Channel',
-    createNewFeed: 'Add Channel',
+    allempty: 'No channels found',
+    emptyDes: "Let's change that, get started with your first channel!",
+    createFeed: 'Add Channel',
+    exploreFeeds: 'Explore Feeds',
   },
   FollowingComponent: {
     allempty: 'No Subscriptions Yet',
     emptyDes: 'Go and subscribe to channels you find exciting',
   },
   LikesComponent: {
-    allempty: 'No Likes Yet',
-    emptyLikeDes: 'Give a like to posts you find interesting',
+    allempty: 'Nothing liked yet',
+    emptyLikeDes: "See what's being posted on the timeline!",
+    timeline: 'Timeline',
+    exploreFeeds : 'Explore Feeds'
   },
   ConfirmdialogComponent: {
     signoutTitle: 'Sign Out',

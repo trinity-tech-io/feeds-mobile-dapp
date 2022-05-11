@@ -198,7 +198,8 @@ export const zh = {
     subscribeSuccess: '订阅成功',
     subscribeFail: '订阅失败',
     didSigninError1: 'credaccess error',
-    didSigninError2: 'Use didManager VerifiablePresentationBuilder error'
+    didSigninError2: 'Use didManager VerifiablePresentationBuilder error',
+    yes: '是'
   },
   app: {
     profileDetails: '档案详情',
@@ -269,22 +270,25 @@ export const zh = {
     moreinfo: '更多信息',
     collectibles: '收藏品',
     createCollectible: '创建收藏品',
-    allempty: '还没有收藏品',
-    emptyDes: '开始创建一个收藏品'
+    allempty: '没有发现收藏品',
+    emptyDes: '创建一个收藏品或从Pasar Lite marketplace购买一个！',
+    exploreMarketplace:'探索市场'
   },
   MyfeedsComponent: {
-    allempty: '空空如也',
-    emptyDes: '创建频道以开始使用',
-    createFeed: '创建频道',
-    createNewFeed: '新建频道',
+    allempty: '没有找到频道',
+    emptyDes: '让我们改变现状，开始你的第一个频道！',
+    createFeed: '添加频道',
+    exploreFeeds: '探索Feeds',
   },
   FollowingComponent: {
     allempty: '空空如也',
     emptyDes: '去订阅有趣的频道吧',
   },
   LikesComponent: {
-    allempty: '空空如也',
-    emptyLikeDes: '给有趣的微说点个赞',
+    allempty: '还没有喜欢',
+    emptyLikeDes: '看看时间线上贴了什么！',
+    timeline: '时间线',
+    exploreFeeds : '探索Feeds'
   },
   ConfirmdialogComponent: {
     signoutTitle: '登出',

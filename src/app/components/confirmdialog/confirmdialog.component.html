@@ -1,12 +1,8 @@
 <div class="container" [class.darkContainer]="theme.darkMode">
   <ion-row class="header">
     <h1>{{ title | translate }}</h1>
-    <ion-col size="12">
-      <div class="bigCircle">
-          <div class="smallCircle">
-             <img [src]="imgPath"/>
-          </div>
-      </div>
+    <ion-col size="12" class="kuangImg">
+        <img [src]="imgPath"/>
     </ion-col>
   </ion-row>
   <ion-row>

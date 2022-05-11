@@ -6,11 +6,12 @@ import {
   TitleBarForegroundMode,
 } from 'src/app/components/titlebar/titlebar.types';
 import { NativeService } from 'src/app/services/NativeService';
-import { MenuController, PopoverController } from '@ionic/angular';
+import { IonThumbnail, MenuController, PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { Router } from '@angular/router';
 import { FeedService } from '../services/FeedService';
 import { PopupProvider } from '../services/popup';
+import { ThemeService } from './theme.service';
 
 let TAG: string = 'TitleBarService';
 
@@ -25,10 +26,16 @@ export class TitleBarService {
     private event: Events,
     private feedService: FeedService,
     public popupProvider: PopupProvider,
+    public theme: ThemeService
   ) {}
   setTitleBarMoreMemu(titleBar: TitleBarComponent,type?:string,imgPath?:string) {
     let clickType = type || "more";
-    let rightImgName = imgPath || "assets/icon/more_menu.ico";
+    let rightImgName = "";
+    if(this.theme.darkMode){
+        rightImgName = imgPath || "assets/icon/dark/more_menu.ico";
+    }else{
+        rightImgName = imgPath || "assets/icon/more_menu.ico";
+    }
     this.setIcon(
       titleBar,
       FeedsData.TitleBarIconSlot.OUTER_RIGHT,

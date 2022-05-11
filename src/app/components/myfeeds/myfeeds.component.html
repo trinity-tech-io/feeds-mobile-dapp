@@ -1,14 +1,22 @@
-<div *ngIf="channels.length === 0 && followers === 0" class="empty-container">
-  <img src="./assets/images/no-Channels.svg">
-  <h1>{{ 'MyfeedsComponent.allempty' | translate }}</h1>
+<div *ngIf="channels.length === 0 && followers === 0" class="new-empty-container">
+  <img src="./assets/images/profile-no-channel.svg">
+  <h1 style="margin-top: 20px;">{{ 'MyfeedsComponent.allempty' | translate }}</h1>
   <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
-  <ion-row class="btn-row">
+
+  <div class="btn-row-empty" style="margin-top:5px;" (click)="createNewFeed()">
+    {{ 'MyfeedsComponent.createFeed' | translate }}
+  </div>
+
+  <div class="btn-row-empty" style="margin-top:10px;" (click)="exploreFeeds()">
+    {{ "MyfeedsComponent.exploreFeeds" | translate }}
+  </div>
+  <!-- <ion-row class="btn-row">
     <ion-button (click)="createNewFeed()">
       <ion-label>
         {{ 'MyfeedsComponent.createFeed' | translate }}
       </ion-label>
     </ion-button>
-  </ion-row>
+  </ion-row> -->
 </div>
 
 <ion-list *ngIf="channels.length > 0 || followers > 0" class="channel-list" [class.darkChannelList]="theme.darkMode"

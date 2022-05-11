@@ -6,6 +6,7 @@ import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
 import { ViewHelper } from '../../services/viewhelper.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { FeedsPage } from 'src/app/pages/feeds/feeds.page';
 @Component({
   selector: 'app-myfeeds',
   templateUrl: './myfeeds.component.html',
@@ -26,6 +27,7 @@ export class MyfeedsComponent implements OnInit {
     private native: NativeService,
     private viewHelper: ViewHelper,
     public popupProvider: PopupProvider,
+    private feedspage: FeedsPage
   ) {}
 
   ngOnInit() {
@@ -73,6 +75,11 @@ export class MyfeedsComponent implements OnInit {
     this.dataHelper.setSelsectIndex(1);
 
     this.native.navigateForward(['/createnewfeed'], '');
+  }
+
+  exploreFeeds() {
+    this.native.setRootRouter(['/tabs/search']);
+    this.feedspage.search();
   }
 
   clickFollowing() {
