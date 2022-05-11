@@ -67,6 +67,11 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_QUERY_COMMENT_FROM_POSTS = "script_query_comment_from_posts";
     public static readonly SCRIPT_QUERY_COMMENT_COUNTS = "script_query_comment_counts";
 
+    //public
+    public static readonly QUERY_PUBLIC_SPECIFIED_POST = "query_public_specified_post";
+    public static readonly QUERY_PUBLIC_SOMETIME_POST = "query_public_sometime_post";
+    public static readonly QUERY_PUBLIC_POST_BY_CHANNEL = "query_public_post_by_channel";
+
     constructor(
         private hiveService: HiveService,
         private dataHelper: DataHelper,
@@ -115,7 +120,13 @@ export class HiveVaultHelper {
                 const p23 = this.registerQueryCommentsFromPostsScripting();
 
                 const p24 = this.registerQuerySelfLikeByIdScripting();
-                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24] as const
+
+                //Public post
+                const p25 = this.registerQueryPublicPostByIdScripting();
+                const p26 = this.registerQueryPublicPostByChannelIdScripting();
+                const p27 = this.registerQueryPublicPostRangeOfTimeScripting();
+
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
                 }, reason => {
@@ -2010,4 +2021,122 @@ export class HiveVaultHelper {
     queryCommentsFromPosts(targetDid: string, postIds: string[]): Promise<any> {
         return this.callQueryCommentsFromPosts(targetDid, postIds);
     }
+
+    /** query public post data by id start*/
+    private registerQueryPublicPostByIdScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const postType = 'public';
+                let postCondition = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "type": postType };
+                let queryCondition = new QueryHasResultCondition("post_permission", HiveVaultHelper.TABLE_POSTS, postCondition, null);
+
+                let executablefilter = { "channel_id": "$params.channel_id", "post_id": "$params.post_id", "type": postType };
+                let options = { "projection": { "_id": false }, "limit": 100 };
+
+                let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true);
+                await this.hiveService.registerScript(HiveVaultHelper.QUERY_PUBLIC_SPECIFIED_POST, findExe, queryCondition, false, false);
+                resolve("SUCCESS");
+            } catch (error) {
+                Logger.error(TAG, 'Register query public post by id error', error);
+                reject(error);
+            }
+        })
+    }
+
+    private callQueryPublicPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const doc = { "channel_id": channelId, "post_id": postId };
+                const result = await this.callScript(targetDid, HiveVaultHelper.QUERY_PUBLIC_SPECIFIED_POST, doc);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'callQueryPostById error:', error);
+                reject(error);
+            }
+        });
+    }
+
+    queryPublicPostById(targetDid: string, channelId: string, postId: string) {
+        return this.callQueryPublicPostById(targetDid, channelId, postId);
+    }
+    /** query public post data by id end*/
+
+    /** query public post data by channel id start */
+    private registerQueryPublicPostByChannelIdScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const channelType = 'public';
+                const postType = 'public';
+                let conditionfilter = { "channel_id": "$params.channel_id", "type": channelType };
+                let queryCondition = new QueryHasResultCondition("channel_permission", HiveVaultHelper.TABLE_CHANNELS, conditionfilter, null);
+
+                let executablefilter = { "channel_id": "$params.channel_id", "type": postType };
+                let options = { "projection": { "_id": false }, "limit": 100 };
+
+                let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true);
+                await this.hiveService.registerScript(HiveVaultHelper.QUERY_PUBLIC_POST_BY_CHANNEL, findExe, queryCondition, false, false);
+                resolve("SUCCESS");
+            } catch (error) {
+                Logger.error(TAG, 'Register query public post by channel error', error);
+                reject(error);
+            }
+        })
+    }
+
+    private callQueryPublicPostByChannelId(targetDid: string, channelId: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await this.callScript(targetDid, HiveVaultHelper.QUERY_PUBLIC_POST_BY_CHANNEL, { "channel_id": channelId });
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Call query public post by channel error:', error);
+                reject(error);
+            }
+        })
+    }
+
+    queryPublicPostByChannelId(targetDid: string, channelId: string): Promise<any> {
+        return this.callQueryPublicPostByChannelId(targetDid, channelId);
+    }
+    /** query public post data by channel id end */
+
+    /** query public post data range of time start */
+    private registerQueryPublicPostRangeOfTimeScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const channelType = 'public';
+                const postType = 'public';
+                let conditionfilter = { "channel_id": "$params.channel_id", "type": channelType };
+                let queryCondition = new QueryHasResultCondition("channel_permission", HiveVaultHelper.TABLE_CHANNELS, conditionfilter, null);
+
+                let executablefilter = { "channel_id": "$params.channel_id", "updated_at": { $gt: "$params.start", $lt: "$params.end" }, "type": postType };
+                let options = { "projection": { "_id": false }, "limit": 30, "sort": { "updated_at": -1 } };
+
+                let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true);
+                await this.hiveService.registerScript(HiveVaultHelper.QUERY_PUBLIC_SOMETIME_POST, findExe, queryCondition, false, false);
+                resolve("SUCCESS");
+            } catch (error) {
+                Logger.error(error);
+                reject(error);
+            }
+        })
+    }
+
+    private callQueryPublicPostRangeOfTimeScripting(targetDid: string, channelId: string, start: number, end: number) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await this.callScript(targetDid, HiveVaultHelper.QUERY_PUBLIC_SOMETIME_POST, { "channel_id": channelId, "start": start, "end": end });
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Call query post by channel and range of time error:', error);
+                reject(error);
+            }
+        })
+    }
+
+    queryPublicPostRangeOfTimeScripting(targetDid: string, channelId: string, start: number, end: number): Promise<any> {
+        return this.callQueryPublicPostRangeOfTimeScripting(targetDid, channelId, start, end);
+    }
+    /** query public post data range of time end */
+
 }
