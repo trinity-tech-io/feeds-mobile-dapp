@@ -106,6 +106,7 @@ export class HiveService {
     catch (error) {
       Logger.error(TAG, 'Create vault error:', error);
       this.events.publish(FeedsEvent.PublishType.authEssentialFail,{type:1});
+      throw error
     }
   }
 
@@ -269,6 +270,7 @@ export class HiveService {
       return await scriptingService.downloadFile(transaction_id)
     } catch (error) {
       console.log("scriptingService.downloadFile error: ==== ", error)
+      throw error
     }
   }
 
@@ -284,6 +286,7 @@ export class HiveService {
     }
     catch (error) {
       Logger.error(TAG, "getUploadDataFromScript error: ", error);
+      throw error
     }
   }
 
@@ -294,6 +297,7 @@ export class HiveService {
     }
     catch (error) {
       Logger.error(TAG, "uploadDataFromScript error: ", error);
+      throw error
     }
   }
 
@@ -304,6 +308,7 @@ export class HiveService {
     }
     catch (error) {
       Logger.error(TAG, "Upload script blob error: ", error);
+      throw error
     }
   }
 
@@ -314,6 +319,7 @@ export class HiveService {
     }
     catch (error) {
       Logger.error(TAG, "uploadScriptWithString error: ", error);
+      throw error
     }
   }
 
