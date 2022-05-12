@@ -331,6 +331,8 @@ export const en = {
     noSubscription: 'No subscription',
     subscribeChannel: 'Subscribe to view posts from this channel',
     viewall: 'View all',
+    allempty1: 'Channel not subscribed',
+    emptyDes1: "Subscribe to view contents from this channel"
   },
   NotificationPage: {
     allempty: 'Nothing to find here',

@@ -1,11 +1,11 @@
 <app-titlebar id="homeTittleBar"></app-titlebar>
 <ion-row [class.darkExploreTabs]="theme.darkMode" [class.exploreTabs]="!theme.darkMode" id="homeTab">
-  <ion-col size="1.25" class="des"></ion-col>
-  <ion-col size="4.5" class="des colBorder" [ngClass]="{'select-colBorder':tabType==='feeds','select-color':tabType==='feeds','no-select-color':tabType!='feeds'}"
+  <ion-col size="1" class="des"></ion-col>
+  <ion-col size="4.75" class="des colBorder" [ngClass]="{'select-colBorder':tabType==='feeds','select-color':tabType==='feeds','no-select-color':tabType!='feeds'}"
    (click)="clickTab('feeds')">{{'FeedsPage.tabTitle5'|translate}}</ion-col>
   <ion-col size="0.5" class="des"></ion-col>
-  <ion-col size="4.5" class="des colBorder"  [ngClass]="{'select-colBorder':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
-  <ion-col size="1.25" class="des"></ion-col>
+  <ion-col size="4.75" class="des colBorder"  [ngClass]="{'select-colBorder':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
+  <ion-col size="1" class="des"></ion-col>
 </ion-row>
 <ion-row *ngIf="tabType==='pasar'" style="margin-top: 28px;">
   <ion-col size="1">
@@ -91,14 +91,14 @@
       [class.removeBorder]="post === postList[postList.length - 1]" [class.blur]="!hideComment"
       id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}>
       <ion-row class="post-row">
+        <ion-col size="0.5"></ion-col>
         <ion-col class="img-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(post.destDid,post.channelId,post.postId)">
             <img id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-homeChannelAvatar src="./assets/icon/reserve.svg">
           </div>
         </ion-col>
-        <ion-col class="content-col" size="9.5">
-          <ion-row class="top-row">
-            <ion-col class="left-col" size="11">
+        <ion-col class="content-col" size="6.5">
+
               <ion-label  *ngIf="hannelNameMap[post.postId] === '' || hannelNameMap[post.postId] === undefined">
                 ......
               </ion-label>
@@ -106,157 +106,156 @@
                 {{ hannelNameMap[post.postId] }}
                 <span> {{ handleDisplayTime(post.createdAt) }}</span>
               </ion-label>
-            </ion-col>
-            <img class="moremenuclick"
-              *ngIf="post.status!=1"
-              [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
-              (click)="menuMore(post)"
-            >
-          </ion-row>
-          <!-- <p>@{{ getChannelOwnerName(post.postId, post.channelId) }}</p> -->
+          <p>@...</p>
+        </ion-col>
+        <ion-col size="2" class="menuMore">
+          <img
+          *ngIf="post.status!=1"
+          [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
+          (click)="menuMore(post)"
+        >
+        </ion-col>
+        <ion-col size="0.5"></ion-col>
+      </ion-row>
+      <!--- text -->
+      <ion-row>
+        <ion-col size="0.5">
 
+        </ion-col>
+        <ion-col size="11" class="postText">
           <h2 *ngIf="post.status!=1">
             <div *ngIf="getPostContentTextSize(post.content.content)<=maxTextSize"
               (click)="navToPostDetail(post.destDid, post.channelId, post.postId,$event)">
-              <pre [ngStyle]="styleObj" [innerHTML]="getContentText(post.content.content) | html"></pre>
+              <pre  [innerHTML]="getContentText(post.content.content) | html"></pre>
             </div>
             <div *ngIf="getPostContentTextSize(post.content.content)>maxTextSize"
               (click)="navToPostDetail(post.destDid, post.channelId, post.postId,$event)">
-              <pre [ngStyle]="styleObj" [innerHTML]="getContentShortText(post) | html"></pre>
-              <pre [ngStyle]="styleObj" style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
+              <pre  [innerHTML]="getContentShortText(post) | html"></pre>
+              <pre  style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
             </div>
           </h2>
           <h2 (click)="navToPostDetail(post.destDid, post.channelId, post.postId)" *ngIf="post.status===1">
-            <pre [ngStyle]="styleObj">{{'common.deleted' | translate}}</pre>
+            <pre>{{'common.deleted' | translate}}</pre>
           </h2>
+        </ion-col>
+        <ion-col size="0.5">
 
+        </ion-col>
+      </ion-row>
+     <!--- img  video-->
+      <ion-row *ngIf="post.content.mediaType ===1 || post.content.mediaType ===2">
+        <ion-col size="12" style="padding: 0px;">
           <div *ngIf="post.status!=1&&post.content.mediaType ===1" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}rpostimg
-            style="width: 100%">
-            <span class="lefttopostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
+          style="width: 100%">
+          <span class="lefttopostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
 
-          <div style="position:relative;">
-            <app-percentageloading
-            *ngIf="isImgPercentageLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
-            [ngStyle]="imgloadingStyleObj"
-            [percent]="imgPercent"
-            [rotateNum]="imgRotateNum"
-            >
-            </app-percentageloading>
+        <div style="position:relative;">
+          <app-percentageloading
+          *ngIf="isImgPercentageLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
+          [ngStyle]="imgloadingStyleObj"
+          [percent]="imgPercent"
+          [rotateNum]="imgRotateNum"
+          >
+          </app-percentageloading>
+
+        <app-roundloading
+        *ngIf="isImgLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
+        [ngStyle]="imgloadingStyleObj"
+        >
+        </app-roundloading>
+          <img
+          id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}postimg
+          class="post-img"
+          src="assets/images/loading.png"
+          style="width: 100%;"
+          (click)="showBigImage(post.destDid,post.channelId,post.postId)">
+          <img src="./assets/images/avatar.svg" class="avatarImg"
+            id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebidAvatar />
+          <img src="./assets/images/videoTypeIcon.svg" class="avatarImg"
+            id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebidVideo />
+          <img src="./assets/images/bidfeedslogo.svg" class="bidLogoImg"
+            id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebidfeedslogo />
+          <div class="buyContainer" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebuy>
+             <ion-row>
+               <ion-col size="8" class="pricecol">
+                <span class="price" [class.darkPrice]="theme.darkMode"
+                  id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homeNftPrice></span><img
+                  style="vertical-align:middle;margin-left:4px;
+                " src="assets/images/purpleblue.svg"/>
+                <div class="quantity" [class.darkQuantity]="theme.darkMode">{{"common.quantity"|translate}}: <span
+                    id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homeNftQuantity></span>/<span
+                    id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homeMaxNftQuantity></span></div>
+               </ion-col>
+               <ion-col size="4">
+                <ion-button (click)="buy(post)">
+                  <ion-label class="buyLabel">{{'BidPage.buy' | translate}}</ion-label>
+                </ion-button>
+               </ion-col>
+            </ion-row>
+          </div>
+          <span class="topostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
+        </div>
+        </div>
+
+        <div *ngIf="post.status!=1&&post.content.mediaType ===2"
+          id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgplayer style="width: 100%;position:relative;">
 
           <app-roundloading
-          *ngIf="isImgLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
-          [ngStyle]="imgloadingStyleObj"
+          *ngIf="isVideoLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
+          [ngStyle]="videoloadingStyleObj"
           >
           </app-roundloading>
-            <img
-            id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}postimg
-            class="post-img"
-            src="assets/images/loading.png"
-            style="width: 100%;"
-            (click)="showBigImage(post.destDid,post.channelId,post.postId)">
-            <img src="./assets/images/avatar.svg" class="avatarImg"
-              id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebidAvatar />
-            <img src="./assets/images/videoTypeIcon.svg" class="avatarImg"
-              id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebidVideo />
-            <img src="./assets/images/bidfeedslogo.svg" class="bidLogoImg"
-              id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebidfeedslogo />
-            <div class="buyContainer" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebuy>
-               <ion-row>
-                 <ion-col size="8" class="pricecol">
-                  <span class="price" [class.darkPrice]="theme.darkMode"
-                    id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homeNftPrice></span><img
-                    style="vertical-align:middle;margin-left:4px;
-                  " src="assets/images/purpleblue.svg"/>
-                  <div class="quantity" [class.darkQuantity]="theme.darkMode">{{"common.quantity"|translate}}: <span
-                      id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homeNftQuantity></span>/<span
-                      id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homeMaxNftQuantity></span></div>
-                 </ion-col>
-                 <ion-col size="4">
-                  <ion-button (click)="buy(post)">
-                    <ion-label class="buyLabel">{{'BidPage.buy' | translate}}</ion-label>
-                  </ion-button>
-                 </ion-col>
-              </ion-row>
-            </div>
-            <span class="topostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
+
+          <app-percentageloading
+          *ngIf="isVideoPercentageLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
+          [ngStyle]="videoloadingStyleObj"
+          [percent]="videoPercent"
+          [rotateNum]="videoRotateNum"
+          >
+          </app-percentageloading>
+
+            <div style="width:100%;height:200px;display:inline-block;">
+              <span class="lefttopostdetailvideo" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
+              <vg-player>
+                <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplayhome></vg-overlay-play>
+                <vg-controls id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgcontrolshome style="display: none;">
+                  <img class="vgfullscreen" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgfullscreenhome
+                    src="assets/images/fullscreen.svg"/>
+                </vg-controls>
+
+            <video #media [vgMedia]="media" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}video
+            poster="assets/images/loading.png"
+            playsinline webkit-playsinline>
+            <source type="video/mp4" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}source>
+            </video>
+            </vg-player>
+           </div>
+           <span class="topostdetailvideo" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
           </div>
-          </div>
+        </ion-col>
+      </ion-row>
 
-          <div *ngIf="post.status!=1&&post.content.mediaType ===2"
-            id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgplayer style="width: 100%;position:relative;">
-
-            <app-roundloading
-            *ngIf="isVideoLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
-            [ngStyle]="videoloadingStyleObj"
-            >
-            </app-roundloading>
-
-            <app-percentageloading
-            *ngIf="isVideoPercentageLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
-            [ngStyle]="videoloadingStyleObj"
-            [percent]="videoPercent"
-            [rotateNum]="videoRotateNum"
-            >
-            </app-percentageloading>
-
-              <div style="width:100%;height:200px;display:inline-block;">
-                <span class="lefttopostdetailvideo" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
-                <vg-player>
-                  <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplayhome></vg-overlay-play>
-                  <vg-controls id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgcontrolshome style="display: none;">
-                    <img class="vgfullscreen" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgfullscreenhome
-                      src="assets/images/fullscreen.svg"/>
-                  </vg-controls>
-
-              <video #media [vgMedia]="media" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}video
-              poster="assets/images/loading.png"
-              playsinline webkit-playsinline>
-              <source type="video/mp4" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}source>
-              </video>
-              </vg-player>
-             </div>
-             <span class="topostdetailvideo" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
-            </div>
-          <ion-row class="bottom-row">
-            <ion-col size="2.25" (click)="like(post.destDid, post.channelId, post.postId)">
-              <img [src]="likeMap[post.postId] === 'like' ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
-              <img [src]="likeMap[post.postId] === 'like' ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
-              <ion-label [class.liked]="likeMap[post.postId] === 'like' ">{{  likeNumMap[post.postId] }}</ion-label>
-            </ion-col>
-            <ion-col size="2.25" (click)="showComment(post.destDid, post.channelId, post.postId)">
-              <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
-              <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode">
-              <ion-label>{{ commentNumMap[post.postId] }}</ion-label>
-            </ion-col>
-            <!-- <ion-col (click)="clickDashang(post.destDid, post.channelId, post.postId)" *ngIf="isAndroid">
-              <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
-              <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
-            </ion-col> -->
-            <ion-col>
-              <ion-label class="status" *ngIf="post.status === 2" style="right: -5px;">{{ 'common.edit' | translate}} </ion-label>
-              <ion-label class="status" *ngIf="post.status === 11" style="right: -5px;">{{ 'common.sending' | translate}} </ion-label>
-              <ion-label class="status" *ngIf="post.status === 12" style="right: -5px;">{{ 'common.sendFail' | translate}} </ion-label>
-            </ion-col>
-          </ion-row>
-
-         <ion-row *ngIf="post.status === 12" class="bottom-row">
-            <ion-col size="2.25">
-            </ion-col>
-            <ion-col size="2.25">
-            </ion-col>
-            <ion-col>
-            </ion-col>
-            <ion-col>
-                <ion-icon  style="right: 66px;top:0px;position:absolute; color: #7171bd;" name="refresh"></ion-icon>
-                <!-- <ion-label style="
-                position:absolute;
-                right: 1px;
-                font-size: 13px;
-                font-weight: 500;
-                color: #7171bd;" (click)="retry(post.nodeId, post.channel_id, post.id)">{{ "common.retry" | translate }} </ion-label> -->
-                <ion-button (click)="retry(post.destDid, post.channelId, post.postId)" class="retrybutton">{{ "common.retry" | translate }}</ion-button>
-            </ion-col>
-          </ion-row>
+      <!--like comment tip-->
+      <ion-row class="bottom-row">
+        <ion-col size="1"></ion-col>
+        <ion-col size="2.25" (click)="like(post.destDid, post.channelId, post.postId)">
+          <img [src]="likeMap[post.postId] === 'like' ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
+          <img [src]="likeMap[post.postId] === 'like' ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
+          <ion-label [class.liked]="likeMap[post.postId] === 'like' ">{{  likeNumMap[post.postId] }}</ion-label>
+        </ion-col>
+        <ion-col size="2.25" (click)="showComment(post.destDid, post.channelId, post.postId)">
+          <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
+          <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode">
+          <ion-label>{{ commentNumMap[post.postId] }}</ion-label>
+        </ion-col>
+        <!-- <ion-col (click)="clickDashang(post.destDid, post.channelId, post.postId)" *ngIf="isAndroid">
+          <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
+          <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
+        </ion-col> -->
+        <ion-col>
+          <ion-label class="status" *ngIf="post.status === 2" style="right: 10px;">{{ 'common.edit' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="post.status === 11" style="right: 10px;">{{ 'common.sending' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="post.status === 12" style="right: 10px;">{{ 'common.sendFail' | translate}} </ion-label>
         </ion-col>
       </ion-row>
       <ion-ripple-effect></ion-ripple-effect>
