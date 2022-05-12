@@ -152,7 +152,7 @@ export class HiveService {
   async getVault(userDid: string): Promise<VaultServices> {
     let vault = this.values[userDid]
 
-    if (vault == undefined) {
+    if (vault === undefined) {
       vault = await this.creatVault(userDid)
     }
     Logger.log(TAG, 'Get vault from', 'vault is', this.vault)
@@ -164,7 +164,7 @@ export class HiveService {
       try {
         const userDid = (await this.dataHelper.getSigninData()).did
         let vault = this.values[userDid]
-        if (vault == undefined) {
+        if (vault === undefined) {
           vault = await this.creatVault(userDid)
         }
         Logger.log(TAG, 'Create vault is', this.vault);
@@ -249,7 +249,7 @@ export class HiveService {
   async downloadEssAvatarTransactionId() {
     try {
       const avatarParam = this.avatarParam
-      if (avatarParam === null || avatarParam == undefined) {
+      if (avatarParam === null || avatarParam === undefined) {
         return
       }
       let userDid = (await this.dataHelper.getSigninData()).did
