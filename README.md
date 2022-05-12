@@ -33,8 +33,6 @@ An initial **technical preview version v2.0.9** has been released with the follo
 
 - [x] Pushed posts/comments to dApp
 
-- [x] Notifications
-
 - [x] Tip for feeds
 
 - [x] Post content with images
@@ -43,19 +41,7 @@ An initial **technical preview version v2.0.9** has been released with the follo
 
 - [x] Connect wallet
 
-- [x] Create collectibles
-
-- [x] Sell collectibles
-
-- [x] Buy collectibles
-
-- [x] Cancel the sale of collectibles
-
-- [x] Update the price of collectibles
-
-- [x] Transfer of collectibles
-
-- [x] Destroy collectibles
+- [ ] Notifications
 
 - [ ] Private/Payment channels [ **IN PLAN** ]
 
