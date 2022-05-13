@@ -100,7 +100,7 @@ export class MyApp {
     this.initializeApp();
     this.initProfileData();
     this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async () => {
-
+      this.initProfileData();
       try {
         await this.hiveVaultController.prepareConnection();
         await this.initRegisterScript(true)
