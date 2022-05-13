@@ -100,14 +100,20 @@ export class MyApp {
     this.initializeApp();
     this.initProfileData();
     this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async () => {
-      this.initProfileData();
       try {
         await this.hiveVaultController.prepareConnection();
-        await this.initRegisterScript(true)
+        await this.initRegisterScript(true);
       } catch (error) {
         Logger.error(TAG, error)
       }
+
     });
+
+
+    this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
+      this.getAvatar();
+      this.initProfileData();
+    })
 
     this.events.subscribe(FeedsEvent.PublishType.walletConnectedRefreshPage, (walletAccount) => {
       this.updateWalletAddress(walletAccount);
@@ -495,10 +501,6 @@ export class MyApp {
       },
       error => { },
     );
-
-    this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
-      this.getAvatar();
-    })
   }
 
   async getAvatar() {
@@ -540,6 +542,7 @@ export class MyApp {
     this.events.unsubscribe(FeedsEvent.PublishType.openPayPrompt);
     this.events.unsubscribe(FeedsEvent.PublishType.signinSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.initHiveData);
+    this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
   }
 
   profiledetail() {
