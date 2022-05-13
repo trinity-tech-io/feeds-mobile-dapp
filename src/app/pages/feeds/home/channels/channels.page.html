@@ -46,15 +46,10 @@
         </ion-button>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="!followStatus">
+    <!-- <ion-row *ngIf="!followStatus">
       <ion-col size="12" style="display: flex;
       justify-content: center;
       margin-top: 70px;">
-       <!-- <div class="bigCircle">
-           <div class="smallCircle">
-              <img src="./assets/images/lock.svg"/>
-           </div>
-       </div> -->
        <img src="./assets/images/unSubscribe.svg">
       </ion-col>
 
@@ -62,20 +57,20 @@
         <h1>{{ "ChannelsPage.noSubscription" | translate }}</h1>
         <p>{{ "ChannelsPage.subscribeChannel"|translate }}</p>
       </ion-col>
-    </ion-row>
+    </ion-row> -->
 
     <ion-ripple-effect></ion-ripple-effect>
   </ion-grid>
 
   <!-- EMPTY CONTAINER -->
-  <div *ngIf="followStatus&&postList.length === 0" class="empty-container">
+  <div *ngIf="postList.length === 0" class="empty-container">
     <img src="./assets/images/empty-feeds-icon.svg">
     <h1>{{ 'ChannelsPage.allempty' | translate }}</h1>
     <p>{{ 'ChannelsPage.emptyDes' | translate }}</p>
   </div>
 
   <!-- POSTS -->
-  <div *ngIf="followStatus&&postList.length > 0">
+  <div *ngIf="postList.length > 0">
     <div  *ngFor="let post of postList let i=index" >
     <ion-grid style="padding-top:5px" class="post-grid ion-activatable ripple channelgird" [class.darkPostGrid]="theme.darkMode" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}>
       <ion-row class="post-row">

@@ -24,7 +24,7 @@ const routes: Routes = [
       './pages/feeds/profileimage/profileimage.module#ProfileimagePageModule',
   },
   {
-    path: 'channels/:destDid/:channelId',
+    path: 'channels/:destDid/:channelId/:isSubscribed',
     loadChildren:
       './pages/feeds/home/channels/channels.module#ChannelsPageModule',
   },
@@ -176,11 +176,11 @@ const routes: Routes = [
   },
   {
     path: 'hive-interface-test',
-    loadChildren: () => import('./pages/hive-interface-test/hive-interface-test.module').then( m => m.HiveInterfaceTestPageModule)
+    loadChildren: () => import('./pages/hive-interface-test/hive-interface-test.module').then(m => m.HiveInterfaceTestPageModule)
   },
   {
     path: 'galleriahive',
-    loadChildren: () => import('./pages/galleriahive/galleriahive.module').then( m => m.GalleriahivePageModule)
+    loadChildren: () => import('./pages/galleriahive/galleriahive.module').then(m => m.GalleriahivePageModule)
   },
 ];
 

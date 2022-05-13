@@ -232,4 +232,16 @@ export class HiveVaultApi {
   querySelfLikeById(targetDid: string, channelId: string, likeId: string) {
     return this.hiveVaultHelper.querySelfLikeById(targetDid, channelId, likeId);
   }
+
+  queryPublicPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
+    return this.hiveVaultHelper.queryPublicPostById(targetDid, channelId, postId);
+  }
+
+  queryPublicPostByChannelId(targetDid: string, channelId: string): Promise<any> {
+    return this.hiveVaultHelper.queryPublicPostByChannelId(targetDid, channelId);
+  }
+
+  queryPublicPostRangeOfTime(targetDid: string, channelId: string, start: number, end: number): Promise<any> {
+    return this.hiveVaultHelper.queryPublicPostRangeOfTime(targetDid, channelId, start, end);
+  }
 }

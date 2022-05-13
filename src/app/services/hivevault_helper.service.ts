@@ -2056,7 +2056,7 @@ export class HiveVaultHelper {
         });
     }
 
-    queryPublicPostById(targetDid: string, channelId: string, postId: string) {
+    queryPublicPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
         return this.callQueryPublicPostById(targetDid, channelId, postId);
     }
     /** query public post data by id end*/
@@ -2122,7 +2122,7 @@ export class HiveVaultHelper {
         })
     }
 
-    private callQueryPublicPostRangeOfTimeScripting(targetDid: string, channelId: string, start: number, end: number) {
+    private callQueryPublicPostRangeOfTime(targetDid: string, channelId: string, start: number, end: number) {
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await this.callScript(targetDid, HiveVaultHelper.QUERY_PUBLIC_SOMETIME_POST, { "channel_id": channelId, "start": start, "end": end });
@@ -2134,8 +2134,8 @@ export class HiveVaultHelper {
         })
     }
 
-    queryPublicPostRangeOfTimeScripting(targetDid: string, channelId: string, start: number, end: number): Promise<any> {
-        return this.callQueryPublicPostRangeOfTimeScripting(targetDid, channelId, start, end);
+    queryPublicPostRangeOfTime(targetDid: string, channelId: string, start: number, end: number): Promise<any> {
+        return this.callQueryPublicPostRangeOfTime(targetDid, channelId, start, end);
     }
     /** query public post data range of time end */
 

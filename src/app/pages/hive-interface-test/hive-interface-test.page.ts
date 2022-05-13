@@ -401,4 +401,16 @@ export class HiveInterfaceTestPage implements OnInit {
 
     // this.tmpPostList = postList;
   }
+
+  // queryPublicPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
+  //   return this.hiveVaultController.queryPublicPostById(targetDid, channelId, postId);
+  // }
+
+  // queryPublicPostByChannelId(targetDid: string, channelId: string): Promise<any> {
+  //   return this.hiveVaultHelper.queryPublicPostByChannelId(targetDid, channelId);
+  // }
+
+  // queryPublicPostRangeOfTime(targetDid: string, channelId: string, start: number, end: number): Promise<any> {
+  //   return this.hiveVaultHelper.queryPublicPostRangeOfTime(targetDid, channelId, start, end);
+  // }
 }

@@ -227,8 +227,8 @@ export class SearchPage implements OnInit {
   subscribe(destDid: string, id: string) {
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
-    this.native.toastWarn('common.connectionError');
-    return;
+      this.native.toastWarn('common.connectionError');
+      return;
     }
 
     //TODO
@@ -335,7 +335,7 @@ export class SearchPage implements OnInit {
 
   navTo(destDid: string, channelId: string) {
     this.removeSubscribe();
-    this.native.navigateForward(['/channels', destDid, channelId], '');
+    this.native.navigateForward(['/channels', destDid, channelId, false], '');
   }
 
   parseChannelAvatar(avatar: string): string {
@@ -356,8 +356,8 @@ export class SearchPage implements OnInit {
   discover() {
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
-    this.native.toastWarn('common.connectionError');
-    return;
+      this.native.toastWarn('common.connectionError');
+      return;
     }
     this.native.go('discoverfeed');
   }
@@ -449,7 +449,19 @@ export class SearchPage implements OnInit {
     //Show channel info dialog
     // this.hiveVaultController.subscribeChannel(feedsUrl.destDid, feedsUrl.channelId, displayName);
 
-    this.showSubscribePrompt(feedsUrl);
+    // this.showSubscribePrompt(feedsUrl);
+    // this.zone.run(async () => {
+    await this.native.showLoading("common.waitMoment");
+    await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+    const subscriptionChannels: FeedsData.SubscribedChannelV3[] = await this.hiveVaultController.getSelfSubscriptionChannel(feedsUrl.destDid);
+
+    const readyCheck: FeedsData.SubscribedChannelV3 = { destDid: feedsUrl.destDid, channelId: feedsUrl.channelId };
+    const isSubscribed = _.includes(subscriptionChannels, readyCheck);
+    // await this.hiveVaultController.queryRemoteChannelPostWithTime(feedsUrl.destDid, feedsUrl.channelId, UtilService.getCurrentTimeNum());
+    this.native.hideLoading();
+    this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId, isSubscribed], '');
+    // });
+
   }
 
   loadData(events: any) {
@@ -1115,7 +1127,7 @@ export class SearchPage implements OnInit {
     this.confirmdialog = await this.popupProvider.showConfirmdialog(
       this,
       'common.confirmDialog',
-      this.translate.instant('SearchPage.follow')+" "+ channelName + '?',
+      this.translate.instant('SearchPage.follow') + " " + channelName + '?',
       this.cancelButton,
       this.okButton,
       './assets/images/finish.svg',

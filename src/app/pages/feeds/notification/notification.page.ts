@@ -175,8 +175,8 @@ export class NotificationPage {
 
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
-    this.native.toastWarn('common.connectionError');
-    return;
+      this.native.toastWarn('common.connectionError');
+      return;
     }
 
     let nodeId = notification.details.nodeId;
@@ -196,7 +196,7 @@ export class NotificationPage {
   }
   navToChannel(destDid: string, channelId: string) {
     this.removeEvent();
-    this.native.navigateForward(['/channels', destDid, channelId], '');
+    this.native.navigateForward(['/channels', destDid, channelId, true], '');
   }
 
   navToPostDetail(nodeId: string, channelId: number, postId: number) {
@@ -313,8 +313,8 @@ export class NotificationPage {
 
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
-    this.native.toastWarn('common.connectionError');
-    return;
+      this.native.toastWarn('common.connectionError');
+      return;
     }
 
     this.removeEvent();

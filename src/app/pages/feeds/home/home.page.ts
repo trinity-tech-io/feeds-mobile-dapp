@@ -661,7 +661,7 @@ export class HomePage implements OnInit {
   navTo(destDid: string, channelId: string, postId: number) {
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.clearData();
-    this.native.navigateForward(['/channels', destDid, channelId], "");
+    this.native.navigateForward(['/channels', destDid, channelId, true], '');
   }
 
   async navToPostDetail(

@@ -168,6 +168,20 @@ export class FeedsSqliteHelper {
     });
   }
 
+  queryChannelPostDataByTime(dbUserDid: string, channelId: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_POST + ' WHERE channel_id=? and updated_at>=? and updated_at<=?  ORDER BY updated_at Desc limit ' + this.limitNum;
+        const result = await this.executeSql(dbUserDid, statement, [channelId, start, end]);
+        const postList = this.parsePostData(result);
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'query post data by time error', error);
+        reject(error);
+      }
+    });
+  }
+
   queryPostDataByID(dbUserDid: string, postId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {

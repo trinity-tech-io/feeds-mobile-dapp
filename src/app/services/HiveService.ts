@@ -105,7 +105,7 @@ export class HiveService {
     }
     catch (error) {
       Logger.error(TAG, 'Create vault error:', error);
-      this.events.publish(FeedsEvent.PublishType.authEssentialFail,{type:1});
+      this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
       throw error
     }
   }
@@ -224,7 +224,7 @@ export class HiveService {
         resolve()
       } catch (error) {
         Logger.error(TAG, 'register error:', error)
-        this.events.publish(FeedsEvent.PublishType.authEssentialFail,{type:0})
+        this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 0 })
         reject(error)
       }
     })

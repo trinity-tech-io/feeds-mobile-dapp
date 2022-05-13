@@ -47,7 +47,7 @@ export class ChannelsPage implements OnInit {
   public channelOwner: string = '';
   public channelDesc: string = '';
   public channelSubscribes: number = 0;
-  public postList: any = [];
+  public postList: FeedsData.PostV3[] = [];
 
   public channelId: string = "0";
 
@@ -129,6 +129,7 @@ export class ChannelsPage implements OnInit {
   private commentNumMap: any = {};
   private isLoadingLikeMap: any = {};
   private confirmdialog = null;
+  private isSubscribed = "false";
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -207,12 +208,13 @@ export class ChannelsPage implements OnInit {
     this.acRoute.params.subscribe(data => {
       this.destDid = data.destDid;
       this.channelId = data.channelId;
+      this.isSubscribed = data.isSubscribed;
     });
   }
 
   async init() {
     await this.initChannelData();
-    this.initRefresh();
+    await this.initRefresh();
     //this.initStatus(this.postList);
   }
 
@@ -229,7 +231,11 @@ export class ChannelsPage implements OnInit {
   }
 
   async initRefresh() {
-    this.totalData = await this.sortChannelList();
+    if (this.isSubscribed == "false") {
+      this.totalData = await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
+    } else {
+      this.totalData = await this.sortChannelList();
+    }
     this.startIndex = 0;
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -254,10 +260,14 @@ export class ChannelsPage implements OnInit {
 
   async refreshChannelList() {
     if (this.startIndex === 0) {
-      this.initRefresh();
+      await this.initRefresh();
       return;
     }
-    this.totalData = await this.sortChannelList();
+    if (this.isSubscribed == "false") {
+      this.totalData = await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
+    } else {
+      this.totalData = await this.sortChannelList();
+    }
 
     if (this.totalData.length === this.postList.length) {
       this.postList = this.totalData;
@@ -560,13 +570,18 @@ export class ChannelsPage implements OnInit {
     try {
       this.images = {};
       this.startIndex = 0;
-      //TODO
-      this.dataHelper.cleanCachedComment();
-      this.dataHelper.cleanCacheLikeNum();
-      this.dataHelper.cleanCachedLikeStatus();
-      await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
-      await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
-      await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
+      // await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
+      if (this.isSubscribed == "false") {
+        await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
+        //public TODO comment &  like
+      } else {
+        this.dataHelper.cleanCachedComment();
+        this.dataHelper.cleanCacheLikeNum();
+        this.dataHelper.cleanCachedLikeStatus();
+        await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
+        await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
+        await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
+      }
       this.init();
       event.target.complete();
     } catch (error) {
@@ -716,7 +731,12 @@ export class ChannelsPage implements OnInit {
           let destDid: string = arr[0];
           let postId: string = arr[2];
 
-          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let posts = _.filter(this.postList, (post: FeedsData.PostV3) => {
+            return destDid == post.destDid && postId == post.postId;
+          })
+
+          const post: FeedsData.PostV3 = posts[0];
+          // let post = await this.dataHelper.getPostV3ById(destDid, postId);
           let mediaDatas = post.content.mediaData;
           const elements = mediaDatas[0];
           //缩略图

@@ -803,7 +803,7 @@ export class PostdetailPage implements OnInit {
   }
 
   navTo(destDid: string, channelId: string) {
-    this.native.navigateForward(['/channels', destDid, channelId], '');
+    this.native.navigateForward(['/channels', destDid, channelId, true], '');
   }
 
   async checkCommentIsMine(comment: FeedsData.CommentV3) {

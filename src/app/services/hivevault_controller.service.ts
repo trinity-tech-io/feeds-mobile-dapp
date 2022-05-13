@@ -224,23 +224,58 @@ export class HiveVaultController {
     });
   }
 
-  getSubscriptionChannelById(targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
+  //TODO user link
+  getSubscriptionChannelById(targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      // try {
+      //   const result = await this.hiveVaultApi.querySubscrptionInfoByChannelId(targetDid, channelId);
+      //   Logger.log(TAG, 'Query subscription info result is', result);
+      //   if (result) {
+      //     const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
+
+      //     if (!subscriptions || subscriptions.length == 0) {
+      //       resolve(null);
+      //       return;
+      //     }
+      //     await this.dataHelper.addSubscribedChannels(subscriptions);
+      //     resolve(subscriptions);
+      //   } else {
+      //     resolve(null);
+      //   }
+      // } catch (error) {
+      //   Logger.error(TAG, error);
+      //   reject(error);
+      // }
+    });
+  }
+
+  getSelfSubscriptionChannel(targetDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.querySubscrptionInfoByChannelId(targetDid, channelId);
-        Logger.log(TAG, 'Query subscription info result is', result);
-        if (result) {
-          const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
+        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const result = await this.hiveVaultApi.querySubscriptionInfoByUserDID(targetDid, selfDid);
+        Logger.log(TAG, 'Query user subscription info result is', result);
 
-          if (!subscriptions || subscriptions.length == 0) {
-            resolve(null);
-            return;
-          }
-          this.dataHelper.addSubscribedChannel(subscriptions[0]);
-          resolve(subscriptions[0]);
-        } else {
-          resolve(null);
+        if (!result) {
+          resolve([]);
+          return;
         }
+        const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
+        if (!subscriptions || subscriptions.length == 0) {
+          resolve([]);
+          return;
+        }
+        let subscibedChannelList: FeedsData.SubscribedChannelV3[] = [];
+        for (let index = 0; index < subscriptions.length; index++) {
+          const subscription = subscriptions[index];
+          const subscibedChannel: FeedsData.SubscribedChannelV3 = {
+            destDid: subscription.destDid,
+            channelId: subscription.channelId
+          }
+          subscibedChannelList.push(subscibedChannel);
+        }
+        this.dataHelper.addSubscribedChannels(subscibedChannelList);
+        resolve(subscibedChannelList);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
@@ -1340,6 +1375,30 @@ export class HiveVaultController {
     });
   }
 
+  queryRemoteChannelPostWithTime(destDid: string, channelId: string, endTime: number): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryPublicPostRangeOfTime(destDid, channelId, 0, endTime);
+        if (!result) {
+          resolve([]);
+          return;
+        }
+        console.log('-----------queryRemoteChannelPostWithTime----------', result);
+        const postList = HiveVaultResultParse.parsePostResult(destDid, result.find_message.items);
+        // const postList = await this.handleSyncPostResult(destDid, channelId, result);
+        if (!postList || postList.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'Query channel post with time error', error);
+        reject(error);
+      }
+    });
+  }
+
   queryLocalPostWithTime() {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1485,6 +1544,25 @@ export class HiveVaultController {
     });
   }
 
+  loadPublicChannelPostMoreData(useRemoteData: boolean, destDid: string, channelId: string, originPostList: FeedsData.PostV3[]): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const list = await this._loadPublicChannelPostMoreData(useRemoteData, destDid, channelId, originPostList) || [];
+        let postList: FeedsData.PostV3[] = [];
+        if (list && list.length > 0) {
+          postList = _.unionWith(originPostList, list, _.isEqual);
+
+          postList = _.sortBy(postList, (item: FeedsData.PostV3) => {
+            return -Number(item.updatedAt);
+          });
+        }
+        resolve(postList);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   private _loadPostMoreData(useRemoteData: boolean, postList: FeedsData.PostV3[]): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1509,6 +1587,30 @@ export class HiveVaultController {
     });
   }
 
+  private _loadPublicChannelPostMoreData(useRemoteData: boolean, destDid: string, channelId: string, postList: FeedsData.PostV3[]): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let endTime = UtilService.getCurrentTimeNum();
+        if (postList && postList.length > 0) {
+          const minUpdatePost = _.minBy(postList, (item) => {
+            return item.updatedAt;
+          });
+          endTime = minUpdatePost.updatedAt || endTime;
+        }
+
+        let list = [];
+        if (useRemoteData) {
+          list = await this.queryRemoteChannelPostWithTime(destDid, channelId, endTime) || [];
+        } else {
+          list = await this.loadLocalChannelPostData(channelId, endTime) || [];
+        }
+        resolve(list);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   queryLikeByRangeOfTime(targetDid: string, channelId: string, postId: string, star: number, end: number) {
     return this.hiveVaultApi.queryLikeByRangeOfTime(targetDid, channelId, postId, star, end)
   }
@@ -1520,4 +1622,10 @@ export class HiveVaultController {
   loadMoreLocalData(end: number): Promise<FeedsData.PostV3[]> {
     return this.dataHelper.queryPostDataByTime(0, end);
   }
+
+  loadLocalChannelPostData(channelId: string, end: number): Promise<FeedsData.PostV3[]> {
+    return this.dataHelper.queryChannelPostDataByTime(channelId, 0, end);
+  }
+
+
 }

@@ -349,7 +349,7 @@ export class IntentService {
     this.languageService.setCurLang(currentLang);
   }
 
-  async createShareLink(destDid: string, channelId: string, postId: string,ownerDid: string,channel: FeedsData.ChannelV3): Promise<string> {
+  async createShareLink(destDid: string, channelId: string, postId: string, ownerDid: string, channel: FeedsData.ChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
 
@@ -395,7 +395,7 @@ export class IntentService {
     });
   }
 
-  createSharePostTitle(destDid: string, channelId: string, postId: string,postText: string): string {
+  createSharePostTitle(destDid: string, channelId: string, postId: string, postText: string): string {
     // const key = this.dataHelper.getKey(destDid, channelId, postId, 0);
     // const post = this.dataHelper.getPost(key);
     // const content = post.content || null;
@@ -412,19 +412,19 @@ export class IntentService {
     return this.translate.instant("common.sharePasar");
   }
 
-  createShareChannelTitle(destDid: string, channelId: string,channel: FeedsData.ChannelV3): string {
+  createShareChannelTitle(destDid: string, channelId: string, channel: FeedsData.ChannelV3): string {
     // const key = this.dataHelper.getKey(destDid, channelId, "0", 0);
     // const channel = this.dataHelper.getChannel(key);
 
     const channelName = channel.name || '';
 
-    if (channelName != ''){
-     let code = this.languageService.getCurLang() || "en";
-     let des = ""
-      if(code === "zh"){
-        des = "这是我从Feeds(@ElastosFeeds) 分享的微频 '"+channelName+"'，请订阅后继续阅读 ";
-      }else{
-        des =  "Check out this channel '" + channelName + "' on Feeds(@ElastosFeeds) ";
+    if (channelName != '') {
+      let code = this.languageService.getCurLang() || "en";
+      let des = ""
+      if (code === "zh") {
+        des = "这是我从Feeds(@ElastosFeeds) 分享的微频 '" + channelName + "'，请订阅后继续阅读 ";
+      } else {
+        des = "Check out this channel '" + channelName + "' on Feeds(@ElastosFeeds) ";
       }
       return des;
     }
@@ -495,7 +495,7 @@ export class IntentService {
     }
 
     if (parseInt(channelId) != 0) {
-      this.native.getNavCtrl().navigateForward(['/channels', serverNodeId, channelId]);
+      this.native.getNavCtrl().navigateForward(['/channels', serverNodeId, channelId, false]);
       return;
     }
 
@@ -511,7 +511,7 @@ export class IntentService {
       return;
     }
 
-   await this.native.showLoading("common.parseing", () => { }, 30000);
+    await this.native.showLoading("common.parseing", () => { }, 30000);
     try {
       const orderInfo = await this.nftContractHelperService.getOrderInfo(orderId);
 

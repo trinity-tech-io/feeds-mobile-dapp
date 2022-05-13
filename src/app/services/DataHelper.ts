@@ -3492,6 +3492,18 @@ export class DataHelper {
     })
   }
 
+  queryChannelPostDataByTime(channelId: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        let list = await this.sqliteHelper.queryChannelPostDataByTime(selfDid, channelId, start, end) || [];
+        resolve(list);
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
   addComment(newComment: FeedsData.CommentV3) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -4080,5 +4092,10 @@ export class DataHelper {
   getSyncHiveData() {
     return this.syncHiveData;
   }
+
+
+  //API
+  // addPosts(postList: FeedsData.PostV3[], useCache: boolean, usePersistence: boolean) {
+  // }
 
 }
