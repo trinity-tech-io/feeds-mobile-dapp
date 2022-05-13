@@ -39,7 +39,6 @@ export class AboutPage implements OnInit {
       this.translate.instant('AboutPage.about'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   gotoWebsite() {

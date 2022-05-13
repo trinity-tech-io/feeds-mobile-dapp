@@ -1,12 +1,12 @@
 <app-titlebar></app-titlebar>
-<!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
-<ion-content>
-    <ion-grid [class.dark-container]="theme.darkMode">
-        <!-- <ion-card>
-            <img src="assets/images/feeds-logo.svg">
-            <ion-card-title>{{version}}</ion-card-title>
-        </ion-card> -->
-
+<ion-content class="bg" [class.dark-container]="theme.darkMode">
+    <ion-grid  class="card">
+        <img src="./assets/images/Feeds-logo-signin.png"/>
+    </ion-grid>
+    <div class="kuang">
+        <div class="border-radius-40">
+        </div>
+        <ion-content>
         <ion-list>
             <ion-row class="details" (click)="gotoWebsite()">
                 <h4>{{'AboutPage.website'|translate}}</h4>
@@ -56,5 +56,6 @@
                 <p *ngIf="currentLanguage!='zh'">https://github.com/elastos-trinity/feeds-manual-docs/blob/master/Feeds_Manual_en.md</p>
             </ion-row> -->
         </ion-list>
-    </ion-grid>
+    </ion-content>
+    </div>
 </ion-content>

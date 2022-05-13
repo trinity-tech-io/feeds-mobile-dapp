@@ -449,7 +449,6 @@ export class PostdetailPage implements OnInit {
       this.translate.instant('PostdetailPage.postview'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   getContentText(content: string): string {

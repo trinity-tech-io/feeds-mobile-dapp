@@ -1,3 +1,22 @@
+.bg{
+    --background:linear-gradient(180deg, #000000 0%, #A067FF 99.09%);
+}
+.kuang{
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 300px);
+    background: #161c24;
+}
+
+.border-radius-40{
+    position: absolute;
+    width: 100%;
+    height: 34px;
+    border-radius: 40px 40px 0px 0px;
+    background: #161c24;
+    z-index: 999;
+    top: -34px;
+}
 .container {
   padding: 20px;
   .elaAdressRow{
@@ -27,30 +46,6 @@
     text-align: center;
     color:#7624fe;
 }
-.bigCircle{
- margin:0 auto;
- width: 203px;
- height: 203px;
- background-color:#F0E8FF;
- border-radius:50%;
- position: relative;
-}
-
-.smallCircle {
-  position:absolute;
-  left:50px;
-  top:50px;
-  width: 103px;
-  height: 103px;
-  background-color:#D8C1FF;
-  border-radius:50%;
-
-  img{
-    position: absolute;
-    top: 14px;
-    left: 22px;
-    }
- }
 
 .detail-row {
     margin-left: 5px;
@@ -58,6 +53,10 @@
 
     padding-top: 10px;
     padding-bottom: 0px;
+
+    .left-col h1 {
+        font-size: 25px;
+    }
 
     .qr-container {
       margin-top: 10px;
@@ -68,7 +67,11 @@
       .qrcode {
         padding: 15px;
         background: #f0f0f0;
-        border-radius: 17px;
+        border-radius: 20px;
+        border: 2px solid transparent;
+        background-clip: padding-box,border-box;
+        background-origin: padding-box,border-box;
+        background-image: linear-gradient(90deg,#161c24,#161c24),linear-gradient(90deg,#7624fe,#368bff);
       }
     }
  }
@@ -77,86 +80,88 @@
     border-bottom: none;
  }
 
-.channel-header {
+ .channel-header {
+    position: relative;
+    width: 100%;
+    height: 300px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px 20px 0;
-    padding-right:20px;
-
+    // padding: 0px 0px 0;
+    // padding-right:20px;
+    padding: 0px;
+    .cardImg{
+    width: 100%;
+    display: flex;
+    justify-content: center;
     .feedAvatar {
+        width: 90px;
+        height: 90px;
         display: flex;
         align-items: center;
+        justify-content: center;
         position: relative;
-        border-radius: 50%;
-        width: 110px;
-        height: 110px;
-        background-color: rgba(255, 255, 255, 0);
-        margin: 0 auto;
-        border: 3px solid #a067ff;
+        border-radius: 60px;
+        background-color: #161c24;
+        border: 2px solid transparent;
+        background-clip: padding-box,border-box;
+        background-origin: padding-box,border-box;
+        background-image: linear-gradient(90deg,#161c24,#161c24),linear-gradient(90deg,#7624fe,#368bff);
 
         img {
-            width:100px;
-            height:100px;
-            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            border-radius: 60px;
+            -o-object-fit: cover;
             object-fit: cover;
-            margin: 0 auto;
-        }
-
-        .offline {
-            width: 10px;
-            height: 10px;
-            bottom: 3px;
-            right: 4px;
-            border: 2px solid #f8f8ff;
-            border-radius: 100%;
+            overflow: hidden;
         }
     }
-
+    }
     .feedName{
-    font-size: 20px;
-    font-weight: bold;
-    font-stretch: normal;
+    font-size: 25px;
+    font-weight: 700;
     font-style: normal;
     text-align:center;
     color: #000;
     margin-top: 5px;
-    }
+    font-weight: 700;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+   }
 
     .channelOwner{
-    font-size: 12px;
-    font-weight: bold;
-    font-stretch: normal;
+    font-size: 15px;
+    font-weight: 700;
     font-style: normal;
     text-align:center;
-    color: #9ca0a4;
+    color: #C4C4C4;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
     }
 
     .channeldes{
-        font-size: 12px;
-        font-weight: normal;
-        font-stretch: normal;
+        font-size: 15px;
+        font-weight: 400;
         font-style: normal;
         line-height:1.5;
         text-align: center;
         color: #000;
-        width: 240px;
+        height: 36px;
         margin: 0 auto;
         margin-top:4px;
-        margin-bottom:21px;
     }
 
     .channelSubscribes{
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 700;
-        font-stretch: normal;
         font-style: normal;
         letter-spacing: normal;
         text-align: center;
-        color: #9ca0a4;
-        border-radius: 10px;
-        border: 1px solid #f5f4f8;
+        color: #FFFFFF;
         display: inline-block;
         padding: 6px 10px 6px 10px;
         margin-right: 15px;
@@ -169,13 +174,12 @@
         width: 100%;
 
         ion-button {
-            width: 94px;
-            height: 30px;
-            --border-radius: 10px;
+            width: 124px;
+            height: 35px;
+            --border-radius: 20px;
             --box-shadow: none;
-            --background:#7624fe;
-            --background-activated:#7624fe;
-
+            --background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+            --background-activated: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
             ion-label {
               font-size: 14px;
               font-weight: bold;
@@ -188,19 +192,11 @@
         }
 
         .unsubscribed {
-
-            --border-width: 1.5px;
-            --border-style: solid;
-            --border-color: #7624fe;
-            --background: transparent;
-            --background-activated: transparent;
-            --background-activated-opacity: none;
-            --background-focused: transparent;
-            --background-focused-opacity: none;
-
-            ion-label {
-                color:#7624fe !important;
-            }
+            margin-top:10px;
+            width:124px;
+            height: 35px;
+            line-height: 31px;
+            margin: 0px
         }
 
         .subscribed{
@@ -213,7 +209,7 @@
             --background: #a067ff;
         }
     }
- }
+}
 }
 
 .edit{
@@ -250,21 +246,6 @@ ion-button {
     }
 }
 
-.unsubscribed {
-
-    --border-width: 1.5px;
-    --border-style: solid;
-    --border-color: #7624fe;
-    --background: transparent;
-    --background-activated: transparent;
-    --background-activated-opacity: none;
-    --background-focused: transparent;
-    --background-focused-opacity: none;
-
-    ion-label {
-        color:#7624fe !important;
-    }
-}
 
 .subscribed{
     ion-label {
@@ -295,12 +276,9 @@ ion-button {
         color:#fff;
     }
     .channeldes{
-        color:#fff;
+        color:#C4C4C4;
     }
 
-    .channelSubscribes{
-        border: 1px solid #2e2f4e;
-    }
    }
 
   .removeBorder {
