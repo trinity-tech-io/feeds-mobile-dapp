@@ -712,6 +712,7 @@ ion-row {
 
   .post-row {
     .img-col {
+      padding-left: 0px;
       display: flex;
       align-items: flex-start;
       justify-content: flex-start;
@@ -903,6 +904,7 @@ ion-row {
   }
 
   .postText{
+    padding-left: 0px;
     h2 {
       margin: 7.5px 0 10px;
       pre {

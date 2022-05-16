@@ -10,6 +10,7 @@ import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { UtilService } from './utilService';
 import { Events } from 'src/app/services/events.service';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 const TAG: string = 'AppService';
 @Injectable({
   providedIn: 'root',
@@ -25,7 +26,8 @@ export class AppService {
     public popupProvider: PopupProvider,
     private languageService: LanguageService, // private titleBarService: TitleBarService
     private dataHelper: DataHelper,
-    private events: Events
+    private events: Events,
+    private splashScreen: SplashScreen,
   ) { }
 
   init() {
@@ -70,6 +72,7 @@ export class AppService {
       UtilService.getCurrentTimeNum() > signInData.expiresTS
     ) {
       this.native.setRootRouter(['/signin']);
+      this.splashScreen.hide();
       return;
     }
 
@@ -79,6 +82,7 @@ export class AppService {
               //此处切换成galleriahive 页面
               this.events.publish(FeedsEvent.PublishType.signinSuccess);
               this.native.setRootRouter('galleriahive');
+              this.splashScreen.hide();
               return;
           }else{
             this.dataHelper.loadData("feeds.syncHiveData").then((syncHiveData: any)=>{
@@ -88,17 +92,20 @@ export class AppService {
                      this.dataHelper.setSyncHiveData(syncHiveData);
                      this.native.setRootRouter(['/tabs/home']);
                      this.feedService.updateSignInDataExpTime(signInData);
+                     this.splashScreen.hide();
                   }else{
                      if(syncHiveData.status === 6) {
                       this.dataHelper.setSyncHiveData(syncHiveData);
                       this.native.setRootRouter(['/tabs/home']);
                       this.feedService.updateSignInDataExpTime(signInData);
+                      this.splashScreen.hide();
                      }else {
                       let syncHiveData = {status: 0, describe: "GalleriahivePage.preparingData"}
                       this.dataHelper.setSyncHiveData(syncHiveData);
                       this.events.publish(FeedsEvent.PublishType.initHiveData);
                       this.native.setRootRouter(['/tabs/home']);
                       this.feedService.updateSignInDataExpTime(signInData);
+                      this.splashScreen.hide();
                      }
                   }
             })

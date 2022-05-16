@@ -1,1 +1,14 @@
-<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="26px" height="26.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M512 65.983C266.08 65.983 65.983 266.08 65.983 512c0 245.952 200.065 446.017 446.017 446.017S958.017 757.952 958.017 512c0-245.92-200.065-446.017-446.017-446.017z m0 828.034c-210.656 0-382.017-171.392-382.017-382.017 0-210.656 171.36-382.017 382.017-382.017 210.625 0 382.017 171.36 382.017 382.017 0 210.625-171.392 382.017-382.017 382.017zM512 352C423.776 352 352 423.776 352 512s71.774 160 160 160 160-71.774 160-160-71.776-160-160-160z" fill="#7624fe" /></svg>
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="1" y="1" width="18" height="18" rx="9" stroke="url(#paint0_linear_1094_3836)" stroke-width="2"/>
+<path d="M10 14C12.2091 14 14 12.2091 14 10C14 7.79086 12.2091 6 10 6C7.79086 6 6 7.79086 6 10C6 12.2091 7.79086 14 10 14Z" fill="url(#paint1_linear_1094_3836)"/>
+<defs>
+<linearGradient id="paint0_linear_1094_3836" x1="-8.88623e-08" y1="10.1639" x2="20" y2="10.1639" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7624FE"/>
+<stop offset="1" stop-color="#368BFF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_1094_3836" x1="6" y1="9.11815" x2="13.8763" y2="9.11815" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7624FE"/>
+<stop offset="1" stop-color="#368BFF"/>
+</linearGradient>
+</defs>
+</svg>

@@ -4,6 +4,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
 @Component({
   selector: 'app-disclaimer',
@@ -19,17 +20,20 @@ export class DisclaimerPage implements OnInit {
     private translate: TranslateService,
     public theme: ThemeService,
     private titleBarService: TitleBarService,
+    private splashScreen: SplashScreen
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   ionViewWillEnter() {
     this.initTitle();
     // this.styleObj['height'] = screen.height - 245 + 'px';
-    this.initTitle();
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() {
+    this.splashScreen.hide();
+  }
 
   private initTitle() {
     this.titleBarService.setTitle(
@@ -56,6 +60,6 @@ export class DisclaimerPage implements OnInit {
   }
 
   init() {
-    this.native.navigateForward('learnmore', {});
+    this.native.navigateForward(['/learnmore'], {});
   }
 }

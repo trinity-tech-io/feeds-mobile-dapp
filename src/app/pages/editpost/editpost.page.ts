@@ -164,7 +164,6 @@ export class EditPostPage implements OnInit {
       this.translate.instant('EditPostPage.title'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   async clickEidtPost() {

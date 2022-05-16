@@ -198,7 +198,6 @@ export class CreatenewpostPage implements OnInit {
       this.translate.instant('CreatenewpostPage.addingPost'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   post() {
@@ -509,6 +508,11 @@ export class CreatenewpostPage implements OnInit {
   openNft(that: any) {
     that.native.navigateForward(['profilenftimage'], { queryParams: { type: 'postImages' } });
   }
+
+  clickNFT(){
+   this.openNft(this);
+  }
+
 
   openGallery(that: any) {
     that.handleImgUri(0, that).then(async (imagePath: string) => {

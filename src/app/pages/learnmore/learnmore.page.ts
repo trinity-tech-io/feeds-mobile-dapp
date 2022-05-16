@@ -8,6 +8,7 @@ import { AppService } from '../../services/AppService';
 import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 
 @Component({
   selector: 'app-learnmore',
@@ -30,6 +31,7 @@ export class LearnmorePage implements OnInit {
     private translate: TranslateService,
     private event: Events,
     private titleBarService: TitleBarService,
+    private splashScreen: SplashScreen,
     public theme: ThemeService,
     public appService: AppService,
   ) {}
@@ -56,7 +58,9 @@ export class LearnmorePage implements OnInit {
     this.initTile();
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() {
+    this.splashScreen.hide();
+  }
 
   ionViewWillLeave() {}
 

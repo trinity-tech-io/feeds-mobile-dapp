@@ -13,7 +13,7 @@
       </ion-col>
     </ion-row>
   </ion-item>
-  <div (click)="newPostTextArea()" style="margin-left:15px;">
+  <div (click)="newPostTextArea()">
   <ion-textarea #newPostIonTextarea  autoGrow="true"  placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
   </ion-textarea>
   </div>
@@ -54,6 +54,7 @@ playsinline webkit-playsinline>
       <img id="camera" [src]="!theme.darkMode ? './assets/images/photo-camera.svg' : './assets/images/darkmode/photo-camera.svg'" (click)="addImg(1)"  *ngIf="posterImg ===''"/>
       <img id="selectvideo" [src]="!theme.darkMode ? './assets/images/file-video.svg' : './assets/images/darkmode/file-video.svg'" (click)="selectvideo()" *ngIf="imgUrl === ''" />
       <img id="videocam" [src]="!theme.darkMode ? './assets/images/video.svg' : './assets/images/darkmode/video.svg'" (click)="videocam()"*ngIf="imgUrl === ''"  />
+      <img  [src]="!theme.darkMode ? './assets/images/NFT.svg' : './assets/images/darkmode/NFT.svg'" (click)="clickNFT()"*ngIf="imgUrl === ''"  />
       <!-- <span class="nftButton" (click)="createNft()">NFT</span> -->
     </ion-col>
     <ion-col class="right-col" size="3.5">

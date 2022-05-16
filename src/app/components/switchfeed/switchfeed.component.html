@@ -2,7 +2,7 @@
 <div id="switchfeedMask" class="backdrop backdropdonghua" (click)="clickItem(null)" [class.darkbackdrop]="theme.darkMode" [class.lightbackdrop]="!theme.darkMode">
 </div>
 <div class="feedlist feedlistbackdropdonghua" [class.darkfeedlist]="theme.darkMode" [class.lightfeedlist]="!theme.darkMode">
-    <ion-grid >
+    <ion-grid>
       <ion-row *ngFor="let channel of channelList" class="feedrow" [class.borderbottom]="channel != channelList[channelList.length - 1]" (click)="clickItem(channel)">
         <ion-col
           size="2.5"
@@ -18,20 +18,18 @@
         >
           <ion-label [class.drakfeedname]="theme.darkMode" [class.lightfeedname]="!theme.darkMode" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{channel.name}}</ion-label>
           <ion-row>
-            <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'"> <br>
-            <p><span>{{ channel.subscribers }}</span> {{ 'common.followers' | translate }}</p>
+            <p><span>0</span> {{ 'common.followers' | translate }}</p>
           </ion-row>
         </ion-col>
         <ion-col size="1.5" class="right-col">
            <img *ngIf="currentFeed['destDid']===channel.destDid&&currentFeed['channelId']===channel.channelId" src="./assets/images/radioSelect.svg">
            <img *ngIf="currentFeed['destDid']===channel.destDid&&currentFeed['channelId']!=channel.channelId" src="./assets/images/radiounSelect.svg">
-           <!-- <ion-icon *ngIf="currentFeed['nodeId']===feed.nodeId&&currentFeed['feedId']===feed.id" name="checkmark-circle-outline" style="color: #2dd36f;width: 26px;height: 26px"></ion-icon> -->
         </ion-col>
         <ion-ripple-effect></ion-ripple-effect>
       </ion-row>
   </ion-grid>
 </div>
-<div [class.feedcancel]="!theme.darkMode" [class.darkfeedcancel]="theme.darkMode">
+<!-- <div [class.feedcancel]="!theme.darkMode" [class.darkfeedcancel]="theme.darkMode">
   <ion-grid>
   <ion-row (click)="clickItem(null)">
     <ion-col
@@ -40,7 +38,7 @@
   </ion-col>
   </ion-row>
 </ion-grid>
-</div>
+</div> -->
 </div>
 
 

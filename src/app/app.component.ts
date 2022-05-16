@@ -151,7 +151,7 @@ export class MyApp {
       .then(async (api) => {
         Config.changeApi(api);
         this.feedService.initDidManager();
-        this.splashScreen.hide();
+        //this.splashScreen.hide();
         //for ios
         if (this.isIOSPlatform()) {
           this.statusBar.backgroundColorByHexString('#f8f8ff');
@@ -396,20 +396,19 @@ export class MyApp {
   }
 
   initDisclaimer() {
-    this.splashScreen.hide();
     this.appService.initTranslateConfig();
     this.appService.init();
     let isDisclaimer =
       localStorage.getItem('org.elastos.dapp.feeds.disclaimer') || '';
     if (isDisclaimer === '') {
-      this.native.setRootRouter('disclaimer');
+       this.native.navigateForward(['/disclaimer'],{});
       return;
     }
 
     let isLearnMore =
       localStorage.getItem('org.elastos.dapp.feeds.isLearnMore') || '';
     if (isLearnMore === '') {
-      this.native.navigateForward('learnmore', {});
+      this.native.navigateForward(['/learnmore'], {});
       return;
     }
 
@@ -471,7 +470,7 @@ export class MyApp {
       .then(() => {
         this.events.publish(FeedsEvent.PublishType.clearHomeEvent);
         this.globalService.restartApp();
-        this.native.setRootRouter('signin');
+        this.native.setRootRouter(['/signin']);
       })
       .catch(err => {
         //TODO
