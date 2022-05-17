@@ -26,8 +26,8 @@
     .channel-list {
         padding: 10px 25px;
         background: #ffffff;
-        border-top-left-radius: 13px;
-        border-top-right-radius: 13px;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
 
         ion-item {
             .channel-row {
@@ -46,12 +46,31 @@
                 .middle-col {
                     ion-label {
                         margin: 0;
-                        font-size: 14px;
+                        font-size: 15px;
+                        font-style: normal;
+                        font-weight: 700;
+                        font-size: 15px;
+                        line-height: 18px;
+                        color: #FFFFFF;
                     }
 
                     p {
-                        font-weight: 500;
+                        margin: 0;
+                        font-style: normal;
+                        font-weight: 700;
+                        font-size: 15px;
+                        line-height: 18px;
+                        color: #C4C4C4;
                     }
+
+                    span {
+                      margin: 0;
+                      font-style: normal;
+                      font-weight: 700;
+                      font-size: 15px;
+                      line-height: 18px;
+                      color: #C4C4C4;
+                  }
                 }
 
                 .right-col {
@@ -77,15 +96,19 @@
                 ion-textarea {
                     margin: 10px 0 5px;
                     max-height: 192px;
-                    background-color: #f0f1ff;
-                    --color: #000000;
-                    border-radius: 9px;
+                    font-style: normal;
+                    background-color:  #323B45;;
+                    --color: #C4C4C4;;
+                    border-radius: 20px;
                     --padding-start: 10px;
-                    font-family: 'SourceSansPro';
-                    font-size: 14px;
-                    font-weight: 500;
-                    line-height: 1.25;
+                    font-size: 15px;
+                    font-weight: 400;
+                    line-height: 18px;
                     --placeholder-color:#a1a1a1;
+                    border: 2px solid transparent;
+                    background-clip: padding-box,border-box;
+                    background-origin: padding-box,border-box;
+                    background-image: linear-gradient(90deg,#161c24,#161c24),linear-gradient(90deg,#7624fe,#368bff);
                 }
             }
         }
@@ -118,15 +141,15 @@
             .right-col {
                 ion-button {
                     width: 100%;
-                    height: 36px;
-                    --border-radius: 10px;
+                    height: 44px;
+                    --border-radius: 20px;
                     --box-shadow: none;
-                    --background:#7624fe;
-                    --background-activated:#7624fe;
+                    --background:linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+                    --background-activated:linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
 
                     ion-label {
-                      font-size: 14px !important;
-                      font-weight:bold;
+                      font-size: 15px !important;
+                      font-weight:700;
                       padding: 1px;
                       overflow: hidden;
                     }
@@ -136,10 +159,7 @@
     }
 
     .darkChannelList {
-      background: #191a2f;
-      border-radius: 0;
-      border-top: 2px solid #2e2f4e;
-
+      background: #161C24;
       ion-item {
         .channel-row {
           .middle-col {
@@ -153,7 +173,7 @@
       .input-row {
         ion-col {
           ion-textarea {
-            background-color: #2e2f4e;
+            background-color: #323B45;
             color: #ffffff;
           }
         }

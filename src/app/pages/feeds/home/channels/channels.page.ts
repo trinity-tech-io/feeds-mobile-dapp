@@ -130,6 +130,7 @@ export class ChannelsPage implements OnInit {
   private isLoadingLikeMap: any = {};
   private confirmdialog = null;
   private isSubscribed = "false";
+  public lightThemeType: number = 3;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,

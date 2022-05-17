@@ -24,50 +24,50 @@
     // animation-name:ion-animation-6;
 }
 
-.darkbackdrop{
-    background-color:#fff;
-  }
+    .darkbackdrop{
+      background-color:#fff;
+    }
 
-  .lightbackdrop{
-      background-color:#000;
-  }
+    .lightbackdrop{
+        background-color:#000;
+    }
 
-  .backdrop{
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      display: block;
-      position: absolute;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      contain: strict;
-      cursor: pointer;
-      opacity: 0.3;
-      -ms-touch-action: none;
-      touch-action: none;
-      z-index:998;
-  }
+    .backdrop{
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        display: block;
+        position: absolute;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        contain: strict;
+        cursor: pointer;
+        opacity: 0.3;
+        -ms-touch-action: none;
+        touch-action: none;
+        z-index:998;
+    }
 
-  .feedlist {
-    width: calc(100vw - 16px);
-    //max-height:436px;
+    .feedlist {
+    width:100%;
     position:absolute;
-    bottom:80px;
-    left:8px;
+    bottom:0px;
+    left:0px;
     z-index:999;
-    border-radius:13px;
-    //overflow: auto;
-   }
+    border-radius: 40px 40px 0px 0px;
+    padding: 10px 0px;
+    }
 
    .darkfeedlist{
-       background: #2e2f4e!important;
+       background: #161C24 !important;
        .shareTitle{
-        font-size: 16px;
+        font-size: 25px;
         font-weight: 700;
         margin:5px 0px;
         color:#fff;
         text-align: center;
+        font-style: normal;
        }
 
        .share{
@@ -83,22 +83,27 @@
         color: #fff;
     }
 
+    .share img{
+        width: 36px;
+        height: 36px;
+        margin-left: 15px;
+        margin-top: 10px;
+    }
+
     .share span{
-        margin-top: -18px;
-        margin-left: 5px;
+        margin-top: -22px;
+        margin-left: 21.55px;
         justify-content: left;
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 16px;
+        font-weight: 700;
         color: #fff;
         vertical-align: middle;
         display: inline-block;
-    }
-    .bordertop{
-        border-top: 1px solid rgba(255,255,255,.07);
+        font-style: normal;
     }
 
     .share .unfollowColor{
-        color: #e77978;
+        color: #FF453A;
     }
     }
 
@@ -124,19 +129,23 @@
         margin-top: 10px;
     }
 
+    .share img{
+        width: 36px;
+        height: 36px;
+        margin-left: 15px;
+        margin-top: 10px;
+    }
+
     .share span{
-        margin-top: -18px;
-        margin-left: 5px;
+        margin-top: -22px;
+        margin-left: 21.55px;
         justify-content: left;
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 16px;
+        font-weight: 700;
         color: #000;
         vertical-align: middle;
         display: inline-block;
-    }
-
-    .bordertop{
-       border-top: 1px solid rgba(34,34,34,.07);
+        font-style: normal;
     }
 
     .share .unfollowColor{
@@ -218,7 +227,7 @@
       border: 2px solid transparent;
       background-clip: padding-box,border-box;
       background-origin: padding-box,border-box;
-      background-image: linear-gradient(90deg,#161c24,#161c24),linear-gradient(90deg,#7624fe,#368bff);
+      background-image: linear-gradient(90deg,#fff,#fff),linear-gradient(90deg,#7624fe,#368bff);
     }
 }
 
@@ -230,7 +239,7 @@
     .qrcode {
       padding: 15px;
       background:#F8F9FF;
-      border-radius: 17px;
+      border-radius: 26.6667px;
     }
 }
 

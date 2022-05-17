@@ -54,6 +54,7 @@ export class FeedinfoPage implements OnInit {
   public type: string = '';
   public serverDid: string = '';
   private confirmdialog: any = null;
+  public lightThemeType: number = 3;
   constructor(
     private popoverController: PopoverController,
     private feedService: FeedService,

@@ -1,4 +1,4 @@
-<app-titlebar></app-titlebar>
+<app-titlebar [lightThemeType]="lightThemeType"></app-titlebar>
 <ion-content class="bg container" [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment" [ngClass]="{'translucent-mask': isShowPrompt}">
 
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
@@ -196,8 +196,8 @@
       </ion-row>
        <!--like comment tip-->
        <ion-row class="bottom-row">
-        <ion-col size="1"></ion-col>
-        <ion-col size="2.25" (click)="like(post.destDid, post.channelId, post.postId)">
+        <ion-col size="0.5"></ion-col>
+        <ion-col size="2.25" (click)="like(post.destDid, post.channelId, post.postId)" style="padding-left: 0px;">
           <img [src]="likeMap[post.postId] === 'like' ? '/assets/images/like-s.svg' : '/assets/images/darkmode/like.svg'" *ngIf="theme.darkMode">
           <img [src]="likeMap[post.postId] === 'like' ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
           <ion-label [class.liked]="likeMap[post.postId] === 'like' ">{{ likeNumMap[post.postId] }}</ion-label>

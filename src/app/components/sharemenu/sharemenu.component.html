@@ -9,7 +9,7 @@
         </ion-col>
       </ion-row>
 
-      <div   [class.qr-container]="theme.darkMode" [class.light-qr-container]="!theme.darkMode" class="" *ngIf="isShowQrcode">
+      <div [class.qr-container]="theme.darkMode" [class.light-qr-container]="!theme.darkMode" class="" *ngIf="isShowQrcode">
             <div class="qrcode">
                 <qrcode [qrdata]="qrCodeString" [size]="200" [level]="'M'" allowEmptyString="true"></qrcode>
             </div>
@@ -18,14 +18,14 @@
       <ion-row (click)="clickItem('share')" class="share">
         <ion-col
         size="12">
-        <ion-icon name="share"></ion-icon><span>{{"common.share"|translate}}</span>
+        <img src="./assets/images/share.svg"><span>{{"common.share"|translate}}</span>
       </ion-col>
       </ion-row>
 
-      <ion-row (click)="clickItem('info')" class="share bordertop" *ngIf="isShowInfo">
+      <ion-row (click)="clickItem('info')" class="share" *ngIf="isShowInfo">
         <ion-col
         size="12">
-        <ion-icon name="information-circle"></ion-icon><span>{{"common.details"|translate}}</span>
+        <img src="./assets/images/information-circle.svg"/><span>{{"common.details"|translate}}</span>
       </ion-col>
       </ion-row>
 
@@ -36,15 +36,22 @@
       </ion-col>
       </ion-row> -->
 
-      <ion-row (click)="clickItem('unfollow')" class="share bordertop" *ngIf="isShowUnfollow">
+      <ion-row (click)="clickItem('unfollow')" class="share" *ngIf="isShowUnfollow">
         <ion-col
         size="12" style="margin-top: -2px;">
-        <ion-icon name="person-remove" class="unfollowColor"></ion-icon><span class="unfollowColor">{{"common.unsubscribe"|translate}}</span>
+        <img src="./assets/images/person-remove.svg"><span class="unfollowColor">{{"common.unsubscribe"|translate}}</span>
+      </ion-col>
+      </ion-row>
+
+      <ion-row (click)="clickItem('cancel')" class="share">
+        <ion-col
+        size="12">
+        <img src="./assets/images/close-circle.svg"/><span>{{"common.cancel"|translate}}</span>
       </ion-col>
       </ion-row>
     </ion-grid>
 </div>
-<div [class.feedcancel]="!theme.darkMode" [class.darkfeedcancel]="theme.darkMode">
+<!-- <div [class.feedcancel]="!theme.darkMode" [class.darkfeedcancel]="theme.darkMode">
   <ion-grid>
   <ion-row (click)="clickItem('cancel')">
     <ion-col
@@ -53,5 +60,5 @@
   </ion-col>
   </ion-row>
 </ion-grid>
-</div>
+</div> -->
 </div>

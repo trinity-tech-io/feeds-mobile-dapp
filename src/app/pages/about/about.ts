@@ -15,7 +15,7 @@ export class AboutPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public version = '2.1.2';
   public currentLanguage = '';
-
+  public lightThemeType: number = 3;
   constructor(
     private native: NativeService,
     private translate: TranslateService,

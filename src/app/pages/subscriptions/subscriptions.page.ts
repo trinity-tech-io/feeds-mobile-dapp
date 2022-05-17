@@ -116,7 +116,7 @@ export class SubscriptionsPage implements OnInit {
     this.hideSharMenuComponent = true;
   }
 
-  toPage(eventParm: any) {
+  async toPage(eventParm: any) {
     let destDid = eventParm['destDid'];
     let channelId = eventParm['channelId'];
     let postId = eventParm['postId'] || '';
@@ -127,7 +127,10 @@ export class SubscriptionsPage implements OnInit {
         .getNavCtrl()
         .navigateForward([page, destDid, channelId, postId]);
     } else {
-      this.native.getNavCtrl().navigateForward([page, destDid, channelId]);
+      const subscribedChannels: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+      const readyCheck: FeedsData.SubscribedChannelV3 = { destDid: destDid, channelId: channelId };
+      const isSubscribed = _.includes(subscribedChannels, readyCheck);
+      this.native.getNavCtrl().navigateForward([page, destDid, channelId, isSubscribed]);
     }
   }
 

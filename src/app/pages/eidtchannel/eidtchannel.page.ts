@@ -43,6 +43,7 @@ export class EidtchannelPage implements OnInit {
   private isClickConfirm: boolean = false;
   private channelCollections: FeedsData.ChannelCollections = null;
   private popover: any = null;
+  public lightThemeType:number = 3;
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,

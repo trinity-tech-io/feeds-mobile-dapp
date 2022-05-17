@@ -35,6 +35,7 @@ export class CreatenewfeedPage implements OnInit {
   public arrowBoxStyle: any = { top: '0px' };
   public curLang: string = '';
   public tippingAddress: string = '';
+  public lightThemeType: number = 3;
   constructor(
     private popover: PopoverController,
     private navCtrl: NavController,
