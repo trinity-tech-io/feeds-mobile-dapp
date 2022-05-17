@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Executable, InsertOptions, File as HiveFile, VaultServices, AppContext, Logger as HiveLogger, UpdateResult, UpdateOptions, Condition, InsertResult } from "@elastosfoundation/hive-js-sdk";
+import { Executable, InsertOptions, File as HiveFile, ScriptRunner, Vault, AppContext, Logger as HiveLogger, UpdateResult, UpdateOptions, Condition, InsertResult } from "@elastosfoundation/hive-js-sdk";
 import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Console } from 'console';
@@ -24,12 +24,13 @@ export class HiveService {
 
   public image = null
   public appinstanceDid: string
-  private vault: VaultServices
+  private vault: Vault
+  private scriptRunner: ScriptRunner
   private avatarScriptName: string
   private tarDID: string
   private tarAppDID: string
   private avatarParam: string
-  private values: { [key: string]: VaultServices } = {}
+  private scriptRunners: { [key: string]: ScriptRunner } = {}
 
   constructor(
     private standardAuthService: StandardAuthService,
@@ -89,17 +90,27 @@ export class HiveService {
       }
     })
   }
+  async creatScriptRunner(userDid: string) {
+    let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
+    const context = await this.creatAppContext(appinstanceDocument, userDid)
+    let scriptRunner = new ScriptRunner(context)
+    this.scriptRunners[userDid] = scriptRunner
 
-  async creatVault(userDid: string) {
+    return scriptRunner
+  }
+
+  async creatVault() {
     try {
+      const userDid = (await this.dataHelper.getSigninData()).did
       let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
       const context = await this.creatAppContext(appinstanceDocument, userDid)
-      const vault = new VaultServices(context)
+      let scriptRunner = await this.creatScriptRunner(userDid)
+      this.scriptRunners[userDid] = scriptRunner
+      const vault = new Vault(context)
       const userDID = DID.from(userDid)
       const userDIDDocument = await userDID.resolve()
-      this.parseUserDIDDocument(userDid, userDIDDocument)
 
-      this.values[userDid] = vault
+      this.parseUserDIDDocument(userDid, userDIDDocument)
       Logger.log(TAG, 'Create vault ', userDid, this.vault)
       return vault
     }
@@ -149,43 +160,33 @@ export class HiveService {
     return provider
   }
 
-  async getVault(userDid: string): Promise<VaultServices> {
-    let vault = this.values[userDid]
+  async getScriptRunner(userDid: string): Promise<ScriptRunner> {
+    this.scriptRunner = this.scriptRunners[userDid]
 
-    if (vault === undefined) {
-      vault = await this.creatVault(userDid)
-    }
-    Logger.log(TAG, 'Get vault from', 'vault is', this.vault)
-    return vault
+    if (this.scriptRunner === undefined || this.scriptRunner === null) {
+      this.scriptRunner = await this.creatScriptRunner(userDid)
+     }
+    return this.scriptRunner
   }
 
-  getMyVault(): Promise<VaultServices> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const userDid = (await this.dataHelper.getSigninData()).did
-        let vault = this.values[userDid]
-        if (vault === undefined) {
-          vault = await this.creatVault(userDid)
-        }
-        Logger.log(TAG, 'Create vault is', this.vault);
-        resolve(vault);
-      } catch (error) {
-        reject(error)
-        Logger.error(TAG, 'Create vault error', error);
-      }
-    });
+  async getVault(): Promise<Vault> {
+    if (this.vault === undefined || this.vault === null) {
+      this.vault = await this.creatVault()
+    }
+    Logger.log(TAG, 'Get vault from', 'vault is', this.vault)
+    return this.vault
   }
 
   async getDatabaseService() {
-    return (await this.getMyVault()).getDatabaseService()
-  }
-
-  async getScriptingService(userDid: string) {
-    return (await this.getVault(userDid)).getScriptingService()
+    return (await this.getVault()).getDatabaseService()
   }
 
   async getFilesService() {
-    return (await this.getMyVault()).getFilesService()
+    return (await this.getVault()).getFilesService()
+  }
+
+  async getScriptingService() {
+    return (await this.getVault()).getScriptingService()
   }
 
   async createCollection(channelName: string): Promise<void> {
@@ -217,8 +218,7 @@ export class HiveService {
   registerScript(scriptName: string, executable: Executable, condition?: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        let userDid = (await this.dataHelper.getSigninData()).did
-        let scriptingService = await this.getScriptingService(userDid)
+        let scriptingService = await this.getScriptingService()
         await scriptingService.registerScript(scriptName, executable,
           condition, allowAnonymousUser, allowAnonymousApp)
         resolve()
@@ -231,8 +231,8 @@ export class HiveService {
   }
 
   async callScript(scriptName: string, document: any, targetDid: string, appid: string): Promise<any> {
-    let scriptingService = await this.getScriptingService(targetDid)
-    let result = await scriptingService.callScript<any>(scriptName, document, targetDid, appid)
+    let scriptRunner = await this.getScriptRunner(targetDid)
+    let result = await scriptRunner.callScript<any>(scriptName, document, targetDid, appid)
     return result
   }
 
@@ -242,8 +242,8 @@ export class HiveService {
 
   async uploadScriting(transactionId: string, data: string) {
     let userDid = (await this.dataHelper.getSigninData()).did
-    const scriptingService = await this.getScriptingService(userDid)
-    return scriptingService.uploadFile(transactionId, data)
+    const scriptRunner = await this.getScriptRunner(userDid)
+    return scriptRunner.uploadFile(transactionId, data)
   }
 
   async downloadEssAvatarTransactionId() {
@@ -253,11 +253,11 @@ export class HiveService {
         return
       }
       let userDid = (await this.dataHelper.getSigninData()).did
-      const scriptingService = await this.getScriptingService(userDid)
+      const scriptRunner = await this.getScriptRunner(userDid)
       const avatarScriptName = this.avatarScriptName
       const tarDID = this.tarDID
       const tarAppDID = this.tarAppDID
-      return await scriptingService.callScript(avatarScriptName, avatarParam, tarDID, tarAppDID)
+      return await scriptRunner.callScript(avatarScriptName, avatarParam, tarDID, tarAppDID)
     } catch (error) {
       Logger.error(TAG, "Download Ess Avatar transactionId error: ", error)
       reject(error)
@@ -266,8 +266,8 @@ export class HiveService {
 
   async downloadScripting(targetDid: string, transaction_id: string) {
     try {
-      const scriptingService = await this.getScriptingService(targetDid)
-      return await scriptingService.downloadFile(transaction_id)
+      const scriptRunner = await this.getScriptRunner(targetDid)
+      return await scriptRunner.downloadFile(transaction_id)
     } catch (error) {
       console.log("scriptingService.downloadFile error: ==== ", error)
       throw error
@@ -281,8 +281,8 @@ export class HiveService {
 
   async getUploadDataFromScript(targetDid: string, transactionId: string, img: any) {
     try {
-      const scriptingService = await this.getScriptingService(targetDid)
-      return scriptingService.uploadFile(transactionId, img)
+      const scriptRunner = await this.getScriptRunner(targetDid)
+      return scriptRunner.uploadFile(transactionId, img)
     }
     catch (error) {
       Logger.error(TAG, "getUploadDataFromScript error: ", error);
@@ -292,8 +292,8 @@ export class HiveService {
 
   async uploadDataFromScript(targetDid: string, transactionId: string, img: any) {
     try {
-      const scriptingService = await this.getScriptingService(targetDid)
-      return scriptingService.uploadFile(transactionId, img)
+      const scriptRunner = await this.getScriptRunner(targetDid)
+      return scriptRunner.uploadFile(transactionId, img)
     }
     catch (error) {
       Logger.error(TAG, "uploadDataFromScript error: ", error);
