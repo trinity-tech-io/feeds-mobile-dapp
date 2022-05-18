@@ -18,7 +18,7 @@ export class AlertdialogComponent implements OnInit {
 
   constructor(public theme: ThemeService, private navParams: NavParams) {
     this.that = this.navParams.get('that');
-    this.title = this.navParams.get('title') || 'common.confirmDialog';
+    this.title =  this.navParams.get('title');
     this.message = this.navParams.get('message');
     this.okText = this.navParams.get('okText');
     this.confirm = this.navParams.get('okFunction');

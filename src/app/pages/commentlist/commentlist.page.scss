@@ -4,7 +4,7 @@
 
 .postDetail-grid {
     border-bottom: 1px solid #f0f1ff;
-    padding: 20px;
+    padding: 0px;
 
     ion-row {
         width: 100%;
@@ -13,7 +13,7 @@
     .top-row {
         .left-col {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             padding-left: 0;
         }
@@ -32,29 +32,27 @@
                 span {
                     position: relative;
                     bottom: 1.5px;
-                    font-size: 10px;
-                    font-weight: 500;
-                    color: #8888b0;
+                    font-size: 15px;
+                    font-weight: 700;
+                    color: #C4C4C4;
                 }
             }
 
             p {
                 margin: 0;
-                font-size: 12px;
-                font-weight: 600;
-                color: #8888b0;
+                font-size: 15px;
+                font-weight: 700;
+                color: #C4C4C4;
             }
         }
 
         .right-col {
-            // display: flex;
-            // justify-content: flex-end;
-            // align-items: center;
-            position: absolute;
-            right: 0px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
             img {
-                width:20px;
-                height:20px;
+                // width:20px;
+                // height:20px;
                 overflow: visible;
             }
         }
@@ -72,10 +70,11 @@
 
                 pre {
                     margin: 0 !important;
-                    font-family: 'SourceSansPro' !important;
-                    font-weight: 500;
-                    font-size: 18px;
-                    line-height: 1.25;
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 15px;
+                    line-height: 18px;
+                    color: #C4C4C4;
                 }
             }
 
@@ -101,9 +100,10 @@
 
             ion-label {
                 margin-left: 5px;
-                font-size: 11px;
-                font-weight: 600;
+                font-size: 15px;
+                font-weight: 500;
                 color: #a0a2c4;
+                font-style: normal;
             }
 
             .liked {
@@ -115,8 +115,8 @@
             }
 
             img {
-                width: 16px;
-                height: 14px;
+                // width: 16px;
+                // height: 14px;
                 overflow: visible;
             }
         }
@@ -132,12 +132,12 @@
                 color: #ffffff;
 
                 span {
-                    color: #cfd1f7;
+                    color: #C4C4C4;;
                 }
             }
 
             p {
-                color: #cfd1f7;
+                color: #C4C4C4;;
             }
         }
     }
@@ -145,7 +145,7 @@
     .bottom-row {
         ion-col {
             ion-label {
-                color: #a0a2c4;
+                color: #C4C4C4;
             }
 
             .liked {
@@ -160,28 +160,9 @@
 }
 
 .post-grid {
-    padding: 10px 20px 10px 0;
+    padding: 10px 0px 10px 0;
 
     .post-row {
-        .img-col {
-            .comment-avatar {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                border: 1.25px solid #368bff;
-                object-fit: cover;
-            }
-        }
-
-        .right-col {
-            position: absolute;
-            right: 0px;
-            img {
-                width:20px;
-                height:20px;
-                overflow: visible;
-            }
-        }
 
         .content-col {
             .bottom-row {

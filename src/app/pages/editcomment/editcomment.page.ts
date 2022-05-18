@@ -107,7 +107,6 @@ export class EditCommentPage implements OnInit {
       this.translate.instant(this.titleKey),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   async publishComment() {

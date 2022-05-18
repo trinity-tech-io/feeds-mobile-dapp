@@ -276,7 +276,6 @@ export class CommentlistPage implements OnInit {
       this.translate.instant('CommentlistPage.title'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   getContentText(): string {

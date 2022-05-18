@@ -1728,7 +1728,7 @@ export class ProfilePage implements OnInit {
   openAlert() {
     this.popover = this.popupProvider.ionicAlert(
       this,
-      '',
+      'common.confirmDialog',
       'common.downDes',
       this.cancel,
       './assets/images/tskth.svg',

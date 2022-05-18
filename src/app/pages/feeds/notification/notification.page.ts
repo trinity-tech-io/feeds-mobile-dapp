@@ -283,15 +283,14 @@ export class NotificationPage {
         {
           text: this.translate.instant('NotificationPage.deleteNotification'),
           role: 'destructive',
-          icon: 'trash',
+          icon: 'ios-delete',
           handler: () => {
             this.delete(notification);
           },
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.notificationMenu != null) {
               this.notificationMenu.dismiss();

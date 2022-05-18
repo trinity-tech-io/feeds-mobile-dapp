@@ -1,34 +1,11 @@
 .container {
     background: #ffffff;
-    border-radius: 10px;
-    padding: 0;
+    border-radius: 20px;
+    padding: 15px;
 
-    .bigCircle{
-        margin:0 auto;
-        width: 203px;
-        height: 203px;
-        background-color:#F0E8FF;
-        border-radius:50%;
-        position: relative;
-    }
-
-    .smallCircle{
-         position:absolute;
-         left:50px;
-         top:50px;
-         width: 103px;
-         height: 103px;
-         background-color:#D8C1FF;
-         border-radius:50%;
-
-         img{
-           position: absolute;
-           top: 26px;
-           left: 28px;
-           width: 50px;
-           height: 50px;
-           object-fit:contain;
-        }
+    .kuangImg {
+        display: flex;
+        justify-content: center;
     }
 
     .header {
@@ -39,13 +16,13 @@
         padding: 15px;
 
         h1 {
-            margin: 5px 0 0;
-            font-size: 20px;
-            font-weight: bold;
-            font-stretch: normal;
-            font-style: normal;
-            text-align: center;
-            color: #7624fe;
+        margin: 5px 0 0;
+        font-size: 25px;
+        font-weight: 700;
+        font-style: normal;
+        text-align: center;
+        color:#fff;
+        margin-bottom: 10px;
         }
     }
 
@@ -59,16 +36,16 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 30px 15px;
+        padding: 10px 15px;
 
         p {
             margin: 0px;
-            font-size: 16px;
-            font-weight: normal;
-            font-stretch: normal;
+            font-size: 15px;
+            font-weight: 400;
             font-style: normal;
             text-align: center;
             color: #000000;
+            word-wrap: break-word;
         }
     }
 
@@ -80,7 +57,12 @@
 
 
 .darkContainer {
-    background:#191a2f;
+    background: #161C24;
+    border: 2px solid transparent;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+    border-radius: 20px;
     .message {
         p {
           color: #fff;
@@ -94,39 +76,10 @@
     }
 
     .btns-row .btn ion-label {
-        font-size: 14px;
-        font-weight: bold;
-        font-stretch: normal;
+        font-size: 15px;
+        font-weight: 700;
         font-style: normal;
         text-align: center;
-        color: #ffffff;
-    }
-
-    .bigCircle{
-        margin:0 auto;
-        width: 203px;
-        height: 203px;
-        background-color:#221B44;
-        border-radius:50%;
-        position: relative;
-    }
-
-    .smallCircle{
-         position:absolute;
-         left:50px;
-         top:50px;
-         width: 103px;
-         height: 103px;
-         background-color: #321C69;
-         border-radius:50%;
-
-         img{
-           position: absolute;
-           top: 26px;
-           left: 28px;
-           width: 50px;
-           height: 50px;
-           object-fit:contain;
-        }
+        color: #FFFFFF;
     }
 }

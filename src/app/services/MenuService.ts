@@ -63,7 +63,7 @@ export class MenuService {
       buttons: [
         {
           text: this.translate.instant('common.share'),
-          icon: 'share',
+          icon: 'ios-share1',
           handler: async () => {
             let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
             let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
@@ -89,7 +89,7 @@ export class MenuService {
         {
           text: this.translate.instant('common.unsubscribe'),
           role: 'destructive',
-          icon: 'person-remove',
+          icon: 'ios-unsubscribe',
           handler: () => {
             let connect = this.dataHelper.getNetworkStatus();
             if (connect === FeedsData.ConnState.disconnected) {
@@ -128,8 +128,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.postDetail != null) {
               this.postDetail.dismiss();
@@ -158,7 +157,7 @@ export class MenuService {
       buttons: [
         {
           text: this.translate.instant('common.share'),
-          icon: 'share',
+          icon: 'ios-share1',
           handler: async () => {
             let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
             let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
@@ -184,8 +183,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.postDetail != null) {
               this.postDetail.dismiss();
@@ -209,7 +207,7 @@ export class MenuService {
       buttons: [
         {
           text: this.translate.instant('common.share'),
-          icon: 'share',
+          icon: 'ios-share1',
           handler: () => {
             this.intentService
               .share(title, qrCodeString)
@@ -218,8 +216,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.postDetail != null) {
               this.postDetail.dismiss();
@@ -249,7 +246,7 @@ export class MenuService {
           text:
             this.translate.instant('common.unsubscribe') + ' @' + channelName,
           role: 'destructive',
-          icon: 'person-remove',
+          icon: 'ios-unsubscribe',
           handler: async () => {
             await this.native.showLoading("common.waitMoment");
             this.hiveVaultController.unSubscribeChannel(
@@ -270,8 +267,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.postDetail != null) {
               this.postDetail.dismiss();
@@ -297,7 +293,7 @@ export class MenuService {
         {
           text: this.translate.instant('common.unsubscribe'),
           role: 'destructive',
-          icon: 'person-remove',
+          icon: 'ios-unsubscribe',
           handler: async () => {
             await this.native.showLoading("common.waitMoment");
             try {
@@ -322,8 +318,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.postDetail != null) {
               this.postDetail.dismiss();
@@ -371,7 +366,7 @@ export class MenuService {
       buttons: [
         {
           text: this.translate.instant('common.sharepost'),
-          icon: 'share',
+          icon: 'ios-share1',
           handler: async () => {
             await this.handlePostDetailMenun(
               nodeId,
@@ -384,7 +379,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.editpost'),
-          icon: 'create',
+          icon: 'ios-edit1',
           handler: () => {
             this.handlePostDetailMenun(
               nodeId,
@@ -398,7 +393,7 @@ export class MenuService {
         {
           text: this.translate.instant('common.removepost'),
           role: 'destructive',
-          icon: 'trash',
+          icon: 'ios-delete',
           handler: () => {
             this.handlePostDetailMenun(
               nodeId,
@@ -411,8 +406,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.postDetail != null) {
               this.postDetail.dismiss();
@@ -442,7 +436,7 @@ export class MenuService {
       buttons: [
         {
           text: this.translate.instant('common.sharepost'),
-          icon: 'share',
+          icon: 'ios-share1',
           handler: () => {
             this.handlePostDetailMenun(
               destDid,
@@ -455,7 +449,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.editpost'),
-          icon: 'create',
+          icon: 'ios-edit1',
           handler: () => {
             this.handlePostDetailMenun(
               destDid,
@@ -469,7 +463,7 @@ export class MenuService {
         {
           text: this.translate.instant('common.removepost'),
           role: 'destructive',
-          icon: 'trash',
+          icon: 'ios-delete',
           handler: () => {
             this.handlePostDetailMenun(
               destDid,
@@ -483,7 +477,7 @@ export class MenuService {
         {
           text: this.translate.instant('common.unsubscribe'),
           role: 'destructive',
-          icon: 'person-remove',
+          icon: 'ios-unsubscribe',
           handler: async () => {
             let connect = this.dataHelper.getNetworkStatus();
             if (connect === FeedsData.ConnState.disconnected) {
@@ -513,8 +507,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.postDetail != null) {
               this.postDetail.dismiss();
@@ -648,8 +641,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.postDetail != null) {
               this.postDetail.dismiss();
@@ -688,7 +680,7 @@ export class MenuService {
       buttons: [
         {
           text: this.translate.instant('common.editcomment'),
-          icon: 'create',
+          icon: 'ios-edit1',
           handler: () => {
             this.native.go('editcomment', {
               destDid: destDid,
@@ -704,7 +696,7 @@ export class MenuService {
         {
           text: this.translate.instant('common.removecomment'),
           role: 'destructive',
-          icon: 'trash',
+          icon: 'ios-delete',
           handler: () => {
             this.popover = this.popupProvider.ionicConfirm(
               this,
@@ -718,8 +710,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.commentPostDetail != null) {
               this.commentPostDetail.dismiss();
@@ -771,7 +762,7 @@ export class MenuService {
       buttons: [
         {
           text: this.translate.instant('CommentlistPage.editreply'),
-          icon: 'create',
+          icon: 'ios-edit1',
           handler: () => {
             this.native.go('editcomment', {
               destDid: destDid,
@@ -787,7 +778,7 @@ export class MenuService {
         {
           text: this.translate.instant('CommentlistPage.deletereply'),
           role: 'destructive',
-          icon: 'trash',
+          icon: 'ios-delete',
           handler: () => {
             this.popover = this.popupProvider.ionicConfirm(
               this,
@@ -801,8 +792,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.replyDetail != null) {
               this.replyDetail.dismiss();
@@ -868,8 +858,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.onSaleMenu != null) {
               this.onSaleMenu.dismiss();
@@ -1028,8 +1017,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.buyMenu != null) {
               this.buyMenu.dismiss();
@@ -1083,7 +1071,7 @@ export class MenuService {
         {
           text: this.translate.instant('common.burnNFTs'),
           role: 'destructive',
-          icon: 'trash',
+          icon: 'ios-delete',
           handler: () => {
             this.viewHelper.showNftPrompt(
               assItem,
@@ -1094,8 +1082,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.createdMenu != null) {
               this.createdMenu.dismiss();
@@ -1119,7 +1106,7 @@ export class MenuService {
       buttons: [
         {
           text: this.translate.instant('common.share'),
-          icon: 'share',
+          icon: 'ios-share1',
           handler: async () => {
             this.sharePasarLink(assItem);
           },
@@ -1136,8 +1123,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.shareOnSaleMenu != null) {
               this.shareOnSaleMenu.dismiss();
@@ -1186,7 +1172,7 @@ export class MenuService {
         {
           text: this.translate.instant('common.burnNFTs'),
           role: 'destructive',
-          icon: 'trash',
+          icon: 'ios-delete',
           handler: () => {
             this.viewHelper.showNftPrompt(
               channelItem,
@@ -1197,8 +1183,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.channelCollectionsMenu != null) {
               this.channelCollectionsMenu.dismiss();
@@ -1238,8 +1223,7 @@ export class MenuService {
         },
         {
           text: this.translate.instant('common.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
+          icon: 'ios-cancel',
           handler: () => {
             if (this.channelCollectionsPublishedMenu != null) {
               this.channelCollectionsPublishedMenu.dismiss();

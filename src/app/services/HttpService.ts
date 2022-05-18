@@ -215,7 +215,7 @@ export class HttpService {
     }
     this.popover = this.popupProvider.ionicAlert(
       this,
-      '',
+      'common.confirmDialog',
       'common.httperror',
       this.confirm,
       'tskth.svg',

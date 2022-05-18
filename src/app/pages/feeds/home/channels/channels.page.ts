@@ -1251,7 +1251,7 @@ export class ChannelsPage implements OnInit {
   openAlert() {
     this.popover = this.popupProvider.ionicAlert(
       this,
-      '',
+      'common.confirmDialog',
       'common.downDes',
       this.cancel,
       'tskth.svg',

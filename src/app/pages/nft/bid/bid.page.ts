@@ -480,7 +480,7 @@ export class BidPage implements OnInit {
   buyFail() {
     this.popover = this.popupProvider.ionicAlert(
       this,
-      '',
+      'common.confirmDialog',
       'common.buyNftError',
       this.confirm,
       'tskth.svg',
