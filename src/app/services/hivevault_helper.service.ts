@@ -3,7 +3,7 @@ import { HiveService } from 'src/app/services/HiveService';
 import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { DataHelper } from './DataHelper';
-import { QueryHasResultCondition, FindExecutable, AndCondition, AggregatedExecutable, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, InsertResult, FileDownloadExecutable } from "@elastosfoundation/hive-js-sdk";
+import { QueryHasResultCondition, FindExecutable, AndCondition, AggregatedExecutable, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, InsertResult, FileDownloadExecutable, HiveException, InsufficientStorageException } from "@elastosfoundation/hive-js-sdk";
 import { Config } from 'src/app/services/config';
 import { rawImageToBase64DataUrl } from 'src/app/services/picture.helpers';
 import SparkMD5 from 'spark-md5';
@@ -151,10 +151,11 @@ export class HiveVaultHelper {
         })
     }
 
-    handleError(error: Error) {
+    handleError(error: any) {
         if (error["code"] === 507) {
             const errorStr = this.translate.instant("ErrorInfo.HIVE_INSUFFICIENT_STORAGE")
-            return errorStr
+            const newError = new InsufficientStorageException(errorStr, null, 507)
+            return newError
         } else {
             return error
         }
@@ -229,7 +230,7 @@ export class HiveVaultHelper {
                 resolve('true');
             }, reason => {
                 Logger.error(TAG, 'create Collections error', reason);
-                reject(reason)
+                    reject(this.handleError(reason))
             })
         });
     }
