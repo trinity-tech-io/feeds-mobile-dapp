@@ -557,6 +557,7 @@ export const zh = {
     SESSION_ADD_STREAM_ERROR: 'Session: 添加Stream出错',
     SESSION_REQUEST_ERROR: 'Session: 请求出错',
     SESSION_START_ERROR: 'Session: 启动出错',
+    HIVE_INSUFFICIENT_STORAGE: 'Hive存储空间不足，请购买',
   },
   EidtchannelPage: {
     title: '编辑频道信息',

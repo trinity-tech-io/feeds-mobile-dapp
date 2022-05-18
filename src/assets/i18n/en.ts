@@ -556,6 +556,7 @@ export const en = {
     SESSION_ADD_STREAM_ERROR: 'Session: Add Stream Error',
     SESSION_REQUEST_ERROR: 'Session: Request Error',
     SESSION_START_ERROR: 'Session: Start Error',
+    HIVE_INSUFFICIENT_STORAGE: 'Insufficient storage space for hive, please buy',
   },
   EidtchannelPage: {
     title: 'Edit Channel Info',
