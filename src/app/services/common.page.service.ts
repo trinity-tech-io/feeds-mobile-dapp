@@ -4,6 +4,7 @@ import { UtilService } from './utilService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { resolve } from 'url';
 import { DataHelper } from './DataHelper';
+import { Config } from './config';
 @Injectable()
 export class CommonPageService {
 
@@ -15,7 +16,7 @@ export class CommonPageService {
         let id = key + "-" + elementId;
         let htmlElement: HTMLElement = document.getElementById(id) || null;
         if (htmlElement != null) {
-          htmlElement.setAttribute('src', "./assets/icon/reserve.svg");
+            htmlElement.setAttribute('src', "./assets/icon/reserve.svg");
         }
       }
     }
@@ -246,8 +247,8 @@ export class CommonPageService {
     try {
       if (
         id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= clientHeight
+        postgrid.getBoundingClientRect().top >= - Config.rectTop &&
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];
@@ -298,8 +299,8 @@ export class CommonPageService {
     try {
       if (
         id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= clientHeight
+        postgrid.getBoundingClientRect().top >= - Config.rectTop &&
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];
@@ -344,8 +345,8 @@ export class CommonPageService {
     try {
       if (
         id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= clientHeight
+        postgrid.getBoundingClientRect().top >= - Config.rectTop &&
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];
@@ -388,8 +389,8 @@ export class CommonPageService {
     try {
       if (
         id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= clientHeight
+        postgrid.getBoundingClientRect().top >= - Config.rectTop &&
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];
@@ -457,8 +458,8 @@ export class CommonPageService {
     try {
       if (
         id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= clientHeight
+        postgrid.getBoundingClientRect().top >= -Config.rectTop &&
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];
@@ -514,8 +515,8 @@ export class CommonPageService {
     try {
       if (
         id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= clientHeight
+        postgrid.getBoundingClientRect().top >= - Config.rectTop &&
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         let arr = srcId.split('-');
         let destDid = arr[0];

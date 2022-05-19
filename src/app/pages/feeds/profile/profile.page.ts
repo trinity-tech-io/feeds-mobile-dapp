@@ -30,6 +30,7 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { FeedService } from 'src/app/services/FeedService';
 import { CommonPageService } from 'src/app/services/common.page.service';
 import { FeedsPage } from '../feeds.page';
+import { Config } from 'src/app/services/config';
 
 let TAG: string = 'Feeds-profile';
 
@@ -855,8 +856,8 @@ export class ProfilePage implements OnInit {
       try {
         if (
           id != '' &&
-          avatarImage.getBoundingClientRect().top >= -100 &&
-          avatarImage.getBoundingClientRect().bottom <= this.clientHeight
+          avatarImage.getBoundingClientRect().top >= - Config.rectTop &&
+          avatarImage.getBoundingClientRect().bottom <= Config.rectBottom
         ) {
           if (isload === "") {
             let arr = id.split("-");
@@ -956,8 +957,8 @@ export class ProfilePage implements OnInit {
       try {
         if (
           id != '' &&
-          thumbImage.getBoundingClientRect().top >= -100 &&
-          thumbImage.getBoundingClientRect().bottom <= this.clientHeight
+          thumbImage.getBoundingClientRect().top >= - Config.rectTop &&
+          thumbImage.getBoundingClientRect().bottom <= Config.rectBottom
         ) {
           if (isload === "") {
             //  if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
@@ -985,7 +986,8 @@ export class ProfilePage implements OnInit {
         } else {
           srcStr = thumbImage.getAttribute('src') || './assets/icon/reserve.svg';
           if (
-            thumbImage.getBoundingClientRect().top < -100 &&
+            thumbImage.getBoundingClientRect().top < - Config.rectTop &&
+            thumbImage.getBoundingClientRect().bottom > Config.rectBottom &&
             this.profileCollectiblesisLoadimage[fileName] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {
@@ -1121,8 +1123,8 @@ export class ProfilePage implements OnInit {
     try {
       if (
         id != '' &&
-        postImage.getBoundingClientRect().top >= -100 &&
-        postImage.getBoundingClientRect().bottom <= this.clientHeight
+        postImage.getBoundingClientRect().top >= - Config.rectTop &&
+        postImage.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -1183,7 +1185,8 @@ export class ProfilePage implements OnInit {
       } else {
         let postImageSrc = postImage.getAttribute('src') || '';
         if (
-          postImage.getBoundingClientRect().top < -100 &&
+          postImage.getBoundingClientRect().top < - Config.rectTop &&
+          postImage.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadimage[id] === '13' &&
           postImageSrc != ''
         ) {
@@ -1207,8 +1210,8 @@ export class ProfilePage implements OnInit {
     try {
       if (
         id != '' &&
-        postAvatar.getBoundingClientRect().top >= -100 &&
-        postAvatar.getBoundingClientRect().bottom <= this.clientHeight
+        postAvatar.getBoundingClientRect().top >= - Config.rectTop &&
+        postAvatar.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadAvatarImage[id] = '11';
@@ -1300,6 +1303,8 @@ export class ProfilePage implements OnInit {
       } else {
         let postAvatarSrc = postAvatar.getAttribute('src') || './assets/icon/reserve.svg';
         if (
+          postAvatar.getBoundingClientRect().top < - Config.rectTop &&
+          postAvatar.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadAvatarImage[id] === '13' &&
           postAvatarSrc != './assets/icon/reserve.svg'
         ) {
@@ -1326,8 +1331,8 @@ export class ProfilePage implements OnInit {
     try {
       if (
         id != '' &&
-        video.getBoundingClientRect().top >= -100 &&
-        video.getBoundingClientRect().bottom <= this.clientHeight
+        video.getBoundingClientRect().top >= - Config.rectTop &&
+        video.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
@@ -1371,7 +1376,8 @@ export class ProfilePage implements OnInit {
       } else {
         let postSrc = video.getAttribute('poster') || '';
         if (
-          video.getBoundingClientRect().top < -100 &&
+          video.getBoundingClientRect().top < - Config.rectTop &&
+          video.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadVideoiamge[id] === '13' &&
           postSrc != ''
         ) {

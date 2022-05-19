@@ -119,4 +119,7 @@ export class Config {
     public static newAuthVersion: number = 10400;
     public static newCommentVersion: number = 10400;
     public static newMultiPropCountVersion: number = 10500;
+
+    public static rectTop: number = 2*screen.availHeight;
+    public static rectBottom: number = 2*screen.availHeight;
 }

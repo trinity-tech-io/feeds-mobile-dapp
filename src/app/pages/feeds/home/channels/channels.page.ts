@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import {  ModalController, Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
@@ -24,6 +24,7 @@ import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { CommonPageService } from 'src/app/services/common.page.service';
+import { Config } from 'src/app/services/config';
 let TAG: string = 'Feeds-feeds';
 @Component({
   selector: 'app-channels',
@@ -733,8 +734,8 @@ export class ChannelsPage implements OnInit {
     try {
       if (
         id != '' &&
-        postImage.getBoundingClientRect().top >= -100 &&
-        postImage.getBoundingClientRect().bottom <= this.clientHeight
+        postImage.getBoundingClientRect().top >= - Config.rectTop &&
+        postImage.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -802,7 +803,8 @@ export class ChannelsPage implements OnInit {
       } else {
         let postImageSrc = postImage.getAttribute('src') || '';
         if (
-          postImage.getBoundingClientRect().top < -100 &&
+          postImage.getBoundingClientRect().top < - Config.rectTop  &&
+          postImage.getBoundingClientRect().bottom > Config.rectBottom  &&
           this.isLoadimage[id] === '13' &&
           postImageSrc != ''
         ) {
@@ -830,8 +832,8 @@ export class ChannelsPage implements OnInit {
     try {
       if (
         id != '' &&
-        video.getBoundingClientRect().top >= -100 &&
-        video.getBoundingClientRect().bottom <= this.clientHeight
+        video.getBoundingClientRect().top >= - Config.rectTop &&
+        video.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
@@ -877,7 +879,8 @@ export class ChannelsPage implements OnInit {
       } else {
         let postSrc = video.getAttribute('poster') || '';
         if (
-          video.getBoundingClientRect().top < -100 &&
+          video.getBoundingClientRect().top < - Config.rectTop &&
+          video.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadVideoiamge[id] === '13' &&
           postSrc != 'assets/images/loading.png'
         ) {

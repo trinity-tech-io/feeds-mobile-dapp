@@ -11,6 +11,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { UtilService } from 'src/app/services/utilService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import _ from 'lodash';
+import { Config } from 'src/app/services/config';
 
 @Component({
   selector: 'app-subscriptions',
@@ -329,8 +330,8 @@ export class SubscriptionsPage implements OnInit {
       try {
         if (
           id != '' &&
-          avatarImage.getBoundingClientRect().top >= -100 &&
-          avatarImage.getBoundingClientRect().bottom <= this.clientHeight
+          avatarImage.getBoundingClientRect().top >= - Config.rectTop &&
+          avatarImage.getBoundingClientRect().bottom <= Config.rectBottom
         ) {
           if (isload === "") {
             let arr = id.split("-");
@@ -389,6 +390,8 @@ export class SubscriptionsPage implements OnInit {
         } else {
           srcStr = avatarImage.getAttribute('src') || './assets/icon/reserve.svg';
           if (
+            avatarImage.getBoundingClientRect().top < - Config.rectTop &&
+            avatarImage.getBoundingClientRect().bottom > Config.rectBottom &&
             this.followingIsLoadimage[id] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {

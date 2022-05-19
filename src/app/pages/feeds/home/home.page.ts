@@ -40,6 +40,8 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { CommonPageService } from 'src/app/services/common.page.service';
 import { HiveVaultHelper } from 'src/app/services/hivevault_helper.service';
+import { config } from 'process';
+import { Config } from 'src/app/services/config';
 let TAG: string = 'Feeds-home';
 @Component({
   selector: 'app-home',
@@ -547,7 +549,18 @@ export class HomePage implements OnInit {
     this.clearData();
   }
 
-  clearData() {
+  clearAssets(){
+    CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'homeChannelAvatar');
+    this.removeImages();
+    this.removeAllVideo();
+    this.isLoadimage = {};
+    this.isLoadAvatarImage = {};
+    this.avatarImageMap = {};
+    this.downPostAvatarMap = {};
+    this.isLoadVideoiamge = {};
+  }
+
+  clearData(isClearAssets: boolean = true ) {
     this.isPostLoading = false;
     this.doRefreshCancel();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
@@ -569,14 +582,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.clickHome);
 
-    CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'homeChannelAvatar');
-    this.removeImages();
-    this.removeAllVideo();
-    this.isLoadimage = {};
-    this.isLoadAvatarImage = {};
-    this.avatarImageMap = {};
-    this.downPostAvatarMap = {};
-    this.isLoadVideoiamge = {};
+
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
@@ -605,6 +611,9 @@ export class HomePage implements OnInit {
 
     this.hideFullScreen();
     this.native.hideLoading();
+    if(isClearAssets){
+      this.clearAssets();
+    }
   }
 
   ionViewDidLeave() {
@@ -666,8 +675,14 @@ export class HomePage implements OnInit {
 
   navTo(destDid: string, channelId: string, postId: number) {
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
-    this.clearData();
-    this.native.navigateForward(['/channels', destDid, channelId, true], '');
+    this.clearData(false);
+    this.native.navigateForward(['/channels', destDid, channelId, true], '').then((result)=>{
+          let sid = setTimeout(()=>{
+            this.clearAssets();
+            clearTimeout(sid);
+            sid = null;
+          },50);
+    });
   }
 
   async navToPostDetail(
@@ -694,10 +709,16 @@ export class HomePage implements OnInit {
       }
     }
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
-    this.clearData();
+    this.clearData(false);
     this.native
       .getNavCtrl()
-      .navigateForward(['/postdetail', destDid, channelId, postId]);
+      .navigateForward(['/postdetail', destDid, channelId, postId]).then((result)=>{
+        let sid = setTimeout(()=>{
+          this.clearAssets();
+          clearTimeout(sid);
+          sid = null;
+        },50);
+      });
   }
 
   exploreFeeds() {
@@ -986,8 +1007,8 @@ export class HomePage implements OnInit {
     try {
       if (
         id != '' &&
-        postAvatar.getBoundingClientRect().top >= -100 &&
-        postAvatar.getBoundingClientRect().bottom <= this.clientHeight
+        postAvatar.getBoundingClientRect().top >= - Config.rectTop &&
+        postAvatar.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadAvatarImage[id] = '11';
@@ -1085,6 +1106,8 @@ export class HomePage implements OnInit {
       } else {
         let postAvatarSrc = postAvatar.getAttribute('src') || './assets/icon/reserve.svg';
         if (
+          postAvatar.getBoundingClientRect().top < - Config.rectTop &&
+          postAvatar.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadAvatarImage[id] === '13' &&
           postAvatarSrc != './assets/icon/reserve.svg'
         ) {
@@ -1209,8 +1232,8 @@ export class HomePage implements OnInit {
     try {
       if (
         id != '' &&
-        postImage.getBoundingClientRect().top >= -100 &&
-        postImage.getBoundingClientRect().bottom <= this.clientHeight
+        postImage.getBoundingClientRect().top >= - Config.rectTop &&
+        postImage.getBoundingClientRect().bottom <=  Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -1274,7 +1297,8 @@ export class HomePage implements OnInit {
       } else {
         let postImageSrc = postImage.getAttribute('src') || '';
         if (
-          postImage.getBoundingClientRect().top < -100 &&
+          postImage.getBoundingClientRect().top < - Config.rectTop &&
+          postImage.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadimage[id] === '13' &&
           postImageSrc != ''
         ) {
@@ -1299,8 +1323,8 @@ export class HomePage implements OnInit {
     try {
       if (
         id != '' &&
-        video.getBoundingClientRect().top >= -100 &&
-        video.getBoundingClientRect().bottom <= this.clientHeight
+        video.getBoundingClientRect().top >= - Config.rectTop &&
+        video.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
@@ -1350,7 +1374,8 @@ export class HomePage implements OnInit {
       } else {
         let postSrc = video.getAttribute('poster') || '';
         if (
-          video.getBoundingClientRect().top < -100 &&
+          video.getBoundingClientRect().top < - Config.rectTop &&
+          video.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadVideoiamge[id] === '13' &&
           postSrc != 'assets/images/loading.png'
         ) {
@@ -1373,7 +1398,7 @@ export class HomePage implements OnInit {
     this.native.throttle(this.handleScroll(), 200, this, true);
     switch (this.tabType) {
       case 'feeds':
-        this.native.throttle(this.setVisibleareaImage(), 200, this, true);
+        this.setVisibleareaImage();
         break;
       case 'pasar':
         if (this.styleType === 'grid') {
@@ -1392,7 +1417,7 @@ export class HomePage implements OnInit {
       this.setVisibleareaImage();
       clearTimeout(sid);
       sid = null;
-    }, 100);
+    }, 0);
   }
 
   pauseVideo(id: string) {
@@ -2091,8 +2116,8 @@ export class HomePage implements OnInit {
       try {
         if (
           id != '' &&
-          thumbImage.getBoundingClientRect().top >= -100 &&
-          thumbImage.getBoundingClientRect().bottom <= this.clientHeight
+          thumbImage.getBoundingClientRect().top >= - Config.rectTop &&
+          thumbImage.getBoundingClientRect().bottom <= Config.rectBottom
         ) {
           if (isload === "") {
             // if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
@@ -2120,7 +2145,8 @@ export class HomePage implements OnInit {
         } else {
           srcStr = thumbImage.getAttribute('src') || '';
           if (
-            thumbImage.getBoundingClientRect().top < -100 &&
+            thumbImage.getBoundingClientRect().top < - Config.rectTop &&
+            thumbImage.getBoundingClientRect().bottom > Config.rectBottom &&
             this.pasarGridisLoadimage[fileName] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {
@@ -2164,8 +2190,8 @@ export class HomePage implements OnInit {
       try {
         if (
           id != '' &&
-          thumbImage.getBoundingClientRect().top >= -100 &&
-          thumbImage.getBoundingClientRect().bottom <= this.clientHeight
+          thumbImage.getBoundingClientRect().top >= - Config.rectTop &&
+          thumbImage.getBoundingClientRect().bottom <= Config.rectBottom
         ) {
           if (isload === "") {
             //  if (kind == 'gif' && size && parseInt(size, 10) > 10 * 1000 * 1000) {
@@ -2194,7 +2220,8 @@ export class HomePage implements OnInit {
         } else {
           srcStr = thumbImage.getAttribute('src') || '';
           if (
-            thumbImage.getBoundingClientRect().top < -100 &&
+            thumbImage.getBoundingClientRect().top < - Config.rectTop &&
+            thumbImage.getBoundingClientRect().bottom > Config.rectBottom &&
             this.pasarListisLoadimage[fileName] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {

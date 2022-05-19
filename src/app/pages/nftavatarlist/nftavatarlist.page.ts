@@ -15,6 +15,7 @@ import { IonRefresher } from '@ionic/angular';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { Config } from 'src/app/services/config';
 const TAG: string = 'NftavatarlistPage';
 @Component({
   selector: 'app-nftavatarlist',
@@ -273,8 +274,8 @@ export class NftavatarlistPage implements OnInit {
       try {
         if (
           avatarUri != '' &&
-          thumbImage.getBoundingClientRect().top >= -100 &&
-          thumbImage.getBoundingClientRect().bottom <= this.clientHeight
+          thumbImage.getBoundingClientRect().top >= - Config.rectTop &&
+          thumbImage.getBoundingClientRect().bottom <= Config.rectBottom
         ) {
           if (isload === "") {
             this.profileNftImagePagePostisLoad[avatarUri] = '12';
@@ -298,7 +299,8 @@ export class NftavatarlistPage implements OnInit {
         } else {
           srcStr = thumbImage.getAttribute('src') || '';
           if (
-            thumbImage.getBoundingClientRect().top < -100 &&
+            thumbImage.getBoundingClientRect().top < - Config.rectTop &&
+            thumbImage.getBoundingClientRect().bottom < - Config.rectBottom &&
             this.profileNftImagePagePostisLoad[avatarUri] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {
