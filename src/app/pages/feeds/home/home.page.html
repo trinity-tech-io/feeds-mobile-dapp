@@ -106,7 +106,12 @@
                 {{ hannelNameMap[post.postId] }}
                 <span> {{ handleDisplayTime(post.createdAt) }}</span>
               </ion-label>
-          <p>@...</p>
+          <p *ngIf="handleDisplayNameMap[post.destDid] === '' || handleDisplayNameMap[post.destDid] === undefined">
+            @......
+          </p>
+          <p *ngIf="handleDisplayNameMap[post.destDid] != '' && handleDisplayNameMap[post.destDid] != undefined">
+            {{ handleDisplayNameMap[post.destDid] }}
+          </p>
         </ion-col>
         <ion-col size="2" class="menuMore">
           <img

@@ -181,6 +181,7 @@ export class ProfilePage implements OnInit {
   private downMyFeedsAvatarMap: any = {};
   private myFeedsAvatarImageMap: any = {};
   public lightThemeType: number = 3;
+  private handleDisplayNameMap: any = {};
   constructor(
     public theme: ThemeService,
     private events: Events,
@@ -708,6 +709,7 @@ export class ProfilePage implements OnInit {
         try {
           await this.hiveVaultController.syncAllLikeData();
           this.startIndex = 0;
+          this.handleDisplayNameMap = {};
           this.initLike();
           event.target.complete();
         } catch (error) {
@@ -1221,6 +1223,26 @@ export class ProfilePage implements OnInit {
           if (channel != null) {
             avatarUri = channel.avatar;
             this.channelNameMap[postId] = channel.name || '';
+            //dispalyName
+            let userDid = channel.destDid;
+            let displayNameMap = this.handleDisplayNameMap[userDid] || '';
+            if(displayNameMap === ""){
+              let text = userDid.replace('did:elastos:', '');
+              this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+              try {
+                this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
+                then((result: string) => {
+                  let name = result || "";
+                  if (name != "") {
+                     this.handleDisplayNameMap[userDid] = name;
+                  }
+                }).catch(() => {
+                });
+              } catch (error) {
+
+              }
+            }
+
           } else {
             this.channelNameMap[postId] = "";
           }

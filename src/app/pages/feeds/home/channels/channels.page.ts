@@ -17,7 +17,6 @@ import { PopupProvider } from 'src/app/services/popup';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
 import * as _ from 'lodash';
@@ -128,7 +127,6 @@ export class ChannelsPage implements OnInit {
   private likeNumMap: any = {};
   private commentNumMap: any = {};
   private isLoadingLikeMap: any = {};
-  private confirmdialog = null;
   private isSubscribed = "false";
   public lightThemeType: number = 3;
   constructor(
@@ -146,7 +144,6 @@ export class ChannelsPage implements OnInit {
     public popupProvider: PopupProvider,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-    private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController
@@ -295,6 +292,21 @@ export class ChannelsPage implements OnInit {
     this.channelName = channel.name;
     this.updatedTime = channel.updatedAt || 0;
     this.channelOwner = "";
+
+    let text = this.destDid.replace('did:elastos:', '');
+    this.channelOwner = UtilService.resolveAddress(text);
+    try {
+      this.hiveVaultController.getDisplayName(this.destDid, this.channelId, this.destDid).
+      then((result: string) => {
+        let name = result || "";
+        if (name != "") {
+          this.channelOwner = name;
+        }
+      }).catch(() => {
+      });
+    } catch (error) {
+
+    }
     this.channelDesc = channel.intro;
     //this.channelSubscribes = channel.subscribers;
     this.tippingAddress = channel.tipping_address || '';

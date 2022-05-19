@@ -24,7 +24,8 @@
           <span>{{channelName}}</span>
         </div>
         <div class="channelOwner">
-          <span>@{{channelOwner}}...</span>
+          <span *ngIf="channelOwner ==='' ">@......</span>
+          <span *ngIf="channelOwner !='' ">@{{channelOwner}}</span>
         </div>
 
         <div class="channeldes">
@@ -84,16 +85,12 @@
           </div>
         </ion-col>
         <ion-col class="content-col" size="6.5">
-          <!-- <ion-row class="top-row"> -->
-            <!-- <ion-col class="left-col" size="11" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"> -->
               <ion-label (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
                 {{ channelName }}
                 <span> {{ handleDisplayTime(post.createdAt) }}</span>
               </ion-label>
-            <!-- </ion-col> -->
-          <!-- </ion-row> -->
-          <p>@....</p>
-
+          <p *ngIf="channelOwner ==='' ">@......</p>
+          <p *ngIf="channelOwner !='' ">@{{channelOwner}}</p>
         </ion-col>
         <ion-col size="2" class="menuMore">
           <img

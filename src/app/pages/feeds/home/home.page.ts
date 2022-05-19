@@ -172,7 +172,7 @@ export class HomePage implements OnInit {
   private syncHiveDataStatus: number = null;
   private syncHiveDataDes: string = null;
   private useRemoteData: boolean = false;
-
+  private handleDisplayNameMap: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -840,7 +840,7 @@ export class HomePage implements OnInit {
           await this.hiveVaultController.syncAllPost();
           await this.hiveVaultController.syncAllComments();
           await this.hiveVaultController.syncAllLikeData();
-
+          this.handleDisplayNameMap = {};
           await this.initPostListData(true);
           if (event != null) event.target.complete();
           this.refreshEvent = null;
@@ -949,7 +949,6 @@ export class HomePage implements OnInit {
         let postId = arr[2];
         let mediaType = arr[3];
         let id = destDid + '-' + channelId + '-' + postId;
-
         //post Avatar
         this.handlePostAvatar(id, srcId, postgridindex);
         //postImg
@@ -1013,6 +1012,24 @@ export class HomePage implements OnInit {
           if (channel != null) {
             this.hannelNameMap[postId] = channel.name;
             avatarUri = channel.avatar;
+            let userDid = channel.destDid;
+            let displayNameMap = this.handleDisplayNameMap[userDid] || '';
+            if(displayNameMap === ""){
+              let text = userDid.replace('did:elastos:', '');
+              this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+              try {
+                this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
+                then((result: string) => {
+                  let name = result || "";
+                  if (name != "") {
+                     this.handleDisplayNameMap[userDid] = name;
+                  }
+                }).catch(() => {
+                });
+              } catch (error) {
+
+              }
+            }
           }
           let fileName: string = avatarUri.split("@")[0];
           this.avatarImageMap[id] = avatarUri;//存储相同头像的Post的Map
@@ -1081,6 +1098,7 @@ export class HomePage implements OnInit {
       delete this.avatarImageMap[id];
     }
   }
+
 
   initTitleBar() {
     let title = this.translate.instant('FeedsPage.tabTitle1');
