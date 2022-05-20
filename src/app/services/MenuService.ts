@@ -614,21 +614,21 @@ export class MenuService {
       buttons: [
         {
           text: this.translate.instant('common.takePicture'),
-          icon: 'camera',
+          icon: 'ios-take-photo',
           handler: () => {
             openCamera(that);
           },
         },
         {
           text: this.translate.instant('common.photolibary'),
-          icon: 'images',
+          icon: 'ios-photo-gallery',
           handler: () => {
             openGallery(that);
           },
         },
         {
           text: this.translate.instant('common.collectibles'),
-          icon: 'list-circle',
+          icon: 'ios-nft',
           handler: () => {
             let accountAddress =
               this.nftContractControllerService.getAccountAddress() || '';

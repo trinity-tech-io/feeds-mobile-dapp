@@ -122,4 +122,5 @@ export class Config {
 
     public static rectTop: number = 2*screen.availHeight;
     public static rectBottom: number = 2*screen.availHeight;
+    public static assetsTimer: number = 200;
 }

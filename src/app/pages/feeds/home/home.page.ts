@@ -550,9 +550,9 @@ export class HomePage implements OnInit {
   }
 
   clearAssets(){
-    CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'homeChannelAvatar');
     this.removeImages();
     this.removeAllVideo();
+    CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'homeChannelAvatar');
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
     this.avatarImageMap = {};
@@ -681,7 +681,7 @@ export class HomePage implements OnInit {
             this.clearAssets();
             clearTimeout(sid);
             sid = null;
-          },50);
+          },Config.assetsTimer);
     });
   }
 
@@ -717,7 +717,7 @@ export class HomePage implements OnInit {
           this.clearAssets();
           clearTimeout(sid);
           sid = null;
-        },50);
+        },Config.assetsTimer);
       });
   }
 
@@ -1874,16 +1874,27 @@ export class HomePage implements OnInit {
     }
 
     this.pauseAllVideo();
-    this.clearData();
-
+    this.clearData(false);
     const channels = await this.dataHelper.getSelfChannelListV3();
     if (channels.length === 0) {
-      this.native.navigateForward(['/createnewfeed'], '');
+      this.native.navigateForward(['/createnewfeed'], '').then(()=>{
+         let sid = setTimeout(()=>{
+             this.clearAssets();
+             clearTimeout(sid);
+             sid = null;
+         },Config.assetsTimer);
+      });
       return;
     }
 
     this.dataHelper.setSelsectNftImage("");
-    this.native.navigateForward(['createnewpost'], '');
+    this.native.navigateForward(['createnewpost'], '').then(()=>{
+      let sid = setTimeout(()=>{
+          this.clearAssets();
+          clearTimeout(sid);
+          sid = null;
+      },Config.assetsTimer);
+    });
   }
 
   createNft() {
