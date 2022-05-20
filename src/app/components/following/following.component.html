@@ -2,6 +2,9 @@
   <img src="./assets/images/profile-no-channel.svg">
   <h1 style="margin-top: 20px;">{{ 'FollowingComponent.allempty' | translate }}</h1>
   <p>{{ 'FollowingComponent.emptyDes' | translate }}</p>
+  <div class="btn-row-empty" style="margin-top:10px;" (click)="clickExploreFeeds()">
+    {{ 'LikesComponent.exploreFeeds' | translate }}
+  </div>
 </div>
 
 <ion-list *ngIf="followingList.length > 0" class="channel-list" [class.darkChannelList]="theme.darkMode" style="padding-top:5px;">

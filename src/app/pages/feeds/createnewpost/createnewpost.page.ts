@@ -228,7 +228,6 @@ export class CreatenewpostPage implements OnInit {
           //dismiss dialog
           this.backHome();
         } catch (error) {
-          console.log('======================1');
           this.isLoading = false;
           this.isPublishing = false;
           this.native.toast('common.sendFail'); // 需要更改错误提示

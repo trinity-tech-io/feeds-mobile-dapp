@@ -12,7 +12,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TranslateService } from '@ngx-translate/core';
 import { StorageService } from 'src/app/services/StorageService';
-import _ from 'lodash';
+import _, { result } from 'lodash';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { UtilService } from 'src/app/services/utilService';
@@ -597,7 +597,18 @@ export class ProfilePage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  clearData() {
+  clearAssets(){
+    this.removeImages();
+    this.removeAllVideo();
+    CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'homeChannelAvatar');
+    this.isLoadimage = {};
+    this.isLoadAvatarImage = {};
+    this.avatarImageMap = {};
+    this.isLoadVideoiamge = {};
+    this.downPostAvatarMap = {};
+  }
+
+  clearData(isClearAssets: boolean = true ) {
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();
@@ -628,14 +639,17 @@ export class ProfilePage implements OnInit {
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
-    CommonPageService.removeAllAvatar(this.myFeedsIsLoadimage, 'myFeedsAvatar')
-    this.removeImages();
-    this.removeAllVideo();
-    this.isLoadimage = {};
-    this.isLoadVideoiamge = {};
-    this.isLoadAvatarImage = {};
-    this.avatarImageMap = {};
-    this.downPostAvatarMap = {};
+    if(isClearAssets){
+      CommonPageService.removeAllAvatar(this.myFeedsIsLoadimage, 'myFeedsAvatar')
+      this.removeImages();
+      this.removeAllVideo();
+      this.isLoadimage = {};
+      this.isLoadVideoiamge = {};
+      this.isLoadAvatarImage = {};
+      this.avatarImageMap = {};
+      this.downPostAvatarMap = {};
+    }
+
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
@@ -1903,17 +1917,29 @@ export class ProfilePage implements OnInit {
     let channelId = eventParm['channelId'];
     let postId = eventParm['postId'] || '';
     let page = eventParm['page'];
-    this.clearData();
+    this.clearData(false);
     if (postId != '') {
       this.native
         .getNavCtrl()
-        .navigateForward([page, destDid, channelId, postId]);
+        .navigateForward([page, destDid, channelId, postId]).then((result)=>{
+          let sid = setTimeout(()=>{
+            this.clearAssets();
+            clearTimeout(sid);
+            sid = null;
+          },Config.assetsTimer);
+        });
     } else {
 
       const subscribedChannels: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
       const readyCheck: FeedsData.SubscribedChannelV3 = { destDid: destDid, channelId: channelId };
       const isSubscribed = _.includes(subscribedChannels, readyCheck);
-      this.native.getNavCtrl().navigateForward([page, destDid, channelId, isSubscribed]);
+      this.native.getNavCtrl().navigateForward([page, destDid, channelId, isSubscribed]).then((result)=>{
+        let sid = setTimeout(()=>{
+          this.clearAssets();
+          clearTimeout(sid);
+          sid = null;
+        },Config.assetsTimer);
+      });;
     }
   }
 
@@ -1955,8 +1981,14 @@ export class ProfilePage implements OnInit {
       ownerDid: ownerDid,
       tippingAddress: channel.tipping_address
     });
-    this.clearData();
-    this.native.navigateForward(['/feedinfo'], '');
+    this.clearData(false);
+    this.native.navigateForward(['/feedinfo'], '').then((result)=>{
+      let sid = setTimeout(()=>{
+        this.clearAssets();
+        clearTimeout(sid);
+        sid = null;
+      },Config.assetsTimer);
+    });;
   }
 
   async checkFollowStatus(destDid: string, channelId: string) {
@@ -1985,12 +2017,24 @@ export class ProfilePage implements OnInit {
     this.clearData();
     const channels = await this.dataHelper.getSelfChannelListV3() || []
     if (channels.length === 0) {
-      this.native.navigateForward(['/createnewfeed'], '');
+      this.native.navigateForward(['/createnewfeed'], '').then((result)=>{
+        let sid = setTimeout(()=>{
+          this.clearAssets();
+          clearTimeout(sid);
+          sid = null;
+        },Config.assetsTimer);
+      });;
       return;
     }
 
     this.dataHelper.setSelsectNftImage("");
-    this.native.navigateForward(['createnewpost'], '');
+    this.native.navigateForward(['createnewpost'], '').then((result)=>{
+      let sid = setTimeout(()=>{
+        this.clearAssets();
+        clearTimeout(sid);
+        sid = null;
+      },Config.assetsTimer);
+    });;
   }
 
   async connectWallet() {
@@ -2048,8 +2092,14 @@ export class ProfilePage implements OnInit {
   }
 
   subsciptions() {
-    this.clearData();
-    this.native.navigateForward(['subscriptions'], '');
+    this.clearData(false);
+    this.native.navigateForward(['subscriptions'], '').then((result)=>{
+      let sid = setTimeout(()=>{
+        this.clearAssets();
+        clearTimeout(sid);
+        sid = null;
+      },Config.assetsTimer);
+    });
   }
 
   chanelCollections() {

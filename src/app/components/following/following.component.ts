@@ -13,10 +13,11 @@ export class FollowingComponent implements OnInit {
   @Output() fromChild = new EventEmitter();
   @Input() followingList: any = [];
   @Output() toFollowPage = new EventEmitter();
+  @Output() exploreFeeds = new EventEmitter();
   constructor(
     public theme: ThemeService,
     private viewHelper: ViewHelper,
-    private native: NativeService
+    private native: NativeService,
   ) {}
 
   ngOnInit() {}
@@ -62,5 +63,9 @@ export class FollowingComponent implements OnInit {
     if (name != '' && name.length > 15) {
       this.viewHelper.createTip(name);
     }
+  }
+
+  clickExploreFeeds() {
+    this.exploreFeeds.emit();
   }
 }

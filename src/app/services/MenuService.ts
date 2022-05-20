@@ -626,19 +626,19 @@ export class MenuService {
             openGallery(that);
           },
         },
-        {
-          text: this.translate.instant('common.collectibles'),
-          icon: 'ios-nft',
-          handler: () => {
-            let accountAddress =
-              this.nftContractControllerService.getAccountAddress() || '';
-            if (accountAddress === '') {
-              this.native.toastWarn('common.connectWallet');
-              return false;
-            }
-            openNft(that);
-          },
-        },
+        // {
+        //   text: this.translate.instant('common.collectibles'),
+        //   icon: 'ios-nft',
+        //   handler: () => {
+        //     let accountAddress =
+        //       this.nftContractControllerService.getAccountAddress() || '';
+        //     if (accountAddress === '') {
+        //       this.native.toastWarn('common.connectWallet');
+        //       return false;
+        //     }
+        //     openNft(that);
+        //   },
+        // },
         {
           text: this.translate.instant('common.cancel'),
           icon: 'ios-cancel',

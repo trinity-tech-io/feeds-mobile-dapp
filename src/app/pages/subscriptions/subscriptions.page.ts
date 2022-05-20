@@ -12,7 +12,11 @@ import { UtilService } from 'src/app/services/utilService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import _ from 'lodash';
 import { Config } from 'src/app/services/config';
-
+import { ThemeService } from 'src/app/services/theme.service';
+import { Logger } from 'src/app/services/logger';
+import { PopupProvider } from 'src/app/services/popup';
+import {  ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
+const TAG: string = 'SubscriptionsPage';
 @Component({
   selector: 'app-subscriptions',
   templateUrl: './subscriptions.page.html',
@@ -36,6 +40,8 @@ export class SubscriptionsPage implements OnInit {
   private clientHeight: number = 0;
   private followingAvatarImageMap: any = {};
   private downFollowingAvatarMap: any = {};
+  public isSearch: string = '';
+  public scanServiceStyle = { right: '' };
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -46,10 +52,14 @@ export class SubscriptionsPage implements OnInit {
     private intentService: IntentService,
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private popupProvider: PopupProvider,
+    public theme: ThemeService
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.scanServiceStyle['right'] = (screen.width * 7.5) / 100 + 5 + 'px';
+   }
 
   ionViewWillEnter() {
     this.clientHeight = screen.availHeight;
@@ -417,6 +427,52 @@ export class SubscriptionsPage implements OnInit {
       clearTimeout(sid);
     }, 100);
 
+  }
+
+  async scanService() {
+    let scanObj = await this.popupProvider.scan() || {};
+    let scanData = scanObj["data"] || {};
+    let scannedContent = scanData["scannedText"] || "";
+    Logger.log(TAG, 'Scan content is', scannedContent);
+    const scanResult = ScannerHelper.parseScannerResult(scannedContent);
+    Logger.log(TAG, 'Parse scan result is', scanResult);
+
+    if (!scanResult || !scanResult.feedsUrl || scanResult.code == ScannerCode.INVALID_FORMAT) {
+      this.native.toastWarn('AddServerPage.tipMsg');
+      return;
+    }
+    const feedsUrl = scanResult.feedsUrl;
+
+    //TODO
+    //Show channel info dialog
+    // this.hiveVaultController.subscribeChannel(feedsUrl.destDid, feedsUrl.channelId, displayName);
+
+    // this.showSubscribePrompt(feedsUrl);
+    // this.zone.run(async () => {
+    await this.native.showLoading("common.waitMoment");
+    await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+    const subscriptionChannels: FeedsData.SubscribedChannelV3[] = await this.hiveVaultController.getSelfSubscriptionChannel(feedsUrl.destDid);
+
+    const readyCheck: FeedsData.SubscribedChannelV3 = { destDid: feedsUrl.destDid, channelId: feedsUrl.channelId };
+    const isSubscribed = _.includes(subscriptionChannels, readyCheck);
+    // await this.hiveVaultController.queryRemoteChannelPostWithTime(feedsUrl.destDid, feedsUrl.channelId, UtilService.getCurrentTimeNum());
+    this.native.hideLoading();
+    this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId, isSubscribed], '');
+    // });
+
+  }
+
+  ionClear() {
+
+  }
+
+  getItems(event: string){
+
+  }
+
+  exploreFeeds() {
+    this.feedService.setCurTab("search");
+    this.native.setRootRouter(['/tabs/search']);
   }
 
 }

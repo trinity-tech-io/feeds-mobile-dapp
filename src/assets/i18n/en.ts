@@ -209,6 +209,7 @@ export const en = {
     signout: 'Sign out',
     des: 'Signed out',
     settings: 'Settings',
+    privacyPolicy: 'Privacy Policy'
   },
   SigninPage: {
     signIn: 'Sign In',

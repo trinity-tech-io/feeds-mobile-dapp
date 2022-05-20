@@ -829,4 +829,8 @@ export class MyApp {
   async closeMenu() {
     await this.menuController.close();
   }
+
+  privacyPolicy() {
+
+  }
 }

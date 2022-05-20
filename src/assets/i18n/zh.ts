@@ -209,6 +209,7 @@ export const zh = {
     signout: '登出',
     des: '登出成功',
     settings: '设置',
+    privacyPolicy: '隐私政策'
   },
   SigninPage: {
     signIn: '登录',
@@ -405,7 +406,7 @@ export const zh = {
     disclaimerNft: '免责声明(Pasar Lite)',
     help: 'Feeds使用手册',
     email: '邮箱',
-    telegram: '电报',
+    telegram: '电报'
   },
   PostdetailPage: {
     postview: '微说详情',

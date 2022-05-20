@@ -26,19 +26,20 @@
 
   <ion-grid class="container" [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment">
     <ion-row [class.darkExploreTabs]="theme.darkMode" [class.exploreTabs]="!theme.darkMode">
-      <ion-col size="0.5" class="des"></ion-col>
-      <ion-col size="3.4" class="des colBorder" [ngClass]="{'select-colBorder':selectType === 'ProfilePage.myFeeds','select-color':selectType === 'ProfilePage.myFeeds','no-select-color':selectType != 'ProfilePage.myFeeds'}" (click)="changeType('ProfilePage.myFeeds')">
+      <ion-col size="1.25" class="des"></ion-col>
+      <ion-col size="4.5" class="des colBorder" [ngClass]="{'select-colBorder':selectType === 'ProfilePage.myFeeds','select-color':selectType === 'ProfilePage.myFeeds','no-select-color':selectType != 'ProfilePage.myFeeds'}" (click)="changeType('ProfilePage.myFeeds')">
         {{'ProfilePage.myFeeds' | translate}}
       </ion-col>
-      <ion-col size="0.4" class="des"></ion-col>
+      <!-- <ion-col size="0.4" class="des"></ion-col>
       <ion-col size="3.4" class="des colBorder"  [ngClass]="{'select-colBorder':selectType === 'ProfilePage.collectibles','select-color':selectType === 'ProfilePage.collectibles','no-select-color':selectType != 'ProfilePage.collectibles'}" (click)="changeType('ProfilePage.collectibles')">
         {{'ProfilePage.collectibles'|translate}}
       </ion-col>
-      <ion-col size="0.4" class="des"></ion-col>
-      <ion-col size="3.4" class="des colBorder"  [ngClass]="{'select-colBorder':selectType === 'ProfilePage.myLikes','select-color':selectType === 'ProfilePage.myLikes','no-select-color':selectType != 'ProfilePage.myLikes'}" (click)="changeType('ProfilePage.myLikes')">
+      <ion-col size="0.4" class="des"></ion-col> -->
+      <ion-col size="0.5" class="des"></ion-col>
+      <ion-col size="4.5" class="des colBorder"  [ngClass]="{'select-colBorder':selectType === 'ProfilePage.myLikes','select-color':selectType === 'ProfilePage.myLikes','no-select-color':selectType != 'ProfilePage.myLikes'}" (click)="changeType('ProfilePage.myLikes')">
         {{'ProfilePage.myLikes'|translate}}
       </ion-col>
-      <ion-col size="0.5" class="des"></ion-col>
+      <ion-col size="1.25" class="des"></ion-col>
     </ion-row>
     <ion-row style="height:40px">&nbsp;</ion-row>
     <ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
