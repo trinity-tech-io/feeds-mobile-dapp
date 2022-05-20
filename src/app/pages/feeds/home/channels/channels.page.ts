@@ -326,7 +326,7 @@ export class ChannelsPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-
+    this.theme.setTheme1();
     this.isMine = await this.checkChannelIsMine();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
@@ -393,6 +393,7 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.theme.restTheme();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();

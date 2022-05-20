@@ -561,9 +561,11 @@ export class ProfilePage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    this.theme.setTheme1();//改变状态栏
     this.initTitleBar();
     this.elaPrice = this.dataHelper.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {
+      this.theme.setTheme1();//改变状态栏
       this.elaPrice = this.dataHelper.getElaUsdPrice();
       if (!this.collectiblesList || this.collectiblesList.length == 0) {
         await this.getCollectiblesList();
@@ -609,6 +611,7 @@ export class ProfilePage implements OnInit {
   }
 
   clearData(isClearAssets: boolean = true ) {
+    this.theme.restTheme();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();

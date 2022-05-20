@@ -131,6 +131,7 @@ export class TitleBarService {
   registerMoreMenu(titleBar: TitleBarComponent) {
     titleBar.addOnItemClickedListener(icon => {
       if (icon.key == 'more') {
+        this.theme.setTheme1();//改变状态栏
         this.event.publish(FeedsEvent.PublishType.openRightMenu);
         this.event.publish(FeedsEvent.PublishType.openRightMenuForSWM);
         this.menu.open('menu');

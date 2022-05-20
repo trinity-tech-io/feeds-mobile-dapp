@@ -97,6 +97,7 @@ export class MyApp {
     private sqliteHelper: FeedsSqliteHelper,
     private menu: MenuController
   ) {
+    console.log("=====test======");
     this.initializeApp();
     this.initProfileData();
     this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async () => {
@@ -530,6 +531,7 @@ export class MyApp {
   }
 
   ionViewWillLeave() {
+    console.log("=====ionViewWillLeave======");
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();
@@ -832,5 +834,9 @@ export class MyApp {
 
   privacyPolicy() {
 
+  }
+
+  menuClose() {
+   this.theme.restTheme();
   }
 }

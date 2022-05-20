@@ -100,6 +100,7 @@ export class FeedinfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.theme.setTheme1();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initChannelInfo();
     this.initTitle();
@@ -174,6 +175,7 @@ export class FeedinfoPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.theme.restTheme();
     this.removeEvents();
   }
 

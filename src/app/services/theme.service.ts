@@ -60,8 +60,8 @@ export class ThemeService {
     if (this.darkMode) {
       // Set dark mode globally
       document.body.classList.add('dark');
-      this.statusBar.styleLightContent();
       this.statusBar.backgroundColorByHexString("#ff161C24");
+      this.statusBar.styleLightContent();
     } else {
       // Remove dark mode globally
       this.statusBar.backgroundColorByHexString("#ffffffff");
@@ -73,5 +73,29 @@ export class ThemeService {
       'org.elastos.dapp.feeds.isDrakMode',
       JSON.stringify(this.darkMode),
     );
+  }
+
+  setTheme1() {
+    if (this.darkMode) {
+      // Set dark mode globally
+      this.statusBar.backgroundColorByHexString("#ff010101");
+      this.statusBar.styleLightContent();
+    } else {
+      // Remove dark mode globally
+      this.statusBar.backgroundColorByHexString("#ffffffff");
+      this.statusBar.styleDefault()
+    }
+  }
+
+  restTheme() {
+    if (this.darkMode) {
+      // Set dark mode globally
+      this.statusBar.styleLightContent();
+      this.statusBar.backgroundColorByHexString("#ff161C24");
+    } else {
+      // Remove dark mode globally
+      this.statusBar.backgroundColorByHexString("#ffffffff");
+      this.statusBar.styleDefault()
+    }
   }
 }

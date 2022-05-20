@@ -60,6 +60,7 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.theme.setTheme1();
     this.initTitle();
     this.curLang = this.languageService.getCurLang();
     this.developerMode = this.dataHelper.getDeveloperMode();
@@ -74,6 +75,7 @@ export class CreatenewfeedPage implements OnInit {
   ionViewDidEnter() { }
 
   ionViewWillLeave() {
+    this.theme.restTheme();
     this.native.hideLoading();
     this.native.handleTabsEvents();
   }

@@ -90,6 +90,7 @@ export class EidtchannelPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.theme.setTheme1();
     this.initTitle();
     this.channelAvatar = this.dataHelper.getProfileIamge();
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
@@ -106,6 +107,7 @@ export class EidtchannelPage implements OnInit {
   ionViewDidEnter() { }
 
   ionViewWillLeave() {
+    this.theme.restTheme();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();
