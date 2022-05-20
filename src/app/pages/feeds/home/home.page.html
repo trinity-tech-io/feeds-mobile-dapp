@@ -87,7 +87,7 @@
   <!-- HAS POSTS  -->
   <div *ngIf="postList.length > 0 && !this.isPostLoading && syncHiveDataStatus === 6">
     <div  *ngFor="let post of postList let i=index" >
-    <ion-grid class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode"
+    <ion-grid style="padding-top: 0px;" class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode"
       [class.removeBorder]="post === postList[postList.length - 1]" [class.blur]="!hideComment"
       id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}>
       <ion-row class="post-row">

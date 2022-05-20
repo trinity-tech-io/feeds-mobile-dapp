@@ -451,6 +451,8 @@ export class SearchPage implements OnInit {
 
     // this.showSubscribePrompt(feedsUrl);
     // this.zone.run(async () => {
+    try {
+
     await this.native.showLoading("common.waitMoment");
     await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
     const subscriptionChannels: FeedsData.SubscribedChannelV3[] = await this.hiveVaultController.getSelfSubscriptionChannel(feedsUrl.destDid);
@@ -460,7 +462,10 @@ export class SearchPage implements OnInit {
     // await this.hiveVaultController.queryRemoteChannelPostWithTime(feedsUrl.destDid, feedsUrl.channelId, UtilService.getCurrentTimeNum());
     this.native.hideLoading();
     this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId, isSubscribed], '');
-    // });
+    } catch (error) {
+    this.native.hideLoading();
+    this.native.toast("common.subscribeFail");
+   }
 
   }
 

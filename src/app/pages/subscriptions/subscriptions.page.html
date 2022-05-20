@@ -1,11 +1,5 @@
 <app-titlebar></app-titlebar>
 <ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
-  <div class="search-container" [class.dark-search-container]="theme.darkMode" style="position:absolute;width: 100%;padding:0px;">
-    <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
-    <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
-      <ion-searchbar #searchbar  [(ngModel)]="isSearch" inputmode=""  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
-    </form>
-  </div>
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
@@ -15,6 +9,14 @@
       refreshingText="{{'common.beingRefresh'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
+  <div style="height: 58px;">
+    <div class="search-container" [class.dark-search-container]="theme.darkMode" style="position:absolute;width: 100%;padding:0px;">
+      <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
+      <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
+        <ion-searchbar #searchbar  [(ngModel)]="isSearch" inputmode=""  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()"></ion-searchbar>
+      </form>
+    </div>
+  </div>
    <app-following [followingList] = "followingList" (exploreFeeds) = "exploreFeeds()" (fromChild)="showMenuMore($event)" (toFollowPage)="toPage($event)"></app-following>
 </ion-content>
 <!---------------- ADD share menu---------------->

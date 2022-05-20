@@ -2017,7 +2017,7 @@ export class ProfilePage implements OnInit {
       return;
     }
 
-    this.clearData();
+    this.clearData(false);
     const channels = await this.dataHelper.getSelfChannelListV3() || []
     if (channels.length === 0) {
       this.native.navigateForward(['/createnewfeed'], '').then((result)=>{

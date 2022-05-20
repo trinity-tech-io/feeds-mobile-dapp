@@ -27,6 +27,7 @@ export class AboutPage implements OnInit {
   ngOnInit() { }
 
   ionViewWillEnter() {
+    this.theme.setTheme1();
     this.initTitle();
   }
 
@@ -75,6 +76,7 @@ export class AboutPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.theme.restTheme();
   }
 
   showNftDisclaimer() {
