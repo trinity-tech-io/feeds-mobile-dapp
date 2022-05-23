@@ -831,7 +831,7 @@ export class MyApp {
   }
 
   privacyPolicy() {
-
+    this.native.openUrl('https://trinity-tech.io/privacy_policy.html');
   }
 
   menuClose() {
