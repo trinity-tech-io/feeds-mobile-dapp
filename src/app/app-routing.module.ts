@@ -2,134 +2,215 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
-  { path: 'tabs', loadChildren: './pages/feeds/feeds.module#FeedsPageModule' },
+  {
+    path: '',
+    loadChildren: () =>
+      import('./pages/feeds/feeds.module').then(
+        m => m.FeedsPageModule,
+      ),
+  },
+  {
+    path: 'tabs',
+    loadChildren: () =>
+      import('./pages/feeds/feeds.module').then(
+        m => m.FeedsPageModule,
+      ),
+  },
   {
     path: 'signin',
-    loadChildren: './pages/signin/signin.module#SigninPageModule',
+    loadChildren: () =>
+      import('./pages/signin/signin.module').then(
+        m => m.SigninPageModule,
+      ),
   },
   {
     path: 'createnewfeed',
-    loadChildren:
-      './pages/feeds/createnewfeed/createnewfeed.module#CreatenewfeedPageModule',
+    loadChildren: () =>
+      import('./pages/feeds/createnewfeed/createnewfeed.module').then(
+        m => m.CreatenewfeedPageModule,
+      ),
   },
   {
     path: 'createnewpost',
-    loadChildren:
-      './pages/feeds/createnewpost/createnewpost.module#CreatenewpostPageModule',
+    loadChildren: () =>
+      import('./pages/feeds/createnewpost/createnewpost.module').then(
+        m => m.CreatenewpostPageModule,
+      ),
   },
   {
     path: 'profileimage',
-    loadChildren:
-      './pages/feeds/profileimage/profileimage.module#ProfileimagePageModule',
+    loadChildren: () =>
+      import('./pages/feeds/profileimage/profileimage.module').then(
+        m => m.ProfileimagePageModule,
+      ),
   },
   {
     path: 'channels/:destDid/:channelId/:isSubscribed',
-    loadChildren:
-      './pages/feeds/home/channels/channels.module#ChannelsPageModule',
+    loadChildren: () =>
+      import('./pages/feeds/home/channels/channels.module').then(
+        m => m.ChannelsPageModule,
+      ),
   },
   {
     path: 'postdetail/:destDid/:channelId/:postId',
-    loadChildren:
-      './pages/feeds/home/postdetail/postdetail.module#PostdetailPageModule',
+    loadChildren: () =>
+      import('./pages/feeds/home/postdetail/postdetail.module').then(
+        m => m.PostdetailPageModule,
+      ),
   },
-
   {
     path: 'menu/profiledetail',
-    loadChildren:
-      './pages/feeds/menu/profiledetail/profiledetail.module#ProfiledetailPageModule',
+    loadChildren: () =>
+      import('./pages/feeds/menu/profiledetail/profiledetail.module').then(
+        m => m.ProfiledetailPageModule,
+      ),
   },
   {
     path: 'menu/about',
-    loadChildren: './pages/about/about.module#AboutPageModule',
+    loadChildren: () =>
+      import('./pages/about/about.module').then(
+        m => m.AboutPageModule,
+      ),
   },
   {
     path: 'disclaimer',
-    loadChildren: './pages/disclaimer/disclaimer.module#DisclaimerPageModule',
+    loadChildren: () =>
+      import('./pages/disclaimer/disclaimer.module').then(
+        m => m.DisclaimerPageModule,
+      ),
   },
   {
     path: 'eidtchannel',
-    loadChildren:
-      './pages/eidtchannel/eidtchannel.module#EidtchannelPageModule',
+    loadChildren: () =>
+      import('./pages/eidtchannel/eidtchannel.module').then(
+        m => m.EidtchannelPageModule,
+      ),
   },
   {
     path: 'editpost',
-    loadChildren: './pages/editpost/editpost.module#EditPostPageModule',
+    loadChildren: () =>
+      import('./pages/editpost/editpost.module').then(
+        m => m.EditPostPageModule,
+      ),
   },
   {
     path: 'editcomment',
-    loadChildren:
-      './pages/editcomment/editcomment.module#EditCommentPageModule',
+    loadChildren: () =>
+      import('./pages/editcomment/editcomment.module').then(
+        m => m.EditCommentPageModule,
+      ),
   },
   {
     path: 'settings',
-    loadChildren: './pages/settings/settings.module#SettingsPageModule',
+    loadChildren: () =>
+      import('./pages/settings/settings.module').then(
+        m => m.SettingsPageModule,
+      ),
   },
   {
     path: 'editimage',
-    loadChildren: './pages/editimage/editimage.module#EditimagePageModule',
+    loadChildren: () =>
+      import('./pages/editimage/editimage.module').then(
+        m => m.EditimagePageModule,
+      ),
   },
   {
     path: 'discoverfeedinfo',
-    loadChildren:
-      './pages/discoverfeedinfo/discoverfeedinfo.module#DiscoverfeedinfoPageModule',
+    loadChildren: () =>
+      import('./pages/discoverfeedinfo/discoverfeedinfo.module').then(
+        m => m.DiscoverfeedinfoPageModule,
+      ),
   },
   {
     path: 'feedinfo',
-    loadChildren: './pages/feedinfo/feedinfo.module#FeedinfoPageModule',
+    loadChildren: () =>
+      import('./pages/feedinfo/feedinfo.module').then(
+        m => m.FeedinfoPageModule,
+      ),
   },
   {
     path: 'commentlist',
-    loadChildren:
-      './pages/commentlist/commentlist.module#CommentlistPageModule',
+    loadChildren: () =>
+      import('./pages/commentlist/commentlist.module').then(
+        m => m.CommentlistPageModule,
+      ),
   },
   {
     path: 'feedspreferences',
-    loadChildren:
-      './pages/feedspreferences/feedspreferences.module#FeedspreferencesPageModule',
+    loadChildren: () =>
+      import('./pages/feedspreferences/feedspreferences.module').then(
+        m => m.FeedspreferencesPageModule,
+      ),
   },
   {
     path: 'language',
-    loadChildren:
-      './pages/settings/language/language.module#LanguagePageModule',
+    loadChildren: () =>
+      import('./pages/settings/language/language.module').then(
+        m => m.LanguagePageModule,
+      ),
   },
   {
     path: 'mintnft',
-    loadChildren: './pages/nft/mintnft/mintnft.module#MintnftPageModule',
+    loadChildren: () =>
+      import('./pages/nft/mintnft/mintnft.module').then(
+        m => m.MintnftPageModule,
+      ),
   },
   {
     path: 'assetdetails',
-    loadChildren:
-      './pages/nft/assetdetails/assetdetails.module#AssetdetailsPageModule',
+    loadChildren: () =>
+      import('./pages/nft/assetdetails/assetdetails.module').then(
+        m => m.AssetdetailsPageModule,
+      ),
   },
-  { path: 'bid', loadChildren: './pages/nft/bid/bid.module#BidPageModule' },
+  {
+    path: 'bid',
+    loadChildren: () =>
+      import('./pages/nft/bid/bid.module').then(
+        m => m.BidPageModule,
+      ),
+  },
   {
     path: 'channelsviewall',
-    loadChildren: './pages/feeds/search/search.module#SearchPageModule',
+    loadChildren: () =>
+      import('./pages/feeds/search/search.module').then(
+        m => m.SearchPageModule,
+      ),
   },
   {
     path: 'learnmore',
-    loadChildren: './pages/learnmore/learnmore.module#LearnmorePageModule',
+    loadChildren: () =>
+      import('./pages/learnmore/learnmore.module').then(
+        m => m.LearnmorePageModule,
+      ),
   },
   {
     path: 'walletteach',
-    loadChildren:
-      './pages/walletteach/walletteach.module#WalletteachPageModule',
+    loadChildren: () =>
+      import('./pages/walletteach/walletteach.module').then(
+        m => m.WalletteachPageModule,
+      ),
   },
   {
     path: 'subscriptions',
-    loadChildren:
-      './pages/subscriptions/subscriptions.module#SubscriptionsPageModule',
+    loadChildren: () =>
+      import('./pages/subscriptions/subscriptions.module').then(
+        m => m.SubscriptionsPageModule,
+      ),
   },
   {
     path: 'elastosapiprovider',
-    loadChildren:
-      './pages/elastosapiprovider/elastosapiprovider.module#ElastosapiproviderPageModule',
+    loadChildren: () =>
+      import('./pages/elastosapiprovider/elastosapiprovider.module').then(
+        m => m.ElastosapiproviderPageModule,
+      ),
   },
   {
     path: 'profilenftimage',
-    loadChildren:
-      './pages/profilenftimage/profilenftimage.module#ProfilenftimagePageModule',
+    loadChildren: () =>
+      import('./pages/profilenftimage/profilenftimage.module').then(
+        m => m.ProfilenftimagePageModule,
+      ),
   },
   {
     path: 'editprofileimage',
@@ -180,7 +261,7 @@ const routes: Routes = [
   },
   {
     path: 'apppreferences',
-    loadChildren: () => import('./pages/apppreferences/apppreferences.module').then( m => m.ApppreferencesPageModule)
+    loadChildren: () => import('./pages/apppreferences/apppreferences.module').then(m => m.ApppreferencesPageModule)
   },
 ];
 
