@@ -1249,6 +1249,40 @@ export class HiveVaultController {
     });
   }
 
+  getReplyCommentListMap(postId: string): Promise<{ [refCommentId: string]: FeedsData.CommentV3[] }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const commentList = await this.getCommentList(postId, '0');
+        if (!commentList || commentList.length == 0) {
+          resolve({});
+          return;
+        }
+
+        let replyCommentsMap: { [refCommentId: string]: FeedsData.CommentV3[] } = {};
+        for (let index = 0; index < commentList.length; index++) {
+
+          const comment = commentList[index];
+          console.log('==========comment==========', comment);
+          const replyCommentList = await this.getCommentList(comment.postId, comment.commentId);
+          console.log('==========replyCommentList==========', replyCommentList);
+          replyCommentsMap[comment.commentId] = replyCommentList;
+          console.log('==========replyCommentsMap==========', replyCommentsMap);
+        }
+
+        if (!replyCommentsMap || Object.keys(replyCommentsMap).length == 0) {
+          resolve({});
+          return;
+        }
+
+        resolve(replyCommentsMap);
+        return;
+      } catch (error) {
+        Logger.error(TAG, 'Get local comment list error', error);
+        reject(error);
+      }
+    });
+  }
+
   getLikeStatus(postId: string, commentId: string): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1344,7 +1378,7 @@ export class HiveVaultController {
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Prepare Connection error', error);
-        this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail,{type:1});
+        this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
         reject(error);
       }
     });

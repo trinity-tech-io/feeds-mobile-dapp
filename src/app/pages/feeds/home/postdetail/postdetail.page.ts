@@ -136,6 +136,7 @@ export class PostdetailPage implements OnInit {
   private isloadingLikeMap: any = {};
   private isLoadingLike = false;
   public channelOwnerName: string = '';
+  public replyCommentsMap: { [refcommentId: string]: FeedsData.CommentV3[] } = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -175,6 +176,10 @@ export class PostdetailPage implements OnInit {
     } else {
       this.refreshCommentList();
     }
+
+
+    this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMap(this.postId);
+    console.log('this.replyCommentsMap = ', this.replyCommentsMap);
   }
 
   handleChannelAvatar(channelAvatarUri: string) {
