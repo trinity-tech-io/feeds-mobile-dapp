@@ -28,11 +28,11 @@
         <ion-col size="2.5" class="left-col">
             <img src="assets/images/darkmode/developer/network.svg"/>
         </ion-col>
-        <ion-col size="6.5" class="title-col">
-            <h1>{{"SettingsPage.configure-network" | translate }}</h1>
-            <h2>{{ selectedNetwork }}</h2>
+        <ion-col size="8.5" class="title-col">
+            <h2>{{ "SettingsPage.configure-network" | translate }}</h2>
+            <h3>{{ "SettingsPage.networkDes" | translate }}</h3>
         </ion-col>
-        <ion-col size="3" class="arrow-col">
+        <ion-col size="1" class="arrow-col">
             <img src="assets/images/darkmode/settings/right-arrow.svg"/>
         </ion-col>
     </ion-row>
@@ -41,9 +41,9 @@
             <img src="assets/images/darkmode/developer/log.svg"/>
         </ion-col>
         <ion-col size="6.5" class="title-col" (swipe)="toggleLogMode()" [style.touch-action]="'pan-y'">
-            <h1>{{"common.developLog" | translate }}</h1>
-            <h2 *ngIf="openLog">{{ 'SettingsPage.on' | translate }}</h2>
-            <h2 *ngIf="!openLog">{{ 'SettingsPage.off' | translate }}</h2>
+            <h2>{{"common.developLog" | translate }}</h2>
+            <h3 *ngIf="openLog">{{ 'SettingsPage.on' | translate }}</h3>
+            <h3 *ngIf="!openLog">{{ 'SettingsPage.off' | translate }}</h3>
         </ion-col>
         <ion-col size="3" class="arrow-col" (swipe)="toggleLogMode()" [style.touch-action]="'pan-y'">
             <ion-toggle mode="ios" color="success" [(ngModel)]="openLog" style="pointer-events:none;">
@@ -55,10 +55,11 @@
         <ion-col size="2.5" class="left-col">
             <img src="assets/images/darkmode/developer/interface.svg"/>
         </ion-col>
-        <ion-col size="6.5" class="title-col">
-            <h1>Interface Test</h1>
+        <ion-col size="8.5" class="title-col">
+            <h2>{{ "SettingsPage.interface" | translate }}</h2>
+            <h3>{{ "SettingsPage.interfaceDes" | translate }}</h3>
         </ion-col>
-        <ion-col size="3" class="arrow-col">
+        <ion-col size="1" class="arrow-col">
             <img src="assets/images/darkmode/settings/right-arrow.svg"/>
         </ion-col>
     </ion-row>
@@ -68,7 +69,8 @@
         <img src="assets/images/darkmode/developer/delete.svg"/>
     </ion-col>
     <ion-col size="9.5" class="title-col">
-        <h1>delete All Collections</h1>
+        <h2>{{ "SettingsPage.databaseCollections" | translate }}</h2>
+        <h3>{{ "SettingsPage.databaseCollectionsDes" | translate}}</h3>
     </ion-col>
     </ion-row>
 

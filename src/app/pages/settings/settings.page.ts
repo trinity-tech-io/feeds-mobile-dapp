@@ -22,8 +22,6 @@ export class SettingsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode: boolean = false;
   public popover: any = null;
-  public languageName: string = null;
-  public curApiProviderName = 'elastos.io';
   constructor(
     private languageService: LanguageService,
     private events: Events,
@@ -51,18 +49,7 @@ export class SettingsPage implements OnInit {
 
   ionViewWillEnter() {
     //this.loadAssistShowName();
-    this.curApiProviderName = this.dataHelper.getApiProvider();
-    this.languageName = this.getCurlanguageName();
     this.initTitle();
-  }
-
-  getCurlanguageName() {
-    let curCode = this.languageService.getCurLang();
-    let languageList = this.languageService.languages;
-    let curlanguage = _.find(languageList, item => {
-      return item.code === curCode;
-    });
-    return curlanguage['name'];
   }
 
   ionViewDidEnter() { }
