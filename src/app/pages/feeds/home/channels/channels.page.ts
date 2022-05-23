@@ -438,9 +438,9 @@ export class ChannelsPage implements OnInit {
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
     if (!this.theme.darkMode) {
-      this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelRightMenu", "assets/icon/dot.ico");
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelRightMenu", "assets/icon/info.ico");
     } else {
-      this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelRightMenu", "assets/icon/dark/dot.ico");
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelRightMenu", "assets/icon/dark/info.ico");
     }
   }
 

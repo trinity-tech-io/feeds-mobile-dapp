@@ -12,7 +12,8 @@
             <span>{{name}}</span>
           </div>
           <div class="channelOwner">
-            <span>@...</span>
+            <span *ngIf="channelOwner ==='' ">@......</span>
+            <span *ngIf="channelOwner !='' ">@{{channelOwner}}</span>
           </div>
 
           <div class="channeldes">

@@ -1,5 +1,5 @@
 <div class="bg"(click)="hidePreviewQrcode()" >
-<div class="qr-container" [ngStyle]="styleObj">
+<div class="qr-container">
 <div class="qrcode" (click)="hidePreviewQrcode()">
     <qrcode [qrdata]="qrCodeString" [size]="qrCodewidth" [level]="'M'" allowEmptyString="true"></qrcode>
 </div>

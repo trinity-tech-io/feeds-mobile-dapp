@@ -96,7 +96,22 @@ export class FeedinfoPage implements OnInit {
     if (this.followStatus == null) this.followStatus = false;
 
     this.channelSubscribes = channelInfo['channelSubscribes'] || 0;
-    this.channelOwner = channelInfo.channelOwner || "";
+    //this.channelOwner = channelInfo.channelOwner || "";
+
+    let text = this.destDid.replace('did:elastos:', '');
+    this.channelOwner = UtilService.resolveAddress(text);
+    try {
+      this.hiveVaultController.getDisplayName(this.destDid, this.channelId, this.destDid).
+      then((result: string) => {
+        let name = result || "";
+        if (name != "") {
+          this.channelOwner = name;
+        }
+      }).catch(() => {
+      });
+    } catch (error) {
+
+    }
   }
 
   ionViewWillEnter() {
@@ -166,9 +181,9 @@ export class FeedinfoPage implements OnInit {
 
     if (this.isMine && this.type === "") {
       if (!this.theme.darkMode) {
-        this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelInfoRightMenu", "assets/icon/dot.ico");
+        this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelInfoRightMenu", "assets/icon/edit.ico");
       } else {
-        this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelInfoRightMenu", "assets/icon/dark/dot.ico");
+        this.titleBarService.setTitleBarMoreMemu(this.titleBar, "channelInfoRightMenu", "assets/icon/dark/edit.ico");
       }
     }
 
