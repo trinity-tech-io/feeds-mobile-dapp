@@ -3258,12 +3258,10 @@ export class DataHelper {
     });
   }
 
-  private async updateChannelV3(channel: FeedsData.ChannelV3): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      const selfDid = (await this.getSigninData()).did;
-      // update 的时候更新updateTime
-      return await this.sqliteHelper.updateChannelData(selfDid, channel);
-    });
+  private async updateChannelV3(channel: FeedsData.ChannelV3) {
+    const selfDid = (await this.getSigninData()).did;
+    // update 的时候更新updateTime
+    return await this.sqliteHelper.updateChannelData(selfDid, channel);
   }
 
   private updateChannelsV3(channels: FeedsData.ChannelV3[]): Promise<string> {
