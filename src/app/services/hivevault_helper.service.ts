@@ -3,7 +3,7 @@ import { HiveService } from 'src/app/services/HiveService';
 import { Logger } from './logger';
 import { UtilService } from './utilService';
 import { DataHelper } from './DataHelper';
-import { QueryHasResultCondition, FindExecutable, AndCondition, AggregatedExecutable, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, InsertResult, FileDownloadExecutable, HiveException, InsufficientStorageException } from "@elastosfoundation/hive-js-sdk";
+import { QueryHasResultCondition, FindExecutable, AndCondition, NetworkException, InsertExecutable, UpdateExecutable, DeleteExecutable, UpdateResult, UpdateOptions, InsertResult, FileDownloadExecutable, HiveException, InsufficientStorageException } from "@elastosfoundation/hive-js-sdk";
 import { Config } from 'src/app/services/config';
 import { rawImageToBase64DataUrl } from 'src/app/services/picture.helpers';
 import SparkMD5 from 'spark-md5';
@@ -130,8 +130,8 @@ export class HiveVaultHelper {
                     reject(reason)
                 })
             } catch (error) {
-                Logger.error(TAG,"registeScripting error",error);
-                reject(error);
+                Logger.error(TAG, "registeScripting error", error);
+                reject(this.handleError(error))
             }
         });
     }
@@ -158,12 +158,14 @@ export class HiveVaultHelper {
 
     async handleError(error: any) {
         let errorCode = error["code"];
-        let errorDes = "ErrorInfo.HIVE_ERROR_"+errorCode;
-        if ( errorCode === 507) {
-            if(this.buyStorageSpaceDialog === null){
-               await this.showBuyStorageSpaceDialog(errorDes);
+        let errorDes = "ErrorInfo.HIVE_ERROR_" + errorCode;
+        if (errorCode === 507) {
+            if (this.buyStorageSpaceDialog === null) {
+                await this.showBuyStorageSpaceDialog(errorDes);
             }
-            return error;
+        } else if (errorCode === undefined) {
+            this.native.toastWarn(errorDes)
+            console.log("errorDes >>>>>>>>>> ", errorDes)
         }
         return error
     }
@@ -207,7 +209,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query Feeds scripting from DB', error);
-                reject(error);
+                reject(this.handleError(error))
             }
         });
     }
@@ -237,7 +239,7 @@ export class HiveVaultHelper {
                 resolve('true');
             }, reason => {
                 Logger.error(TAG, 'create Collections error', reason);
-                    reject(this.handleError(reason))
+                reject(this.handleError(reason))
             })
         });
     }
@@ -263,7 +265,7 @@ export class HiveVaultHelper {
                 if (error["code"] === 404) {
                     resolve("true")
                 } else {
-                    reject(error)
+                    reject(this.handleError(error))
                 }
             }
         });
@@ -1005,8 +1007,8 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_COMMENT, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryCommentRangeOfTime error",error)
-                reject(error)
+                Logger.error(TAG, "registerQueryCommentRangeOfTime error", error)
+                reject(this.handleError(error))
             }
         })
     }
@@ -1241,8 +1243,8 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_DELETE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerDeleteComment error",error)
-                reject(error)
+                Logger.error(TAG, "registerDeleteComment error", error)
+                reject(this.handleError(error))
             }
         })
     }
@@ -1260,7 +1262,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Delete comment from scripting , error:', error);
-                reject(error);
+                reject(this.handleError(error))
             }
         });
     }
@@ -1292,8 +1294,8 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryLikeById error",error)
-                reject(error)
+                Logger.error(TAG, "registerQueryLikeById error", error)
+                reject(this.handleError(error))
             }
         })
     }
@@ -1344,8 +1346,8 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SELF_LIKE_BY_ID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQuerySelfLikeById error",error)
-                reject(error)
+                Logger.error(TAG, "registerQuerySelfLikeById error", error)
+                reject(this.handleError(error))
             }
         })
     }
@@ -1393,8 +1395,8 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryLikeByChannel error",error)
-                reject(error)
+                Logger.error(TAG, "registerQueryLikeByChannel error", error)
+                reject(this.handleError(error))
             }
         })
     }
@@ -1442,8 +1444,8 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryLikeByPost error",error)
-                reject(error)
+                Logger.error(TAG, "registerQueryLikeByPost error", error)
+                reject(this.handleError(error))
             }
         })
     }
@@ -1483,8 +1485,8 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_LIKE, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerLikeRangeOfTime error",error)
-                reject(error)
+                Logger.error(TAG, "registerLikeRangeOfTime error", error)
+                reject(this.handleError(error))
             }
         })
     }
@@ -1536,8 +1538,8 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_LIKE, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerCreateLike error",error)
-                reject(error)
+                Logger.error(TAG, "registerCreateLike error", error)
+                reject(this.handleError(error))
             }
         })
     }
@@ -1591,8 +1593,8 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_REMOVE_LIKE, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerRemoveLike error",error)
-                reject(error)
+                Logger.error(TAG, "registerRemoveLike error", error)
+                reject(this.handleError(error))
             }
         })
     }
@@ -1643,8 +1645,8 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_LIKE, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerUpdateLike error",error)
-                reject(error)
+                Logger.error(TAG, "registerUpdateLike error", error)
+                reject(this.handleError(error))
             }
         })
     }
@@ -1690,7 +1692,7 @@ export class HiveVaultHelper {
             }
             catch (error) {
                 Logger.error(TAG, "Download Ess Avatar error: ", error);
-                reject(error)
+                reject(this.handleError(error))
             }
         });
     }
@@ -1714,7 +1716,7 @@ export class HiveVaultHelper {
                 resolve(avatarHiveURL);
             } catch (error) {
                 console.log("uploadMediaData error:", error)
-                reject(error);
+                reject(this.handleError(error))
             }
         });
     }
@@ -1733,13 +1735,21 @@ export class HiveVaultHelper {
                 resolve(avatarHiveURL)
             } catch (error) {
                 console.log("uploadMediaData error:", error)
-                reject(error);
+                reject(this.handleError(error))
             }
         });
     }
 
-    downloadFile(remotePath: string) {
-        return this.hiveService.downloadFile(remotePath)
+    downloadFile(remotePath: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = this.hiveService.downloadFile(remotePath)
+                resolve(result)
+            } catch (error) {
+                console.log("downloadFile error:", error)
+                reject(this.handleError(error))
+            }
+        });
     }
 
     /** helper */
@@ -1758,7 +1768,7 @@ export class HiveVaultHelper {
                 resolve(data);
             } catch (error) {
                 Logger.error(TAG, 'download file from scripting error', error);
-                reject(error);
+                reject(this.handleError(error))
             }
         });
     }
@@ -1796,7 +1806,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'callScript error:', error);
-                reject(error);
+                reject(this.handleError(error))
             }
         });
     }
@@ -1810,7 +1820,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query channels from DB', error);
-                reject(error);
+                reject(this.handleError(error))
             }
         });
     }
@@ -1829,7 +1839,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query post from DB', error);
-                reject(error);
+                reject(this.handleError(error))
             }
         });
     }
@@ -1848,7 +1858,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query post by channel from DB', error);
-                reject(error);
+                reject(this.handleError(error))
             }
         });
     }
@@ -1879,7 +1889,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryDisplayName error",error)
+                Logger.error(TAG, "registerQueryDisplayName error", error)
                 reject(this.handleError(error))
             }
         })
@@ -1957,7 +1967,7 @@ export class HiveVaultHelper {
                 resolve('FINISH');
             } catch (error) {
                 Logger.error(TAG, 'Remove bsc db error', error);
-                reject(error);
+                reject(this.handleError(error))
             }
         })
     }
@@ -1977,7 +1987,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query bsc db error', error);
-                reject(error);
+                reject(this.handleError(error))
             }
         })
     }

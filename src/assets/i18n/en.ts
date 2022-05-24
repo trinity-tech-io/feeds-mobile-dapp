@@ -273,7 +273,7 @@ export const en = {
     createCollectible: 'Create Collectibles',
     allempty: 'No collectibles found',
     emptyDes: 'Create a collectible or buy one from Pasar Lite marketplace!',
-    exploreMarketplace:'Explore Marketplace'
+    exploreMarketplace: 'Explore Marketplace'
   },
   MyfeedsComponent: {
     allempty: 'No channels found',
@@ -292,7 +292,7 @@ export const en = {
     allempty: 'Nothing liked yet',
     emptyLikeDes: "See what's being posted on the timeline!",
     timeline: 'Timeline',
-    exploreFeeds : 'Explore Feeds'
+    exploreFeeds: 'Explore Feeds'
   },
   ConfirmdialogComponent: {
     signoutTitle: 'Sign Out',
@@ -574,6 +574,7 @@ export const en = {
     SESSION_REQUEST_ERROR: 'Session: Request Error',
     SESSION_START_ERROR: 'Session: Start Error',
     HIVE_ERROR_507: 'Sorry, insufficient Hive storage available',
+    HIVE_ERROR_undefined: 'Network error, please try again',
   },
   EidtchannelPage: {
     title: 'Edit Channel Info',
@@ -625,7 +626,7 @@ export const en = {
     appPreferencesDes: 'Manage app preferences',
     developer: 'Developer',
     developerDes: 'Environment settings',
-    languageDes : 'Global language settings',
+    languageDes: 'Global language settings',
     apiProviderDes: 'Configure API provider',
     dataMigration: 'Data Migration',
     dataMigrationDes: 'Feeds Service to Hive vault',
@@ -634,7 +635,7 @@ export const en = {
     interface: 'Interface',
     databaseCollections: 'Database Collections',
     databaseCollectionsDes: 'Delete all collections'
-    },
+  },
   // DiscoverfeedPage: {
   //   title: 'Discovery Square',
   //   emptyDes: 'There are no public Channels',

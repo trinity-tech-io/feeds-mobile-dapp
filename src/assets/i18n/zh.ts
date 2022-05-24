@@ -273,7 +273,7 @@ export const zh = {
     createCollectible: '创建收藏品',
     allempty: '没有发现收藏品',
     emptyDes: '创建一个收藏品或从Pasar Lite marketplace购买一个！',
-    exploreMarketplace:'探索市场'
+    exploreMarketplace: '探索市场'
   },
   MyfeedsComponent: {
     allempty: '没有找到频道',
@@ -291,7 +291,7 @@ export const zh = {
     allempty: '还没有喜欢',
     emptyLikeDes: '看看时间线上贴了什么！',
     timeline: '时间线',
-    exploreFeeds : '探索Feeds'
+    exploreFeeds: '探索Feeds'
   },
   ConfirmdialogComponent: {
     signoutTitle: '登出',
@@ -574,6 +574,7 @@ export const zh = {
     SESSION_REQUEST_ERROR: 'Session: 请求出错',
     SESSION_START_ERROR: 'Session: 启动出错',
     HIVE_ERROR_507: '对不起，Hive存储空间不足',
+    HIVE_ERROR_undefined: '网络错误,请重试',
   },
   EidtchannelPage: {
     title: '编辑频道信息',
@@ -625,7 +626,7 @@ export const zh = {
     appPreferencesDes: '管理应用首选项',
     developer: '开发者模式',
     developerDes: '环境设置',
-    languageDes : '全局语言设置',
+    languageDes: '全局语言设置',
     apiProviderDes: '配置API提供商',
     dataMigration: '数据迁移',
     dataMigrationDes: 'Feeds Service to Hive vault',
