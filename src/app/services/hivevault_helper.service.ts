@@ -10,6 +10,7 @@ import SparkMD5 from 'spark-md5';
 const TAG = 'HiveVaultHelper';
 import { TranslateService } from '@ngx-translate/core';
 import { PopupProvider } from './popup';
+import { NativeService } from './NativeService';
 
 @Injectable()
 export class HiveVaultHelper {
@@ -71,7 +72,8 @@ export class HiveVaultHelper {
         private hiveService: HiveService,
         private dataHelper: DataHelper,
         private translate: TranslateService,
-        private popupProvider: PopupProvider
+        private popupProvider: PopupProvider,
+        private native: NativeService
     ) {
     }
 
@@ -2151,10 +2153,10 @@ export class HiveVaultHelper {
 
         this.buyStorageSpaceDialog = await this.popupProvider.ionicAlert(
             this,
-            'common.confirmDialog',
+            'buyStorageSpaceDialog.title',
             message,
             this.cancelBuyStorageSpace,
-            'signOutDialog.svg',
+            'hiveStrong.svg',
         );
     }
 

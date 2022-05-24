@@ -573,7 +573,7 @@ export const en = {
     SESSION_ADD_STREAM_ERROR: 'Session: Add Stream Error',
     SESSION_REQUEST_ERROR: 'Session: Request Error',
     SESSION_START_ERROR: 'Session: Start Error',
-    HIVE_ERROR_507: 'Insufficient storage space for hive',
+    HIVE_ERROR_507: 'Sorry, insufficient Hive storage available',
   },
   EidtchannelPage: {
     title: 'Edit Channel Info',
@@ -878,7 +878,7 @@ export const en = {
     title: " App Preferences",
   },
   buyStorageSpaceDialog: {
-    title: "Buy Storage Space",
+    title: "Insufficient Storage",
     noBuy: "Don't buy",
     buy: "Buy"
   }
