@@ -170,13 +170,13 @@ const routes: Routes = [
         m => m.BidPageModule,
       ),
   },
-  {
-    path: 'channelsviewall',
-    loadChildren: () =>
-      import('./pages/feeds/search/search.module').then(
-        m => m.SearchPageModule,
-      ),
-  },
+  // {
+  //   path: 'channelsviewall',
+  //   loadChildren: () =>
+  //     import('./pages/feeds/search/search.module').then(
+  //       m => m.SearchPageModule,
+  //     ),
+  // },
   {
     path: 'learnmore',
     loadChildren: () =>

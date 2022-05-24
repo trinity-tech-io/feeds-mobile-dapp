@@ -14,7 +14,10 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: './home/home.module#HomePageModule',
+            loadChildren: () =>
+              import('./home/home.module').then(
+                m => m.HomePageModule,
+              ),
           },
         ],
       },
@@ -24,7 +27,10 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: './profile/profile.module#ProfilePageModule',
+            loadChildren: () =>
+              import('./profile/profile.module').then(
+                m => m.ProfilePageModule,
+              ),
           },
         ],
       },
@@ -34,8 +40,10 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren:
-              './notification/notification.module#NotificationPageModule',
+            loadChildren: () =>
+              import('./notification/notification.module').then(
+                m => m.NotificationPageModule,
+              ),
           },
         ],
       },
@@ -45,7 +53,10 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: './pages/feeds/search/search.module#SearchPageModule',
+            loadChildren: () =>
+              import('./search/search.module').then(
+                m => m.SearchPageModule,
+              ),
           },
         ],
       },
@@ -62,4 +73,4 @@ const routes: Routes = [
   imports: [TranslateModule, RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class FeedsRoutingModule {}
+export class FeedsRoutingModule { }
