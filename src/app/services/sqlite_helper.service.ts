@@ -564,7 +564,6 @@ export class FeedsSqliteHelper {
         const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
         const num = this.parseNum(result);
-
         Logger.log(TAG, 'query subscription Num by channel id result is', num);
         resolve(num);
       } catch (error) {
@@ -600,6 +599,21 @@ export class FeedsSqliteHelper {
         resolve('SUCCESS');
       } catch (error) {
         Logger.error(TAG, 'delete subscription data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  cleanSubscriptionData(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIPTION;
+        const params = [];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'clean subscription result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'clean subscription data error', error);
         reject(error);
       }
     });

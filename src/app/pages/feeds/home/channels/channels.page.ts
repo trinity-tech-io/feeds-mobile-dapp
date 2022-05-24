@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import {  ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
@@ -298,18 +298,18 @@ export class ChannelsPage implements OnInit {
     this.channelOwner = UtilService.resolveAddress(text);
     try {
       this.hiveVaultController.getDisplayName(this.destDid, this.channelId, this.destDid).
-      then((result: string) => {
-        let name = result || "";
-        if (name != "") {
-          this.channelOwner = name;
-        }
-      }).catch(() => {
-      });
+        then((result: string) => {
+          let name = result || "";
+          if (name != "") {
+            this.channelOwner = name;
+          }
+        }).catch(() => {
+        });
     } catch (error) {
 
     }
     this.channelDesc = channel.intro;
-    //this.channelSubscribes = channel.subscribers;
+    this.channelSubscribes = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
     this.tippingAddress = channel.tipping_address || '';
     let channelAvatarUri = channel.avatar || '';
     this.channelAvatarUri = channelAvatarUri;
@@ -593,6 +593,7 @@ export class ChannelsPage implements OnInit {
         this.dataHelper.cleanCachedComment();
         this.dataHelper.cleanCacheLikeNum();
         this.dataHelper.cleanCachedLikeStatus();
+        await this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId);
         await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
         await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
         await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
@@ -804,8 +805,8 @@ export class ChannelsPage implements OnInit {
       } else {
         let postImageSrc = postImage.getAttribute('src') || '';
         if (
-          postImage.getBoundingClientRect().top < - Config.rectTop  &&
-          postImage.getBoundingClientRect().bottom > Config.rectBottom  &&
+          postImage.getBoundingClientRect().top < - Config.rectTop &&
+          postImage.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadimage[id] === '13' &&
           postImageSrc != ''
         ) {

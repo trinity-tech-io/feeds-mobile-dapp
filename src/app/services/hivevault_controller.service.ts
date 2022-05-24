@@ -224,28 +224,31 @@ export class HiveVaultController {
     });
   }
 
-  //TODO user link
-  getSubscriptionChannelById(targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
+  //TODO be improve user link
+  querySubscriptionChannelById(targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
-      // try {
-      //   const result = await this.hiveVaultApi.querySubscrptionInfoByChannelId(targetDid, channelId);
-      //   Logger.log(TAG, 'Query subscription info result is', result);
-      //   if (result) {
-      //     const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
+      try {
+        const result = await this.hiveVaultApi.querySubscrptionInfoByChannelId(targetDid, channelId);
+        Logger.log(TAG, 'Query subscription info result is', result);
+        if (!result) {
+          resolve([]);
+          return;
+        }
 
-      //     if (!subscriptions || subscriptions.length == 0) {
-      //       resolve(null);
-      //       return;
-      //     }
-      //     await this.dataHelper.addSubscribedChannels(subscriptions);
-      //     resolve(subscriptions);
-      //   } else {
-      //     resolve(null);
-      //   }
-      // } catch (error) {
-      //   Logger.error(TAG, error);
-      //   reject(error);
-      // }
+        const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
+        if (!subscriptions || subscriptions.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        await this.dataHelper.cleanSubscriptionsV3Data();
+        await this.dataHelper.addSubscriptionsV3Data(subscriptions);
+        await this.dataHelper.addSubscribedChannels(subscriptions);
+        resolve(subscriptions);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
     });
   }
 
@@ -1062,13 +1065,6 @@ export class HiveVaultController {
     });
   }
 
-  //TODO
-  backupSubscriptions() {
-  }
-
-  restoreSubscriptions() {
-  }
-
   handleChannelResult(targetDid: string, result: any): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1260,13 +1256,9 @@ export class HiveVaultController {
 
         let replyCommentsMap: { [refCommentId: string]: FeedsData.CommentV3[] } = {};
         for (let index = 0; index < commentList.length; index++) {
-
           const comment = commentList[index];
-          console.log('==========comment==========', comment);
           const replyCommentList = await this.getCommentList(comment.postId, comment.commentId);
-          console.log('==========replyCommentList==========', replyCommentList);
           replyCommentsMap[comment.commentId] = replyCommentList;
-          console.log('==========replyCommentsMap==========', replyCommentsMap);
         }
 
         if (!replyCommentsMap || Object.keys(replyCommentsMap).length == 0) {
@@ -1277,7 +1269,7 @@ export class HiveVaultController {
         resolve(replyCommentsMap);
         return;
       } catch (error) {
-        Logger.error(TAG, 'Get local comment list error', error);
+        Logger.error(TAG, 'Get reply comment list error', error);
         reject(error);
       }
     });

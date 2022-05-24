@@ -3079,7 +3079,6 @@ export class DataHelper {
 
 
   //subscriptionV3
-  //暂不缓存这部分数据
   private addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3093,11 +3092,10 @@ export class DataHelper {
     });
   }
 
-  //暂不缓存这部分数据
-  private addSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
+  addSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!subscriptions) {
+        if (!subscriptions || subscriptions.length == 0) {
           resolve('FINISH');
           return;
         }
@@ -3114,7 +3112,6 @@ export class DataHelper {
     });
   }
 
-  //暂不缓存这部分数据
   private updateSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3129,7 +3126,6 @@ export class DataHelper {
     })
   }
 
-  //暂不缓存这部分数据
   private updateSubscriptionsV3Data(subscriptions: FeedsData.SubscriptionV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3150,7 +3146,19 @@ export class DataHelper {
     });
   }
 
-  //暂不缓存这部分数据
+  cleanSubscriptionsV3Data(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.cleanSubscriptionData(selfDid);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Update subscriptions error', error);
+        reject(error)
+      }
+    });
+  }
+
   getSubscriptionV3NumByChannelId(destDid: string, channelId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3165,7 +3173,6 @@ export class DataHelper {
     })
   }
 
-  //暂不缓存这部分数据
   getSubscriptionV3DataByChannelId(destDid: string, channelId: string): Promise<FeedsData.SubscriptionV3> {
     return new Promise(async (resolve, reject) => {
       try {
