@@ -331,7 +331,6 @@ export class HiveService {
         resolve(insertResult)
       } catch (error) {
         Logger.error(TAG, 'Insert error:', error);
-        this.events.publish(FeedsEvent.PublishType.insertError);
         reject(error)
       }
     })

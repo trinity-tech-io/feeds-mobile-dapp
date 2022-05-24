@@ -9,6 +9,7 @@ import { rawImageToBase64DataUrl } from 'src/app/services/picture.helpers';
 import SparkMD5 from 'spark-md5';
 const TAG = 'HiveVaultHelper';
 import { TranslateService } from '@ngx-translate/core';
+import { PopupProvider } from './popup';
 
 @Injectable()
 export class HiveVaultHelper {
@@ -65,11 +66,12 @@ export class HiveVaultHelper {
     public static readonly QUERY_PUBLIC_SPECIFIED_POST = "query_public_specified_post";
     public static readonly QUERY_PUBLIC_SOMETIME_POST = "query_public_sometime_post";
     public static readonly QUERY_PUBLIC_POST_BY_CHANNEL = "query_public_post_by_channel";
-
+    private buyStorageSpaceDialog: any = null;
     constructor(
         private hiveService: HiveService,
         private dataHelper: DataHelper,
         private translate: TranslateService,
+        private popupProvider: PopupProvider
     ) {
     }
 
@@ -152,14 +154,16 @@ export class HiveVaultHelper {
         })
     }
 
-    handleError(error: any) {
-        if (error["code"] === 507) {
-            const errorStr = this.translate.instant("ErrorInfo.HIVE_INSUFFICIENT_STORAGE")
-            const newError = new InsufficientStorageException(errorStr, null, 507)
-            return newError
-        } else {
-            return error
+    async handleError(error: any) {
+        let errorCode = error["code"];
+        let errorDes = "ErrorInfo.HIVE_ERROR_"+errorCode;
+        if ( errorCode === 507) {
+            if(this.buyStorageSpaceDialog === null){
+               await this.showBuyStorageSpaceDialog(errorDes);
+            }
+            return error;
         }
+        return error
     }
 
     createFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false) {
@@ -2143,4 +2147,22 @@ export class HiveVaultHelper {
     }
     /** query public post data range of time end */
 
+    async showBuyStorageSpaceDialog(message: string) {
+
+        this.buyStorageSpaceDialog = await this.popupProvider.ionicAlert(
+            this,
+            'common.confirmDialog',
+            message,
+            this.cancelBuyStorageSpace,
+            'signOutDialog.svg',
+        );
+    }
+
+
+    cancelBuyStorageSpace(that: any) {
+        if (that.buyStorageSpaceDialog != null) {
+            that.buyStorageSpaceDialog.dismiss();
+            that.buyStorageSpaceDialog = null;
+        }
+    }
 }

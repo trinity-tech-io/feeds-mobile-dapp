@@ -148,19 +148,6 @@ export class CreatenewpostPage implements OnInit {
       this.pauseVideo();
       this.hideFullScreen();
     });
-
-    this.events.subscribe(FeedsEvent.PublishType.authEssentialFail, () => {
-      this.isLoading = false;
-      this.isPublishing = false;
-      this.native.toast('common.sendFail'); // 需要更改错误提示
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.insertError,() => {
-      this.isLoading = false;
-      this.isPublishing = false;
-      this.native.toast('common.sendFail'); // 需要更改错误提示
-    });
-
   }
 
   ionViewWillLeave() {
@@ -172,8 +159,6 @@ export class CreatenewpostPage implements OnInit {
     }
 
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-    this.events.unsubscribe(FeedsEvent.PublishType.authEssentialFail);
-    this.events.unsubscribe(FeedsEvent.PublishType.insertError);
     this.hideFullScreen();
 
     this.imgUrl = '';
@@ -228,9 +213,11 @@ export class CreatenewpostPage implements OnInit {
           //dismiss dialog
           this.backHome();
         } catch (error) {
+          if(error["code"] != 507){
+            this.native.toast('common.sendFail'); // 需要更改错误提示
+          }
           this.isLoading = false;
           this.isPublishing = false;
-          this.native.toast('common.sendFail'); // 需要更改错误提示
         }
       }
     });

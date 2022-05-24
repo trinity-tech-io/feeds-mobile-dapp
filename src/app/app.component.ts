@@ -248,7 +248,6 @@ export class MyApp {
         this.initCurrentChannel();
         this.initDiscoverfeeds();
         this.initCollectibleSetting();
-        this.initWhiteList();
         this.initFeedsSortType();
         this.initHideAdult();
         this.initPublishedActivePanelList();
@@ -330,15 +329,6 @@ export class MyApp {
   }
 
   initSetting() {
-    this.updateElaPrice();
-    this.dataHelper
-      .loadData("feeds:elaPrice").then((elaPrice: any) => {
-        if (elaPrice === null) {
-          this.setElaUsdPrice("");
-        } else {
-          this.setElaUsdPrice(elaPrice);
-        }
-      }).catch(err => { });
 
     this.dataHelper.loadDevelopLogMode().then((isOpenLog: boolean) => {
       if (isOpenLog)
@@ -569,19 +559,6 @@ export class MyApp {
       .catch(() => { });
   }
 
-  initWhiteList() {
-    this.dataHelper.loadData("feeds.WhiteList")
-      .then((whiteListData: FeedsData.WhiteItem[]) => {
-        if (whiteListData === null) {
-          this.dataHelper.setWhiteListData([]);
-          this.ajaxGetWhiteList(false);
-          return;
-        }
-        this.dataHelper.setWhiteListData(whiteListData);
-        this.ajaxGetWhiteList(false);
-      })
-      .catch()
-  }
 
   async initFeedsSortType() {
     try {
@@ -638,12 +615,6 @@ export class MyApp {
       that.walletAddressStr = '';
       that.events.publish(FeedsEvent.PublishType.clickDisconnectWallet);
     }
-  }
-
-  updateElaPrice() {
-    setInterval(() => {
-      this.setElaUsdPrice("");
-    }, 60000 * 10);
   }
 
   setElaUsdPrice(caceElaPrice: any) {
