@@ -1338,7 +1338,7 @@ export class NFTContractHelperService {
         const item: FeedsData.NFTItem = this.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, 'onSale');
         resolve(item);
       } catch (error) {
-        Logger.error(error);
+        Logger.error(TAG,"BuySaleNFTFromPost error",error);
         reject(error);
       }
     });

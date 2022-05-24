@@ -2170,7 +2170,7 @@ export class ProfilePage implements OnInit {
             this.saveCollectiblesToCache(accAddress);
             // this.collectiblesList.push(item);
           } catch (error) {
-            Logger.error("Get not sale item error", error);
+            Logger.error(TAG,"Get not sale item error", error);
           }
         }
 

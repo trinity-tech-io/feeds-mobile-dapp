@@ -104,7 +104,7 @@ export class MyApp {
         await this.hiveVaultController.prepareConnection();
         await this.initRegisterScript(true);
       } catch (error) {
-        Logger.error(TAG, error)
+        Logger.error(TAG,"signinFail error",error);
       }
 
     });

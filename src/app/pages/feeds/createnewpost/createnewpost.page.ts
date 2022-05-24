@@ -289,7 +289,7 @@ export class CreatenewpostPage implements OnInit {
         });
       });
     } catch (error) {
-      Logger.error(error);
+      Logger.error(TAG,"recordAVideo error",error);
     }
     this.handleVideoData(videoData);
   }

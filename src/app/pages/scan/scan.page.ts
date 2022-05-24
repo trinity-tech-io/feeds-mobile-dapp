@@ -190,7 +190,7 @@ async hideCamera() {
                               }
                               catch (err) {
                                   //debugger;
-                                  Logger.error("Scanner", err);
+                                  Logger.error(TAG,"Scanner", err);
                                   code = null;
                                   this.native.hideLoading();
                               }
@@ -230,7 +230,7 @@ async hideCamera() {
                       this.startScanningProcess();
                   });
               } else {
-                  Logger.error("Scanner", err);
+                  Logger.error(TAG,"Scanner", err);
                   void this.scanDialog('common.sorry', 'ScanPage.galleryErr');
               }
           }, {

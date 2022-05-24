@@ -296,7 +296,7 @@ export class NftdialogComponent implements OnInit {
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, { "tokenId": tokenId, "panelId": tokenInfo[0], "assItem": this.curAssItem });
         resolve('Successs');
       } catch (err) {
-        Logger.error(err);
+        Logger.error(TAG,"handleCreteChannelOrder error",err);
         reject(err);
       }
     });
@@ -457,7 +457,7 @@ export class NftdialogComponent implements OnInit {
           resolve(item);
         }
       } catch (err) {
-        Logger.error(err);
+        Logger.error(TAG,"handleCreteOrder err",err);
         reject(err);
       }
     });

@@ -220,7 +220,7 @@ export class AddFeedService {
   decodeFeedUrl(feedUrl: string): FeedsData.FeedUrl {
     if (this.checkFeedUrl(feedUrl)) {
       let error = 'Feed url contains error';
-      Logger.error(TAG, error);
+      Logger.error(TAG,"decodeFeedUrl err",error);
       return null;
     }
 

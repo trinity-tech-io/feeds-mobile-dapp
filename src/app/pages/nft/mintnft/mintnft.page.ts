@@ -967,7 +967,7 @@ export class MintnftPage implements OnInit {
           this.thumbnail = await this.compressImage(this.assetBase64);
         }
       } catch (error) {
-        Logger.error('Get image thumbnail error', error);
+        Logger.error(TAG,'Get image thumbnail error', error);
       }
     }
   }

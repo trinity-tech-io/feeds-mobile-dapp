@@ -121,6 +121,7 @@ export class StandardAuthService {
         parseResult = await didManager.parseJWT(true, authChallengeJwttoken);
       } catch (error) {
         Logger.error(TAG, 'Parse JWT error,', error);
+        reject(error);
       }
       Logger.log(TAG, 'Parse JWT Result is', parseResult);
       if (!parseResult) {
@@ -230,6 +231,7 @@ export class StandardAuthService {
         },
         err => {
           Logger.error(TAG, 'Create Verifiable Presentation error', err);
+          reject(err);
         },
       );
     });
@@ -401,6 +403,8 @@ export class StandardAuthService {
         parseResult = await didManager.parseJWT(true, challeng)
       } catch (error) {
         Logger.error(TAG, 'Parse JWT error,', error)
+        reject(error);
+
       }
       Logger.log(TAG, 'Parse JWT Result is', parseResult)
       if (!parseResult) {
@@ -495,7 +499,8 @@ export class StandardAuthService {
         }
       },
       err => {
-        Logger.error(TAG, 'Create Verifiable Presentation error', err)
+        Logger.error(TAG, 'Create Verifiable Presentation error', err);
+        reject(err);
       },)
 
     })

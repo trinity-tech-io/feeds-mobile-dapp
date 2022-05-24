@@ -126,7 +126,8 @@ export class HiveVaultHelper {
                     reject(reason)
                 })
             } catch (error) {
-                Logger.error(error);
+                Logger.error(TAG,"registeScripting error",error);
+                reject(error);
             }
         });
     }
@@ -311,7 +312,7 @@ export class HiveVaultHelper {
                 else
                     reject('Insert channel data error');
             } catch (error) {
-                Logger.error(error);
+                Logger.error(TAG,"insertChannelData error",error);
                 reject(error)
             }
         });
@@ -374,7 +375,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, null, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryChannelInfo error",error)
                 reject(this.handleError(error))
             }
         })
@@ -448,7 +449,7 @@ export class HiveVaultHelper {
 
                 resolve({ targetDid: signinDid, postId: postId, createdAt: createdAt, updatedAt: updatedAt });
             } catch (error) {
-                Logger.error(error);
+                Logger.error(TAG,"insertPostData error",error);
                 reject(error)
             }
         });
@@ -562,7 +563,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SPECIFIED_POST, findExe, andCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryPostById error",error)
                 reject(this.handleError(error))
             }
         })
@@ -598,7 +599,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryPostByChannelId error",error)
                 reject(this.handleError(error))
             }
         })
@@ -634,7 +635,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryPostRangeOfTime error",error)
                 reject(this.handleError(error))
             }
         })
@@ -682,7 +683,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SUBSCRIBE_CHANNEL, executable, condition);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerSubscribe error",error)
                 reject(this.handleError(error))
             }
         })
@@ -733,7 +734,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_SUBSCRIPTION, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerUpdateSubscription error",error)
                 reject(this.handleError(error))
             }
         })
@@ -777,7 +778,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UNSUBSCRIBE_CHANNEL, executable, null);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerUnsubscribe error",error)
                 reject(this.handleError(error))
             }
         })
@@ -818,7 +819,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, executable, null, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQuerySubscriptionInfoByChannelId error",error)
                 reject(this.handleError(error))
             }
         })
@@ -859,7 +860,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, executable, null, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQuerySubscriptionInfoByUserDID error",error)
                 reject(this.handleError(error))
             }
         })
@@ -907,7 +908,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryCommentByPostId error",error)
                 reject(this.handleError(error))
             }
         })
@@ -957,7 +958,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerFindCommentById error",error)
                 reject(this.handleError(error))
             }
         })
@@ -998,7 +999,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_COMMENT, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryCommentRangeOfTime error",error)
                 reject(error)
             }
         })
@@ -1040,7 +1041,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_CHANNELID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryCommentByChannel error",error)
                 reject(this.handleError(error))
             }
         })
@@ -1100,7 +1101,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerCreateComment error",error)
                 reject(this.handleError(error))
             }
         })
@@ -1174,7 +1175,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerUpdateComment error",error)
                 reject(this.handleError(error))
             }
         })
@@ -1234,7 +1235,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_DELETE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerDeleteComment error",error)
                 reject(error)
             }
         })
@@ -1285,7 +1286,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryLikeById error",error)
                 reject(error)
             }
         })
@@ -1337,7 +1338,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SELF_LIKE_BY_ID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQuerySelfLikeById error",error)
                 reject(error)
             }
         })
@@ -1386,7 +1387,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryLikeByChannel error",error)
                 reject(error)
             }
         })
@@ -1435,7 +1436,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryLikeByPost error",error)
                 reject(error)
             }
         })
@@ -1476,7 +1477,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_LIKE, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerLikeRangeOfTime error",error)
                 reject(error)
             }
         })
@@ -1529,7 +1530,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_LIKE, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerCreateLike error",error)
                 reject(error)
             }
         })
@@ -1584,7 +1585,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_REMOVE_LIKE, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerRemoveLike error",error)
                 reject(error)
             }
         })
@@ -1636,7 +1637,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_LIKE, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerUpdateLike error",error)
                 reject(error)
             }
         })
@@ -1872,7 +1873,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryDisplayName error",error)
                 reject(this.handleError(error))
             }
         })
@@ -1999,7 +2000,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_FROM_POSTS, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(error)
+                Logger.error(TAG,"registerQueryCommentsFromPosts error",error)
                 reject(this.handleError(error))
             }
         });
@@ -2119,7 +2120,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.QUERY_PUBLIC_SOMETIME_POST, findExe, queryCondition, false, false);
                 resolve("SUCCESS");
             } catch (error) {
-                Logger.error(error);
+                Logger.error(TAG,"registerQueryPublicPostRangeOfTime error",error);
                 reject(this.handleError(error))
             }
         })

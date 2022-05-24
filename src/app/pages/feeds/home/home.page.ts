@@ -890,7 +890,7 @@ export class HomePage implements OnInit {
       this.refreshPasarGridVisibleareaImage();
       this.pasarListPage++;
     } catch (err) {
-      Logger.error(TAG, err);
+      Logger.error(TAG,"refreshPasarList err",err);
     }
   }
 
@@ -1924,7 +1924,7 @@ export class HomePage implements OnInit {
         const item: FeedsData.NFTItem = this.nftContractHelperService.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, 'onSale');
         resolve(item);
       } catch (error) {
-        Logger.error(error);
+        Logger.error(TAG,"getOpenOrderByIndex error",error);
         reject(error);
       }
     });
