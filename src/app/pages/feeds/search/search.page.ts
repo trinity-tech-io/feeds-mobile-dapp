@@ -447,8 +447,17 @@ export class SearchPage implements OnInit {
 
     try {
       await this.native.showLoading("common.waitMoment");
-      await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-      const isSubscribed = await this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
+      try {
+        await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+      } catch (error) {
+      }
+
+      let isSubscribed = false;
+      try {
+        isSubscribed = await this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
+      } catch (error) {
+      }
+
       this.native.hideLoading();
       this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId, isSubscribed], '');
     } catch (error) {
