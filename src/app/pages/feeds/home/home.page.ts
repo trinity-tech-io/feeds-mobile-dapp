@@ -175,6 +175,7 @@ export class HomePage implements OnInit {
   private syncHiveDataDes: string = null;
   private useRemoteData: boolean = false;
   private handleDisplayNameMap: any = {};
+  public owerCreatChannelNum: Number = 0;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -321,6 +322,11 @@ export class HomePage implements OnInit {
           this.handleRefresherInfinite(false);
           this.isPostLoading = true;
           this.refreshPostList();
+          try {
+            let channelList = await this.dataHelper.getSelfChannelListV3() || [];
+            this.owerCreatChannelNum = channelList.length;
+          } catch (error) {
+          }
         } else {
           this.handleRefresherInfinite(true);
         }
@@ -346,7 +352,15 @@ export class HomePage implements OnInit {
       }
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.homeCommonEvents, () => {
+    this.events.subscribe(FeedsEvent.PublishType.homeCommonEvents, async () => {
+      if(this.syncHiveDataStatus === 6){
+        try {
+          let channelList = await this.dataHelper.getSelfChannelListV3() || [];
+          this.owerCreatChannelNum = channelList.length;
+        } catch (error) {
+
+        }
+      }
       this.addCommonEvents();
     });
 

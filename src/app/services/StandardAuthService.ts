@@ -93,13 +93,22 @@ export class StandardAuthService {
   getInstanceDIDDoc(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let didAccess = new DID.DIDAccess();
-      let instanceDIDInfo = await didAccess.getOrCreateAppInstanceDID();
-      instanceDIDInfo.didStore.loadDidDocument(
-        instanceDIDInfo.did.getDIDString(),
-        didDocument => {
-          resolve(didDocument.toJson());
-        },
-      );
+      try {
+        let instanceDIDInfo = await didAccess.getOrCreateAppInstanceDID();
+        if(instanceDIDInfo != null){
+          instanceDIDInfo.didStore.loadDidDocument(
+            instanceDIDInfo.did.getDIDString(),
+            didDocument => {
+              resolve(didDocument.toJson());
+            },
+          );
+        }else{
+         reject("instanceDIDInfo is null");
+         }
+      } catch (error) {
+        reject(error);
+      }
+
     });
   }
 

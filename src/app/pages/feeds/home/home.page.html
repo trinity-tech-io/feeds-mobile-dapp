@@ -75,8 +75,12 @@
     <h1>{{ 'HomePage.allempty' | translate }}</h1>
     <p>{{ "HomePage.emptyDes"| translate }}</p>
 
-    <div class="btn-row-empty" style="margin-top:10px;" (click)="create()">
+    <div class="btn-row-empty" style="margin-top:10px;" (click)="create()" *ngIf="owerCreatChannelNum === 0">
       {{ "HomePage.addChannel" | translate }}
+    </div>
+
+    <div class="btn-row-empty" style="margin-top:10px;" (click)="create()" *ngIf="owerCreatChannelNum > 0">
+      {{ "HomePage.createPost" | translate }}
     </div>
 
     <div class="btn-row-empty" style="margin-top:29px;" (click)="exploreFeeds()">

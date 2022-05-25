@@ -262,7 +262,8 @@ export const en = {
     priceLowToHigh: 'Price: Low to High',
     priceHightoLow: 'Price: High to Low',
     search: 'Search',
-    addChannel: 'Add Channel'
+    addChannel: 'Add Channel',
+    createPost: 'Create Post'
   },
   ProfilePage: {
     myFeeds: 'Channels',

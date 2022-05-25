@@ -689,8 +689,12 @@ export class MyApp {
     } catch (error) {
     }
 
-    const signinData = await this.dataHelper.getSigninData();
-    let userDid = signinData.did;
+    const signinData = await this.dataHelper.getSigninData() || {};
+    let userDid = signinData.did || "";
+
+    if(userDid === ""){
+      return;
+    }
 
     let syncHiveData0 = { status: 0, describe: "GalleriahivePage.preparingData" }
     this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData0);

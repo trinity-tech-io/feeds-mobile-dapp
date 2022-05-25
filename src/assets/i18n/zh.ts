@@ -262,7 +262,8 @@ export const zh = {
     priceLowToHigh: '价格：从低到高',
     priceHightoLow: '价格：从高到低',
     search: '搜索',
-    addChannel: 'Add Channel'
+    addChannel: '创建频道',
+    createPost: '创建微说'
   },
   ProfilePage: {
     myFeeds: '频道',

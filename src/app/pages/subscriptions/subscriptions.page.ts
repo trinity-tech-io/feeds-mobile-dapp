@@ -130,19 +130,13 @@ export class SubscriptionsPage implements OnInit {
   async toPage(eventParm: any) {
     let destDid = eventParm['destDid'];
     let channelId = eventParm['channelId'];
-    let postId = eventParm['postId'] || '';
     let page = eventParm['page'];
 
-    if (postId != '') {
-      this.native
-        .getNavCtrl()
-        .navigateForward([page, destDid, channelId, postId]);
-    } else {
-      const subscribedChannels: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-      const readyCheck: FeedsData.SubscribedChannelV3 = { destDid: destDid, channelId: channelId };
-      const isSubscribed = _.includes(subscribedChannels, readyCheck);
-      this.native.getNavCtrl().navigateForward([page, destDid, channelId, isSubscribed]);
-    }
+    const subscribedChannels: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+    const readyCheck: FeedsData.SubscribedChannelV3 = { destDid: destDid, channelId: channelId };
+    const isSubscribed = _.includes(subscribedChannels, readyCheck);
+    this.native.getNavCtrl().navigateForward([page, destDid, channelId, isSubscribed]);
+
   }
 
 
