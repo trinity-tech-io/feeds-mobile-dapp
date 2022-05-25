@@ -179,7 +179,22 @@ export class PostdetailPage implements OnInit {
 
 
     this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMap(this.postId);
+    this.initRelyCommentExtradata();
     console.log('this.replyCommentsMap = ', this.replyCommentsMap);
+  }
+
+  async initRelyCommentExtradata() {
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    for(let key in  this.replyCommentsMap){
+        let commentList: FeedsData.CommentV3[] = this.replyCommentsMap[key] || [];
+        this.checkRelyCommentIsMine(commentList,ownerDid);
+    }
+  }
+
+  checkRelyCommentIsMine(commentList: FeedsData.CommentV3[], ownerDid: string) {
+      _.forEach(commentList,(item: FeedsData.CommentV3)=>{
+          this.checkCommentIsMine(item, ownerDid);
+      });
   }
 
   handleChannelAvatar(channelAvatarUri: string) {
@@ -206,13 +221,13 @@ export class PostdetailPage implements OnInit {
     //this.totalData = this.sortCommentList();
   }
 
-  initOwnCommentObj() {
+  async initOwnCommentObj() {
     let captainCommentList = _.cloneDeep(this.captainCommentList);
-
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     _.each(captainCommentList, (item: FeedsData.CommentV3) => {
       let key = item.commentId;
       this.userNameList[key] = item.destDid;
-      this.checkCommentIsMine(item);
+      this.checkCommentIsMine(item,ownerDid);
     });
 
     this.captainCommentList = _.cloneDeep(captainCommentList);
@@ -792,6 +807,12 @@ export class PostdetailPage implements OnInit {
     this.menuService.showCommentDetailMenu(comment);
   }
 
+  async openReplyTool(comment: any) {
+    this.curComment = comment;
+    this.menuService.showReplyDetailMenu(comment);
+  }
+
+
   handleCommentStatus() {
     let status = '(edit)';
     return status;
@@ -810,10 +831,9 @@ export class PostdetailPage implements OnInit {
     this.native.navigateForward(['/channels', destDid, channelId, true], '');
   }
 
-  async checkCommentIsMine(comment: FeedsData.CommentV3) {
+  checkCommentIsMine(comment: FeedsData.CommentV3, ownerDid: string) {
     let commentId = comment.commentId;
     let destDid = comment.createrDid;
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     if (destDid != ownerDid) {
       this.isOwnComment[commentId] = false;
       return false;
@@ -1189,6 +1209,7 @@ export class PostdetailPage implements OnInit {
 
   ionScroll() {
     this.native.throttle(this.handleLikeAndComment(), 200, this, true);
+    this.native.throttle(this.handleUserName(), 200, this, true);
   }
 
   refreshLikeAndComment() {
@@ -1241,6 +1262,37 @@ export class PostdetailPage implements OnInit {
         )
       }
     }
+  }
+
+  handleUserName() {
+    let replayComments = document.getElementsByClassName('replayCommentPostGrid') || [];
+    let replayCommentNum = replayComments.length;
+    for (let replayCommentIndex = 0; replayCommentIndex < replayCommentNum; replayCommentIndex++) {
+      let replayComment = replayComments[replayCommentIndex];
+      let srcId = replayComment.getAttribute('id') || '';
+      if (srcId != '') {
+        let arr = srcId.split('-');
+        let destDid = arr[0];
+        let channelId = arr[1];
+        let postId = arr[2];
+        let commentId = arr[3];
+        let id = destDid + '-' + channelId + '-' + postId + '-' + commentId;
+        //处理Name
+        CommonPageService.handleDisplayUserName(
+          id, srcId, replayCommentIndex,
+          replayComment, this.clientHeight, this.isInitUserNameMap,
+          this.userNameMap, this.hiveVaultController,
+          this.userNameMap[this.destDid]
+        );
+      }
+    }
+  }
+
+  refresuserName() {
+    let sid = setTimeout(() => {
+      this.handleUserName();
+      clearTimeout(sid);
+    }, 50);
   }
 }
 
