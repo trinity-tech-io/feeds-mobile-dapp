@@ -107,8 +107,8 @@
                 <p (press)="userNameList[replayComment.refcommentId]" [style.touch-action]="'pan-y'"><span style="color:#fff;" [style.touch-action]="'pan-y'">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ userNameMap[userNameList[replayComment.refcommentId]]}}</p>
               </ion-label>
             </ion-col>
-            <ion-col class="menuMore" size="2"  *ngIf="replayComment.status != 1 && isOwnComment[replayComment.commentId]">
-              <img (click)="openEditTool(replayComment)"
+            <ion-col class="menuMore" size="2"  *ngIf="replayComment.status != 1 && isOwnComment[replayComment.commentId]" (click)="openEditTool(replayComment)">
+              <img
                 [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
               >
             </ion-col>

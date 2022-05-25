@@ -92,11 +92,10 @@
           <p *ngIf="channelOwner ==='' ">@......</p>
           <p *ngIf="channelOwner !='' ">@{{channelOwner}}</p>
         </ion-col>
-        <ion-col size="2" class="menuMore">
+        <ion-col size="2" class="menuMore"  (click)="menuMore(post)">
           <img
           *ngIf="post.status != 1"
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
-            (click)="menuMore(post)"
           >
         </ion-col>
         <ion-col size="0.5"></ion-col>

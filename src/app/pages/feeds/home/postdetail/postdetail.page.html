@@ -175,8 +175,8 @@
             <p  (press)="pressContent(channelOwner)"><span style="color:#7624fe;">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ userNameMap[channelOwner] }}</p>
           </ion-label>
         </ion-col>
-        <ion-col class="menuMore" size="2"  *ngIf="comment.status != 1 && isOwnComment[comment.commentId]">
-          <img (click)="openEditTool(comment)"
+        <ion-col class="menuMore" size="2"  *ngIf="comment.status != 1 && isOwnComment[comment.commentId]" (click)="openEditTool(comment)">
+          <img
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
           >
         </ion-col>
@@ -250,8 +250,8 @@
               <p (press)="pressContent(channelOwner)"><span style="color:#7624fe;">{{'ServerInfoPage.replyingto'|translate}}</span> @{{ userNameMap[channelOwner] }}</p>
             </ion-label>
           </ion-col>
-          <ion-col class="menuMore" size="2"  *ngIf="replyComment.status != 1 && isOwnComment[replyComment.commentId]">
-            <img (click)="openReplyTool(replyComment)"
+          <ion-col class="menuMore" size="2"  *ngIf="replyComment.status != 1 && isOwnComment[replyComment.commentId]"  (click)="openReplyTool(replyComment)">
+            <img
               [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
             >
           </ion-col>
@@ -265,14 +265,14 @@
               <pre>{{'common.cdeleted' | translate}}</pre>
             </h2>
             <h2 *ngIf="replyComment.status != 1&&getPostContentTextSize(replyComment.content)<=maxTextSize" (click)="clickComment(replyComment,$event)" (press)="pressContent(replyComment.content)" [style.touch-action]="'pan-y'">
-              <pre  [innerHTML]="replyComment.content | html"></pre>
+              <pre  (click)="clickComment(replyComment,$event)" [innerHTML]="replyComment.content | html"></pre>
             </h2>
-            <h2 *ngIf="replyComment.status != 1&&getPostContentTextSize(replyComment.content)>maxTextSize&&!isFullContent[replyComment.commentId]" (press)="pressContent(replyComment.content)" [style.touch-action]="'pan-y'">
-              <pre   [innerHTML]="handleCommentContent(replyComment.content) | html"></pre>
+            <h2  *ngIf="replyComment.status != 1&&getPostContentTextSize(replyComment.content)>maxTextSize&&!isFullContent[replyComment.commentId]" (press)="pressContent(replyComment.content)" [style.touch-action]="'pan-y'">
+              <pre (click)="clickComment(replyComment,$event)"  [innerHTML]="handleCommentContent(replyComment.content) | html"></pre>
               <pre  style="color:#368bff;" (click)="showFullContent(replyComment.commentId)">{{"common.showmore" | translate }}</pre>
             </h2>
             <h2 *ngIf="replyComment.status != 1&&getPostContentTextSize(replyComment.content)>maxTextSize&&isFullContent[replyComment.commentId]" (press)="pressContent(replyComment.content)" [style.touch-action]="'pan-y'">
-              <pre   [innerHTML]="replyComment.content | html"></pre>
+              <pre  (click)="clickComment(replyComment,$event)"  [innerHTML]="replyComment.content | html"></pre>
               <pre  style="color:#368bff;" (click)="hideFullContent(replyComment.commentId)">{{"common.showless" | translate }}</pre>
             </h2>
            </ion-col>

@@ -1155,17 +1155,17 @@ export class PostdetailPage implements OnInit {
         return;
       }
     }
-    let commentId: string = comment.commentId;
-    let createrDid: string = comment.createrDid;
-    this.native.navigateForward(['commentlist'], {
-      queryParams: {
-        destDid: this.destDid,
-        channelId: this.channelId,
-        postId: this.postId,
-        commentId: commentId,
-        createrDid: createrDid
-      },
-    });
+    // let commentId: string = comment.commentId;
+    // let createrDid: string = comment.createrDid;
+    // this.native.navigateForward(['commentlist'], {
+    //   queryParams: {
+    //     destDid: this.destDid,
+    //     channelId: this.channelId,
+    //     postId: this.postId,
+    //     commentId: commentId,
+    //     createrDid: createrDid
+    //   },
+    // });
   }
 
   retry(destDid: string, channelId: string, postId: string) {
