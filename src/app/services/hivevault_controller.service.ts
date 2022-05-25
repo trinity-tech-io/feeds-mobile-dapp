@@ -286,6 +286,45 @@ export class HiveVaultController {
     });
   }
 
+  checkSubscriptionStatusFromRemote(targetDid: string, channelId: string): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const result = await this.hiveVaultApi.querySubscriptionByUserDIDAndChannelId(targetDid, selfDid, channelId);
+        Logger.log(TAG, 'Check subscription status from remote result is', result);
+
+        try {
+          const subscribedChannel = await this.dataHelper.getSubscribedChannelV3ByKey(targetDid, channelId);
+          if (subscribedChannel)
+            this.dataHelper.removeSubscribedChannelV3(subscribedChannel);
+        } catch (error) {
+        }
+
+        if (!result) {
+          resolve(false);
+          return;
+        }
+
+        const subscriptions = HiveVaultResultParse.parseSubscriptionResult(targetDid, result);
+        if (!subscriptions || subscriptions.length == 0) {
+          resolve(false);
+          return;
+        }
+
+        const newSubscribedChannel: FeedsData.SubscribedChannelV3 = {
+          destDid: subscriptions[0].destDid,
+          channelId: subscriptions[0].channelId
+        }
+
+        await this.dataHelper.addSubscribedChannelV3(newSubscribedChannel);
+        resolve(true);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
   async queryPostByRangeOfTime(targetDid: string, channelId: string, star: number, end: number) {
     const result = await this.hiveVaultApi.queryPostByRangeOfTime(targetDid, channelId, star, end)
     const rangeOfTimePostList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);

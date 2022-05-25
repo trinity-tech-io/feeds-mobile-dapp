@@ -448,11 +448,7 @@ export class SearchPage implements OnInit {
     try {
       await this.native.showLoading("common.waitMoment");
       await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-      const subscriptionChannels: FeedsData.SubscribedChannelV3[] = await this.hiveVaultController.getSelfSubscriptionChannel(feedsUrl.destDid);
-      await this.hiveVaultController.querySubscriptionChannelById(feedsUrl.destDid, feedsUrl.channelId);
-      const readyCheck: FeedsData.SubscribedChannelV3 = { destDid: feedsUrl.destDid, channelId: feedsUrl.channelId };
-      const isSubscribed = _.includes(subscriptionChannels, readyCheck);
-      // await this.hiveVaultController.queryRemoteChannelPostWithTime(feedsUrl.destDid, feedsUrl.channelId, UtilService.getCurrentTimeNum());
+      const isSubscribed = await this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
       this.native.hideLoading();
       this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId, isSubscribed], '');
     } catch (error) {

@@ -104,6 +104,10 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.querySubscriptionByUserDID(targetDid, userDid);
   }
 
+  querySubscriptionByUserDIDAndChannelId(targetDid: string, userDid: string, channelId: string) {
+    return this.hiveVaultHelper.querySubscriptionByUserDIDAndChannelId(targetDid, userDid, channelId);
+  }
+
   /** Comment */
   createComment(targetDid: string, channelId: string, postId: string, refcommentId: string, content: string): Promise<{ commentId: string, createrDid: string, createdAt: number }> {
     return this.hiveVaultHelper.createComment(targetDid, channelId, postId, refcommentId, content);

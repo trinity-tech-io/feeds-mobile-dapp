@@ -600,7 +600,7 @@ export class ProfilePage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  clearAssets(){
+  clearAssets() {
     this.removeImages();
     this.removeAllVideo();
     CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'homeChannelAvatar');
@@ -611,7 +611,7 @@ export class ProfilePage implements OnInit {
     this.downPostAvatarMap = {};
   }
 
-  clearData(isClearAssets: boolean = true ) {
+  clearData(isClearAssets: boolean = true) {
     this.theme.restTheme();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
@@ -643,7 +643,7 @@ export class ProfilePage implements OnInit {
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
-    if(isClearAssets){
+    if (isClearAssets) {
       CommonPageService.removeAllAvatar(this.myFeedsIsLoadimage, 'myFeedsAvatar')
       this.removeImages();
       this.removeAllVideo();
@@ -1266,18 +1266,18 @@ export class ProfilePage implements OnInit {
             //dispalyName
             let userDid = channel.destDid;
             let displayNameMap = this.handleDisplayNameMap[userDid] || '';
-            if(displayNameMap === ""){
+            if (displayNameMap === "") {
               let text = userDid.replace('did:elastos:', '');
               this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
               try {
                 this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
-                then((result: string) => {
-                  let name = result || "";
-                  if (name != "") {
-                     this.handleDisplayNameMap[userDid] = name;
-                  }
-                }).catch(() => {
-                });
+                  then((result: string) => {
+                    let name = result || "";
+                    if (name != "") {
+                      this.handleDisplayNameMap[userDid] = name;
+                    }
+                  }).catch(() => {
+                  });
               } catch (error) {
 
               }
@@ -1943,24 +1943,20 @@ export class ProfilePage implements OnInit {
     if (postId != '') {
       this.native
         .getNavCtrl()
-        .navigateForward([page, destDid, channelId, postId]).then((result)=>{
-          let sid = setTimeout(()=>{
+        .navigateForward([page, destDid, channelId, postId]).then((result) => {
+          let sid = setTimeout(() => {
             this.clearAssets();
             clearTimeout(sid);
             sid = null;
-          },Config.assetsTimer);
+          }, Config.assetsTimer);
         });
     } else {
-
-      const subscribedChannels: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-      const readyCheck: FeedsData.SubscribedChannelV3 = { destDid: destDid, channelId: channelId };
-      const isSubscribed = _.includes(subscribedChannels, readyCheck);
-      this.native.getNavCtrl().navigateForward([page, destDid, channelId, isSubscribed]).then((result)=>{
-        let sid = setTimeout(()=>{
+      this.native.getNavCtrl().navigateForward([page, destDid, channelId, true]).then((result) => {
+        let sid = setTimeout(() => {
           this.clearAssets();
           clearTimeout(sid);
           sid = null;
-        },Config.assetsTimer);
+        }, Config.assetsTimer);
       });;
     }
   }
@@ -2004,12 +2000,12 @@ export class ProfilePage implements OnInit {
       tippingAddress: channel.tipping_address
     });
     this.clearData(false);
-    this.native.navigateForward(['/feedinfo'], '').then((result)=>{
-      let sid = setTimeout(()=>{
+    this.native.navigateForward(['/feedinfo'], '').then((result) => {
+      let sid = setTimeout(() => {
         this.clearAssets();
         clearTimeout(sid);
         sid = null;
-      },Config.assetsTimer);
+      }, Config.assetsTimer);
     });;
   }
 
@@ -2039,23 +2035,23 @@ export class ProfilePage implements OnInit {
     this.clearData(false);
     const channels = await this.dataHelper.getSelfChannelListV3() || []
     if (channels.length === 0) {
-      this.native.navigateForward(['/createnewfeed'], '').then((result)=>{
-        let sid = setTimeout(()=>{
+      this.native.navigateForward(['/createnewfeed'], '').then((result) => {
+        let sid = setTimeout(() => {
           this.clearAssets();
           clearTimeout(sid);
           sid = null;
-        },Config.assetsTimer);
+        }, Config.assetsTimer);
       });;
       return;
     }
 
     this.dataHelper.setSelsectNftImage("");
-    this.native.navigateForward(['createnewpost'], '').then((result)=>{
-      let sid = setTimeout(()=>{
+    this.native.navigateForward(['createnewpost'], '').then((result) => {
+      let sid = setTimeout(() => {
         this.clearAssets();
         clearTimeout(sid);
         sid = null;
-      },Config.assetsTimer);
+      }, Config.assetsTimer);
     });;
   }
 
@@ -2115,12 +2111,12 @@ export class ProfilePage implements OnInit {
 
   subsciptions() {
     this.clearData(false);
-    this.native.navigateForward(['subscriptions'], '').then((result)=>{
-      let sid = setTimeout(()=>{
+    this.native.navigateForward(['subscriptions'], '').then((result) => {
+      let sid = setTimeout(() => {
         this.clearAssets();
         clearTimeout(sid);
         sid = null;
-      },Config.assetsTimer);
+      }, Config.assetsTimer);
     });
   }
 
@@ -2189,7 +2185,7 @@ export class ProfilePage implements OnInit {
             this.saveCollectiblesToCache(accAddress);
             // this.collectiblesList.push(item);
           } catch (error) {
-            Logger.error(TAG,"Get not sale item error", error);
+            Logger.error(TAG, "Get not sale item error", error);
           }
         }
 

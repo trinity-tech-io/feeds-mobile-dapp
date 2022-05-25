@@ -15,7 +15,7 @@ import { Config } from 'src/app/services/config';
 import { ThemeService } from 'src/app/services/theme.service';
 import { Logger } from 'src/app/services/logger';
 import { PopupProvider } from 'src/app/services/popup';
-import {  ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
+import { ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
 const TAG: string = 'SubscriptionsPage';
 @Component({
   selector: 'app-subscriptions',
@@ -60,7 +60,7 @@ export class SubscriptionsPage implements OnInit {
 
   ngOnInit() {
     this.scanServiceStyle['right'] = (screen.width * 7.5) / 100 + 5 + 'px';
-   }
+  }
 
   ionViewWillEnter() {
     this.clientHeight = screen.availHeight;
@@ -132,12 +132,8 @@ export class SubscriptionsPage implements OnInit {
     let destDid = eventParm['destDid'];
     let channelId = eventParm['channelId'];
     let page = eventParm['page'];
-
-    const subscribedChannels: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-    const readyCheck: FeedsData.SubscribedChannelV3 = { destDid: destDid, channelId: channelId };
-    const isSubscribed = _.includes(subscribedChannels, readyCheck);
+    const isSubscribed = await this.hiveVaultController.checkSubscriptionStatusFromRemote(destDid, channelId);
     this.native.getNavCtrl().navigateForward([page, destDid, channelId, isSubscribed]);
-
   }
 
 
@@ -347,24 +343,24 @@ export class SubscriptionsPage implements OnInit {
             let avatarUri = "";
             if (channel != null) {
               avatarUri = channel.avatar;
-                    //关注数
-            let follower = this.subscriptionV3NumMap[channelId] || '';
-            if(follower === ""){
+              //关注数
+              let follower = this.subscriptionV3NumMap[channelId] || '';
+              if (follower === "") {
                 try {
-                 this.subscriptionV3NumMap[channelId] = "...";
-                 this.dataHelper.getSubscriptionV3NumByChannelId(
-                   channel.destDid, channel.channelId).
-                   then((result)=>{
-                   result = result || 0;
-                   this.subscriptionV3NumMap[channelId] =  result;
+                  this.subscriptionV3NumMap[channelId] = "...";
+                  this.dataHelper.getSubscriptionV3NumByChannelId(
+                    channel.destDid, channel.channelId).
+                    then((result) => {
+                      result = result || 0;
+                      this.subscriptionV3NumMap[channelId] = result;
 
-                   }).catch(()=>{
-                    this.subscriptionV3NumMap[channelId] = 0;
+                    }).catch(() => {
+                      this.subscriptionV3NumMap[channelId] = 0;
 
-                   });
+                    });
                 } catch (error) {
                 }
-            }
+              }
             }
             let fileName: string = avatarUri.split("@")[0];
             this.followingAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
@@ -455,26 +451,15 @@ export class SubscriptionsPage implements OnInit {
       return;
     }
     const feedsUrl = scanResult.feedsUrl;
-
-    //TODO
-    //Show channel info dialog
-    // this.hiveVaultController.subscribeChannel(feedsUrl.destDid, feedsUrl.channelId, displayName);
-
-    // this.showSubscribePrompt(feedsUrl);
-    // this.zone.run(async () => {
     try {
-    await this.native.showLoading("common.waitMoment");
-    await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-    const subscriptionChannels: FeedsData.SubscribedChannelV3[] = await this.hiveVaultController.getSelfSubscriptionChannel(feedsUrl.destDid);
-
-    const readyCheck: FeedsData.SubscribedChannelV3 = { destDid: feedsUrl.destDid, channelId: feedsUrl.channelId };
-    const isSubscribed = _.includes(subscriptionChannels, readyCheck);
-    // await this.hiveVaultController.queryRemoteChannelPostWithTime(feedsUrl.destDid, feedsUrl.channelId, UtilService.getCurrentTimeNum());
-    this.native.hideLoading();
-    this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId, isSubscribed], '');
+      await this.native.showLoading("common.waitMoment");
+      await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+      const isSubscribed = await this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
+      this.native.hideLoading();
+      this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId, isSubscribed], '');
     } catch (error) {
-     this.native.hideLoading();
-     this.native.toast("common.subscribeFail");
+      this.native.hideLoading();
+      this.native.toast("common.subscribeFail");
     }
 
   }
@@ -483,7 +468,7 @@ export class SubscriptionsPage implements OnInit {
 
   }
 
-  getItems(event: string){
+  getItems(event: string) {
 
   }
 

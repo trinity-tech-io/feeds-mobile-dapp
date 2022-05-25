@@ -38,6 +38,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_UNSUBSCRIBE_CHANNEL = "script_unsubscribe_channel";
     public static readonly SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID = "script_query_subscription_by_channelid";
     public static readonly SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID = "script_query_subscription_by_userdid";
+    public static readonly SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID_CHANNELID = "script_query_subscription_by_userdid_channelid";
     public static readonly SCRIPT_UPDATE_SUBSCRIPTION = "script_update_subscription";
 
     public static readonly SCRIPT_CREATE_COMMENT = "script_create_comment";
@@ -123,7 +124,8 @@ export class HiveVaultHelper {
                 const p26 = this.registerQueryPublicPostByChannelIdScripting();
                 const p27 = this.registerQueryPublicPostRangeOfTimeScripting();
 
-                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27] as const
+                const p28 = this.registerQuerySubscriptionInfoByUserDIDAndChannelIdScripting();
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
                 }, reason => {
@@ -320,7 +322,7 @@ export class HiveVaultHelper {
                 else
                     reject('Insert channel data error');
             } catch (error) {
-                Logger.error(TAG,"insertChannelData error",error);
+                Logger.error(TAG, "insertChannelData error", error);
                 reject(error)
             }
         });
@@ -383,7 +385,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, null, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryChannelInfo error",error)
+                Logger.error(TAG, "registerQueryChannelInfo error", error)
                 reject(this.handleError(error))
             }
         })
@@ -457,7 +459,7 @@ export class HiveVaultHelper {
 
                 resolve({ targetDid: signinDid, postId: postId, createdAt: createdAt, updatedAt: updatedAt });
             } catch (error) {
-                Logger.error(TAG,"insertPostData error",error);
+                Logger.error(TAG, "insertPostData error", error);
                 reject(error)
             }
         });
@@ -571,7 +573,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SPECIFIED_POST, findExe, andCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryPostById error",error)
+                Logger.error(TAG, "registerQueryPostById error", error)
                 reject(this.handleError(error))
             }
         })
@@ -607,7 +609,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryPostByChannelId error",error)
+                Logger.error(TAG, "registerQueryPostByChannelId error", error)
                 reject(this.handleError(error))
             }
         })
@@ -643,7 +645,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryPostRangeOfTime error",error)
+                Logger.error(TAG, "registerQueryPostRangeOfTime error", error)
                 reject(this.handleError(error))
             }
         })
@@ -691,7 +693,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SUBSCRIBE_CHANNEL, executable, condition);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerSubscribe error",error)
+                Logger.error(TAG, "registerSubscribe error", error)
                 reject(this.handleError(error))
             }
         })
@@ -742,7 +744,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_SUBSCRIPTION, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerUpdateSubscription error",error)
+                Logger.error(TAG, "registerUpdateSubscription error", error)
                 reject(this.handleError(error))
             }
         })
@@ -786,7 +788,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UNSUBSCRIBE_CHANNEL, executable, null);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerUnsubscribe error",error)
+                Logger.error(TAG, "registerUnsubscribe error", error)
                 reject(this.handleError(error))
             }
         })
@@ -827,7 +829,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, executable, null, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQuerySubscriptionInfoByChannelId error",error)
+                Logger.error(TAG, "registerQuerySubscriptionInfoByChannelId error", error)
                 reject(this.handleError(error))
             }
         })
@@ -868,7 +870,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, executable, null, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQuerySubscriptionInfoByUserDID error",error)
+                Logger.error(TAG, "registerQuerySubscriptionInfoByUserDID error", error)
                 reject(this.handleError(error))
             }
         })
@@ -895,6 +897,48 @@ export class HiveVaultHelper {
     }
     /** query subscription info by userDid end */
 
+    /** query subscription info by userDid and channelId start */
+    private registerQuerySubscriptionInfoByUserDIDAndChannelIdScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const executableFilter = {
+                    "channel_id": "$params.channel_id",
+                    "user_did": "$params.user_did"
+                };
+
+                let options = { "projection": { "_id": false }, "limit": 100 };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID_CHANNELID, executable, null, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(TAG, "registerQuerySubscriptionInfoByUserDID error", error)
+                reject(this.handleError(error))
+            }
+        })
+    }
+
+    private callQuerySubscriptionByUserDIDAndChannelId(targetDid: string, userDid: string, channelId: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const params = {
+                    "channel_id": channelId,
+                    "user_did": userDid
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID_CHANNELID, params);
+                console.log("Find subscription from scripting , result is", result);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Find subscription from scripting , error:', error);
+                reject(error);
+            }
+        });
+    }
+
+    querySubscriptionByUserDIDAndChannelId(targetDid: string, userDid: string, channelId: string): Promise<any> {
+        return this.callQuerySubscriptionByUserDIDAndChannelId(targetDid, userDid, channelId);
+    }
+    /** query subscription info by userDid and channelId end */
+
     /** query comment by postId start */
     private registerQueryCommentByPostIdScripting(): Promise<string> {
         return new Promise(async (resolve, reject) => {
@@ -916,7 +960,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryCommentByPostId error",error)
+                Logger.error(TAG, "registerQueryCommentByPostId error", error)
                 reject(this.handleError(error))
             }
         })
@@ -966,7 +1010,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerFindCommentById error",error)
+                Logger.error(TAG, "registerFindCommentById error", error)
                 reject(this.handleError(error))
             }
         })
@@ -1049,7 +1093,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_CHANNELID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryCommentByChannel error",error)
+                Logger.error(TAG, "registerQueryCommentByChannel error", error)
                 reject(this.handleError(error))
             }
         })
@@ -1109,7 +1153,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerCreateComment error",error)
+                Logger.error(TAG, "registerCreateComment error", error)
                 reject(this.handleError(error))
             }
         })
@@ -1183,7 +1227,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerUpdateComment error",error)
+                Logger.error(TAG, "registerUpdateComment error", error)
                 reject(this.handleError(error))
             }
         })
@@ -2016,7 +2060,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_FROM_POSTS, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
-                Logger.error(TAG,"registerQueryCommentsFromPosts error",error)
+                Logger.error(TAG, "registerQueryCommentsFromPosts error", error)
                 reject(this.handleError(error))
             }
         });
@@ -2136,7 +2180,7 @@ export class HiveVaultHelper {
                 await this.hiveService.registerScript(HiveVaultHelper.QUERY_PUBLIC_SOMETIME_POST, findExe, queryCondition, false, false);
                 resolve("SUCCESS");
             } catch (error) {
-                Logger.error(TAG,"registerQueryPublicPostRangeOfTime error",error);
+                Logger.error(TAG, "registerQueryPublicPostRangeOfTime error", error);
                 reject(this.handleError(error))
             }
         })

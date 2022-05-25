@@ -63,7 +63,7 @@ export class MyApp {
   public loadingText: string = null;
   public loadingCurNumber: string = null;
   public loadingMaxNumber: string = null;
-  private scriptVersion = "1.0.1"
+  private scriptVersion = "1.0.2"
   private LOCAL_VERSION = "localScriptVersion"
   public userDidDisplay: string = '';
 
@@ -104,7 +104,7 @@ export class MyApp {
         await this.hiveVaultController.prepareConnection();
         await this.initRegisterScript(true);
       } catch (error) {
-        Logger.error(TAG,"signinFail error",error);
+        Logger.error(TAG, "signinFail error", error);
       }
 
     });
@@ -391,7 +391,7 @@ export class MyApp {
     let isDisclaimer =
       localStorage.getItem('org.elastos.dapp.feeds.disclaimer') || '';
     if (isDisclaimer === '') {
-       this.native.navigateForward(['/disclaimer'],{});
+      this.native.navigateForward(['/disclaimer'], {});
       return;
     }
 
@@ -810,6 +810,6 @@ export class MyApp {
   }
 
   menuClose() {
-   this.theme.restTheme();
+    this.theme.restTheme();
   }
 }
