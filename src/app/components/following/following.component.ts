@@ -12,6 +12,7 @@ import { ViewHelper } from '../../services/viewhelper.service';
 export class FollowingComponent implements OnInit {
   @Output() fromChild = new EventEmitter();
   @Input() followingList: any = [];
+  @Input() subscriptionV3NumMap: any = {};
   @Output() toFollowPage = new EventEmitter();
   @Output() exploreFeeds = new EventEmitter();
   constructor(

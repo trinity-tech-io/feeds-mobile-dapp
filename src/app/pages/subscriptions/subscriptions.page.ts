@@ -42,6 +42,7 @@ export class SubscriptionsPage implements OnInit {
   private downFollowingAvatarMap: any = {};
   public isSearch: string = '';
   public scanServiceStyle = { right: '' };
+  public subscriptionV3NumMap: any = {};
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -346,6 +347,24 @@ export class SubscriptionsPage implements OnInit {
             let avatarUri = "";
             if (channel != null) {
               avatarUri = channel.avatar;
+                    //关注数
+            let follower = this.subscriptionV3NumMap[channelId] || '';
+            if(follower === ""){
+                try {
+                 this.subscriptionV3NumMap[channelId] = "...";
+                 this.dataHelper.getSubscriptionV3NumByChannelId(
+                   channel.destDid, channel.channelId).
+                   then((result)=>{
+                   result = result || 0;
+                   this.subscriptionV3NumMap[channelId] =  result;
+
+                   }).catch(()=>{
+                    this.subscriptionV3NumMap[channelId] = 0;
+
+                   });
+                } catch (error) {
+                }
+            }
             }
             let fileName: string = avatarUri.split("@")[0];
             this.followingAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map

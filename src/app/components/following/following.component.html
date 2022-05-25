@@ -31,7 +31,10 @@
         <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0px;">{{ channel.name }}</ion-label>
         <ion-row>
           <br>
-          <p><span>{{ 0 }}</span> {{ 'common.followers' | translate }}</p>
+          <p>
+            <span *ngIf="subscriptionV3NumMap[channel.channelId] === '' || subscriptionV3NumMap[channel.channelId] === undefined">...</span>
+            <span *ngIf="subscriptionV3NumMap[channel.channelId]=== 0 || subscriptionV3NumMap[channel.channelId] != '' && subscriptionV3NumMap[channel.channelId] != undefined">{{ subscriptionV3NumMap[channel.channelId] }}</span> {{ 'common.followers' | translate }}
+          </p>
         </ion-row>
       </ion-col>
       <ion-col size="1.5" class="right-col" (click)="menuMore(channel)">

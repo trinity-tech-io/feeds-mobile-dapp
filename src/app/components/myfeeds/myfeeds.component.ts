@@ -15,7 +15,8 @@ import { FeedsPage } from 'src/app/pages/feeds/feeds.page';
 export class MyfeedsComponent implements OnInit {
   @Output() fromChild = new EventEmitter();
   @Input() channels: any = [];
-  @Input() followers:any = 0;
+  @Input() followers= 0;
+  @Input() subscriptionV3NumMap: any = {};
   @Output() toFeedPage = new EventEmitter();
   @Output() subsciptions = new EventEmitter();
   @Output() chanelCollections = new EventEmitter();
@@ -31,6 +32,7 @@ export class MyfeedsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log("=====subscriptionV3NumMap======",JSON.stringify(this.subscriptionV3NumMap));
   }
 
   moreName(name: string) {
@@ -57,10 +59,6 @@ export class MyfeedsComponent implements OnInit {
       postId: 0,
       tabType: 'myfeeds',
     });
-  }
-
-  handleClientNumber(destDid: string) {
-    return 0;
   }
 
   pressName(channelName: string) {
