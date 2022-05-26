@@ -3459,6 +3459,18 @@ export class DataHelper {
     });
   }
 
+  removeChannelPostData(channelId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.removePostDataByChannel(selfDid, channelId);
+        resolve(result);
+      } catch (error) {
+        resolve('FINISH');
+      }
+    });
+  }
+
   getPostV3ById(destDid: string, postId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {

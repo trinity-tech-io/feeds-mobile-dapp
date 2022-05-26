@@ -1917,11 +1917,11 @@ export class HiveVaultHelper {
     private registerQueryDisplayNameScripting(): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
-                let conditionFilter = {
-                    "channel_id": "$params.channel_id",
-                    "user_did": "$caller_did"
-                };
-                const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
+                // let conditionFilter = {
+                //     "channel_id": "$params.channel_id",
+                //     "user_did": "$caller_did"
+                // };
+                // const condition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionFilter, null);
 
                 const executableFilter = {
                     "channel_id": "$params.channel_id",
@@ -1930,7 +1930,7 @@ export class HiveVaultHelper {
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, executable, condition, false);
+                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, executable, null, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryDisplayName error", error)

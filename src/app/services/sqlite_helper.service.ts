@@ -268,6 +268,23 @@ export class FeedsSqliteHelper {
     });
   }
 
+  removePostDataByChannel(dbUserDid: string, channelId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_POST + ' WHERE channel_id=?'
+        const params = [channelId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'delete post from channel result: ', result)
+        resolve('SUCCESS');
+      }
+      catch (error) {
+        Logger.error(TAG, 'delete post from channel error', error);
+        reject(error);
+      }
+    });
+  }
+
   // channel
   private createChannelTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {

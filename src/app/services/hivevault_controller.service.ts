@@ -982,13 +982,14 @@ export class HiveVaultController {
         const result = await this.hiveVaultApi.unSubscribeChannel(destDid, channelId);
         console.log('unSubscribeChannel result', result);
 
+
         if (result) {
           const subscribedChannel: FeedsData.SubscribedChannelV3 = {
             destDid: destDid,
             channelId: channelId
           }
-          //1.query
-          //2.remove
+
+          await this.dataHelper.removeChannelPostData(channelId);
           await this.dataHelper.removeSubscribedChannelV3(subscribedChannel);
           this.removeBackupSubscribedChannel(destDid, channelId);
           resolve(subscribedChannel);
@@ -999,7 +1000,7 @@ export class HiveVaultController {
         }
       } catch (error) {
         Logger.error(TAG, 'Unsubscribe channel error', error);
-        reject([]);
+        reject(error);
       }
     });
 
