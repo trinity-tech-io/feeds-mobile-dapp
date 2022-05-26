@@ -14,7 +14,7 @@
   <div *ngFor="let post of likeList let i=index">
   <ion-grid  class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}>
     <ion-row class="post-row">
-      <ion-col size="0.5">
+      <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
 
       </ion-col>
       <ion-col class="img-col" size="2.5" (click)="navTo(post.destDid, post.channelId,post.postId)">
@@ -22,7 +22,7 @@
           <img id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-likeChannelAvatar src="./assets/icon/reserve.svg">
         </div>
       </ion-col>
-      <ion-col class="content-col" size="6.5">
+      <ion-col class="content-col" size="6.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
             <ion-label  *ngIf="channelNameMap[post.postId] === '' || channelNameMap[post.postId] === undefined">
               ......
             </ion-label>
@@ -45,11 +45,15 @@
         [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
       >
       </ion-col>
-      <ion-col size="0.5"></ion-col>
+      <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="post.content.content===''"  (click)="navToPostDetail(post.destDid, post.channelId, post.postId)" class="noText">
+
     </ion-row>
     <!--text-->
-    <ion-row>
-      <ion-col size="0.5">
+    <ion-row  *ngIf="post.content.content !='' ">
+      <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
 
       </ion-col>
       <ion-col size="11" class="postText">
@@ -67,7 +71,7 @@
           </div>
         </h2>
       </ion-col>
-      <ion-col size="0.5">
+      <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
 
       </ion-col>
     </ion-row>
@@ -138,6 +142,10 @@
             </div>
       </ion-col>
     </ion-row>
+
+    <ion-row  (click)="navToPostDetail(post.destDid, post.channelId, post.postId)" class="noText">
+
+    </ion-row>
     <!--like comment tip-->
     <ion-row class="bottom-row">
       <ion-col size="0.5">
@@ -157,7 +165,7 @@
         <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
         <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
       </ion-col> -->
-      <ion-col>
+      <ion-col (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
         <ion-label class="status" *ngIf="post.status === 2" style="right: 10px;">{{ 'common.edit' | translate}} </ion-label>
         <ion-label class="status" *ngIf="post.status === 11" style="right: 10px;">{{ 'common.sending' | translate}} </ion-label>
         <ion-label class="status" *ngIf="post.status === 12" style="right: 10px;">{{ 'common.sendFail' | translate}} </ion-label>

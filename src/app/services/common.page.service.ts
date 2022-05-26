@@ -16,7 +16,8 @@ export class CommonPageService {
         let id = key + "-" + elementId;
         let htmlElement: HTMLElement = document.getElementById(id) || null;
         if (htmlElement != null) {
-            htmlElement.setAttribute('src', "./assets/icon/reserve.svg");
+            htmlElement.removeAttribute('src');
+            htmlElement.style.display = "none";
         }
       }
     }

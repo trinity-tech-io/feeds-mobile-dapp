@@ -1017,16 +1017,16 @@ export class HomePage implements OnInit {
   async handlePostAvatar(id: string, srcId: string, rowindex: number) {
     // 13 存在 12不存在
     let isload = this.isLoadAvatarImage[id] || '';
-    let postAvatar = document.getElementById(id + '-homeChannelAvatar') || null;
+    let postAvatarKuang = document.getElementById(id + '-homeChannelAvatrKuang') || null;
     try {
       if (
         id != '' &&
-        postAvatar.getBoundingClientRect().top >= - Config.rectTop &&
-        postAvatar.getBoundingClientRect().bottom <= Config.rectBottom
+        postAvatarKuang.getBoundingClientRect().top >= - Config.rectTop &&
+        postAvatarKuang.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadAvatarImage[id] = '11';
-          postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
+          //postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
           let arr = srcId.split('-');
 
           let destDid: string = arr[0];
@@ -1081,11 +1081,16 @@ export class HomePage implements OnInit {
               if (realImage != '') {
                 this.downPostAvatarMap[fileName] = "";
                 for (let key in this.avatarImageMap) {
+
                   let uri = this.avatarImageMap[key] || "";
                   if (uri === avatarUri) {
                     let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
-                    if (newPostAvatar != null && this.isLoadAvatarImage[key] === "11") {
-                      newPostAvatar.setAttribute('src', realImage);
+                    if (newPostAvatar != null) {
+                      let imgSrc = newPostAvatar.getAttribute("src") || null;
+                      if(imgSrc === null){
+                        newPostAvatar.setAttribute('src', realImage);
+                      }
+                      newPostAvatar.style.display = "block";
                     }
                     this.isLoadAvatarImage[key] = "13";
                     delete this.avatarImageMap[key];
@@ -1118,14 +1123,14 @@ export class HomePage implements OnInit {
             });
         }
       } else {
+        let postAvatar = document.getElementById(id + '-homeChannelAvatar') || null;
         let postAvatarSrc = postAvatar.getAttribute('src') || './assets/icon/reserve.svg';
         if (
-          postAvatar.getBoundingClientRect().top < - Config.rectTop &&
-          postAvatar.getBoundingClientRect().bottom > Config.rectBottom &&
+          postAvatarKuang.getBoundingClientRect().top < - Config.rectTop &&
+          postAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadAvatarImage[id] === '13' &&
           postAvatarSrc != './assets/icon/reserve.svg'
         ) {
-          postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
           delete this.isLoadAvatarImage[id];
           delete this.avatarImageMap[id];
         }
