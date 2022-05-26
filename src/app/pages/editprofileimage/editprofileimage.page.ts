@@ -78,6 +78,8 @@ export class EditprofileimagePage implements OnInit {
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();
     }
+
+    this.native.handleTabsEvents();
   }
 
   initTitle() {
@@ -86,7 +88,6 @@ export class EditprofileimagePage implements OnInit {
       this.translate.instant('common.setAvatar'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   handleImages() {

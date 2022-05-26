@@ -2510,4 +2510,8 @@ export class ProfilePage implements OnInit {
     this.native.setRootRouter(['/tabs/home']);
     this.feedspage.home();
   }
+
+  editProfile() {
+    this.native.navigateForward(['editprofileimage'], {});
+  }
 }

@@ -11,16 +11,16 @@
   </ion-refresher>
   <ion-row class="card">
     <div class="cardImg">
-      <div class="avatar">
+      <div class="avatar" (click) = "editProfile()">
        <img   *ngIf="avatar === ''" src="./assets/images/selectAvatar.svg" />
        <img   *ngIf="avatar != ''"  [src]="avatar"/>
       </div>
       <div class="cardTitle">{{name}}</div>
-      <div class="card-subtitle" *ngIf="walletAddressStr!=''">
+      <!-- <div class="card-subtitle" *ngIf="walletAddressStr!=''">
         <span style="text-transform: none" (click)="clickWalletAddr()">{{walletAddressStr}}</span>
         <img  (click)="copyWalletAddr()" src="./assets/images/darkmode/copy.svg">
       </div>
-      <div class="connectWallet" *ngIf="walletAddressStr===''" (click)="connectWallet()">{{"WalletteachPage.connectWallet" | translate}}</div>
+      <div class="connectWallet" *ngIf="walletAddressStr===''" (click)="connectWallet()">{{"WalletteachPage.connectWallet" | translate}}</div>-->
     </div>
   </ion-row>
 

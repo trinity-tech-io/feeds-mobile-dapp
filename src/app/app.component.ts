@@ -534,9 +534,9 @@ export class MyApp {
     this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
   }
 
-  profiledetail() {
-    this.menuController.close();
-    this.native.navigateForward('/menu/profiledetail', '');
+  async profiledetail() {
+    await this.menuController.close();
+    this.native.navigateForward(['editprofileimage'], {});
   }
 
   public isIOSPlatform(): boolean {
