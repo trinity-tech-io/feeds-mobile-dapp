@@ -1860,7 +1860,7 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 const filter = {};
-                const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_CHANNELS, filter);
+                const result = await this.hiveService.queryDBData(HiveVaultHelper.TABLE_CHANNELS, filter);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query channels from DB', error);
