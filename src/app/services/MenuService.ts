@@ -286,55 +286,59 @@ export class MenuService {
     await this.postDetail.present();
   }
 
-  async showUnsubscribeMenuWithoutName(destDid: string, channelId: string) {
-    this.postDetail = await this.actionSheetController.create({
-      cssClass: 'editPost',
-      buttons: [
-        {
-          text: this.translate.instant('common.unsubscribe'),
-          role: 'destructive',
-          icon: 'ios-unsubscribe',
-          handler: async () => {
-            await this.native.showLoading("common.waitMoment");
-            try {
-              this.hiveVaultController.unSubscribeChannel(
-                destDid, channelId
-              ).then(async (result) => {
-                let channel: FeedsData.SubscribedChannelV3 = {
-                  destDid: destDid,
-                  channelId: channelId
-                };
-
-                await this.hiveVaultController.removePostListByChannel(destDid, channelId);
-                this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
+  showUnsubscribeMenuWithoutName(destDid: string, channelId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      this.postDetail = await this.actionSheetController.create({
+        cssClass: 'editPost',
+        buttons: [
+          {
+            text: this.translate.instant('common.unsubscribe'),
+            role: 'destructive',
+            icon: 'ios-unsubscribe',
+            handler: async () => {
+              await this.native.showLoading("common.waitMoment");
+              try {
+                this.hiveVaultController.unSubscribeChannel(
+                  destDid, channelId
+                ).then(async (result) => {
+                  let channel: FeedsData.SubscribedChannelV3 = {
+                    destDid: destDid,
+                    channelId: channelId
+                  };
+                  // await this.hiveVaultController.removePostListByChannel(destDid, channelId);
+                  this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
+                  resolve('FINISH');
+                  this.native.hideLoading();
+                }).catch((error) => {
+                  this.native.hideLoading();
+                  reject(error);
+                });
+              } catch (error) {
                 this.native.hideLoading();
-              }).catch(() => {
-                this.native.hideLoading();
-              });
-            } catch (error) {
-              this.native.hideLoading();
-            }
+                reject(error);
+              }
+            },
           },
-        },
-        {
-          text: this.translate.instant('common.cancel'),
-          icon: 'ios-cancel',
-          handler: () => {
-            if (this.postDetail != null) {
-              this.postDetail.dismiss();
-            }
+          {
+            text: this.translate.instant('common.cancel'),
+            icon: 'ios-cancel',
+            handler: () => {
+              if (this.postDetail != null) {
+                this.postDetail.dismiss();
+              }
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
 
-    this.postDetail.onWillDismiss().then(() => {
-      if (this.postDetail != null) {
-        this.postDetail = null;
-      }
-    });
+      this.postDetail.onWillDismiss().then(() => {
+        if (this.postDetail != null) {
+          this.postDetail = null;
+        }
+      });
 
-    await this.postDetail.present();
+      await this.postDetail.present();
+    });
   }
 
   hideActionSheet() {
@@ -493,7 +497,7 @@ export class MenuService {
                   destDid: destDid,
                   channelId: channelId
                 };
-                await this.hiveVaultController.removePostListByChannel(destDid,channelId);
+                await this.hiveVaultController.removePostListByChannel(destDid, channelId);
                 this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
                 this.native.hideLoading();
               }).catch(() => {
@@ -739,9 +743,9 @@ export class MenuService {
       this.popover.dismiss();
     }
 
-      that.events.publish(FeedsEvent.PublishType.deleteCommentFinish,
-        that.comment
-       );
+    that.events.publish(FeedsEvent.PublishType.deleteCommentFinish,
+      that.comment
+    );
 
   }
 

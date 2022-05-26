@@ -102,13 +102,13 @@ export class FeedinfoPage implements OnInit {
     this.channelOwner = UtilService.resolveAddress(text);
     try {
       this.hiveVaultController.getDisplayName(this.destDid, this.channelId, this.destDid).
-      then((result: string) => {
-        let name = result || "";
-        if (name != "") {
-          this.channelOwner = name;
-        }
-      }).catch(() => {
-      });
+        then((result: string) => {
+          let name = result || "";
+          if (name != "") {
+            this.channelOwner = name;
+          }
+        }).catch(() => {
+        });
     } catch (error) {
 
     }
@@ -206,7 +206,7 @@ export class FeedinfoPage implements OnInit {
       return;
     }
 
-    this.native.navigateForward(['/eidtchannel'],{});
+    this.native.navigateForward(['/eidtchannel'], {});
   }
 
   async subscribe() {
@@ -233,11 +233,13 @@ export class FeedinfoPage implements OnInit {
     }
   }
 
-  unsubscribe() {
-    this.menuService.showUnsubscribeMenuWithoutName(
-      this.destDid,
-      this.channelId,
-    );
+  async unsubscribe() {
+    try {
+      await this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId,);
+      this.followStatus = true;
+    } catch (error) {
+      //TODO show unsubscribe error ui
+    }
   }
 
   showPreviewQrcode(feedsUrl: string) {

@@ -190,17 +190,20 @@ export class ChannelsPage implements OnInit {
   }
 
   async unsubscribe() {
-
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
 
-    this.menuService.showUnsubscribeMenuWithoutName(
-      this.destDid,
-      this.channelId,
-    );
+    try {
+      await this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId,);
+      this.followStatus = false;
+      this.isSubscribed = 'false';
+      this.initRefresh();
+    } catch (error) {
+      //TODO show unsubscribe error ui
+    }
   }
 
   ngOnInit() {
@@ -343,7 +346,9 @@ export class ChannelsPage implements OnInit {
       FeedsEvent.PublishType.unsubscribeFinish,
       () => {
         this.zone.run(() => {
-          this.native.setRootRouter(['/tabs/home']);
+
+          // this.doRefresh();
+          // this.native.setRootRouter(['/tabs/home']);
         });
       },
     );
