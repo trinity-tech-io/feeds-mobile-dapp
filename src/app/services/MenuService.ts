@@ -65,8 +65,8 @@ export class MenuService {
           text: this.translate.instant('common.share'),
           icon: 'ios-share1',
           handler: async () => {
-            let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
-            let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
+            let post: any = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
             let ownerDid = (await this.dataHelper.getSigninData()).did;
             let postContent = '';
             if (post != null) {
