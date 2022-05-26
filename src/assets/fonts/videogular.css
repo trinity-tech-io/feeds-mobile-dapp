@@ -96,7 +96,6 @@ vg-player video {
     /* object-fit: fill; */
     /* object-fit: contain; */
     object-fit: cover;
-    mix-blend-mode: screen;
 }
 
 vg-player vg-controls{
