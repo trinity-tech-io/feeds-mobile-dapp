@@ -283,7 +283,7 @@ export class MyApp {
   }
 
   initConnector() {
-    connectivity.registerConnector(this.localIdentityConnector);
+    // connectivity.registerConnector(this.localIdentityConnector);
     // To let users use Essentials for his operations:
     connectivity.registerConnector(this.essentialsConnector);
     connectivity.setApplicationDID(Config.APPLICATION_DID);
@@ -692,7 +692,7 @@ export class MyApp {
     const signinData = await this.dataHelper.getSigninData() || {};
     let userDid = signinData.did || "";
 
-    if(userDid === ""){
+    if (userDid === "") {
       return;
     }
 
