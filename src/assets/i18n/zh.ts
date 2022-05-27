@@ -108,8 +108,8 @@ export const zh = {
     cancelSuccessfully: '取消成功',
     cancellationFailed: '取消失败',
     priceChangeFailed: '更新价格失败',
-    publicPasarFailed: '上架到Pasar失败',
-    nftCreationFailed: 'NFT创建失败',
+    publicPasarFailed: '上架到 Pasar 失败',
+    nftCreationFailed: 'NFT 创建失败',
     onsale: '出售中',
     state: '状态',
     collectibles: '收藏品（NFT）',
@@ -179,7 +179,7 @@ export const zh = {
     tranferNFTSFailed: '转让收藏品失败',
     tranferNFTSSuccess: '转让收藏品成功',
     walletAddressDes1: '收件人钱包地址与收藏品的钱包地址一致',
-    walletAddressDes2: '您至少持有0.01DIA才能允许直接转让收藏品。',
+    walletAddressDes2: '您至少持有 0.01 DIA 才能允许直接转让收藏品。',
     didUriNull: '服务异常，请稍后再试',
     parseing: '解析中',
     dataStorage: '数据缓存',
@@ -230,7 +230,7 @@ export const zh = {
     secure: '#安全',
     freemarket: '#自由市场',
     learnMore: '了解更多',
-    des10: 'Web3社交网络'
+    des10: 'Web3 社交网络'
   },
   FeedsPage: {
     tabTitle1: '主页',
@@ -273,7 +273,7 @@ export const zh = {
     collectibles: '收藏品',
     createCollectible: '创建收藏品',
     allempty: '没有发现收藏品',
-    emptyDes: '创建一个收藏品或从Pasar Lite marketplace购买一个！',
+    emptyDes: '创建一个收藏品或从 Pasar 简版市场购买一个！',
     exploreMarketplace: '探索市场'
   },
   MyfeedsComponent: {
@@ -301,7 +301,7 @@ export const zh = {
   SearchPage: {
     title: '频道',
     allempty: '没有找到频道',
-    emptyDes: 'Explore Feed上没有可用的频道。请稍后再来！',
+    emptyDes: '探索 Feeds 上没有可用的频道。请稍后再来！',
     follow: '订阅',
     following: '已订阅',
     searchFeeds: '搜索',
@@ -404,7 +404,7 @@ export const zh = {
     version: '版本',
     website: '团队网址',
     disclaimer: '免责声明(Feeds)',
-    disclaimerNft: '免责声明(Pasar Lite)',
+    disclaimerNft: '免责声明(Pasar 简版)',
     help: 'Feeds使用手册',
     email: '邮箱',
     telegram: '电报'
@@ -496,9 +496,9 @@ export const zh = {
   },
   GalleriahivePage: {
     title: '登录Hive中',
-    titleSuccess: '登录Hive成功',
+    titleSuccess: '登录 Hive 成功',
     description:
-      '正在等待 Essentials 授权登录Hive， 请稍后....',
+      '正在等待 Essentials 授权登录 Hive， 请稍后....',
     buttonTitle: '开始',
     synchronizingData: '正在同步数据',
 
@@ -512,13 +512,13 @@ export const zh = {
     synchronizingComplete: '同步完成，开始使用',
     buttonTitle1: '重试',
     welcomeHive: '开始使用',
-    titleFail: '登陆hive失败',
-    failDes0: 'Essential授权登录Hive失败',
+    titleFail: '登陆 Hive 失败',
+    failDes0: 'Essentials 授权登录 Hive 失败',
     failDes1: '请检查手机网络（建议科学上网尝试）',
     authorization: '授权',
-    description1: '正在连接 Hive node...',
+    description1: '正在连接 Hive 节点...',
     authorized: '已授权',
-    description2: '成功登录到 to Hive node!'
+    description2: '成功登录到 Hive 节点!'
   },
   ErrorInfo: {
     alreadyExists: '内容已经存在',

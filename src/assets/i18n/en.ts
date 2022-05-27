@@ -513,7 +513,7 @@ export const en = {
     buttonTitle1: 'Try',
     welcomeHive: "Let's go",
     titleFail: 'Failed to log in to hive',
-    failDes0: 'Essential authorization login hive failed',
+    failDes0: 'Essentials authorization login hive failed',
     failDes1: 'Please check the mobile network (scientific Internet access is recommended)',
     authorization: 'Authorization',
     description1: 'Connecting to Hive node...',
