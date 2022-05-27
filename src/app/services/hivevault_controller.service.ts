@@ -124,7 +124,7 @@ export class HiveVaultController {
           const posts = await this.syncSelfPostsByChannel(channelId);
           postList.push(posts);
         } else {
-          const posts = await this.getPostListByChannel(destDid, channelId);
+          const posts = await this.syncPostListByChannel(destDid, channelId);
           postList.push(posts);
         }
         resolve(postList);
@@ -350,6 +350,25 @@ export class HiveVaultController {
     });
   }
 
+  syncPostListByChannel(targetDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const postList = await this.getPostListByChannel(targetDid, channelId);
+
+        if (postList || postList.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        await this.dataHelper.addPosts(postList);
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
   getPostListByChannel(targetDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -360,7 +379,6 @@ export class HiveVaultController {
           return;
         }
         const postList = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
-        await this.dataHelper.addPosts(postList);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, error);
@@ -824,6 +842,20 @@ export class HiveVaultController {
   private syncSelfPostsByChannel(channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
+        const postList = await this.getSelfPostsByChannel(channelId);
+        await this.dataHelper.addPosts(postList);
+        resolve(postList);
+        return;
+      } catch (error) {
+        Logger.error(TAG, 'Sync self post by channel', error);
+        reject(error);
+      }
+    });
+  }
+
+  getSelfPostsByChannel(channelId: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
         const did = (await this.dataHelper.getSigninData()).did;
         const postResult = await this.hiveVaultApi.querySelfPostsByChannel(channelId);
         Logger.log('Query self post result', postResult);
@@ -832,7 +864,6 @@ export class HiveVaultController {
           return;
         }
         const postList = HiveVaultResultParse.parsePostResult(did, postResult);
-        await this.dataHelper.addPosts(postList);
         resolve(postList);
         return;
       } catch (error) {

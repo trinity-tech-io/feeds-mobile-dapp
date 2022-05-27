@@ -195,7 +195,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     await this.native.showLoading('common.waitMoment');
     try {
       await this.hiveVaultController.subscribeChannel(userDid, channelId);
-      await this.hiveVaultController.getPostListByChannel(userDid, channelId);
+      await this.hiveVaultController.syncPostListByChannel(userDid, channelId);
       this.status = '2';
       this.native.hideLoading();
     } catch (error) {

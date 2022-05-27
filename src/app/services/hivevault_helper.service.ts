@@ -1787,7 +1787,7 @@ export class HiveVaultHelper {
     downloadFile(remotePath: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = this.hiveService.downloadFile(remotePath)
+                const result = await this.hiveService.downloadFile(remotePath)
                 resolve(result)
             } catch (error) {
                 console.log("downloadFile error:", error)
@@ -1879,7 +1879,7 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 const filter = {};
-                const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_POSTS, filter);
+                const result = await this.hiveService.queryDBData(HiveVaultHelper.TABLE_POSTS, filter);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query post from DB', error);
@@ -1898,7 +1898,7 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 const filter = { 'channel_id': channelId };
-                const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_POSTS, filter);
+                const result = await this.hiveService.queryDBData(HiveVaultHelper.TABLE_POSTS, filter);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query post by channel from DB', error);

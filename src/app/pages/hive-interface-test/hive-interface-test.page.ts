@@ -108,7 +108,7 @@ export class HiveInterfaceTestPage implements OnInit {
 
   queryPostByChannelId() {
     // this.hiveVaultApi.queryPostByChannelId(this.destDid, 'channelId01');
-    this.hiveVaultController.getPostListByChannel(this.destDid, '0999ede0515410e8f7716c708868fde605ef25289fd2a7502e5f1982748bd41b');
+    this.hiveVaultController.syncPostListByChannel(this.destDid, '0999ede0515410e8f7716c708868fde605ef25289fd2a7502e5f1982748bd41b');
     alert('queryPostByChannelId');
   }
 

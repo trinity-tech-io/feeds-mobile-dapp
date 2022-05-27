@@ -128,7 +128,6 @@ export class ChannelsPage implements OnInit {
   private likeNumMap: any = {};
   private commentNumMap: any = {};
   private isLoadingLikeMap: any = {};
-  private isSubscribed = "false";
   public lightThemeType: number = 3;
   constructor(
     private platform: Platform,
@@ -199,7 +198,6 @@ export class ChannelsPage implements OnInit {
     try {
       await this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId,);
       this.followStatus = false;
-      this.isSubscribed = 'false';
       this.initRefresh();
     } catch (error) {
       //TODO show unsubscribe error ui
@@ -210,7 +208,6 @@ export class ChannelsPage implements OnInit {
     this.acRoute.params.subscribe(data => {
       this.destDid = data.destDid;
       this.channelId = data.channelId;
-      this.isSubscribed = data.isSubscribed;
     });
   }
 
@@ -233,10 +230,15 @@ export class ChannelsPage implements OnInit {
   }
 
   async initRefresh() {
-    if (this.isSubscribed == "false") {
-      this.totalData = await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
-    } else {
+    if (this.followStatus) {
       this.totalData = await this.sortChannelList();
+    } else {
+      const selfDid = (await this.dataHelper.getSigninData()).did || '';
+      if (selfDid && this.destDid == selfDid) {
+        this.totalData = await this.hiveVaultController.getSelfPostsByChannel(this.channelId);
+      } else {
+        this.totalData = await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
+      }
     }
     this.startIndex = 0;
     if (this.totalData.length - this.pageNumber > 0) {
@@ -261,16 +263,12 @@ export class ChannelsPage implements OnInit {
   }
 
   async refreshChannelList() {
+    //after delete post refresh
     if (this.startIndex === 0) {
       await this.initRefresh();
       return;
     }
-    if (this.isSubscribed == "false") {
-      this.totalData = await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
-    } else {
-      this.totalData = await this.sortChannelList();
-    }
-
+    this.totalData = await this.sortChannelList();
     if (this.totalData.length === this.postList.length) {
       this.postList = this.totalData;
     } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
@@ -591,10 +589,8 @@ export class ChannelsPage implements OnInit {
       this.images = {};
       this.startIndex = 0;
       // await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
-      if (this.isSubscribed == "false") {
-        await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
-        //public TODO comment &  like
-      } else {
+
+      if (this.followStatus) {
         this.dataHelper.cleanCachedComment();
         this.dataHelper.cleanCacheLikeNum();
         this.dataHelper.cleanCachedLikeStatus();
