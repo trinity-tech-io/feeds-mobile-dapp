@@ -536,7 +536,7 @@ export class MyApp {
 
   async profiledetail() {
     await this.menuController.close();
-    this.native.navigateForward(['editprofileimage'], {});
+    this.native.navigateForward(['/menu/profiledetail'], {});
   }
 
   public isIOSPlatform(): boolean {

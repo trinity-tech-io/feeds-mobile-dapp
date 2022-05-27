@@ -45,7 +45,6 @@ export class ProfiledetailPage implements OnInit {
   public isShowQrcode: boolean = true;
   public serverStatus: number = 1;
   public clientNumber: number = 0;
-  public nodeId: string = '';
   public serverDetails: any[] = [];
   public isPress: boolean = false;
   public didString: string = '';
@@ -56,6 +55,7 @@ export class ProfiledetailPage implements OnInit {
   public elaAddress: string = '';
   public actionSheet: any = null;
   public walletAddress: string = null;
+  public lightThemeType: number = 3;
   constructor(
     private actionSheetController: ActionSheetController,
     private zone: NgZone,
@@ -135,6 +135,7 @@ export class ProfiledetailPage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    this.theme.setTheme1();
     this.walletAddress =
       this.nftContractControllerService.getAccountAddress() || '';
     this.developerMode = this.feedService.getDeveloperMode();
@@ -148,26 +149,8 @@ export class ProfiledetailPage implements OnInit {
     this.email = signInData['email'] || '';
     this.location = signInData['location'] || '';
     this.avatar = await this.feedService.getUserAvatar(this.did);
+    this.handleImages()
     this.collectData();
-
-    this.initData();
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.serverConnectionChanged,
-      () => {
-        this.zone.run(() => {
-          if (this.nodeId != "") {
-            this.serverStatus = this.feedService.getServerStatusFromId(
-              this.nodeId,
-            );
-          }
-        });
-      },
-    );
-
-    this.events.subscribe(FeedsEvent.PublishType.removeFeedSourceFinish, () => {
-      this.native.hideLoading();
-    });
   }
 
   ionViewDidEnter() { }
@@ -178,15 +161,13 @@ export class ProfiledetailPage implements OnInit {
       this.translate.instant('ProfiledetailPage.profileDetails'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   ionViewWillUnload() { }
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.serverConnectionChanged);
-    this.events.unsubscribe(FeedsEvent.PublishType.removeFeedSourceFinish);
     this.native.handleTabsEvents();
+    this.theme.restTheme();
   }
 
   handleImages() {
@@ -219,125 +200,6 @@ export class ProfiledetailPage implements OnInit {
     }
   }
 
-  initData() {
-    let bindingServer = this.feedService.getBindingServer() || null;
-    let nodeId = "";
-    let did = "";
-    if (bindingServer === null) {
-      this.isShowPublisherAccount = false;
-    } else {
-      this.isShowPublisherAccount = true;
-      nodeId = bindingServer.nodeId || "";
-      this.nodeId = bindingServer.nodeId || "";
-      did = bindingServer.did || "";
-    }
-
-    this.isShowQrcode = false;
-
-    if (did != "") {
-      this.feedService.checkDIDOnSideChain(did, isOnSideChain => {
-        this.zone.run(() => {
-          this.isShowQrcode = isOnSideChain;
-          if (!this.isShowQrcode) {
-            this.native.toastWarn('common.waitOnChain');
-          }
-        });
-      });
-    }
-
-    if (nodeId != "") {
-      this.serverStatus = this.feedService.getServerStatusFromId(nodeId);
-      this.clientNumber = this.feedService.getServerStatisticsNumber(nodeId);
-      let server = this.feedsServiceApi.getServerbyNodeId(nodeId) || null;
-      this.didString = server.did;
-      this.serverName =
-        server.name ||
-        this.translate.instant('DIDdata.NotprovidedfromDIDDocument');
-      this.owner = server.owner;
-      this.introduction = server.introduction;
-      this.feedsUrl = server.feedsUrl || null;
-      this.elaAddress = server.elaAddress || '';
-      this.collectServerData(server);
-    }
-
-
-
-  }
-
-  collectServerData(bindingServer: any) {
-    this.serverDetails = [];
-
-    this.serverDetails.push({
-      type: 'ServerInfoPage.name',
-      details:
-        bindingServer.name ||
-        this.translate.instant('DIDdata.NotprovidedfromDIDDocument'),
-    });
-
-    this.serverDetails.push({
-      type: 'ServerInfoPage.owner',
-      details: bindingServer.owner || '',
-    });
-
-    if (this.developerMode) {
-      this.serverDetails.push({
-        type: 'NodeId',
-        details: bindingServer.nodeId || '',
-      });
-    }
-
-    this.serverDetails.push({
-      type: 'ServerInfoPage.introduction',
-      details: bindingServer.introduction || '',
-    });
-
-    if (this.developerMode) {
-      let version = this.feedService.getServerVersionByNodeId(
-        bindingServer.nodeId,
-      );
-      if (version != '') {
-        this.serverDetails.push({
-          type: 'ServerInfoPage.version',
-          details: version || '<1.3.0(Outdated)',
-        });
-      }
-    }
-
-    this.serverDetails.push({
-      type: 'ServerInfoPage.elaaddress',
-      details:
-        bindingServer.elaAddress ||
-        this.translate.instant('DIDdata.Notprovided'),
-    });
-
-    if (this.developerMode) {
-      this.serverDetails.push({
-        type: 'ServerInfoPage.did',
-        details: this.feedService.rmDIDPrefix(bindingServer.did),
-      });
-    }
-
-    this.serverDetails.push({
-      type: 'ServerInfoPage.feedsSourceQRCode',
-      details: bindingServer.feedsUrl || '',
-      qrcode: true,
-    });
-  }
-
-  showPreviewQrcode(feedsUrl: string) {
-    if (this.isPress) {
-      this.isPress = false;
-      return;
-    }
-    this.viewHelper.showPreviewQrcode(
-      this.titleBar,
-      feedsUrl,
-      'common.qRcodePreview',
-      'ProfiledetailPage.profileDetails',
-      'profileDetails',
-      this.appService,
-    );
-  }
 
   menuMore(feedsUrl: string) {
     if (this.platform.is('ios')) {
@@ -345,86 +207,6 @@ export class ProfiledetailPage implements OnInit {
     }
     //@Deprecated
     this.intentService.share('', feedsUrl);
-  }
-
-  async deleteFeedSource() {
-
-    this.actionSheet = await this.actionSheetController.create({
-      cssClass: 'editPost',
-      buttons: [
-        {
-          text: this.translate.instant('ServerInfoPage.DeletethisFeedSource'),
-          role: 'destructive',
-          icon: 'trash',
-          handler: () => {
-            this.native
-              .showLoading('common.waitMoment', isDismiss => { })
-              .then(() => {
-                this.feedService.deleteFeedSource(this.nodeId).then(() => {
-                  this.native.toast('ServerInfoPage.removeserver');
-                  this.isShowPublisherAccount = false;
-                  this.native.hideLoading();
-                  this.dataHelper.setCurrentChannel(null);
-                  this.storageService.remove('feeds.currentChannel');
-                  this.native.hideLoading();
-                  this.events.publish(FeedsEvent.PublishType.updateTab);
-                });
-              })
-              .catch(() => {
-                this.native.hideLoading();
-              });
-          },
-        },
-        {
-          text: this.translate.instant('ServerInfoPage.cancel'),
-          role: 'cancel',
-          icon: 'close-circle',
-          handler: () => { },
-        },
-      ],
-    });
-
-    this.actionSheet.onWillDismiss().then(() => {
-      if (this.actionSheet != null) {
-        this.actionSheet = null;
-      }
-    });
-
-    await this.actionSheet.present();
-  }
-
-  clickEdit() {
-    if (!this.isShowQrcode) {
-      this.native.toastWarn('common.waitOnChain');
-      return;
-    }
-
-    let connectStatus = this.dataHelper.getNetworkStatus();
-    if (connectStatus === FeedsData.ConnState.disconnected) {
-    this.native.toastWarn('common.connectionError');
-    return;
-    }
-
-    if (this.feedService.getServerStatusFromId(this.nodeId) !== 0) {
-      this.native.toastWarn('common.connectionError1');
-      return;
-    }
-
-    this.native.navigateForward(['editserverinfo'], {
-      queryParams: {
-        name: this.name,
-        introduction: this.introduction,
-        elaAddress: this.elaAddress,
-        nodeId: this.nodeId,
-        did: this.didString,
-      },
-    });
-  }
-
-  clickCollections() {
-    this.native.navigateForward(['collections'], {
-      queryParams: { nodeId: this.nodeId, channelId: 12 },
-    });
   }
 
   editProfile() {

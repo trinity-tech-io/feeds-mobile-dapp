@@ -1,99 +1,114 @@
-.container {
+.bg{
+  --background:linear-gradient(180deg, #000000 0%, #A067FF 99.09%);
+}
 
-  .profilePeople{
-    position: absolute;
-    top: 12px;
-    left:10px;
-    width:16px;
-    height:12px;
-    -o-object-fit: contain;
-    object-fit: contain;
-    border: none;
-  }
+.card {
+  position: relative;
+  width: 100%;
+  height: 200px;
 
-  .editInfo{
-    position: absolute;
-    top: 11px;
-    right: 10px;
-    width: 14px;
-    height: 14px;
-    -o-object-fit: contain;
-    object-fit: contain;
-    border: none;
-  }
-
-  .rightArrow{
-    position: absolute;
-    top:41px;
-    right:10px;
-    width:10px;
-    height: 16px;
-    -o-object-fit: contain;
-    object-fit: contain;
-    border: none;
-  }
-
-  .profileFeeds{
-    position: absolute;
-    top: 12px;
-    left: 10px;
-    width: 24px;
-    height: 22px;
-    -o-object-fit: contain;
-    object-fit: contain;
-    border: none;
-  }
-
-  .elaLogo{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 25px;
-    height: 25px;
-    -o-object-fit: contain;
-    object-fit: contain;
-    border: none;
-  }
-
-  .roundNft{
-    width: 40px;
-    height: 40px;
-    background-color: #7624fe;
-    border-radius:50%;
-    font-size: 12px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    text-align:center;
-    color: #ffffff;
-    line-height: 43px;
-    margin-left: 10px;
-  }
-
-  padding: 40px 25px;
-  .profile-header-title{
-    font-size: 20px;
-    font-weight: bold;
-    font-stretch: normal;
-    font-style: normal;
-    text-align: center;
-    color:#7624fe;
-  }
-
-
-  .detail-row {
-    .qr-container {
-      margin-top: 10px;
+  .cardImg{
+      position: absolute;
+      width: 100%;
       display: flex;
+      top: 20px;
+      justify-content: center;
+      .avatar{
+      width: 90px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 60px;
+      background-color: #161C24;
+      border: 2px solid transparent;
+      background-clip: padding-box, border-box;
+      background-origin: padding-box, border-box;
+      background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+      img{
+          width: 80px;
+          height: 80px;
+          border-radius: 60px;
+          object-fit: cover;
+          overflow: hidden;
+      }
+
+      .eidtAvatar{
+        width: 36px;
+        height: 36px;
+        top: 59px;
+        position: absolute;
+        left: calc(50% + 14px);
+      }
+      }
+  }
+
+  .cardTitle{
+      position: absolute;
+      width: 100%;
+      display: flex;
+      top: 104px;
+      justify-content: center;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 25px;
+      color: #FFFFFF;
+      white-space:nowrap;
+      text-overflow: ellipsis;
+  }
+
+  .connectWallet{
+      display: flex;
+      position: absolute;
+      width: 150px;
+      height: 35px;
+      background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+      border-radius: 20px;
       justify-content: center;
       align-items: center;
+      top: 128px;
+  }
 
-      .qrcode {
-        padding: 15px;
-        background: #ffffff;
-        border-radius: 17px;
+  .card-subtitle{
+      display: flex;
+      position: absolute;
+      width: 170px;
+      height: 35px;
+      background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+      border-radius: 20px;
+      justify-content: center;
+      align-items: center;
+      top: 128px;
+
+      span {
+          font-style: normal;
+          font-weight: 700;
+          font-size: 15px;
+          color: #FFFFFF;
+          margin-left: 17px;
       }
-    }
+
+      img {
+          margin-left: 8px;
+          vertical-align:middle;
+          margin-left:5px;
+          width: 18px;
+          height: 21.33px;
+      }
+  }
+}
+
+.container {
+  overflow: auto;
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 200px);
+  background: #161c24;
+  border-radius: 40px 40px 0px 0px;
+
+  .detail-row {
+
       padding-top: 10px;
       padding-bottom:0px;
       ion-col {
@@ -101,33 +116,34 @@
       }
 
       .left-col {
+        padding: 0 10px;
         h1, h2 {
           margin: 0;
         }
 
         h1 {
           width:100%;
-          font-size: 16px;
-          font-weight: bold;
-          font-stretch: normal;
+          font-size: 15px;
+          font-weight:700;
           font-style: normal;
           color: #000000;
           text-transform: capitalize;
           margin-bottom: 5px;
-          margin-left: 2px;
+          margin-left: 15px;
+          margin-top: 20px;
         }
 
         h2 {
           margin: 5px 0 0;
-          padding: 15px 20px 15px 10px;
-          font-size: 14px;
-          font-weight: normal;
-          font-stretch: normal;
+          padding: 5px 20px 10px 10px;
           font-style: normal;
-          color: #9ca0a4;
+          font-weight: 400;
+          font-size: 15px;
+          color: #C4C4C4;
+          background-color: #161C24;
           width: 100%;
-          background-color: #f6f5f6;
-          border-radius: 10px;
+          border-bottom: 1px solid #323B45;
+          border-radius: 0px;
         }
       }
 
@@ -136,162 +152,6 @@
         justify-content: flex-end;
         align-items: center;
       }
-  }
-  .server-header {
-
-    .clientNumber {
-      display:inline-block;
-      position: absolute;
-      left: 30px;
-      top: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #7624fe;
-    }
-    position: relative;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 17px;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    background-color: #ffffff;
-    margin-bottom: 10px;
-    margin-top: 20px;
-
-    .serverImg {
-      width: 56px;
-      height: 56px;
-      object-fit: cover;
-    }
-
-    .didImg{
-      width: 56px;
-      height: 56px;
-      border: 1px solid #f8f2ff;
-      -o-object-fit: cover;
-      object-fit: cover;
-      overflow: hidden;
-      border-radius: 50%;
-    }
-
-    h1 {
-      margin: 0;
-      padding: 15px 0px 7.5px;
-      font-size: 16px;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    p {
-      margin: 0;
-      padding-bottom: 15px;
-      font-size: 15px;
-      font-weight: 500;
-      letter-spacing: 0.8px;
-      text-align: center;
-      overflow: hidden;
-    }
-
-    .connectWallet{
-      padding: 6px 10px;
-      border-radius: 10px;
-      border: solid 1px #f8f2ff;
-      font-size: 8px !important;
-      font-weight: normal;
-      font-stretch: normal;
-      color: #000;
-      margin: 0 auto;
-  }
-
-    .status-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: 0;
-      position:absolute;
-      right: -19px;
-      top: 43px;
-      .indicator {
-        background-color: #cdcde6;
-        border-radius: 100%;
-        width: 16px;
-        height: 16px;
-        margin-right: 10px;
-      }
-
-      .status {
-        margin-right: 12.3px;
-        margin-left: 4.1px;
-        font-size: 11px;
-        font-weight: 500;
-        color: #cdcde6;
-      }
-
-
-      ion-img {
-        width: 18.1px;
-        height: 14.7px;
-      }
-
-      .users{
-        color: #a0a2c4;
-      }
-
-      .users {
-        display: inline-block;
-        font-size: 11px;
-        font-weight: 500;
-      }
-    }
-
-    .online {
-      .indicator {
-        background-color: #368bff;
-      }
-
-      .status, .users {
-        color: #7624fe;
-      }
-    }
-  }
-
-  .basicAccount{
-    position: relative;
-    padding: 20px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-direction: column;
-    border-radius: 17px;
-    box-shadow: 0 3px 15px 0 #ededf0;
-    background-color: #ffffff;
-    margin-bottom: 5px;
-    margin-top: 10px;
-
-    .support{
-    font-size: 12px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    text-align: left;
-    color: #000;
-    margin: 2px;
-    }
-
-    .notSupport{
-    font-size: 12px;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    text-align: left;
-    color: #dbd8e1;
-    margin: 2px;
-    }
-
   }
 
   .btns {
@@ -313,8 +173,9 @@
 }
 
 .darkContainer {
+overflow: auto;
 .bottomBorder {
-  border-bottom: 1px solid #2e2f4e;
+  border-bottom: 1px solid #323B45;
 }
 
 .detail-row .removeBorder {
@@ -325,9 +186,8 @@
   .left-col {
     h1 {
       width:100%;
-      font-size: 16px;
-      font-weight: bold;
-      font-stretch: normal;
+      font-size: 15px;
+      font-weight:700;
       font-style: normal;
       color: #ffffff;
       text-transform: capitalize;
@@ -337,37 +197,17 @@
 
     h2 {
       margin: 5px 0 0;
-      padding: 15px 20px 15px 10px;
-      font-size: 14px;
-      font-weight: normal;
-      font-stretch: normal;
+      padding: 5px 20px 10px 10px;
       font-style: normal;
+      font-weight: 400;
+      font-size: 15px;
+      background-color: #161C24;
+      color: #C4C4C4;
       width: 100%;
-      background-color: #2b2c49;
-      border-radius: 17px;
+      border-bottom: 1px solid #323B45;
+      border-radius: 0px;
     }
   }
 }
 
-.server-header {
-  box-shadow: 0 3px 15px 0 #151626;
-  background-color: #2e2f4e;
-
-  .connectWallet{
-    color: #fff;
-  }
-}
-
-.basicAccount{
-  box-shadow: 0 3px 15px 0 #151626;
-  background-color: #2e2f4e;
-
-  .support{
-    color: #fff;
-  }
-
-  .notSupport{
-    color: #ddd;
-  }
-}
 }

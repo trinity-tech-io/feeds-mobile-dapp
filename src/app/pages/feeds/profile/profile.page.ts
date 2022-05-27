@@ -2512,6 +2512,7 @@ export class ProfilePage implements OnInit {
   }
 
   editProfile() {
-    this.native.navigateForward(['editprofileimage'], {});
+    this.clearData();
+    this.native.navigateForward(['/menu/profiledetail'], {});
   }
 }

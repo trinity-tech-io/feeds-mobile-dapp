@@ -78,8 +78,6 @@ export class EditprofileimagePage implements OnInit {
     if (this.pictureMenu != null) {
       this.menuService.hideActionSheet();
     }
-
-    this.native.handleTabsEvents();
   }
 
   initTitle() {
