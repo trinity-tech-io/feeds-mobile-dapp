@@ -1328,7 +1328,12 @@ export class HiveVaultController {
         let replyCommentsMap: { [refCommentId: string]: FeedsData.CommentV3[] } = {};
         for (let index = 0; index < commentList.length; index++) {
           const comment = commentList[index];
-          const replyCommentList = await this.getCommentList(comment.postId, comment.commentId);
+          let replyCommentList = await this.getCommentList(comment.postId, comment.commentId);
+
+          replyCommentList = _.sortBy(replyCommentList, (item: FeedsData.CommentV3) => {
+            return -Number(item.createdAt);
+          });
+
           replyCommentsMap[comment.commentId] = replyCommentList;
         }
 
@@ -1724,6 +1729,4 @@ export class HiveVaultController {
   loadLocalChannelPostData(channelId: string, end: number): Promise<FeedsData.PostV3[]> {
     return this.dataHelper.queryChannelPostDataByTime(channelId, 0, end);
   }
-
-
 }
