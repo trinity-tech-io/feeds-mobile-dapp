@@ -30,7 +30,7 @@ export class EditPostPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('newPostIonTextarea', { static: false })
   newPostIonTextarea: IonTextarea;
-  public channelAvatar = './assets/icon/reserve.svg';
+  public channelAvatar = '';
   public channelName = '';
   public subscribers: string = '';
   public editContent: string = '';

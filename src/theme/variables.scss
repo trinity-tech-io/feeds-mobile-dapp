@@ -708,9 +708,12 @@ ion-row {
 /********************** GLOBAL POSTS AND COMMENTS **********************/
 .post-grid {
   border-bottom: 1px solid #F5F4F8;
-  padding: 15px 0px;
-
+  padding-top:1px;
+  padding-bottom: 15px;
+  padding-left: 0px;
+  padding-right: 0px;
   .post-row {
+    padding-top: 14px;
     .img-col {
       padding-left: 0px;
       display: flex;
