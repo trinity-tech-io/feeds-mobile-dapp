@@ -18,7 +18,7 @@
         <ion-col size="0.5"></ion-col>
         <ion-col class="left-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(destDid, channelId)">
-            <img src={{channelAvatar}}>
+            <img src={{channelAvatar}} *ngIf="channelAvatar != ''">
           </div>
         </ion-col>
         <ion-col class="mid-col" size="6.5" (press)="pressName()" (click)="navTo(destDid, channelId)" [style.touch-action]="'pan-y'">
@@ -157,7 +157,7 @@
         <ion-col size="0.5"></ion-col>
         <ion-col class="img-col" size="2.5">
           <div class="feedAvatar">
-          <img *ngIf="comment.destDid === comment.createrDid" class="comment-avatar" style="border: none;" [src]="channelAvatar">
+          <img *ngIf="comment.destDid === comment.createrDid && channelAvatar != ''" class="comment-avatar" style="border: none;" [src]="channelAvatar">
           <img *ngIf="comment.destDid != comment.createrDid" class="comment-avatar" src='./assets/images/default-contact.svg'>
           </div>
         </ion-col>

@@ -199,7 +199,8 @@ export const zh = {
     subscribeFail: '订阅失败',
     didSigninError1: 'credaccess error',
     didSigninError2: 'Use didManager VerifiablePresentationBuilder error',
-    yes: '是'
+    yes: '是',
+    editChannel: 'Edit Channel'
   },
   app: {
     profileDetails: '档案详情',

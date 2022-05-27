@@ -134,10 +134,13 @@ export class SubscriptionsPage implements OnInit {
     let page = eventParm['page'];
     let isSubscribed = false;
     try {
+      await this.native.showLoading('common.waitMoment');
       isSubscribed = await this.hiveVaultController.checkSubscriptionStatusFromRemote(destDid, channelId);
+      this.native.hideLoading();
+      this.native.getNavCtrl().navigateForward([page, destDid, channelId, isSubscribed]);
     } catch (error) {
+      this.native.hideLoading();
     }
-    this.native.getNavCtrl().navigateForward([page, destDid, channelId, isSubscribed]);
   }
 
 
@@ -328,15 +331,13 @@ export class SubscriptionsPage implements OnInit {
       if (id === "") {
         continue;
       }
-
-      let avatarImage = document.getElementById(id + "-followingAvatar");
-      let srcStr = avatarImage.getAttribute("src") || "";
+      let followingAvatarKuang = document.getElementById(id + "-followingAvatarKuang");
       let isload = this.followingIsLoadimage[id] || '';
       try {
         if (
           id != '' &&
-          avatarImage.getBoundingClientRect().top >= - Config.rectTop &&
-          avatarImage.getBoundingClientRect().bottom <= Config.rectBottom
+          followingAvatarKuang.getBoundingClientRect().top >= - Config.rectTop &&
+          followingAvatarKuang.getBoundingClientRect().bottom <= Config.rectBottom
         ) {
           if (isload === "") {
             let arr = id.split("-");
@@ -386,6 +387,7 @@ export class SubscriptionsPage implements OnInit {
                       if (newAvatarImage != null) {
                         newAvatarImage.setAttribute("src", data);
                       }
+                      newAvatarImage.style.display = "block";
                       delete this.followingAvatarImageMap[key];
                     }
                   }
@@ -411,16 +413,17 @@ export class SubscriptionsPage implements OnInit {
             });
           }
         } else {
+          let avatarImage = document.getElementById(id + "-followingAvatar");
+          let srcStr = avatarImage.getAttribute("src") || "";
           srcStr = avatarImage.getAttribute('src') || './assets/icon/reserve.svg';
           if (
-            avatarImage.getBoundingClientRect().top < - Config.rectTop &&
-            avatarImage.getBoundingClientRect().bottom > Config.rectBottom &&
+            followingAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
+            followingAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
             this.followingIsLoadimage[id] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {
             this.followingIsLoadimage[id] = '';
             delete this.followingAvatarImageMap[id];
-            avatarImage.setAttribute('src', './assets/icon/reserve.svg');
           }
         }
       } catch (error) {

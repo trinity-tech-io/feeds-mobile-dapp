@@ -1,4 +1,5 @@
 <ion-tabs (ionTabsDidChange)="tabChanged($event)" [class.darkContainer]="theme.darkMode">
+  <div id="feedstab">
   <div class="tabs-line drak-line"> </div>
   <ion-tab-bar class="tabs-div">
     <ion-tab-button tab="home" (click)="home('1')">
@@ -23,4 +24,5 @@
       <ion-label class="des">{{ 'FeedsPage.tabTitle4' | translate}}</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
+  </div>
 </ion-tabs>

@@ -40,7 +40,7 @@ export class ChannelsPage implements OnInit {
   public images = {};
   public isShowPrompt: boolean = false;
   public popover: any;
-  public channelAvatar: string = './assets/icon/reserve.svg';
+  public channelAvatar: string = '';
   public channelAvatarUri: string = '';
   public channelName: string = '';
   public updatedTime: number = 0;
@@ -806,7 +806,7 @@ export class ChannelsPage implements OnInit {
       } else {
         let postImageSrc = postImage.getAttribute('src') || '';
         if (
-          postImage.getBoundingClientRect().top < - Config.rectTop &&
+          postImage.getBoundingClientRect().top < - Config.rectTop ||
           postImage.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadimage[id] === '13' &&
           postImageSrc != ''
@@ -882,7 +882,7 @@ export class ChannelsPage implements OnInit {
       } else {
         let postSrc = video.getAttribute('poster') || '';
         if (
-          video.getBoundingClientRect().top < - Config.rectTop &&
+          video.getBoundingClientRect().top < - Config.rectTop ||
           video.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadVideoiamge[id] === '13' &&
           postSrc != 'assets/images/loading.png'

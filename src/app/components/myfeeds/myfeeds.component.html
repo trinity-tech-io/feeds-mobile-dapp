@@ -24,8 +24,8 @@
         class="left-col"
         (click)="navTo(channel.destDid, channel.channelId)"
       >
-        <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-          <img src="./assets/icon/reserve.svg" id={{channel.destDid}}-{{channel.channelId}}-myFeedsAvatar>
+        <div class="feedAvatar" id={{channel.destDid}}-{{channel.channelId}}-myFeedsAvatarKuang [class.dark-feedAvatar]="theme.darkMode">
+          <img id={{channel.destDid}}-{{channel.channelId}}-myFeedsAvatar style="display:none">
         </div>
       </ion-col>
       <ion-col

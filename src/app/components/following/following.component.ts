@@ -28,7 +28,6 @@ export class FollowingComponent implements OnInit {
   }
 
   navTo(destDid: string, channelId: string) {
-    this.read(destDid, channelId);
     this.toFollowPage.emit({
       destDid:destDid,
       channelId: channelId,

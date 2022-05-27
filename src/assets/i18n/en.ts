@@ -199,7 +199,8 @@ export const en = {
     subscribeFail: 'Subscription failed',
     didSigninError1: 'credaccess error',
     didSigninError2: 'Use didManager VerifiablePresentationBuilder error',
-    yes: 'Yes'
+    yes: 'Yes',
+    editChannel: 'Edit Channel'
   },
   app: {
     profileDetails: 'Profile Details',

@@ -32,7 +32,7 @@ export class PostdetailPage implements OnInit {
   public postImage: string = 'assets/images/loading.png';
   public avatar: string = '';
 
-  public channelAvatar: string = './assets/icon/reserve.svg';
+  public channelAvatar: string = '';
   public channelName: string = '';
   public commentAvatar: string = '';
   public commentName: string = '';

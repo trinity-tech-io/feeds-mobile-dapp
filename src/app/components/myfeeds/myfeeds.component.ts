@@ -32,7 +32,6 @@ export class MyfeedsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log("=====subscriptionV3NumMap======",JSON.stringify(this.subscriptionV3NumMap));
   }
 
   moreName(name: string) {

@@ -549,6 +549,7 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.tabSendPost, () => {
       this.hideSharMenuComponent = false;
+      document.getElementById("feedstab").style.display = "block";
       this.isImgPercentageLoading[this.imgDownStatusKey] = false;
       this.isImgLoading[this.imgDownStatusKey] = false;
       this.imgDownStatus[this.imgDownStatusKey] = '';
@@ -603,12 +604,17 @@ export class ProfilePage implements OnInit {
   clearAssets() {
     this.removeImages();
     this.removeAllVideo();
-    CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'homeChannelAvatar');
+    CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'likeChannelAvatar');
+    CommonPageService.removeAllAvatar(this.myFeedsIsLoadimage, 'myFeedsAvatar');
+    this.myFeedsIsLoadimage = {};
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
     this.avatarImageMap = {};
     this.isLoadVideoiamge = {};
     this.downPostAvatarMap = {};
+    this.myFeedsIsLoadimage = {};
+    this.downMyFeedsAvatarMap = {};
+    this.myFeedsAvatarImageMap = {};
   }
 
   clearData(isClearAssets: boolean = true) {
@@ -620,6 +626,7 @@ export class ProfilePage implements OnInit {
     }
     this.isAddProfile = false;
     this.hideSharMenuComponent = false;
+    document.getElementById("feedstab").style.display = "block";
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
     this.events.unsubscribe(FeedsEvent.PublishType.channelsDataUpdate);
     this.events.unsubscribe(FeedsEvent.PublishType.refreshPage);
@@ -644,22 +651,12 @@ export class ProfilePage implements OnInit {
     this.native.hideLoading();
     this.hideFullScreen();
     if (isClearAssets) {
-      CommonPageService.removeAllAvatar(this.myFeedsIsLoadimage, 'myFeedsAvatar')
-      this.removeImages();
-      this.removeAllVideo();
-      this.isLoadimage = {};
-      this.isLoadVideoiamge = {};
-      this.isLoadAvatarImage = {};
-      this.avatarImageMap = {};
-      this.downPostAvatarMap = {};
+       this.clearAssets();
     }
 
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
-    this.myFeedsIsLoadimage = {};
-    this.downMyFeedsAvatarMap = {};
-    this.myFeedsAvatarImageMap = {};
     this.curItem = {};
     this.curPostId = '';
   }
@@ -682,6 +679,7 @@ export class ProfilePage implements OnInit {
     this.pauseAllVideo();
     this.selectType = type;
     this.hideSharMenuComponent = false;
+    document.getElementById("feedstab").style.display = "block";
     switch (type) {
       case 'ProfilePage.myFeeds':
         this.initMyFeeds();
@@ -808,6 +806,7 @@ export class ProfilePage implements OnInit {
         this.channelName = item.channelName;
         this.qrCodeString = await this.getQrCodeString(item);
         this.hideSharMenuComponent = true;
+        document.getElementById("feedstab").style.display = "none";
         break;
       case 'myfollow':
         this.isShowTitle = true;
@@ -847,6 +846,7 @@ export class ProfilePage implements OnInit {
     this.channelAvatar = null;
     this.channelName = null;
     this.hideComment = true;
+    document.getElementById("feedstab").style.display = "block";
   }
 
   ionScroll() {
@@ -869,14 +869,13 @@ export class ProfilePage implements OnInit {
         continue;
       }
 
-      let avatarImage = document.getElementById(id + "-myFeedsAvatar");
-      let srcStr = avatarImage.getAttribute("src") || "";
+      let myFeedsAvatarKuang = document.getElementById(id + "-myFeedsAvatarKuang");
       let isload = this.myFeedsIsLoadimage[id] || '';
       try {
         if (
           id != '' &&
-          avatarImage.getBoundingClientRect().top >= - Config.rectTop &&
-          avatarImage.getBoundingClientRect().bottom <= Config.rectBottom
+          myFeedsAvatarKuang.getBoundingClientRect().top >= - Config.rectTop &&
+          myFeedsAvatarKuang.getBoundingClientRect().bottom <= Config.rectBottom
         ) {
           if (isload === "") {
             let arr = id.split("-");
@@ -925,8 +924,12 @@ export class ProfilePage implements OnInit {
                       this.myFeedsIsLoadimage[key] = '13';
                       let newAvatarImage = document.getElementById(key + '-myFeedsAvatar') || null;
                       if (newAvatarImage != null) {
-                        newAvatarImage.setAttribute("src", data);
+                        let imgSrc = newAvatarImage.getAttribute("src") || null;
+                        if(imgSrc === null ){
+                          newAvatarImage.setAttribute("src", data);
+                        }
                       }
+                      newAvatarImage.style.display = "block";
                       delete this.myFeedsAvatarImageMap[key];
                     }
                   }
@@ -953,8 +956,12 @@ export class ProfilePage implements OnInit {
             });
           }
         } else {
+          let avatarImage = document.getElementById(id + "-myFeedsAvatar");
+          let srcStr = avatarImage.getAttribute("src") || "";
           srcStr = avatarImage.getAttribute('src') || './assets/icon/reserve.svg';
           if (
+            myFeedsAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
+            myFeedsAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
             this.myFeedsIsLoadimage[id] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {
@@ -1023,7 +1030,7 @@ export class ProfilePage implements OnInit {
         } else {
           srcStr = thumbImage.getAttribute('src') || './assets/icon/reserve.svg';
           if (
-            thumbImage.getBoundingClientRect().top < - Config.rectTop &&
+            thumbImage.getBoundingClientRect().top < - Config.rectTop ||
             thumbImage.getBoundingClientRect().bottom > Config.rectBottom &&
             this.profileCollectiblesisLoadimage[fileName] === '13' &&
             srcStr != './assets/icon/reserve.svg'
@@ -1222,7 +1229,7 @@ export class ProfilePage implements OnInit {
       } else {
         let postImageSrc = postImage.getAttribute('src') || '';
         if (
-          postImage.getBoundingClientRect().top < - Config.rectTop &&
+          postImage.getBoundingClientRect().top < - Config.rectTop ||
           postImage.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadimage[id] === '13' &&
           postImageSrc != ''
@@ -1243,16 +1250,15 @@ export class ProfilePage implements OnInit {
   async handlePostAvatar(id: string, srcId: string, rowindex: number) {
     // 13 存在 12不存在
     let isload = this.isLoadAvatarImage[id] || '';
-    let postAvatar = document.getElementById(id + '-likeChannelAvatar');
+    let postAvatarKuang = document.getElementById(id + '-likeChannelAvatarKuang');
     try {
       if (
         id != '' &&
-        postAvatar.getBoundingClientRect().top >= - Config.rectTop &&
-        postAvatar.getBoundingClientRect().bottom <= Config.rectBottom
+        postAvatarKuang.getBoundingClientRect().top >= - Config.rectTop &&
+        postAvatarKuang.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadAvatarImage[id] = '11';
-          postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
           let arr = srcId.split('-');
 
           let destDid: string = arr[0];
@@ -1304,7 +1310,11 @@ export class ProfilePage implements OnInit {
                   if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
                     let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
                     if (newPostAvatar != null) {
-                      newPostAvatar.setAttribute('src', realImage);
+                      let imgSrc = newPostAvatar.getAttribute("src") || null;
+                      if(imgSrc === null){
+                        newPostAvatar.setAttribute('src', realImage);
+                      }
+                      newPostAvatar.style.display = "block";
                     }
                     this.isLoadAvatarImage[key] = "13";
                     delete this.avatarImageMap[key];
@@ -1337,14 +1347,14 @@ export class ProfilePage implements OnInit {
             });
         }
       } else {
+        let postAvatar = document.getElementById(id + '-likeChannelAvatar');
         let postAvatarSrc = postAvatar.getAttribute('src') || './assets/icon/reserve.svg';
         if (
-          postAvatar.getBoundingClientRect().top < - Config.rectTop &&
-          postAvatar.getBoundingClientRect().bottom > Config.rectBottom &&
+          postAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
+          postAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadAvatarImage[id] === '13' &&
           postAvatarSrc != './assets/icon/reserve.svg'
         ) {
-          postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
           delete this.isLoadAvatarImage[id];
           delete this.avatarImageMap[id];
         }
@@ -1846,6 +1856,7 @@ export class ProfilePage implements OnInit {
 
         this.qrCodeString = null;
         this.hideSharMenuComponent = false;
+        document.getElementById("feedstab").style.display = "block";
         break;
       case 'share':
         if (this.selectType === 'ProfilePage.myFeeds') {
@@ -1855,6 +1866,7 @@ export class ProfilePage implements OnInit {
           const myChannelId = this.curItem['channelId'];
           const myPostId = this.curItem['postId'] || 0;
           this.hideSharMenuComponent = false;
+          document.getElementById("feedstab").style.display = "block";
           await this.native.showLoading("common.generateSharingLink");
           try {
             let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(myDestDid, myChannelId) || null;
@@ -1866,6 +1878,7 @@ export class ProfilePage implements OnInit {
           }
 
           this.native.hideLoading();
+          document.getElementById("feedstab").style.display = "block";
           return;
         }
         if (this.selectType === 'ProfilePage.myLikes') {
@@ -1881,6 +1894,7 @@ export class ProfilePage implements OnInit {
           }
 
           this.hideSharMenuComponent = false;
+          document.getElementById("feedstab").style.display = "block";
           await this.native.showLoading("common.generateSharingLink");
           try {
             //share post
@@ -1911,10 +1925,12 @@ export class ProfilePage implements OnInit {
           },
         });
         this.hideSharMenuComponent = false;
+        document.getElementById("feedstab").style.display = "block";
         break;
       case 'cancel':
         this.qrCodeString = null;
         this.hideSharMenuComponent = false;
+        document.getElementById("feedstab").style.display = "block";
         break;
     }
     let sharemenu: HTMLElement = document.querySelector("app-sharemenu") || null;
@@ -2000,7 +2016,7 @@ export class ProfilePage implements OnInit {
       tippingAddress: channel.tipping_address
     });
     this.clearData(false);
-    this.native.navigateForward(['/feedinfo'], '').then((result) => {
+    this.native.navigateForward(['/eidtchannel'], '').then((result) => {
       let sid = setTimeout(() => {
         this.clearAssets();
         clearTimeout(sid);

@@ -17,7 +17,7 @@
       <ion-col size="12" style="padding:0px;">
         <div class="cardImg">
         <div class="feedAvatar">
-          <img src={{channelAvatar}}>
+          <img src={{channelAvatar}} *ngIf="channelAvatar != ''">
         </div>
        </div>
         <div class="feedName">
@@ -81,7 +81,7 @@
         <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></ion-col>
         <ion-col class="img-col" size="2.5">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-            <img src={{channelAvatar}}>
+            <img src={{channelAvatar}} *ngIf="channelAvatar != '' ">
           </div>
         </ion-col>
         <ion-col class="content-col" size="6.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">

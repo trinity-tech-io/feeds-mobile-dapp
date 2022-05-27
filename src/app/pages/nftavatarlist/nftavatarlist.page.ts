@@ -299,7 +299,7 @@ export class NftavatarlistPage implements OnInit {
         } else {
           srcStr = thumbImage.getAttribute('src') || '';
           if (
-            thumbImage.getBoundingClientRect().top < - Config.rectTop &&
+            thumbImage.getBoundingClientRect().top < - Config.rectTop ||
             thumbImage.getBoundingClientRect().bottom < - Config.rectBottom &&
             this.profileNftImagePagePostisLoad[avatarUri] === '13' &&
             srcStr != './assets/icon/reserve.svg'

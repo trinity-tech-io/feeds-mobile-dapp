@@ -1126,7 +1126,7 @@ export class HomePage implements OnInit {
         let postAvatar = document.getElementById(id + '-homeChannelAvatar') || null;
         let postAvatarSrc = postAvatar.getAttribute('src') || './assets/icon/reserve.svg';
         if (
-          postAvatarKuang.getBoundingClientRect().top < - Config.rectTop &&
+          postAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
           postAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadAvatarImage[id] === '13' &&
           postAvatarSrc != './assets/icon/reserve.svg'
@@ -1316,7 +1316,7 @@ export class HomePage implements OnInit {
       } else {
         let postImageSrc = postImage.getAttribute('src') || '';
         if (
-          postImage.getBoundingClientRect().top < - Config.rectTop &&
+          postImage.getBoundingClientRect().top < - Config.rectTop ||
           postImage.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadimage[id] === '13' &&
           postImageSrc != ''
@@ -1393,7 +1393,7 @@ export class HomePage implements OnInit {
       } else {
         let postSrc = video.getAttribute('poster') || '';
         if (
-          video.getBoundingClientRect().top < - Config.rectTop &&
+          video.getBoundingClientRect().top < - Config.rectTop ||
           video.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadVideoiamge[id] === '13' &&
           postSrc != 'assets/images/loading.png'
@@ -2175,7 +2175,7 @@ export class HomePage implements OnInit {
         } else {
           srcStr = thumbImage.getAttribute('src') || '';
           if (
-            thumbImage.getBoundingClientRect().top < - Config.rectTop &&
+            thumbImage.getBoundingClientRect().top < - Config.rectTop ||
             thumbImage.getBoundingClientRect().bottom > Config.rectBottom &&
             this.pasarGridisLoadimage[fileName] === '13' &&
             srcStr != './assets/icon/reserve.svg'
@@ -2250,7 +2250,7 @@ export class HomePage implements OnInit {
         } else {
           srcStr = thumbImage.getAttribute('src') || '';
           if (
-            thumbImage.getBoundingClientRect().top < - Config.rectTop &&
+            thumbImage.getBoundingClientRect().top < - Config.rectTop ||
             thumbImage.getBoundingClientRect().bottom > Config.rectBottom &&
             this.pasarListisLoadimage[fileName] === '13' &&
             srcStr != './assets/icon/reserve.svg'
