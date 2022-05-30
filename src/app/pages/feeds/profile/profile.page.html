@@ -43,7 +43,17 @@
     </ion-row>
     <ion-row style="height:40px">&nbsp;</ion-row>
     <ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
-    <app-myfeeds *ngIf="selectType == 'ProfilePage.myFeeds'" (toFeedPage)="toPage($event)" (subsciptions)="subsciptions()" (chanelCollections)="chanelCollections()"  [channels] = "channels" (fromChild)="showMenuMore($event)" [followers] = "followers" [subscriptionV3NumMap]= "subscriptionV3NumMap"></app-myfeeds>
+    <app-myfeeds
+    *ngIf="selectType == 'ProfilePage.myFeeds'"
+    (toFeedPage)="toPage($event)"
+    (subsciptions)="subsciptions()"
+    (chanelCollections)="chanelCollections()"
+    [channels] = "channels"
+    (fromChild)="showMenuMore($event)"
+    [followers] = "followers"
+    [subscriptionV3NumMap]= "subscriptionV3NumMap"
+    [channelAvatarMap] = "myFeedAvatarMap">
+  </app-myfeeds>
     <!-- <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum===0">
       <ion-col size="12">
        <div class="bigCircle">
@@ -103,6 +113,7 @@
        [commentNumMap] = "commentNumMap"
        [channelNameMap] = "channelNameMap"
        [isLoadingLikeMap] = "isLoadingLikeMap"
+       [channelAvatarMap] = "likeAvatarMap"
        [handleDisplayNameMap] = "handleDisplayNameMap"
        (fromChild)="showMenuMore($event)"
        (commentParams)="showComment($event)"

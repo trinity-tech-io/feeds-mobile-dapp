@@ -25,7 +25,7 @@
         (click)="navTo(channel.destDid, channel.channelId)"
       >
         <div class="feedAvatar" id={{channel.destDid}}-{{channel.channelId}}-myFeedsAvatarKuang [class.dark-feedAvatar]="theme.darkMode">
-          <img id={{channel.destDid}}-{{channel.channelId}}-myFeedsAvatar style="display:none">
+          <img [src] = "channelAvatarMap[channel.destDid+'-'+channel.channelId]" *ngIf="channelAvatarMap[channel.destDid+'-'+channel.channelId]  != null && channelAvatarMap[channel.destDid+'-'+channel.channelId] != undefined">
         </div>
       </ion-col>
       <ion-col

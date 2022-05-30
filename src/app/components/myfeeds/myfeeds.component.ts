@@ -17,6 +17,7 @@ export class MyfeedsComponent implements OnInit {
   @Input() channels: any = [];
   @Input() followers= 0;
   @Input() subscriptionV3NumMap: any = {};
+  @Input() channelAvatarMap:any = {};
   @Output() toFeedPage = new EventEmitter();
   @Output() subsciptions = new EventEmitter();
   @Output() chanelCollections = new EventEmitter();

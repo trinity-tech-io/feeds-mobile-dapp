@@ -119,9 +119,9 @@ export class FeedinfoPage implements OnInit {
     this.developerMode = this.feedService.getDeveloperMode();
     this.initChannelInfo();
     this.initTitle();
-    this.channelAvatar = this.dataHelper.getProfileIamge();
-    let avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-    document.getElementById("feedsInfoAvatar").setAttribute("src", avatar);
+
+    let avatar = this.dataHelper.getProfileIamge();
+    this.channelAvatar = this.feedService.parseChannelAvatar(avatar);
     this.addEvents();
   }
 

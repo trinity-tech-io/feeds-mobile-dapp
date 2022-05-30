@@ -176,6 +176,7 @@ export class HomePage implements OnInit {
   private useRemoteData: boolean = false;
   private handleDisplayNameMap: any = {};
   public owerCreatChannelNum: Number = 0;
+  public channelAvatarMap: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -252,13 +253,15 @@ export class HomePage implements OnInit {
     return postList;
   }
 
-  async refreshPostList() {
+  async refreshPostList(isRefresh: boolean = true) {
     if (this.startIndex === 0) {
       this.initPostListData(false);
       return;
     }
     this.isPostLoading = false;
-    this.postList = this.totalData = await this.sortPostList();
+    if(isRefresh){
+      this.postList = this.totalData = await this.sortPostList();
+    }
     // if (this.totalData.length === this.postList.length) {
     //   this.postList = this.totalData;
     // } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
@@ -397,13 +400,13 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTab, isInit => {
-      Logger.log(TAG, "======= Receive updateTab========");
+
       this.zone.run(() => {
         if (isInit) {
           this.initPostListData(true);
           return;
         }
-        this.refreshPostList();
+        this.refreshPostList(isInit);
       });
     });
 
@@ -634,6 +637,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
     this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
     this.events.unsubscribe(FeedsEvent.PublishType.updateSyncHiveData);
+    this.scrollToTop(1);
   }
 
 
@@ -817,6 +821,9 @@ export class HomePage implements OnInit {
     switch (this.tabType) {
       case 'feeds':
         this.zone.run(() => {
+          if(this.isPostLoading){
+            return;
+          }
           this.hiveVaultController.loadPostMoreData(this.useRemoteData, this.postList).then((postList: FeedsData.PostV3[]) => {
             if (postList.length > 0) {
               this.postList = postList;
@@ -1017,7 +1024,7 @@ export class HomePage implements OnInit {
   async handlePostAvatar(id: string, srcId: string, rowindex: number) {
     // 13 存在 12不存在
     let isload = this.isLoadAvatarImage[id] || '';
-    let postAvatarKuang = document.getElementById(id + '-homeChannelAvatrKuang') || null;
+    let postAvatarKuang = document.getElementById(id + '-homeChannelAvatarKuang') || null;
     try {
       if (
         id != '' &&
@@ -1084,14 +1091,7 @@ export class HomePage implements OnInit {
 
                   let uri = this.avatarImageMap[key] || "";
                   if (uri === avatarUri) {
-                    let newPostAvatar = document.getElementById(key + '-homeChannelAvatar') || null;
-                    if (newPostAvatar != null) {
-                      let imgSrc = newPostAvatar.getAttribute("src") || null;
-                      if(imgSrc === null){
-                        newPostAvatar.setAttribute('src', realImage);
-                      }
-                      newPostAvatar.style.display = "block";
-                    }
+                    this.channelAvatarMap[key] = realImage;
                     this.isLoadAvatarImage[key] = "13";
                     delete this.avatarImageMap[key];
                   }
@@ -1123,14 +1123,15 @@ export class HomePage implements OnInit {
             });
         }
       } else {
-        let postAvatar = document.getElementById(id + '-homeChannelAvatar') || null;
-        let postAvatarSrc = postAvatar.getAttribute('src') || './assets/icon/reserve.svg';
+        //let postAvatar = document.getElementById(id + '-homeChannelAvatar') || null;
+        let postAvatarSrc = this.channelAvatarMap[id] || './assets/icon/reserve.svg';
         if (
           postAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
           postAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadAvatarImage[id] === '13' &&
           postAvatarSrc != './assets/icon/reserve.svg'
         ) {
+          this.channelAvatarMap[id] = null;
           delete this.isLoadAvatarImage[id];
           delete this.avatarImageMap[id];
         }

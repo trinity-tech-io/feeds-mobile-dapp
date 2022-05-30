@@ -184,6 +184,8 @@ export class ProfilePage implements OnInit {
   public lightThemeType: number = 3;
   private handleDisplayNameMap: any = {};
   public subscriptionV3NumMap: any = {};
+  public likeAvatarMap: any = {};
+  public myFeedAvatarMap: any = {};
   constructor(
     public theme: ThemeService,
     private events: Events,
@@ -922,14 +924,7 @@ export class ProfilePage implements OnInit {
                     let uri = this.myFeedsAvatarImageMap[key] || "";
                     if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
                       this.myFeedsIsLoadimage[key] = '13';
-                      let newAvatarImage = document.getElementById(key + '-myFeedsAvatar') || null;
-                      if (newAvatarImage != null) {
-                        let imgSrc = newAvatarImage.getAttribute("src") || null;
-                        if(imgSrc === null ){
-                          newAvatarImage.setAttribute("src", data);
-                        }
-                      }
-                      newAvatarImage.style.display = "block";
+                      this.myFeedAvatarMap[key] = data;
                       delete this.myFeedsAvatarImageMap[key];
                     }
                   }
@@ -956,16 +951,14 @@ export class ProfilePage implements OnInit {
             });
           }
         } else {
-          let avatarImage = document.getElementById(id + "-myFeedsAvatar");
-          let srcStr = avatarImage.getAttribute("src") || "";
-          srcStr = avatarImage.getAttribute('src') || './assets/icon/reserve.svg';
+          let srcStr = this.myFeedAvatarMap[id]  || './assets/icon/reserve.svg';
           if (
             myFeedsAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
             myFeedsAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
             this.myFeedsIsLoadimage[id] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {
-            avatarImage.setAttribute('src', './assets/icon/reserve.svg');
+            this.myFeedAvatarMap[id] = null;
             this.myFeedsIsLoadimage[id] = '';
             delete this.myFeedsAvatarImageMap[id];
           }
@@ -1308,14 +1301,7 @@ export class ProfilePage implements OnInit {
                 for (let key in this.avatarImageMap) {
                   let uri = this.avatarImageMap[key] || "";
                   if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
-                    let newPostAvatar = document.getElementById(key + '-likeChannelAvatar') || null;
-                    if (newPostAvatar != null) {
-                      let imgSrc = newPostAvatar.getAttribute("src") || null;
-                      if(imgSrc === null){
-                        newPostAvatar.setAttribute('src', realImage);
-                      }
-                      newPostAvatar.style.display = "block";
-                    }
+                    this.likeAvatarMap[key] = realImage;
                     this.isLoadAvatarImage[key] = "13";
                     delete this.avatarImageMap[key];
                   }
@@ -1347,14 +1333,14 @@ export class ProfilePage implements OnInit {
             });
         }
       } else {
-        let postAvatar = document.getElementById(id + '-likeChannelAvatar');
-        let postAvatarSrc = postAvatar.getAttribute('src') || './assets/icon/reserve.svg';
+        let postAvatarSrc = this.likeAvatarMap[id] || './assets/icon/reserve.svg';
         if (
           postAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
           postAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadAvatarImage[id] === '13' &&
           postAvatarSrc != './assets/icon/reserve.svg'
         ) {
+          this.likeAvatarMap[id] = null;
           delete this.isLoadAvatarImage[id];
           delete this.avatarImageMap[id];
         }

@@ -19,7 +19,7 @@
       </ion-col>
       <ion-col class="img-col" size="2.5" (click)="navTo(post.destDid, post.channelId,post.postId)">
         <div class="feedAvatar"  id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-likeChannelAvatarKuang [class.dark-feedAvatar]="theme.darkMode">
-          <img id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-likeChannelAvatar style="display: none;">
+          <img [src] = "channelAvatarMap[post.destDid+'-'+post.channelId+'-'+post.postId]" *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId+'-'+post.postId]  != null && channelAvatarMap[post.destDid+'-'+post.channelId+'-'+post.postId] != undefined">
         </div>
       </ion-col>
       <ion-col class="content-col" size="6.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">

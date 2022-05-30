@@ -17,7 +17,14 @@
       </form>
     </div>
   </div>
-   <app-following [followingList] = "followingList" [subscriptionV3NumMap] = "subscriptionV3NumMap" (exploreFeeds) = "exploreFeeds()" (fromChild)="showMenuMore($event)" (toFollowPage)="toPage($event)"></app-following>
+   <app-following
+   [followingList] = "followingList"
+   [subscriptionV3NumMap] = "subscriptionV3NumMap"
+   [channelAvatarMap]="followAvatarMap"
+   (exploreFeeds) = "exploreFeeds()"
+   (fromChild)="showMenuMore($event)"
+   (toFollowPage)="toPage($event)">
+  </app-following>
 </ion-content>
 <!---------------- ADD share menu---------------->
 <app-sharemenu

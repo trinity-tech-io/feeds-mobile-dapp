@@ -43,6 +43,7 @@ export class SubscriptionsPage implements OnInit {
   public isSearch: string = '';
   public scanServiceStyle = { right: '' };
   public subscriptionV3NumMap: any = {};
+  public followAvatarMap: any = {};
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -383,11 +384,7 @@ export class SubscriptionsPage implements OnInit {
                     let uri = this.followingAvatarImageMap[key] || "";
                     if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
                       this.followingIsLoadimage[key] = '13';
-                      let newAvatarImage = document.getElementById(key + '-followingAvatar') || null;
-                      if (newAvatarImage != null) {
-                        newAvatarImage.setAttribute("src", data);
-                      }
-                      newAvatarImage.style.display = "block";
+                      this.followAvatarMap[key] = srcData;
                       delete this.followingAvatarImageMap[key];
                     }
                   }
@@ -413,15 +410,14 @@ export class SubscriptionsPage implements OnInit {
             });
           }
         } else {
-          let avatarImage = document.getElementById(id + "-followingAvatar");
-          let srcStr = avatarImage.getAttribute("src") || "";
-          srcStr = avatarImage.getAttribute('src') || './assets/icon/reserve.svg';
+          let srcStr = this.followAvatarMap[id] || "./assets/icon/reserve.svg";
           if (
             followingAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
             followingAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
             this.followingIsLoadimage[id] === '13' &&
             srcStr != './assets/icon/reserve.svg'
           ) {
+            this.followAvatarMap[id] = null;
             this.followingIsLoadimage[id] = '';
             delete this.followingAvatarImageMap[id];
           }

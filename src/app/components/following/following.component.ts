@@ -13,6 +13,7 @@ export class FollowingComponent implements OnInit {
   @Output() fromChild = new EventEmitter();
   @Input() followingList: any = [];
   @Input() subscriptionV3NumMap: any = {};
+  @Input() channelAvatarMap:any = {};
   @Output() toFollowPage = new EventEmitter();
   @Output() exploreFeeds = new EventEmitter();
   constructor(

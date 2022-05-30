@@ -200,7 +200,7 @@ export const zh = {
     didSigninError1: 'credaccess error',
     didSigninError2: 'Use didManager VerifiablePresentationBuilder error',
     yes: '是',
-    editChannel: 'Edit Channel'
+    editChannel: '编辑频道'
   },
   app: {
     profileDetails: '档案详情',
