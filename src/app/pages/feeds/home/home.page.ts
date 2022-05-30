@@ -210,7 +210,7 @@ export class HomePage implements OnInit {
   }
 
   async initPostListData(scrollToTop: boolean) {
-    this.infiniteScroll.disabled = false;
+    this.infiniteScroll.disabled = true;
     this.startIndex = 0;
 
     this.postList = this.totalData = await this.sortPostList();
@@ -239,7 +239,7 @@ export class HomePage implements OnInit {
     this.refreshImage();
     this.dataHelper.resetNewPost();
     this.isPostLoading = false;
-    //this.isInitPostList = false;
+    this.infiniteScroll.disabled = false;
   }
 
   async sortPostList() {
@@ -637,7 +637,11 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
     this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
     this.events.unsubscribe(FeedsEvent.PublishType.updateSyncHiveData);
-    this.scrollToTop(1);
+    this.content.scrollToTop(1).then(()=>{
+      this.homeTittleBar.style.display = "block";
+    });
+
+
   }
 
 
@@ -821,9 +825,6 @@ export class HomePage implements OnInit {
     switch (this.tabType) {
       case 'feeds':
         this.zone.run(() => {
-          if(this.isPostLoading){
-            return;
-          }
           this.hiveVaultController.loadPostMoreData(this.useRemoteData, this.postList).then((postList: FeedsData.PostV3[]) => {
             if (postList.length > 0) {
               this.postList = postList;
