@@ -388,7 +388,8 @@ export class PostHelperService {
   }
 
   checkVideoDurationValid(duration: number): boolean {
-    if (duration > 15)
+    let durationStr =  duration.toString();
+    if (parseInt(durationStr) > 15)
       return false;
     return true;
   }
