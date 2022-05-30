@@ -1972,8 +1972,8 @@ export class ProfilePage implements OnInit {
     let feedAvatar = this.feedService.parseChannelAvatar(channel.avatar);
     if (feedAvatar.indexOf("@feeds/data/") > -1) {
       // d30054aa1d08abfb41c7225eb61f18e4@feeds/data/d30054aa1d08abfb41c7225eb61f18e4
-      let imgKey = destDid + "-" + channelId + "-myFeedsAvatar";
-      feedAvatar = document.getElementById(imgKey).getAttribute("src");
+      let imgKey = destDid + "-" + channelId;
+      feedAvatar = this.myFeedAvatarMap[imgKey];
     }
 
     if (feedAvatar.indexOf('data:image') > -1 ||
