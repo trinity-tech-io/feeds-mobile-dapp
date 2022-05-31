@@ -375,6 +375,7 @@ export const en = {
   ProfileimagePage: {
     title: 'Choose Avatar',
     confirm: 'Confirm',
+    avatarEorr: 'Pictures of GIF type are not supported. Please select again.'
   },
   ProfiledetailPage: {
     profileDetails: 'Profile Details',

@@ -10,7 +10,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { CameraService } from '../../../services/CameraService';
-
+let TAG: string = 'feeds-profileimage';
 @Component({
   selector: 'app-profileimage',
   templateUrl: './profileimage.page.html',
@@ -132,7 +132,6 @@ export class ProfileimagePage implements OnInit {
       this.translate.instant('ProfileimagePage.title'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   selectIndex(index: number, avatar?: string) {
@@ -178,8 +177,15 @@ export class ProfileimagePage implements OnInit {
       0,
       0,
       (imageUrl: any) => {
-        that.native.navigateForward(['editimage'], '');
-        that.dataHelper.setClipProfileIamge(imageUrl);
+        let index = imageUrl.lastIndexOf(".");
+        //获取后缀
+        let ext = imageUrl.substr(index+1);
+        if(ext.toLowerCase() === "gif"){
+            that.native.toastWarn("ProfileimagePage.avatarEorr");
+        }else{
+          that.native.navigateForward(['editimage'], '');
+          that.dataHelper.setClipProfileIamge(imageUrl);
+        }
       },
       err => {},
     );

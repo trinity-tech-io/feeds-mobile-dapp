@@ -375,6 +375,7 @@ export const zh = {
   ProfileimagePage: {
     title: '选择头像',
     confirm: '确认',
+    avatarEorr: '不支持使用GIF类型的图片，请重新选择'
   },
   ProfiledetailPage: {
     profileDetails: '档案详情',
