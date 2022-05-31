@@ -125,8 +125,15 @@ export class EditprofileimagePage implements OnInit {
       0,
       0,
       (imageUrl: any) => {
-        that.native.navigateForward(['editimage'], '');
-        that.dataHelper.setClipProfileIamge(imageUrl);
+        let index = imageUrl.lastIndexOf(".");
+        //获取后缀
+        let ext = imageUrl.substr(index+1);
+        if(ext.toLowerCase() === "gif"){
+            that.native.toastWarn("ProfileimagePage.avatarEorr");
+        }else{
+            that.native.navigateForward(['editimage'], '');
+            that.dataHelper.setClipProfileIamge(imageUrl);
+        }
       },
       err => {},
     );
