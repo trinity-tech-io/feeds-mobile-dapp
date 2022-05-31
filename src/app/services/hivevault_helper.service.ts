@@ -167,10 +167,26 @@ export class HiveVaultHelper {
             }
         } else if (errorCode === undefined) {
             this.native.toastWarn(errorDes)
-            console.log("errorDes >>>>>>>>>> ", errorDes)
         }
         return error
     }
+
+    async handleLikeError(error: any) {
+        let errorCode = error["code"];
+        let errorDes = "ErrorInfo.HIVE_ERROR_" + errorCode;
+        if (errorCode === 507) {
+            if (this.buyStorageSpaceDialog === null) {
+              await this.showBuyStorageSpaceDialog(errorDes);
+            }
+        } else if (errorCode === undefined) {
+            this.native.toastWarn("common.likeError");
+        }else{
+            this.native.toastWarn("common.likeError1");
+        }
+        return error
+    }
+
+
 
     createFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false) {
         return this.insertDataToFeedsScriptingDB(lasterVersion, preVersion, registScripting);
@@ -1405,11 +1421,11 @@ export class HiveVaultHelper {
                     "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SELF_LIKE_BY_ID, params);
-                Logger.log("Query like from scripting , result is", result);
+                Logger.log( TAG, "Query like from scripting , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query like from scripting , error:', error);
-                reject(error);
+                reject(this.handleLikeError(error));
             }
         });
     }
@@ -1606,7 +1622,7 @@ export class HiveVaultHelper {
                 resolve({ createdAt: createdAt });
             } catch (error) {
                 Logger.error(TAG, 'Add like from scripting , error:', error);
-                reject(error);
+                reject(this.handleLikeError(error));
             }
         });
     }
@@ -1709,7 +1725,7 @@ export class HiveVaultHelper {
                 resolve({ updatedAt: updatedAt });
             } catch (error) {
                 Logger.error(TAG, 'update subscription error:', error);
-                reject(error);
+                reject(this.handleLikeError(error));
             }
         });
     }

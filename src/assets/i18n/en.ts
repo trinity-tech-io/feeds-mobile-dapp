@@ -200,7 +200,9 @@ export const en = {
     didSigninError1: 'credaccess error',
     didSigninError2: 'Use didManager VerifiablePresentationBuilder error',
     yes: 'Yes',
-    editChannel: 'Edit Channel'
+    editChannel: 'Edit Channel',
+    likeError: 'Network exception, like failed.',
+    likeError1: 'Like failed, try again later'
   },
   app: {
     profileDetails: 'Profile Details',

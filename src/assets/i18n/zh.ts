@@ -200,7 +200,9 @@ export const zh = {
     didSigninError1: 'credaccess error',
     didSigninError2: 'Use didManager VerifiablePresentationBuilder error',
     yes: '是',
-    editChannel: '编辑频道'
+    editChannel: '编辑频道',
+    likeError: '网络异常，点赞失败。',
+    likeError1: '点赞失败,稍后重试'
   },
   app: {
     profileDetails: '档案详情',
@@ -210,7 +212,7 @@ export const zh = {
     signout: '登出',
     des: '登出成功',
     settings: '设置',
-    privacyPolicy: '隐私政策'
+    privacyPolicy: '隐私政策',
   },
   SigninPage: {
     signIn: '登录',

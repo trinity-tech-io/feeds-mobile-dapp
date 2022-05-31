@@ -191,6 +191,7 @@ export class CommonPageService {
               dataHelper.cacheLikeNum(postId, '0', likedNum)
               resolve("sucess");
             }).catch(err => {
+
               isLoadingLikeMap[postId] = "";
               likeMap[postId] = "";
               if (likeNumMap[postId] > 0) {
@@ -226,7 +227,7 @@ export class CommonPageService {
               }
               dataHelper.cacheLikeNum(postId, '0', likedNum);
               resolve("sucess");
-            }).catch(() => {
+            }).catch((error) => {
               isLoadingLikeMap[postId] = "";
               likeMap[postId] = "like";
               likeNumMap[postId] = likeNumMap[postId] + 1;
