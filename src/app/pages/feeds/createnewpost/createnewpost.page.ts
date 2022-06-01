@@ -521,7 +521,6 @@ export class CreatenewpostPage implements OnInit {
         that.imgUrl = fileBase64;
         that.dataHelper.setSelsectNftImage(fileBase64);
       });
-
     });
   }
 

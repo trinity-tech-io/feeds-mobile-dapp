@@ -20,6 +20,11 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { MenuService } from 'src/app/services/MenuService';
 import { CameraService } from 'src/app/services/CameraService';
 import { HiveService } from 'src/app/services/HiveService';
+import { Logger } from 'src/app/services/logger';
+import { FileHelperService } from 'src/app/services/FileHelperService';
+import { File } from '@ionic-native/file/ngx';
+
+let TAG: string = 'Profiledetail';
 type ProfileDetail = {
   type: string;
   details: string;
@@ -81,7 +86,9 @@ export class ProfiledetailPage implements OnInit {
     private dataHelper: DataHelper,
     private menuService: MenuService,
     private camera: CameraService,
-    private hiveService: HiveService
+    private hiveService: HiveService,
+    private file: File,
+    private fileHelperService: FileHelperService
   ) { }
 
   ngOnInit() { }
@@ -184,8 +191,8 @@ export class ProfiledetailPage implements OnInit {
   ionViewWillUnload() { }
 
   async ionViewWillLeave() {
-    this.native.handleTabsEvents();
     this.theme.restTheme();
+    this.native.handleTabsEvents();
     if (this.pictureMenu != null) {
       await this.menuService.hideActionSheet();
       this.pictureMenu = null;
@@ -251,23 +258,24 @@ export class ProfiledetailPage implements OnInit {
   }
 
   openGallery(that: any) {
-    that.camera.openCamera(
-      30,
-      0,
-      0,
-      (imageUrl: any) => {
-        let index = imageUrl.lastIndexOf(".");
-        //获取后缀
-        let ext = imageUrl.substr(index+1);
-        if(ext.toLowerCase() === "gif"){
-            that.native.toastWarn("ProfileimagePage.avatarEorr");
-        }else{
-            that.native.navigateForward(['editimage'], '');
-            that.dataHelper.setClipProfileIamge(imageUrl);
-        }
-      },
-      err => {},
-    );
+
+    that.handleImgUri(0, that).then(async (imagePath: string) => {
+      console.log("====imagePath==="+imagePath);
+      let pathObj = that.handleImgUrlPath(imagePath);
+      let fileName = pathObj['fileName'];
+      let filePath = pathObj['filepath'];
+      return that.getFlieObj(fileName, filePath, that);
+
+    }).then(async (fileBase64: string) => {
+      if(fileBase64.indexOf("gif") > -1 ){
+        that.avatar = fileBase64;
+        await that.saveAvatar();
+      }else{
+        that.native.navigateForward(['editimage'], '');
+        that.dataHelper.setClipProfileIamge(fileBase64);
+      }
+
+    });
   }
 
   openCamera(that: any) {
@@ -296,6 +304,60 @@ export class ProfiledetailPage implements OnInit {
       this.native.hideLoading();
       this.native.toast('common.saveFailed');
     }
+  }
+
+
+  handleImgUri(type: number, that: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      that.camera.openCamera(
+        100,
+        1,
+        type,
+        (imgPath: any) => {
+          resolve(imgPath);
+        },
+        (err: any) => {
+          Logger.error(TAG, 'Add img err', err);
+          let imgUrl = that.imgUrl || '';
+          if (!imgUrl) {
+            this.native.toast_trans('common.noImageSelected');
+            reject(err);
+            return;
+          }
+        }
+      );
+    });
+  }
+
+  getFlieObj(fileName: string, filepath: string, that: any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const base64Result = await that.fileHelperService.getUserFileBase64Data(filepath, fileName);
+        if (!base64Result) {
+          const error = 'Get File object is null';
+          Logger.error(TAG, 'Get File object error', error)
+          reject(error);
+        }
+        resolve(base64Result);
+      } catch (error) {
+        Logger.error(TAG, 'Get File object error', error)
+        reject(error);
+      }
+    });
+  }
+
+  handleImgUrlPath(fileUri: string) {
+    let pathObj = {};
+    fileUri = fileUri.replace('/storage/emulated/0/', '/sdcard/');
+    let path = fileUri.split('?')[0];
+    let lastIndex = path.lastIndexOf('/');
+    pathObj['fileName'] = path.substring(lastIndex + 1, fileUri.length);
+    pathObj['filepath'] = path.substring(0, lastIndex);
+    pathObj['filepath'] = pathObj['filepath'].startsWith('file://')
+      ? pathObj['filepath']
+      : `file://${pathObj['filepath']}`;
+
+    return pathObj;
   }
 
 }
