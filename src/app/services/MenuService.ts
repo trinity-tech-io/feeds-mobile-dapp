@@ -341,9 +341,9 @@ export class MenuService {
     });
   }
 
-  hideActionSheet() {
+  async hideActionSheet() {
     if (this.postDetail != null) {
-      this.postDetail.dismiss();
+        await this.postDetail.dismiss();
     }
   }
 

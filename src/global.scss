@@ -560,7 +560,21 @@ ion-input {
 .swiper-pagination {
   bottom: 0px !important;
   // bottom: calc(env(safe-area-inset-bottom) + 0px) !important;
-  --swiper-pagination-color:#7624fe;
+
+    // --swiper-pagination-color:#7624fe;
+    // --bullet-background:#ffffff;
+    // --bullet-background-active:#7624fe;
+
+
+    .swiper-pagination-bullet {
+      background: #fff;
+      opacity: 0.5;
+    }
+
+    .swiper-pagination-bullet-active {
+      opacity: 1;
+      background: #7624fe;
+    }
 }
 
 .add-tab{

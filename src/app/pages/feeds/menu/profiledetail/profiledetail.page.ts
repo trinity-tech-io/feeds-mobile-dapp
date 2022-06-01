@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Platform, ActionSheetController } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { FeedService, Avatar } from '../../../../services/FeedService';
 import { NativeService } from '../../../../services/NativeService';
 import { ThemeService } from '../../../../services/theme.service';
@@ -17,7 +17,9 @@ import { IntentService } from 'src/app/services/IntentService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
-
+import { MenuService } from 'src/app/services/MenuService';
+import { CameraService } from 'src/app/services/CameraService';
+import { HiveService } from 'src/app/services/HiveService';
 type ProfileDetail = {
   type: string;
   details: string;
@@ -56,8 +58,9 @@ export class ProfiledetailPage implements OnInit {
   public actionSheet: any = null;
   public walletAddress: string = null;
   public lightThemeType: number = 3;
+  private pictureMenu: any = null;
+  private userDid: string = '';
   constructor(
-    private actionSheetController: ActionSheetController,
     private zone: NgZone,
     private native: NativeService,
     private feedService: FeedService,
@@ -75,7 +78,10 @@ export class ProfiledetailPage implements OnInit {
     private intentService: IntentService,
     private ipfsService: IPFSService,
     private feedsServiceApi: FeedsServiceApi,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private menuService: MenuService,
+    private camera: CameraService,
+    private hiveService: HiveService
   ) { }
 
   ngOnInit() { }
@@ -144,13 +150,25 @@ export class ProfiledetailPage implements OnInit {
     let signInData = await this.dataHelper.getSigninData();
     this.name = signInData['nickname'] || signInData['name'] || '';
     this.description = signInData['description'] || '';
+    this.userDid = signInData['did'];
     this.did = this.feedService.rmDIDPrefix(signInData['did'] || '');
     this.telephone = signInData['telephone'] || '';
     this.email = signInData['email'] || '';
     this.location = signInData['location'] || '';
-    this.avatar = await this.feedService.getUserAvatar(this.did);
-    this.handleImages()
     this.collectData();
+    try {
+      let croppedImage = this.dataHelper.getClipProfileIamge();
+      if (croppedImage != ''){
+        this.avatar = croppedImage;
+        await this.saveAvatar();
+      }else{
+        this.avatar = await this.feedService.getUserAvatar(this.did);
+      }
+    } catch (error) {
+
+    }
+    this.handleImages()
+
   }
 
   ionViewDidEnter() { }
@@ -165,9 +183,13 @@ export class ProfiledetailPage implements OnInit {
 
   ionViewWillUnload() { }
 
-  ionViewWillLeave() {
+  async ionViewWillLeave() {
     this.native.handleTabsEvents();
     this.theme.restTheme();
+    if (this.pictureMenu != null) {
+      await this.menuService.hideActionSheet();
+      this.pictureMenu = null;
+    }
   }
 
   handleImages() {
@@ -210,7 +232,70 @@ export class ProfiledetailPage implements OnInit {
   }
 
   editProfile() {
-    this.native.navigateForward(['editprofileimage'], {});
+    //this.native.navigateForward(['editprofileimage'], {});
+    this.editImage();
+  }
+
+
+  async editImage() {
+    this.pictureMenu = await this.menuService.showPictureMenu(
+      this,
+      this.openCamera,
+      this.openGallery,
+      this.openNft,
+    );
+  }
+
+  openNft(that: any) {
+    that.native.navigateForward(['nftavatarlist'], '');
+  }
+
+  openGallery(that: any) {
+    that.camera.openCamera(
+      30,
+      0,
+      0,
+      (imageUrl: any) => {
+        let index = imageUrl.lastIndexOf(".");
+        //获取后缀
+        let ext = imageUrl.substr(index+1);
+        if(ext.toLowerCase() === "gif"){
+            that.native.toastWarn("ProfileimagePage.avatarEorr");
+        }else{
+            that.native.navigateForward(['editimage'], '');
+            that.dataHelper.setClipProfileIamge(imageUrl);
+        }
+      },
+      err => {},
+    );
+  }
+
+  openCamera(that: any) {
+    that.camera.openCamera(
+      30,
+      0,
+      1,
+      (imageUrl: any) => {
+        that.native.navigateForward(['editimage'], '');
+        that.dataHelper.setClipProfileIamge(imageUrl);
+      },
+      err => {},
+    );
+  }
+
+  async saveAvatar() {
+    await this.native.showLoading('common.waitMoment');
+    try {
+      await this.hiveService.uploadScriptWithString("custome", this.avatar)
+      this.native.hideLoading()
+      this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
+      this.dataHelper.setClipProfileIamge("");
+    } catch (error) {
+      this.avatar = await this.feedService.getUserAvatar(this.did);
+      this.dataHelper.setClipProfileIamge("");
+      this.native.hideLoading();
+      this.native.toast('common.saveFailed');
+    }
   }
 
 }

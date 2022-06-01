@@ -828,6 +828,7 @@ export class ProfilePage implements OnInit {
         this.isShowQrcode = false;
         this.isShowUnfollow = true;
         this.hideSharMenuComponent = true;
+        document.getElementById("feedstab").style.display = "none";
         break;
     }
   }

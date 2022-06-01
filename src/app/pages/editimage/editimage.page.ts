@@ -43,7 +43,6 @@ export class EditimagePage implements OnInit {
     this.titleBarService.hideRight(this.titleBar);
     this.titleBarService.setTitleBarEditImage(this.titleBar);
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   ionViewWillLeave() {
