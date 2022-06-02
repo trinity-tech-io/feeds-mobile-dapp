@@ -705,10 +705,10 @@ export class ProfilePage implements OnInit {
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         try {
+          this.subscriptionV3NumMap = {};
           const did = (await this.dataHelper.getSigninData()).did;
           const selfchannels = await this.hiveVaultController.syncSelfChannel(did);
           await this.hiveVaultController.syncSubscribedChannelFromBackup();
-          this.subscriptionV3NumMap = {};
           await this.initMyFeeds(selfchannels);
           event.target.complete();
         } catch (error) {
