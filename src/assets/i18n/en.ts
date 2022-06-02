@@ -284,7 +284,7 @@ export const en = {
     emptyDes: "Let's change that, get started with your first channel!",
     createFeed: 'Add Channel',
     exploreFeeds: 'Explore Feeds',
-    des: 'slots left',
+    des: 'channels left',
     des1: 'channels subscribed'
 
   },
