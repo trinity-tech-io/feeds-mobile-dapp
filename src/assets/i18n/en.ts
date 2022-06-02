@@ -93,7 +93,7 @@ export const en = {
     bindingCompleted: 'Binding Completed!',
     error: 'Error',
     transMsgTimeout: 'The server is not responding. Please try again later.',
-    advancedSettings: 'Advanced settings',
+    advancedSettings: 'Advanced Settings',
     normalSettings: 'Normal Settings',
     scannerPrompt: 'Place a QR code inside the scan area',
     obtain: 'Obtain',

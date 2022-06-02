@@ -6,7 +6,6 @@
       padding-top: 20px;
       padding-bottom: 5px;
       margin-right: 20px;
-
       ion-col {
         padding: 0;
       }
@@ -59,10 +58,10 @@
         }
 
         ion-toggle {
-            zoom: 0.88;
+            zoom: 0.85;
             --background: #C4C4C4;
-            width: 75px;
-            height: 40px;
+            width: 60px;
+            height: 32px;
             border-radius: 20px;
             --ion-color-success:linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
         }

@@ -435,6 +435,9 @@ export class SearchPage implements OnInit {
     let scanObj = await this.popupProvider.scan() || {};
     let scanData = scanObj["data"] || {};
     let scannedContent = scanData["scannedText"] || "";
+    if(scannedContent === ""){
+      return;
+    }
     Logger.log(TAG, 'Scan content is', scannedContent);
     const scanResult = ScannerHelper.parseScannerResult(scannedContent);
     Logger.log(TAG, 'Parse scan result is', scanResult);
