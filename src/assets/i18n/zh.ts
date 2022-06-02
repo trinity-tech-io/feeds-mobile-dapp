@@ -183,8 +183,8 @@ export const zh = {
     didUriNull: '服务异常，请稍后再试',
     parseing: '解析中',
     dataStorage: '数据缓存',
-    cleanPasarData: '清除Pasar缓存数据',
-    cleanPasarDataTip: '清除Pasar缓存数据后，需要重启应用',
+    cleanPasarData: '清除 Pasar 缓存数据',
+    cleanPasarDataTip: '清除 Pasar 缓存数据后，需要重启应用',
     unpublished: "未公开",
     published: "已公开",
     queryTransactionResult: '已发起交易，正在查询结果',
@@ -197,8 +197,8 @@ export const zh = {
     subscribing: '正在订阅...',
     subscribeSuccess: '订阅成功',
     subscribeFail: '订阅失败',
-    didSigninError1: 'credaccess error',
-    didSigninError2: 'Use didManager VerifiablePresentationBuilder error',
+    didSigninError1: '用户登录时出错',
+    didSigninError2: '解析用户数据时出错',
     yes: '是',
     editChannel: '编辑频道',
     likeError: '网络异常，点赞失败。',
@@ -207,7 +207,7 @@ export const zh = {
   app: {
     profileDetails: '档案详情',
     feedSources: '出版号',
-    about: '关于Feeds',
+    about: '关于 Feeds',
     donation: '捐赠',
     signout: '登出',
     des: '登出成功',
@@ -283,7 +283,7 @@ export const zh = {
     allempty: '没有找到频道',
     emptyDes: '让我们改变现状，开始你的第一个频道！',
     createFeed: '添加频道',
-    exploreFeeds: '探索Feeds',
+    exploreFeeds: '探索 Feeds',
     des: '个频道可以创建',
     des1: '个频道已订阅'
   },
@@ -295,7 +295,7 @@ export const zh = {
     allempty: '还没有喜欢',
     emptyLikeDes: '看看时间线上贴了什么！',
     timeline: '时间线',
-    exploreFeeds: '探索Feeds'
+    exploreFeeds: '探索 Feeds'
   },
   ConfirmdialogComponent: {
     signoutTitle: '登出',
@@ -322,7 +322,7 @@ export const zh = {
     status11: '订阅频道出错',
     status12: '等待',
     status14: '已请求',
-    discover: '进入广场探索Feeds',
+    discover: '进入广场探索 Feeds',
     des1:
       '您订阅此频道的请求正被确认中，请耐心等待30秒左右。确认需要取消请求订阅该频道？',
     confirmTitle: '取消请求',
@@ -404,7 +404,7 @@ export const zh = {
     clearAllData: '清除所有数据',
   },
   AboutPage: {
-    about: '关于Feeds',
+    about: '关于 Feeds',
     version: '版本',
     website: '团队网址',
     disclaimer: '免责声明(Feeds)',
@@ -478,9 +478,9 @@ export const zh = {
     title: '免责声明',
     declaration: '点击“同意”，即表示您接受并同意我们以下条款：',
     copyright:
-      'Feeds由Trinity Tech Co.，Ltd.及其相关团队（“Trinity” 或 “我们”）拥有并运营，并且您同意遵守以下Feeds应用程序的特定条款（统称为“条款”）。',
+      'Feeds 由 Trinity Tech Co.，Ltd. 及其相关团队（“Trinity” 或 “我们”）拥有并运营，并且您同意遵守以下 Feeds 应用程序的特定条款（统称为“条款”）。',
     bodyText:
-      '通过使用我们的Feeds应用程序、其内容和服务（以下简称“应用程序”），您同意对您使用该应用程序以及您发布和提供的任何内容承担全部责任，包括遵守法律、法规和规定。 您应该只发布和提供可以与他人共享的内容。 您必须年满13周岁才能使用该应用程序，或者在您所在的辖区（即市、省或国家）不再被视为未成年人。 我们不认可、支持、说明或保证应用程序上任何内容的完整性、真实性、准确性或可靠性。 您在此确认：在使用该应用程序时，您可能会接触到有害的、不准确的或不适当的内容。',
+      '通过使用我们的 Feeds 应用程序、其内容和服务（以下简称“应用程序”），您同意对您使用该应用程序以及您发布和提供的任何内容承担全部责任，包括遵守法律、法规和规定。 您应该只发布和提供可以与他人共享的内容。 您必须年满13周岁才能使用该应用程序，或者在您所在的辖区（即市、省或国家）不再被视为未成年人。 我们不认可、支持、说明或保证应用程序上任何内容的完整性、真实性、准确性或可靠性。 您在此确认：在使用该应用程序时，您可能会接触到有害的、不准确的或不适当的内容。',
     acceptText: '同意',
     denyText: '不同意',
   },
@@ -615,12 +615,12 @@ export const zh = {
     'elastos-io-des': "Gelaxy",
     'trinity-tech-cn-des': "Trinity Tech",
     'ipfs-provider': 'IPFS API 提供商',
-    'ipfs0-provider-des': 'Primary gateway',
-    'ipfs1-provider-des': 'Secondary gateway',
-    'ipfs2-provider-des': 'Tertiary gateway',
+    'ipfs0-provider-des': '主网关',
+    'ipfs1-provider-des': '辅助网关',
+    'ipfs2-provider-des': '第三级网关',
     'assistPasar-provider': 'Assist API 提供商',
     /*********** Elastos API provider page ***********/
-    elastosapiprovider: 'API Provider',
+    elastosapiprovider: 'API 提供商',
     'developer-setting': '开发者选项',
     'advanced-setting': '高级设置',
     'configure-network': '启用中网络',
@@ -746,7 +746,7 @@ export const zh = {
     firstSale: '首次销售',
     secondarySale: '二次转售',
     dateoNMarket: '上架日期',
-    pasarExplorer: '查看更多在Pasar Explorer'
+    pasarExplorer: '查看更多在 Pasar Explorer'
   },
   BidPage: {
     title: '收藏品明细',
@@ -829,7 +829,7 @@ export const zh = {
     wallet: '#钱包',
     connectWallet: '连接钱包',
     introduce1:
-      '连接钱包可在Feeds上充分享受Elastos智能合约链（ESC）功能。用户现在也可以在市场（也称为Pasar）上交易不可替代代币（NFT）。',
+      '连接钱包可在 Feeds 上充分享受 Elastos 智能合约链（ESC）功能。用户现在也可以在市场（也称为 Pasar ）上交易不可替代代币（NFT）。',
     introduce2: '连接钱包',
     skip: '跳过',
   },
