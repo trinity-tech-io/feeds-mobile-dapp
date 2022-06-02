@@ -111,7 +111,7 @@ export class DeveloperPage implements OnInit {
         let userDid = signinData.did
      localStorage.removeItem(userDid + "localScriptVersion");
         that.native.hideLoading();
-        alert("sucess");
+        alert("success");
    }else{
      that.native.hideLoading();
     alert("fail");

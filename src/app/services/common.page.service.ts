@@ -107,7 +107,7 @@ export class CommonPageService {
               let likedNum = dataHelper.getCachedLikeNum(postId, commentId) || 0;
               likedNum = likedNum + 1;
               dataHelper.cacheLikeNum(postId, commentId, likedNum)
-              resolve("sucess");
+              resolve("success");
             }).catch(() => {
               likedCommentMap[commentId] = "";
               if (likedCommentNum[commentId] > 0) {
@@ -140,7 +140,7 @@ export class CommonPageService {
                 likedNum = likedNum - 1;
               }
               dataHelper.cacheLikeNum(postId, commentId, likedNum);
-              resolve("sucess");
+              resolve("success");
             }).catch(() => {
               likedCommentMap[commentId] = "like";
               likedCommentNum[commentId] = likedCommentNum[commentId] + 1;
@@ -189,7 +189,7 @@ export class CommonPageService {
               let likedNum = dataHelper.getCachedLikeNum(postId, '0') || 0;
               likedNum = likedNum + 1;
               dataHelper.cacheLikeNum(postId, '0', likedNum)
-              resolve("sucess");
+              resolve("success");
             }).catch(err => {
 
               isLoadingLikeMap[postId] = "";
@@ -226,7 +226,7 @@ export class CommonPageService {
                 likedNum = likedNum - 1;
               }
               dataHelper.cacheLikeNum(postId, '0', likedNum);
-              resolve("sucess");
+              resolve("success");
             }).catch((error) => {
               isLoadingLikeMap[postId] = "";
               likeMap[postId] = "like";

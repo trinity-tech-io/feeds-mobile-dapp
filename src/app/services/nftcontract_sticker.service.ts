@@ -356,7 +356,7 @@ export class NFTContractStickerService {
       let afterBurnBalance = parseInt(await this.balanceOf(tokenId));
       if(beforeBurnBalance - afterBurnBalance === burnValue){
         clearInterval(this.checkBurnInterval);
-        callback("sucess");
+        callback("success");
         this.checkBurnInterval = null;
         return;
       }
@@ -429,7 +429,7 @@ export class NFTContractStickerService {
      let afterTransferBalance = parseInt(await this.balanceOf(tokenId));
      if(beforeTransferBalance - afterTransferBalance === transferValue){
        clearInterval(this.checkTransferInterval);
-       callback("sucess");
+       callback("success");
        this.checkTransferInterval = null;
        return;
      }

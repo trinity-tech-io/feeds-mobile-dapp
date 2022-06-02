@@ -283,7 +283,7 @@ export class NftdialogComponent implements OnInit {
           return;
         }
 
-        resolve('Successs');
+        resolve('Success');
       } catch (error) {
         reject(error);
       }
@@ -294,7 +294,7 @@ export class NftdialogComponent implements OnInit {
     return new Promise(async (resolve, reject) => {
       try {
         this.events.publish(FeedsEvent.PublishType.nftUpdateList, { "tokenId": tokenId, "panelId": tokenInfo[0], "assItem": this.curAssItem });
-        resolve('Successs');
+        resolve('Success');
       } catch (err) {
         Logger.error(TAG,"handleCreteChannelOrder error",err);
         reject(err);
@@ -397,7 +397,7 @@ export class NftdialogComponent implements OnInit {
           return;
         }
 
-        resolve('Successs');
+        resolve('Success');
       } catch (error) {
         reject(error);
       }
