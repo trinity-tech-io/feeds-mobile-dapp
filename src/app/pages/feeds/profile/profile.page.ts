@@ -1954,7 +1954,7 @@ export class ProfilePage implements OnInit {
           }, Config.assetsTimer);
         });
     } else {
-      this.native.getNavCtrl().navigateForward([page, destDid, channelId, true]).then((result) => {
+      this.native.getNavCtrl().navigateForward([page, destDid, channelId]).then((result) => {
         let sid = setTimeout(() => {
           this.clearAssets();
           clearTimeout(sid);
