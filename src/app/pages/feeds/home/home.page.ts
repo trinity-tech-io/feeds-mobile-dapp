@@ -256,7 +256,7 @@ export class HomePage implements OnInit {
 
   async refreshPostList(isRefresh: boolean = true) {
     if (this.startIndex === 0) {
-      this.initPostListData(false);
+      this.initPostListData(isRefresh);
       return;
     }
     this.isPostLoading = false;
@@ -325,7 +325,7 @@ export class HomePage implements OnInit {
         if (this.syncHiveDataStatus === 6) {
           this.handleRefresherInfinite(false);
           this.isPostLoading = true;
-          this.refreshPostList();
+          this.refreshPostList(true);
           try {
             let channelList = await this.dataHelper.getSelfChannelListV3() || [];
             this.owerCreatChannelNum = channelList.length;

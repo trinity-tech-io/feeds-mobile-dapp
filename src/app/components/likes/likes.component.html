@@ -124,7 +124,6 @@
               >
               </app-percentageloading>
                  <div style="width: 100%;display:inline-block;height:200px;">
-                <span  class="lefttopostdetailvideo" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
                  <vg-player>
                    <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplaylike></vg-overlay-play>
                    <vg-controls id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgcontrolslike style="display: none;">
@@ -138,7 +137,6 @@
                </video>
                </vg-player>
                </div>
-              <span  class="topostdetailvideo" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
             </div>
       </ion-col>
     </ion-row>

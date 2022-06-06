@@ -158,9 +158,7 @@
         <ion-col size="12" style="padding: 0px;">
           <div *ngIf="post.status!=1&&post.content.mediaType ===1" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}rpostimg
           style="width: 100%">
-          <span class="lefttopostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
-
-        <div style="position:relative;">
+        <div style="position:relative;margin-bottom: -4px;">
           <app-percentageloading
           *ngIf="isImgPercentageLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
           [ngStyle]="imgloadingStyleObj"
@@ -204,7 +202,6 @@
                </ion-col>
             </ion-row>
           </div>
-          <span class="topostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
         </div>
         </div>
 
@@ -226,7 +223,6 @@
           </app-percentageloading>
 
             <div style="width:100%;height:200px;display:inline-block;">
-              <span class="lefttopostdetailvideo" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
               <vg-player>
                 <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplayhome></vg-overlay-play>
                 <vg-controls id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgcontrolshome style="display: none;">
@@ -241,7 +237,6 @@
             </video>
             </vg-player>
            </div>
-           <span class="topostdetailvideo" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
           </div>
         </ion-col>
       </ion-row>
