@@ -258,24 +258,27 @@ export class ProfiledetailPage implements OnInit {
   }
 
   openGallery(that: any) {
+    try {
+      that.handleImgUri(0, that).then(async (imagePath: string) => {
+        let pathObj = that.handleImgUrlPath(imagePath);
+        let fileName = pathObj['fileName'];
+        let filePath = pathObj['filepath'];
+        return that.getFlieObj(fileName, filePath, that);
 
-    that.handleImgUri(0, that).then(async (imagePath: string) => {
-      console.log("====imagePath==="+imagePath);
-      let pathObj = that.handleImgUrlPath(imagePath);
-      let fileName = pathObj['fileName'];
-      let filePath = pathObj['filepath'];
-      return that.getFlieObj(fileName, filePath, that);
+      }).then(async (fileBase64: string) => {
+        if(fileBase64.indexOf("gif") > -1 ){
+          // that.avatar = fileBase64;
+          // await that.saveAvatar();
+          that.native.toastWarn("ProfileimagePage.avatarEorr");
+        }else{
+          that.native.navigateForward(['editimage'], '');
+          that.dataHelper.setClipProfileIamge(fileBase64);
+        }
+      });
+    } catch (error) {
 
-    }).then(async (fileBase64: string) => {
-      if(fileBase64.indexOf("gif") > -1 ){
-        that.avatar = fileBase64;
-        await that.saveAvatar();
-      }else{
-        that.native.navigateForward(['editimage'], '');
-        that.dataHelper.setClipProfileIamge(fileBase64);
-      }
+    }
 
-    });
   }
 
   openCamera(that: any) {

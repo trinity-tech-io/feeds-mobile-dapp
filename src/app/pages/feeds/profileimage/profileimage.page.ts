@@ -177,41 +177,29 @@ export class ProfileimagePage implements OnInit {
   }
 
   openGallery(that: any) {
-    // that.camera.openCamera(
-    //   30,
-    //   0,
-    //   0,
-    //   (imageUrl: any) => {
-    //     let index = imageUrl.lastIndexOf(".");
-    //     //获取后缀
-    //     let ext = imageUrl.substr(index+1);
-    //     if(ext.toLowerCase() === "gif"){
-    //         that.native.toastWarn("ProfileimagePage.avatarEorr");
-    //     }else{
-    //       that.native.navigateForward(['editimage'], '');
-    //       that.dataHelper.setClipProfileIamge(imageUrl);
-    //     }
-    //   },
-    //   err => {},
-    // );
 
-    that.handleImgUri(0, that).then(async (imagePath: string) => {
-      let pathObj = that.handleImgUrlPath(imagePath);
-      let fileName = pathObj['fileName'];
-      let filePath = pathObj['filepath'];
-      return that.getFlieObj(fileName, filePath, that);
+    try {
+      that.handleImgUri(0, that).then(async (imagePath: string) => {
+        let pathObj = that.handleImgUrlPath(imagePath);
+        let fileName = pathObj['fileName'];
+        let filePath = pathObj['filepath'];
+        return that.getFlieObj(fileName, filePath, that);
 
-    }).then(async (fileBase64: string) => {
-      if(fileBase64.indexOf("gif") > -1 ){
-         that.select = 0;
-         that.selectedAvatar =  fileBase64;
-         that.uploadedAvatar = fileBase64;
-      }else{
-        that.native.navigateForward(['editimage'], '');
-        that.dataHelper.setClipProfileIamge(fileBase64);
-      }
+      }).then(async (fileBase64: string) => {
+        if(fileBase64.indexOf("gif") > -1 ){
+          //  that.select = 0;
+          //  that.selectedAvatar =  fileBase64;
+          //  that.uploadedAvatar = fileBase64;
+          that.native.toastWarn("ProfileimagePage.avatarEorr");
+        }else{
+          that.native.navigateForward(['editimage'], '');
+          that.dataHelper.setClipProfileIamge(fileBase64);
+        }
+      });
+    } catch (error) {
 
-    });
+    }
+
   }
 
   openCamera(that: any) {

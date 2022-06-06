@@ -501,27 +501,27 @@ export class CreatenewpostPage implements OnInit {
 
 
   openGallery(that: any) {
-    that.handleImgUri(0, that).then(async (imagePath: string) => {
-
-      // let pathObj = that.handleImgUrlPath(imagePath);
-      let pathObj = that.handleImgUrlPath(imagePath);
-      let fileName = pathObj['fileName'];
-      let filePath = pathObj['filepath'];
-      // that.zone.run(async () => {
-      //   const file: File = await that.fileHelperService.getUserFile(filePath, fileName);
-      //   that.ipfsService.uploadData(file);
-      // });
-      return that.getFlieObj(fileName, filePath, that);
-
-    }).then((fileBase64: string) => {
-      that.zone.run(() => {
-        //For test
-        // const fileBlob = UtilService.base64ToBlob(fileBase64);
-        // that.ipfsService.uploadData(fileBlob);
-        that.imgUrl = fileBase64;
-        that.dataHelper.setSelsectNftImage(fileBase64);
+    try {
+      that.handleImgUri(0, that).then(async (imagePath: string) => {
+        let pathObj = that.handleImgUrlPath(imagePath);
+        let fileName = pathObj['fileName'];
+        let filePath = pathObj['filepath'];
+        return that.getFlieObj(fileName, filePath, that);
+      }).then((fileBase64: string) => {
+        that.zone.run(() => {
+          if(fileBase64.indexOf("gif") > -1 ){
+            // that.avatar = fileBase64;
+            // await that.saveAvatar();
+            that.native.toastWarn("ProfileimagePage.avatarEorr");
+          }else{
+            that.imgUrl = fileBase64;
+            that.dataHelper.setSelsectNftImage(fileBase64);
+          }
+        });
       });
-    });
+    } catch (error) {
+
+    }
   }
 
   openCamera(that: any) {

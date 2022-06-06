@@ -717,18 +717,34 @@ export class PostdetailPage implements OnInit {
     this.postImage = './assets/icon/reserve.svg';//set Reserve Image
     let mediaDatas = post.content.mediaData;
     const elements = mediaDatas[0];
+     //原图
+    let imageKey = elements.originMediaPath;
+
     let thumbnailKey = elements.thumbnailPath;
+
     let type = elements.type;
     //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
     let fileName: string = thumbnailKey.split("@")[0];
-    this.hiveVaultController.getV3Data(this.destDid, thumbnailKey, fileName, type)
-      .then((cacheResult) => {
-        let thumbImage = cacheResult || "";
-        if (thumbImage != "") {
-          this.postImage = thumbImage;
-        }
-      }).catch(() => {
-      })
+
+    this.hiveVaultController
+        .getV3Data(this.destDid, imageKey, fileName, type, "false")
+        .then(async realImg => {
+          let img = realImg || '';
+          if(img != ''){
+            this.postImage = img;
+          }else{
+            this.hiveVaultController.getV3Data(this.destDid, thumbnailKey, fileName, type)
+            .then((cacheResult) => {
+              let thumbImage = cacheResult || "";
+              if (thumbImage != "") {
+                this.postImage = thumbImage;
+              }
+            }).catch(() => {
+            })
+          }
+        }).catch((err)=>{
+
+        })
   }
 
   async doRefresh(event: any) {
