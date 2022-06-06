@@ -217,7 +217,7 @@ export class ChannelsPage implements OnInit {
     //this.initStatus(this.postList);
   }
 
-  async sortChannelList(postList: any) {
+  async filterDeletedPostList(postList: any) {
     this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
     let sortedData = postList;
     if (!this.hideDeletedPosts) {
@@ -228,20 +228,28 @@ export class ChannelsPage implements OnInit {
     return sortedData;
   }
 
+  sortPostList(postList: any) {
+    let sortList = _.sortBy(postList, (item: any) => {
+      return -item.createdAt;
+    });
+    return sortList;
+  }
+
   async initRefresh() {
+    let posts = [];
     if (this.followStatus) {
-      let postList = await this.dataHelper.getPostListV3FromChannel(this.destDid, this.channelId);
-      this.totalData = await this.sortChannelList(postList);
+      posts = await this.dataHelper.getPostListV3FromChannel(this.destDid, this.channelId);
     } else {
       const selfDid = (await this.dataHelper.getSigninData()).did || '';
       if (selfDid && this.destDid == selfDid) {
-        let postList = await this.hiveVaultController.getSelfPostsByChannel(this.channelId);
-        this.totalData = await this.sortChannelList(postList);
+        posts = await this.hiveVaultController.getSelfPostsByChannel(this.channelId);
       } else {
-        let postList = await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
-        this.totalData = await this.sortChannelList(postList);
+        posts = await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
       }
     }
+    let tmpPostList = await this.filterDeletedPostList(posts);
+    this.totalData = this.sortPostList(tmpPostList);
+
     this.startIndex = 0;
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -271,7 +279,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
     let postList = await this.dataHelper.getPostListV3FromChannel(this.destDid, this.channelId);
-    this.totalData = await this.sortChannelList(postList);
+    this.totalData = await this.filterDeletedPostList(postList);
     if (this.totalData.length === this.postList.length) {
       this.postList = this.totalData;
     } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {

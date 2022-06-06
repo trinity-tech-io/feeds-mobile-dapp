@@ -1637,7 +1637,7 @@ export class HiveVaultController {
           postList = _.unionWith(originPostList, list, _.isEqual);
 
           postList = _.sortBy(postList, (item: FeedsData.PostV3) => {
-            return -Number(item.updatedAt);
+            return -Number(item.createdAt);
           });
         }
         resolve(postList);
@@ -1656,7 +1656,7 @@ export class HiveVaultController {
           postList = _.unionWith(originPostList, list, _.isEqual);
 
           postList = _.sortBy(postList, (item: FeedsData.PostV3) => {
-            return -Number(item.updatedAt);
+            return -Number(item.createdAt);
           });
         }
         resolve(postList);
