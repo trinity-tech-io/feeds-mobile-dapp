@@ -146,7 +146,7 @@ export class CreatenewfeedPage implements OnInit {
 
       const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
 
-      if (selfchannels.length >= 15) {
+      if (selfchannels.length >= 5) {
       this.native.hideLoading();
       this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
       return;
