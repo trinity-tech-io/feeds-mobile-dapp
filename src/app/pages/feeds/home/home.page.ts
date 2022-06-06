@@ -212,8 +212,9 @@ export class HomePage implements OnInit {
   async initPostListData(scrollToTop: boolean) {
     this.infiniteScroll.disabled = true;
     this.startIndex = 0;
-
-    this.postList = this.totalData = await this.sortPostList();
+    if(scrollToTop){
+      this.postList = this.totalData = await this.sortPostList();
+    }
     // if (this.totalData.length - this.pageNumber > 0) {
     //   this.postList = this.totalData.slice(0, this.pageNumber);
 
@@ -400,7 +401,6 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.updateTab, isInit => {
-
       this.zone.run(() => {
         if (isInit) {
           this.initPostListData(true);
