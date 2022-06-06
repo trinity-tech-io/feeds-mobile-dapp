@@ -335,7 +335,7 @@ export class SearchPage implements OnInit {
 
   navTo(destDid: string, channelId: string) {
     this.removeSubscribe();
-    this.native.navigateForward(['/channels', destDid, channelId, false], '');
+    this.native.navigateForward(['/channels', destDid, channelId], '');
   }
 
   parseChannelAvatar(avatar: string): string {
@@ -435,7 +435,7 @@ export class SearchPage implements OnInit {
     let scanObj = await this.popupProvider.scan() || {};
     let scanData = scanObj["data"] || {};
     let scannedContent = scanData["scannedText"] || "";
-    if(scannedContent === ""){
+    if (scannedContent === "") {
       return;
     }
     Logger.log(TAG, 'Scan content is', scannedContent);
@@ -455,14 +455,13 @@ export class SearchPage implements OnInit {
       } catch (error) {
       }
 
-      let isSubscribed = false;
       try {
-        isSubscribed = await this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
+        this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
       } catch (error) {
       }
 
       this.native.hideLoading();
-      this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId, isSubscribed], '');
+      this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId], '');
     } catch (error) {
       this.native.hideLoading();
       this.native.toast("common.subscribeFail");

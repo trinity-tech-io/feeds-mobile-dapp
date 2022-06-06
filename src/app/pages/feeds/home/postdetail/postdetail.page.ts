@@ -185,16 +185,16 @@ export class PostdetailPage implements OnInit {
 
   async initRelyCommentExtradata() {
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    for(let key in  this.replyCommentsMap){
-        let commentList: FeedsData.CommentV3[] = this.replyCommentsMap[key] || [];
-        this.checkRelyCommentIsMine(commentList,ownerDid);
+    for (let key in this.replyCommentsMap) {
+      let commentList: FeedsData.CommentV3[] = this.replyCommentsMap[key] || [];
+      this.checkRelyCommentIsMine(commentList, ownerDid);
     }
   }
 
   checkRelyCommentIsMine(commentList: FeedsData.CommentV3[], ownerDid: string) {
-      _.forEach(commentList,(item: FeedsData.CommentV3)=>{
-          this.checkCommentIsMine(item, ownerDid);
-      });
+    _.forEach(commentList, (item: FeedsData.CommentV3) => {
+      this.checkCommentIsMine(item, ownerDid);
+    });
   }
 
   handleChannelAvatar(channelAvatarUri: string) {
@@ -227,7 +227,7 @@ export class PostdetailPage implements OnInit {
     _.each(captainCommentList, (item: FeedsData.CommentV3) => {
       let key = item.commentId;
       this.userNameList[key] = item.destDid;
-      this.checkCommentIsMine(item,ownerDid);
+      this.checkCommentIsMine(item, ownerDid);
     });
 
     this.captainCommentList = _.cloneDeep(captainCommentList);
@@ -844,7 +844,7 @@ export class PostdetailPage implements OnInit {
   }
 
   navTo(destDid: string, channelId: string) {
-    this.native.navigateForward(['/channels', destDid, channelId, true], '');
+    this.native.navigateForward(['/channels', destDid, channelId], '');
   }
 
   checkCommentIsMine(comment: FeedsData.CommentV3, ownerDid: string) {

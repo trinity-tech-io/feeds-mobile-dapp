@@ -45,7 +45,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'channels/:destDid/:channelId/:isSubscribed',
+    path: 'channels/:destDid/:channelId',
     loadChildren: () =>
       import('./pages/feeds/home/channels/channels.module').then(
         m => m.ChannelsPageModule,

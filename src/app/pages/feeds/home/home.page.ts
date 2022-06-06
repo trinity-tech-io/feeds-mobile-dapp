@@ -259,7 +259,7 @@ export class HomePage implements OnInit {
       return;
     }
     this.isPostLoading = false;
-    if(isRefresh){
+    if (isRefresh) {
       this.postList = this.totalData = await this.sortPostList();
     }
     // if (this.totalData.length === this.postList.length) {
@@ -356,7 +356,7 @@ export class HomePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.homeCommonEvents, async () => {
-      if(this.syncHiveDataStatus === 6){
+      if (this.syncHiveDataStatus === 6) {
         try {
           let channelList = await this.dataHelper.getSelfChannelListV3() || [];
           this.owerCreatChannelNum = channelList.length;
@@ -566,7 +566,7 @@ export class HomePage implements OnInit {
     this.clearData();
   }
 
-  clearAssets(){
+  clearAssets() {
     this.removeImages();
     this.removeAllVideo();
     CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'homeChannelAvatar');
@@ -577,7 +577,7 @@ export class HomePage implements OnInit {
     this.isLoadVideoiamge = {};
   }
 
-  clearData(isClearAssets: boolean = true ) {
+  clearData(isClearAssets: boolean = true) {
     this.isPostLoading = false;
     this.doRefreshCancel();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
@@ -628,7 +628,7 @@ export class HomePage implements OnInit {
 
     this.hideFullScreen();
     this.native.hideLoading();
-    if(isClearAssets){
+    if (isClearAssets) {
       this.clearAssets();
     }
   }
@@ -637,7 +637,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
     this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
     this.events.unsubscribe(FeedsEvent.PublishType.updateSyncHiveData);
-    this.content.scrollToTop(1).then(()=>{
+    this.content.scrollToTop(1).then(() => {
       this.homeTittleBar.style.display = "block";
     });
 
@@ -698,12 +698,12 @@ export class HomePage implements OnInit {
   navTo(destDid: string, channelId: string, postId: number) {
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     this.clearData(false);
-    this.native.navigateForward(['/channels', destDid, channelId, true], '').then((result)=>{
-          let sid = setTimeout(()=>{
-            this.clearAssets();
-            clearTimeout(sid);
-            sid = null;
-          },Config.assetsTimer);
+    this.native.navigateForward(['/channels', destDid, channelId], '').then((result) => {
+      let sid = setTimeout(() => {
+        this.clearAssets();
+        clearTimeout(sid);
+        sid = null;
+      }, Config.assetsTimer);
     });
   }
 
@@ -734,12 +734,12 @@ export class HomePage implements OnInit {
     this.clearData(false);
     this.native
       .getNavCtrl()
-      .navigateForward(['/postdetail', destDid, channelId, postId]).then((result)=>{
-        let sid = setTimeout(()=>{
+      .navigateForward(['/postdetail', destDid, channelId, postId]).then((result) => {
+        let sid = setTimeout(() => {
           this.clearAssets();
           clearTimeout(sid);
           sid = null;
-        },Config.assetsTimer);
+        }, Config.assetsTimer);
       });
   }
 
@@ -912,7 +912,7 @@ export class HomePage implements OnInit {
       this.refreshPasarGridVisibleareaImage();
       this.pasarListPage++;
     } catch (err) {
-      Logger.error(TAG,"refreshPasarList err",err);
+      Logger.error(TAG, "refreshPasarList err", err);
     }
   }
 
@@ -1057,18 +1057,18 @@ export class HomePage implements OnInit {
             avatarUri = channel.avatar;
             let userDid = channel.destDid;
             let displayNameMap = this.handleDisplayNameMap[userDid] || '';
-            if(displayNameMap === ""){
+            if (displayNameMap === "") {
               let text = userDid.replace('did:elastos:', '');
               this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
               try {
                 this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
-                then((result: string) => {
-                  let name = result || "";
-                  if (name != "") {
-                     this.handleDisplayNameMap[userDid] = name;
-                  }
-                }).catch(() => {
-                });
+                  then((result: string) => {
+                    let name = result || "";
+                    if (name != "") {
+                      this.handleDisplayNameMap[userDid] = name;
+                    }
+                  }).catch(() => {
+                  });
               } catch (error) {
 
               }
@@ -1254,7 +1254,7 @@ export class HomePage implements OnInit {
       if (
         id != '' &&
         postImage.getBoundingClientRect().top >= - Config.rectTop &&
-        postImage.getBoundingClientRect().bottom <=  Config.rectBottom
+        postImage.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -1898,23 +1898,23 @@ export class HomePage implements OnInit {
     this.clearData(false);
     const channels = await this.dataHelper.getSelfChannelListV3();
     if (channels.length === 0) {
-      this.native.navigateForward(['/createnewfeed'], '').then(()=>{
-         let sid = setTimeout(()=>{
-             this.clearAssets();
-             clearTimeout(sid);
-             sid = null;
-         },Config.assetsTimer);
+      this.native.navigateForward(['/createnewfeed'], '').then(() => {
+        let sid = setTimeout(() => {
+          this.clearAssets();
+          clearTimeout(sid);
+          sid = null;
+        }, Config.assetsTimer);
       });
       return;
     }
 
     this.dataHelper.setSelsectNftImage("");
-    this.native.navigateForward(['createnewpost'], '').then(()=>{
-      let sid = setTimeout(()=>{
-          this.clearAssets();
-          clearTimeout(sid);
-          sid = null;
-      },Config.assetsTimer);
+    this.native.navigateForward(['createnewpost'], '').then(() => {
+      let sid = setTimeout(() => {
+        this.clearAssets();
+        clearTimeout(sid);
+        sid = null;
+      }, Config.assetsTimer);
     });
   }
 
@@ -1945,7 +1945,7 @@ export class HomePage implements OnInit {
         const item: FeedsData.NFTItem = this.nftContractHelperService.createItemFromOrderInfo(orderInfo, tokenInfo, tokenJson, 'onSale');
         resolve(item);
       } catch (error) {
-        Logger.error(TAG,"getOpenOrderByIndex error",error);
+        Logger.error(TAG, "getOpenOrderByIndex error", error);
         reject(error);
       }
     });

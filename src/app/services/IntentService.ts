@@ -495,7 +495,7 @@ export class IntentService {
     }
 
     if (parseInt(channelId) != 0) {
-      this.native.getNavCtrl().navigateForward(['/channels', serverNodeId, channelId, false]);
+      this.native.getNavCtrl().navigateForward(['/channels', serverNodeId, channelId]);
       return;
     }
 

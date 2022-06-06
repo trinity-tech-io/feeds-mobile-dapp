@@ -133,12 +133,17 @@ export class SubscriptionsPage implements OnInit {
     let destDid = eventParm['destDid'];
     let channelId = eventParm['channelId'];
     let page = eventParm['page'];
-    let isSubscribed = false;
+
     try {
       await this.native.showLoading('common.waitMoment');
-      isSubscribed = await this.hiveVaultController.checkSubscriptionStatusFromRemote(destDid, channelId);
+
+      console.log('eventParm', eventParm);
+      console.log('destDid', destDid);
+      console.log('channelId', channelId);
+      console.log('page', page);
+
       this.native.hideLoading();
-      this.native.getNavCtrl().navigateForward([page, destDid, channelId, isSubscribed]);
+      this.native.getNavCtrl().navigateForward([page, destDid, channelId]);
     } catch (error) {
       this.native.hideLoading();
     }
@@ -170,6 +175,11 @@ export class SubscriptionsPage implements OnInit {
 
   async doRefresh(event: any) {
     try {
+      // let subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+      // for (let index = 0; index < subscribedChannels.length; index++) {
+      //   const subscribedChannel = subscribedChannels[index];
+      //   await this.hiveVaultController.querySubscriptionChannelById(subscribedChannel.destDid, subscribedChannel.channelId);
+      // }
       await this.hiveVaultController.syncSubscribedChannelFromBackup();
       await this.hiveVaultController.syncAllChannelInfo();
       this.initFollowing();
@@ -445,7 +455,7 @@ export class SubscriptionsPage implements OnInit {
     let scanObj = await this.popupProvider.scan() || {};
     let scanData = scanObj["data"] || {};
     let scannedContent = scanData["scannedText"] || "";
-    if(scannedContent === ""){
+    if (scannedContent === "") {
       return;
     }
     Logger.log(TAG, 'Scan content is', scannedContent);
@@ -464,14 +474,13 @@ export class SubscriptionsPage implements OnInit {
       } catch (error) {
       }
 
-      let isSubscribed = false;
       try {
-        isSubscribed = await this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
+        this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
       } catch (error) {
       }
 
       this.native.hideLoading();
-      this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId, isSubscribed], '');
+      this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId], '');
     } catch (error) {
       this.native.hideLoading();
       this.native.toast("common.subscribeFail");
