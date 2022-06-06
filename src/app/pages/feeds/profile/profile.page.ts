@@ -653,7 +653,7 @@ export class ProfilePage implements OnInit {
     this.native.hideLoading();
     this.hideFullScreen();
     if (isClearAssets) {
-       this.clearAssets();
+      this.clearAssets();
     }
 
     this.isInitLikeNum = {};
@@ -708,6 +708,12 @@ export class ProfilePage implements OnInit {
           this.subscriptionV3NumMap = {};
           const did = (await this.dataHelper.getSigninData()).did;
           const selfchannels = await this.hiveVaultController.syncSelfChannel(did);
+
+          for (let index = 0; index < selfchannels.length; index++) {
+            const selfchannel = selfchannels[index];
+            await this.hiveVaultController.querySubscriptionChannelById(selfchannel.destDid, selfchannel.channelId);
+          }
+
           await this.hiveVaultController.syncSubscribedChannelFromBackup();
           await this.initMyFeeds(selfchannels);
           event.target.complete();
@@ -889,24 +895,24 @@ export class ProfilePage implements OnInit {
             let avatarUri = "";
             if (channel != null) {
               avatarUri = channel.avatar;
-                //关注数
-            let follower = this.subscriptionV3NumMap[channelId] || '';
-            if(follower === ""){
+              //关注数
+              let follower = this.subscriptionV3NumMap[channelId] || '';
+              if (follower === "") {
                 try {
-                 this.subscriptionV3NumMap[channelId] = "...";
-                 this.dataHelper.getSubscriptionV3NumByChannelId(
-                   channel.destDid, channel.channelId).
-                   then((result)=>{
-                   result = result || 0;
-                   this.subscriptionV3NumMap[channelId] =  result;
+                  this.subscriptionV3NumMap[channelId] = "...";
+                  this.dataHelper.getSubscriptionV3NumByChannelId(
+                    channel.destDid, channel.channelId).
+                    then((result) => {
+                      result = result || 0;
+                      this.subscriptionV3NumMap[channelId] = result;
 
-                   }).catch(()=>{
-                    this.subscriptionV3NumMap[channelId] = 0;
+                    }).catch(() => {
+                      this.subscriptionV3NumMap[channelId] = 0;
 
-                   });
+                    });
                 } catch (error) {
                 }
-            }
+              }
             }
             let fileName: string = avatarUri.split("@")[0];
 
@@ -952,7 +958,7 @@ export class ProfilePage implements OnInit {
             });
           }
         } else {
-          let srcStr = this.myFeedAvatarMap[id]  || './assets/icon/reserve.svg';
+          let srcStr = this.myFeedAvatarMap[id] || './assets/icon/reserve.svg';
           if (
             myFeedsAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
             myFeedsAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&

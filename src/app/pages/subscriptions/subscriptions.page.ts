@@ -136,12 +136,6 @@ export class SubscriptionsPage implements OnInit {
 
     try {
       await this.native.showLoading('common.waitMoment');
-
-      console.log('eventParm', eventParm);
-      console.log('destDid', destDid);
-      console.log('channelId', channelId);
-      console.log('page', page);
-
       this.native.hideLoading();
       this.native.getNavCtrl().navigateForward([page, destDid, channelId]);
     } catch (error) {

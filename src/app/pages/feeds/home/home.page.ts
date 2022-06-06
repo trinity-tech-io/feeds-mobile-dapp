@@ -212,7 +212,7 @@ export class HomePage implements OnInit {
   async initPostListData(scrollToTop: boolean) {
     this.infiniteScroll.disabled = true;
     this.startIndex = 0;
-    if(scrollToTop){
+    if (scrollToTop) {
       this.postList = this.totalData = await this.sortPostList();
     }
     // if (this.totalData.length - this.pageNumber > 0) {
