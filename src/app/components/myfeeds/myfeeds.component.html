@@ -64,7 +64,8 @@
       <ion-label>{{ 'MyfeedsComponent.createFeed' | translate }}</ion-label>
       <ion-row>
         <br>
-        <p><span>{{ 5 - channels.length }}</span> {{ 'MyfeedsComponent.des' | translate }}</p>
+        <p *ngIf=" 5 - channels.length === 1 || 5 - channels.length === 0"><span>{{ 5 - channels.length }}</span> {{ 'MyfeedsComponent.des' | translate }}</p>
+        <p *ngIf=" 5 - channels.length > 1"><span>{{ 5 - channels.length }}</span> {{ 'MyfeedsComponent.des3' | translate }}</p>
       </ion-row>
     </ion-col>
     </ion-row>
@@ -86,7 +87,8 @@
       <ion-label>{{ 'ProfilePage.following' | translate }}</ion-label>
       <ion-row>
         <br>
-        <p><span>{{followers}}</span> {{ 'MyfeedsComponent.des1' | translate }}</p>
+        <p *ngIf="followers === 1 || followers === 0"><span>{{followers}}</span> {{ 'MyfeedsComponent.des1' | translate }}</p>
+        <p *ngIf="followers > 1"><span>{{followers}}</span> {{ 'MyfeedsComponent.des2' | translate }}</p>
       </ion-row>
     </ion-col>
     </ion-row>

@@ -282,7 +282,9 @@ export const zh = {
     createFeed: '添加频道',
     exploreFeeds: '探索 Feeds',
     des: '个频道可以创建',
-    des1: '个频道已订阅'
+    des1: '个频道已订阅',
+    des2: '个频道已订阅',
+    des3: '个频道可以创建'
   },
   FollowingComponent: {
     allempty: '空空如也',

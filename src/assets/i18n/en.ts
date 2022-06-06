@@ -282,8 +282,10 @@ export const en = {
     emptyDes: "Let's change that, get started with your first channel!",
     createFeed: 'Add Channel',
     exploreFeeds: 'Explore Feeds',
-    des: 'channels left',
-    des1: 'channels subscribed'
+    des: 'channel left',
+    des1: 'channel subscribed',
+    des2: 'channels subscribed',
+    des3: 'channels left',
 
   },
   FollowingComponent: {
