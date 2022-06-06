@@ -60,6 +60,6 @@ export class DisclaimerPage implements OnInit {
   }
 
   init() {
-    this.native.navigateForward(['/learnmore'], {});
+    this.native.navigateForward(['/signin'], {});
   }
 }

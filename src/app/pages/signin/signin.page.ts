@@ -26,6 +26,7 @@ export class SigninPage implements OnInit {
   public userName: string = '';
   public emailAddress: string = '';
   public lightThemeType: number = 2;
+  public isShowLearnMore:boolean = false;
   constructor(
     private native: NativeService,
     private feedService: FeedService,
@@ -52,6 +53,12 @@ export class SigninPage implements OnInit {
   ionViewWillEnter() {
     localization.setLanguage(this.languageService.getCurLang());
     this.initTile();
+    let isLearnMore = localStorage.getItem('org.elastos.dapp.feeds.isLearnMore') || '';
+    if(isLearnMore === ''){
+        this.isShowLearnMore = true;
+    }else{
+        this.isShowLearnMore = false;
+    }
   }
 
   ionViewDidEnter() {}
@@ -85,5 +92,18 @@ export class SigninPage implements OnInit {
       });
     } catch (error) {
     }
+  }
+
+  onSlideDidChange() {
+
+  }
+
+  skip() {
+    localStorage.setItem('org.elastos.dapp.feeds.isLearnMore', '11');
+    this.isShowLearnMore = false;
+  }
+
+  learnMore() {
+    this.isShowLearnMore = true;
   }
 }

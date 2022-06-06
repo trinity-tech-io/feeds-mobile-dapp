@@ -395,12 +395,12 @@ export class MyApp {
       return;
     }
 
-    let isLearnMore =
-      localStorage.getItem('org.elastos.dapp.feeds.isLearnMore') || '';
-    if (isLearnMore === '') {
-      this.native.navigateForward(['/learnmore'], {});
-      return;
-    }
+    // let isLearnMore =
+    //   localStorage.getItem('org.elastos.dapp.feeds.isLearnMore') || '';
+    // if (isLearnMore === '') {
+    //   this.native.navigateForward(['/learnmore'], {});
+    //   return;
+    // }
 
     this.appService.initializeApp();
   }

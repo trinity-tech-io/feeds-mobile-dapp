@@ -103,9 +103,10 @@ export class StandardAuthService {
             },
           );
         }else{
-         reject("instanceDIDInfo is null");
+         this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
          }
       } catch (error) {
+        this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
         reject(error);
       }
 
