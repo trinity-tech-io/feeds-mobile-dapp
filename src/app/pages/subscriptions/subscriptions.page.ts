@@ -175,11 +175,11 @@ export class SubscriptionsPage implements OnInit {
 
   async doRefresh(event: any) {
     try {
-      // let subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-      // for (let index = 0; index < subscribedChannels.length; index++) {
-      //   const subscribedChannel = subscribedChannels[index];
-      //   await this.hiveVaultController.querySubscriptionChannelById(subscribedChannel.destDid, subscribedChannel.channelId);
-      // }
+      let subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+      for (let index = 0; index < subscribedChannels.length; index++) {
+        const subscribedChannel = subscribedChannels[index];
+        await this.hiveVaultController.querySubscriptionChannelById(subscribedChannel.destDid, subscribedChannel.channelId);
+      }
       await this.hiveVaultController.syncSubscribedChannelFromBackup();
       await this.hiveVaultController.syncAllChannelInfo();
       this.initFollowing();

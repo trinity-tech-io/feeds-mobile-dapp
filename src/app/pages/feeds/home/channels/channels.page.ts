@@ -520,12 +520,9 @@ export class ChannelsPage implements OnInit {
   }
 
   async checkFollowStatus(destDid: string, channelId: string) {
-
     let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
 
-    console.log('000000000000000', subscribedChannel);
     if (subscribedChannel.length === 0) {
-      console.log('1111111111111');
       this.followStatus = false;
       return;
     }
@@ -534,12 +531,10 @@ export class ChannelsPage implements OnInit {
       return item.destDid === destDid && item.channelId === channelId;
     }) || '';
     if (channelIndex === '') {
-      console.log('222222222222');
       this.followStatus = false;
       return;
     }
 
-    console.log('33333333333333');
     this.followStatus = true;
   }
   handleDisplayTime(createTime: number) {
