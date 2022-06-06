@@ -520,7 +520,8 @@ export class CreatenewpostPage implements OnInit {
         return that.getFlieObj(fileName, filePath, that);
       }).then((fileBase64: string) => {
         that.zone.run(() => {
-          if(fileBase64.indexOf("gif") > -1 ){
+          let str = fileBase64.split(",");
+          if(str[0].indexOf("data:image/gif;base64") > -1 ){
             // that.avatar = fileBase64;
             // await that.saveAvatar();
             that.native.toastWarn("ProfileimagePage.avatarEorr");

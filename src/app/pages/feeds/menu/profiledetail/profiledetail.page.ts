@@ -266,7 +266,8 @@ export class ProfiledetailPage implements OnInit {
         return that.getFlieObj(fileName, filePath, that);
 
       }).then(async (fileBase64: string) => {
-        if(fileBase64.indexOf("gif") > -1 ){
+        let str = fileBase64.split(",");
+        if(str[0].indexOf("data:image/gif;base64") > -1 ){
           // that.avatar = fileBase64;
           // await that.saveAvatar();
           that.native.toastWarn("ProfileimagePage.avatarEorr");

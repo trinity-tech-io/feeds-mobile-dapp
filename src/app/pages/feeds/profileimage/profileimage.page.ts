@@ -186,7 +186,8 @@ export class ProfileimagePage implements OnInit {
         return that.getFlieObj(fileName, filePath, that);
 
       }).then(async (fileBase64: string) => {
-        if(fileBase64.indexOf("gif") > -1 ){
+        let str = fileBase64.split(",");
+        if(str[0].indexOf("data:image/gif;base64") > -1 ){
           //  that.select = 0;
           //  that.selectedAvatar =  fileBase64;
           //  that.uploadedAvatar = fileBase64;
