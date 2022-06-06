@@ -217,27 +217,29 @@ export class ChannelsPage implements OnInit {
     //this.initStatus(this.postList);
   }
 
-  async sortChannelList() {
-    let postListByChannel =
-      await this.dataHelper.getPostListV3FromChannel(this.destDid, this.channelId);
+  async sortChannelList(postList: any) {
     this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+    let sortedData = [];
     if (!this.hideDeletedPosts) {
-      postListByChannel = _.filter(postListByChannel, (item: any) => {
+      sortedData = _.filter(postList, (item: any) => {
         return item.status != 1;
       });
     }
-    return postListByChannel;
+    return sortedData;
   }
 
   async initRefresh() {
     if (this.followStatus) {
-      this.totalData = await this.sortChannelList();
+      let postList = await this.dataHelper.getPostListV3FromChannel(this.destDid, this.channelId);
+      this.totalData = await this.sortChannelList(postList);
     } else {
       const selfDid = (await this.dataHelper.getSigninData()).did || '';
       if (selfDid && this.destDid == selfDid) {
-        this.totalData = await this.hiveVaultController.getSelfPostsByChannel(this.channelId);
+        let postList = await this.hiveVaultController.getSelfPostsByChannel(this.channelId);
+        this.totalData = await this.sortChannelList(postList);
       } else {
-        this.totalData = await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
+        let postList = await this.hiveVaultController.queryRemoteChannelPostWithTime(this.destDid, this.channelId, UtilService.getCurrentTimeNum());
+        this.totalData = await this.sortChannelList(postList);
       }
     }
     this.startIndex = 0;
@@ -268,7 +270,8 @@ export class ChannelsPage implements OnInit {
       await this.initRefresh();
       return;
     }
-    this.totalData = await this.sortChannelList();
+    let postList = await this.dataHelper.getPostListV3FromChannel(this.destDid, this.channelId);
+    this.totalData = await this.sortChannelList(postList);
     if (this.totalData.length === this.postList.length) {
       this.postList = this.totalData;
     } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
@@ -496,10 +499,11 @@ export class ChannelsPage implements OnInit {
     postId: string,
     event?: any,
   ) {
-    // let post = this.feedService.getPostFromId(destDid, channelId, postId);
-    // if (!this.feedService.checkPostIsAvalible(post)) return;
-    if (!this.followStatus)
+    if (!this.followStatus) {
+      // this.native.toast_trans('subscribe first');
       return;
+    }
+
 
     if (this.isPress) {
       this.isPress = false;
