@@ -498,6 +498,8 @@ export class ChannelsPage implements OnInit {
   ) {
     // let post = this.feedService.getPostFromId(destDid, channelId, postId);
     // if (!this.feedService.checkPostIsAvalible(post)) return;
+    if (!this.followStatus)
+      return;
 
     if (this.isPress) {
       this.isPress = false;
