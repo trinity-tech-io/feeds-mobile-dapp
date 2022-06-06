@@ -606,11 +606,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteSubscriptionData(dbUserDid: string, subscriptionV3: FeedsData.SubscriptionV3): Promise<string> {
+  deleteSubscriptionData(dbUserDid: string, channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=?'
-        const params = [subscriptionV3.channelId];
+        const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'remove subscription result is', result);
         resolve('SUCCESS');

@@ -521,7 +521,6 @@ export class ChannelsPage implements OnInit {
 
   async checkFollowStatus(destDid: string, channelId: string) {
     let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-
     if (subscribedChannel.length === 0) {
       this.followStatus = false;
       return;
@@ -534,7 +533,6 @@ export class ChannelsPage implements OnInit {
       this.followStatus = false;
       return;
     }
-
     this.followStatus = true;
   }
   handleDisplayTime(createTime: number) {
@@ -590,12 +588,11 @@ export class ChannelsPage implements OnInit {
       this.images = {};
       this.startIndex = 0;
       // await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
-
+      await this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId);
       if (this.followStatus) {
         this.dataHelper.cleanCachedComment();
         this.dataHelper.cleanCacheLikeNum();
         this.dataHelper.cleanCachedLikeStatus();
-        await this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId);
         await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
         await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
         await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);

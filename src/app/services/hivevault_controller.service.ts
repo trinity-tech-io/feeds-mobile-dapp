@@ -241,9 +241,9 @@ export class HiveVaultController {
           return;
         }
 
-        await this.dataHelper.cleanSubscriptionsV3Data();
+        await this.dataHelper.deleteSubscriptionData(channelId);
         await this.dataHelper.addSubscriptionsV3Data(subscriptions);
-        await this.dataHelper.addSubscribedChannels(subscriptions);
+        // await this.dataHelper.addSubscribedChannels(subscriptions);
         resolve(subscriptions);
       } catch (error) {
         Logger.error(TAG, error);

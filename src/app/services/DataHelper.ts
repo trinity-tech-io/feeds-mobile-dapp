@@ -3159,6 +3159,19 @@ export class DataHelper {
     });
   }
 
+  deleteSubscriptionData(channelId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.deleteSubscriptionData(selfDid, channelId);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Update subscriptions error', error);
+        reject(error)
+      }
+    });
+  }
+
   getSubscriptionV3NumByChannelId(destDid: string, channelId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
