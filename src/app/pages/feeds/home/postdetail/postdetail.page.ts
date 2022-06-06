@@ -719,6 +719,7 @@ export class PostdetailPage implements OnInit {
     const elements = mediaDatas[0];
      //原图
     let imageKey = elements.originMediaPath;
+    let fileOriginName: string = imageKey.split("@")[0];
 
     let thumbnailKey = elements.thumbnailPath;
 
@@ -727,7 +728,7 @@ export class PostdetailPage implements OnInit {
     let fileName: string = thumbnailKey.split("@")[0];
 
     this.hiveVaultController
-        .getV3Data(this.destDid, imageKey, fileName, type, "false")
+        .getV3Data(this.destDid, imageKey, fileOriginName, type, "false")
         .then(async realImg => {
           let img = realImg || '';
           if(img != ''){
