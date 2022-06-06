@@ -513,7 +513,12 @@ export class PostHelperService {
       const isValid = this.checkVideoDurationValid(duration);
       if (!isValid) {
         Logger.warn('Video duration invalid');
-        resolve(null);
+        const videoData: FeedsData.videoData = {
+          video: null,
+          thumbnail: null,
+          duration: null,
+        }
+        resolve(videoData);
         return;
       }
 

@@ -313,6 +313,17 @@ export class CreatenewpostPage implements OnInit {
       this.uploadProgress = 0;
       this.totalProgress = 0;
       this.videoData = null;
+      return;
+    }
+
+    if(videoData.duration === null){
+      this.flieUri = '';
+      this.posterImg = '';
+      this.imgUrl = '';
+      this.transcode = 0;
+      this.uploadProgress = 0;
+      this.totalProgress = 0;
+      this.videoData = null;
       this.native.toast(this.translate.instant('common.filevideodes'));
       return;
     }
