@@ -219,7 +219,7 @@ export class ChannelsPage implements OnInit {
 
   async sortChannelList(postList: any) {
     this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
-    let sortedData = [];
+    let sortedData = postList;
     if (!this.hideDeletedPosts) {
       sortedData = _.filter(postList, (item: any) => {
         return item.status != 1;
