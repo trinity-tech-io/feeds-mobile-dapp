@@ -899,14 +899,15 @@ export class HiveVaultController {
 
           createrDid: result.createrDid
         }
-
-
         await this.dataHelper.addComment(comment);
 
         //resolve cached comment list
-        let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId);
-        cachedCommentList.push(comment);
-        this.dataHelper.cacheCommentList(postId, refcommentId, cachedCommentList)
+        try {
+          let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
+          cachedCommentList.push(comment);
+          this.dataHelper.cacheCommentList(postId, refcommentId, cachedCommentList)
+        } catch (error) {
+        }
 
         resolve(comment);
       } catch (error) {
