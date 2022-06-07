@@ -44,6 +44,10 @@ export class EidtchannelPage implements OnInit {
   private channelCollections: FeedsData.ChannelCollections = null;
   private popover: any = null;
   public lightThemeType:number = 3;
+  public tippingObj = [{
+    "type": "ELA",
+    "address": ""
+  }];
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -83,8 +87,16 @@ export class EidtchannelPage implements OnInit {
 
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
     let tippingAddress = '';
-    if(tippingAddress != null){
+    if(channel != null){
       tippingAddress = channel.tipping_address || '';
+      if(tippingAddress != ''){
+        if(tippingAddress.indexOf("type") > -1){
+           this.tippingObj = JSON.parse(tippingAddress);
+           tippingAddress =  this.tippingObj[0].address;
+        }else{
+            this.tippingObj[0].address =  tippingAddress;
+        }
+      }
     }
     return tippingAddress;
   }
@@ -165,12 +177,17 @@ export class EidtchannelPage implements OnInit {
     try {
       this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
       let tippingAddress = this.tippingAddress || '';
+      if(tippingAddress != ''){
+        this.tippingObj[0].address = this.tippingAddress;
+      }else{
+        this.tippingObj[0].address = '';
+      }
       this.hiveVaultController.updateChannel(
         this.channelId,
         this.channelName,
         this.channelDes,
         this.avatar,
-        tippingAddress,
+        JSON.stringify(this.tippingObj),
         "public",
         '',
         '',
@@ -229,11 +246,14 @@ export class EidtchannelPage implements OnInit {
     if (
       this.oldChannelInfo['name'] === this.channelName &&
       this.oldChannelInfo['des'] === this.channelDes &&
+      this.tippingAddress === this.tippingObj[0].address &&
       this.oldChannelAvatar === this.channelAvatar
     ) {
       this.native.toast_trans('common.nochanges');
       return false;
     }
+
+
 
     return true;
   }

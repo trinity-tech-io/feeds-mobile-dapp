@@ -36,6 +36,10 @@ export class CreatenewfeedPage implements OnInit {
   public curLang: string = '';
   public tippingAddress: string = '';
   public lightThemeType: number = 3;
+  public tippingObj = [{
+    "type": "ELA",
+    "address": ""
+  }];
   constructor(
     private popover: PopoverController,
     private navCtrl: NavController,
@@ -174,7 +178,12 @@ export class CreatenewfeedPage implements OnInit {
       let userDid = signinData.did
       let userDisplayName = signinData.name;
       let tippingAddress = this.tippingAddress || '';
-      const channelId = await this.hiveVaultController.createChannel(name, desc, this.avatar, tippingAddress)
+      if(tippingAddress != ''){
+        this.tippingObj[0].address = this.tippingAddress;
+      }else{
+        this.tippingObj[0].address = '';
+      }
+      const channelId = await this.hiveVaultController.createChannel(name, desc, this.avatar, JSON.stringify(this.tippingObj))
       await this.hiveVaultController.subscribeChannel(userDid, channelId, userDisplayName);
 
       this.native.hideLoading()
