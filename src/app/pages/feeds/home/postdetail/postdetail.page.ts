@@ -771,7 +771,7 @@ export class PostdetailPage implements OnInit {
         this.zone.run(() => {
           this.captainCommentList = this.captainCommentList.concat(arr);
         });
-        this.initOwnCommentObj();
+        // this.initOwnCommentObj();
         event.target.complete();
       } else {
         //上拉加载到底
@@ -787,7 +787,7 @@ export class PostdetailPage implements OnInit {
         this.zone.run(() => {
           this.captainCommentList = this.captainCommentList.concat(arr);
         });
-        this.initOwnCommentObj();
+        // this.initOwnCommentObj();
         event.target.complete();
         clearTimeout(sId);
       }
