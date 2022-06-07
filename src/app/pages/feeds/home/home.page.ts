@@ -716,10 +716,10 @@ export class HomePage implements OnInit {
     //let post = await this.dataHelper.getPostV3ById(destDid, postId);;
     // if (!this.feedService.checkPostIsAvalible(post)) return;
 
-    if (this.isPress) {
-      this.isPress = false;
-      return;
-    }
+    // if (this.isPress) {
+    //   this.isPress = false;
+    //   return;
+    // }
     event = event || '';
     if (event != '') {
       let e = event || window.event; //兼容IE8
