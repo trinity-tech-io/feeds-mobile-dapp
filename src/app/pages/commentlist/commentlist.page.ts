@@ -239,10 +239,6 @@ export class CommentlistPage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, async (comment: FeedsData.CommentV3) => {
       Logger.log(TAG, 'Received getCommentFinish event');
-      let postId = comment.postId;
-      let refcommentId = comment.refcommentId;
-      let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
-      cachedCommentList.push(comment);
       await this.getCaptainComment();
       await this.initData(false);
     });

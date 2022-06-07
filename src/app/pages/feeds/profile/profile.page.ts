@@ -500,9 +500,6 @@ export class ProfilePage implements OnInit {
       Logger.log(TAG, "======= Receive getCommentFinish ========");
       let postId = comment.postId;
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
-      let refcommentId = comment.refcommentId;
-      let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
-      cachedCommentList.push(comment);
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {

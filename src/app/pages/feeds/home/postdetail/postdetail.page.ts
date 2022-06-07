@@ -348,10 +348,6 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment: FeedsData.CommentV3) => {
       this.zone.run(() => {
         Logger.log(TAG, 'Received commentDataUpdate event');
-        let postId = comment.postId;
-        let refcommentId = comment.refcommentId;
-        let cachedCommentList = this.dataHelper.getcachedCommentList(postId, refcommentId) || [];
-        cachedCommentList.push(comment);
         this.startIndex = 0;
         this.initData(true);
       });
@@ -716,7 +712,7 @@ export class PostdetailPage implements OnInit {
     this.postImage = './assets/icon/reserve.svg';//set Reserve Image
     let mediaDatas = post.content.mediaData;
     const elements = mediaDatas[0];
-     //原图
+    //原图
     let imageKey = elements.originMediaPath;
     let fileOriginName: string = imageKey.split("@")[0];
 
@@ -727,13 +723,13 @@ export class PostdetailPage implements OnInit {
     let fileName: string = thumbnailKey.split("@")[0];
 
     this.hiveVaultController
-        .getV3Data(this.destDid, imageKey, fileOriginName, type, "false")
-        .then(async realImg => {
-          let img = realImg || '';
-          if(img != ''){
-            this.postImage = img;
-          }else{
-            this.hiveVaultController.getV3Data(this.destDid, thumbnailKey, fileName, type)
+      .getV3Data(this.destDid, imageKey, fileOriginName, type, "false")
+      .then(async realImg => {
+        let img = realImg || '';
+        if (img != '') {
+          this.postImage = img;
+        } else {
+          this.hiveVaultController.getV3Data(this.destDid, thumbnailKey, fileName, type)
             .then((cacheResult) => {
               let thumbImage = cacheResult || "";
               if (thumbImage != "") {
@@ -741,10 +737,10 @@ export class PostdetailPage implements OnInit {
               }
             }).catch(() => {
             })
-          }
-        }).catch((err)=>{
+        }
+      }).catch((err) => {
 
-        })
+      })
   }
 
   async doRefresh(event: any) {
