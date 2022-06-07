@@ -120,7 +120,7 @@ export class Config {
     public static newCommentVersion: number = 10400;
     public static newMultiPropCountVersion: number = 10500;
 
-    public static rectTop: number = 3*screen.availHeight;
-    public static rectBottom: number = 3*screen.availHeight;
+    public static rectTop: number = 2*screen.availHeight;
+    public static rectBottom: number = 2*screen.availHeight;
     public static assetsTimer: number = 200;
 }
