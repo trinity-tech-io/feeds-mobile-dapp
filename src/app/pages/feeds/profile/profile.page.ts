@@ -1938,8 +1938,8 @@ export class ProfilePage implements OnInit {
     let channelName = feed['channelName'] || '';
     let channelId = feed['channelId'] || '';
     this.shareChannelId = channelId;
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    let qrcodeString = "feeds://v3/" + ownerDid + "/" + channelId + '/' + encodeURIComponent(channelName);
+    //let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    let qrcodeString = "feeds://v3/" + destDid + "/" + channelId + '/' + encodeURIComponent(channelName);
     return qrcodeString;
   }
 

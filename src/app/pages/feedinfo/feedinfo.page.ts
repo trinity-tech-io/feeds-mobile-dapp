@@ -90,7 +90,7 @@ export class FeedinfoPage implements OnInit {
     this.name = channelInfo['name'] || '';
     this.des = channelInfo['des'] || '';
     this.ownerDid = channelInfo["ownerDid"] || "";
-    this.qrcodeString = "feeds://v3/" + this.ownerDid + "/" + this.channelId + '/' + encodeURIComponent(this.name);
+    this.qrcodeString = "feeds://v3/" + this.destDid + "/" + this.channelId + '/' + encodeURIComponent(this.name);
     this.oldChannelAvatar = this.dataHelper.getProfileIamge();
     this.followStatus = channelInfo['followStatus'] || null;
     if (this.followStatus == null) this.followStatus = false;

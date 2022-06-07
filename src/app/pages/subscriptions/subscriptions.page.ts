@@ -195,7 +195,7 @@ export class SubscriptionsPage implements OnInit {
     this.shareChannelId = channelId;
     let name = channel['channelName'] || '';
     let ownerDid = (await this.dataHelper.getSigninData()).did;
-    return "feeds://v3/" + ownerDid + "/" + channelId + '/' + encodeURIComponent(name);
+    return "feeds://v3/" + destDid  + "/" + channelId + '/' + encodeURIComponent(name);
   }
 
   async hideShareMenu(objParm: any) {
