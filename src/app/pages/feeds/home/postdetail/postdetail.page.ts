@@ -180,7 +180,6 @@ export class PostdetailPage implements OnInit {
 
     this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMap(this.postId);
     this.initRelyCommentExtradata();
-    console.log('this.replyCommentsMap = ', this.replyCommentsMap);
   }
 
   async initRelyCommentExtradata() {
