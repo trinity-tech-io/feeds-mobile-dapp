@@ -354,12 +354,6 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const postList = await this.getPostListByChannel(targetDid, channelId);
-
-        if (postList || postList.length == 0) {
-          resolve([]);
-          return;
-        }
-
         await this.dataHelper.addPosts(postList);
         resolve(postList);
       } catch (error) {
