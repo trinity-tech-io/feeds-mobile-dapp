@@ -230,7 +230,7 @@ export class PostdetailPage implements OnInit {
       this.checkCommentIsMine(item, ownerDid);
     });
 
-    this.captainCommentList = _.cloneDeep(captainCommentList);
+    //this.captainCommentList = _.cloneDeep(captainCommentList);
   }
 
   async refreshCommentList() {
