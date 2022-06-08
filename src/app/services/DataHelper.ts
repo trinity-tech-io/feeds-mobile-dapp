@@ -3585,7 +3585,7 @@ export class DataHelper {
       try {
         for (let index = 0; index < commentList.length; index++) {
           const comment = commentList[index];
-          await this.addCommentV3(comment);
+          await this.addComment(comment);
         }
         resolve('FINISH');
       } catch (error) {
@@ -3605,26 +3605,6 @@ export class DataHelper {
       } catch (error) {
         Logger.error(TAG, 'Add comments error', error);
         reject(error);
-      }
-    });
-  }
-
-  private addCommentsV3(comments: FeedsData.CommentV3[]): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (!comments) {
-          resolve('FINISH');
-          return;
-        }
-
-        for (let index = 0; index < comments.length; index++) {
-          const comment = comments[index];
-          await this.addCommentV3(comment);
-        }
-        resolve('FINISH');
-      } catch (error) {
-        Logger.error(TAG, 'Add comment error', error);
-        reject(error)
       }
     });
   }
