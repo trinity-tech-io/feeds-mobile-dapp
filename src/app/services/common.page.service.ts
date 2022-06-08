@@ -32,7 +32,9 @@ export class CommonPageService {
     isInitUserNameMap: any,
     userNameMap: any,
     hiveVaultController: any,
-    channelName?: string) {
+    ownerDid: string = "",
+    channelName?: string,
+    ) {
     try {
       if (
         id != '' &&
@@ -46,9 +48,9 @@ export class CommonPageService {
         let userDid = arr[4];
         let isInit = isInitUserNameMap[commentId] || '';
         if (isInit === '') {
-          if (userDid === destDid) {
+          if (destDid === ownerDid) {
             isInitUserNameMap[commentId] = "11";
-            userNameMap[userDid] = channelName;
+            userNameMap[destDid] = channelName;
             return;
           }
           userNameMap[userDid] = this.indexText(userDid);

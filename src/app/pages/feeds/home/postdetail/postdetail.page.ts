@@ -137,6 +137,7 @@ export class PostdetailPage implements OnInit {
   private isLoadingLike = false;
   public channelOwnerName: string = '';
   public replyCommentsMap: { [refcommentId: string]: FeedsData.CommentV3[] } = {};
+  public ownerDid: string = "";
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -1234,7 +1235,8 @@ export class PostdetailPage implements OnInit {
     }, 50);
   }
 
-  handleLikeAndComment() {
+  async handleLikeAndComment() {
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     let captainComment = document.getElementsByClassName('captainComment');
     let captainCommentNum = document.getElementsByClassName('captainComment').length;
     for (let captainCommentIndex = 0; captainCommentIndex < captainCommentNum; captainCommentIndex++) {
@@ -1252,6 +1254,7 @@ export class PostdetailPage implements OnInit {
           captainComment[captainCommentIndex],
           this.clientHeight, this.isInitUserNameMap,
           this.userNameMap, this.hiveVaultController,
+          ownerDid,
           this.channelName
         );
         //处理commnet like status
@@ -1276,7 +1279,8 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  handleUserName() {
+  async handleUserName() {
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     let replayComments = document.getElementsByClassName('replayCommentPostGrid') || [];
     let replayCommentNum = replayComments.length;
     for (let replayCommentIndex = 0; replayCommentIndex < replayCommentNum; replayCommentIndex++) {
@@ -1289,12 +1293,12 @@ export class PostdetailPage implements OnInit {
         let postId = arr[2];
         let commentId = arr[3];
         let id = destDid + '-' + channelId + '-' + postId + '-' + commentId;
-        //处理Name
         CommonPageService.handleDisplayUserName(
           id, srcId, replayCommentIndex,
           replayComment, this.clientHeight, this.isInitUserNameMap,
           this.userNameMap, this.hiveVaultController,
-          this.userNameMap[this.destDid]
+          ownerDid,
+          this.channelName
         );
       }
     }
