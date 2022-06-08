@@ -1298,7 +1298,7 @@ export class PostdetailPage implements OnInit {
           replayComment, this.clientHeight, this.isInitUserNameMap,
           this.userNameMap, this.hiveVaultController,
           ownerDid,
-          this.channelName
+          this.userNameMap[this.destDid]
         );
       }
     }

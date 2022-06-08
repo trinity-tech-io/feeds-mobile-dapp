@@ -48,7 +48,7 @@ export class CommonPageService {
         let userDid = arr[4];
         let isInit = isInitUserNameMap[commentId] || '';
         if (isInit === '') {
-          if (destDid === ownerDid) {
+          if (userDid === ownerDid) {
             isInitUserNameMap[commentId] = "11";
             userNameMap[destDid] = channelName;
             return;
