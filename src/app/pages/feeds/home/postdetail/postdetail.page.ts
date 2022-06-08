@@ -248,7 +248,7 @@ export class PostdetailPage implements OnInit {
     } else {
       this.captainCommentList = this.totalData;
     }
-    //this.initOwnCommentObj();
+    this.initOwnCommentObj();
     this.refreshLikeAndComment();
   }
 
