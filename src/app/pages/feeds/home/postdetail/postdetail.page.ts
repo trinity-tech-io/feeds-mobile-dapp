@@ -216,7 +216,7 @@ export class PostdetailPage implements OnInit {
     } else {
       this.captainCommentList = this.totalData;
     }
-    this.initOwnCommentObj();
+    //this.initOwnCommentObj();
     this.refreshLikeAndComment();
     //this.totalData = this.sortCommentList();
   }
@@ -248,7 +248,7 @@ export class PostdetailPage implements OnInit {
     } else {
       this.captainCommentList = this.totalData;
     }
-    this.initOwnCommentObj();
+    //this.initOwnCommentObj();
     this.refreshLikeAndComment();
   }
 
@@ -772,7 +772,7 @@ export class PostdetailPage implements OnInit {
         this.zone.run(() => {
           this.captainCommentList = this.captainCommentList.concat(arr);
         });
-        // this.initOwnCommentObj();
+        this.initOwnCommentObj();
         event.target.complete();
       } else {
         //上拉加载到底
@@ -788,7 +788,7 @@ export class PostdetailPage implements OnInit {
         this.zone.run(() => {
           this.captainCommentList = this.captainCommentList.concat(arr);
         });
-        // this.initOwnCommentObj();
+        this.initOwnCommentObj();
         event.target.complete();
         clearTimeout(sId);
       }
@@ -1247,6 +1247,7 @@ export class PostdetailPage implements OnInit {
         let channelId = arr[1];
         let postId = arr[2];
         let commentId = arr[3];
+        let userDid = arr[4];
         let id = destDid + '-' + channelId + '-' + postId + '-' + commentId;
         //处理Name
         CommonPageService.handleDisplayUserName(
@@ -1292,13 +1293,14 @@ export class PostdetailPage implements OnInit {
         let channelId = arr[1];
         let postId = arr[2];
         let commentId = arr[3];
+        let userDid = arr[4];
         let id = destDid + '-' + channelId + '-' + postId + '-' + commentId;
         CommonPageService.handleDisplayUserName(
           id, srcId, replayCommentIndex,
           replayComment, this.clientHeight, this.isInitUserNameMap,
           this.userNameMap, this.hiveVaultController,
           ownerDid,
-          this.userNameMap[this.destDid]
+          this.userNameMap[userDid]
         );
       }
     }
