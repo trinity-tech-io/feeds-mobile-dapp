@@ -74,3 +74,13 @@ playsinline webkit-playsinline>
 (hideComment)="hideComponent($event)"
 >
 </app-switchfeed>
+
+<!---------------- ADD share menu---------------->
+<app-picturemenu
+ *ngIf="hidePictureMenuComponent"
+ [isSupportGif] = "isSupportGif"
+ (openCamera) = "openCamera()"
+ (openGallery)= "openGallery($event)"
+ (hidePictureMenu)="hidePictureMenu($event)"
+>
+</app-picturemenu>

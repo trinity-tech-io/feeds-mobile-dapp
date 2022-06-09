@@ -66,6 +66,8 @@ export class CreatenewpostPage implements OnInit {
   // 视频data
   private videoData: FeedsData.videoData = null;
   private isUpdateHomePage: boolean = false;
+  public hidePictureMenuComponent: boolean = false;
+  public isSupportGif: boolean = true;
   constructor(
     private platform: Platform,
     private events: Events,
@@ -494,12 +496,8 @@ export class CreatenewpostPage implements OnInit {
   }
 
   clickImageMenu() {
-    this.pictureMenu = this.menuService.showPictureMenu(
-      this,
-      this.openCamera,
-      this.openGallery,
-      this.openNft,
-    );
+
+     this.hidePictureMenuComponent = true;
   }
 
   openNft(that: any) {
@@ -511,47 +509,23 @@ export class CreatenewpostPage implements OnInit {
   }
 
 
-  openGallery(that: any) {
-    try {
-      that.handleImgUri(0, that).then(async (imagePath: string) => {
-        let pathObj = that.handleImgUrlPath(imagePath);
-        let fileName = pathObj['fileName'];
-        let filePath = pathObj['filepath'];
-        return that.getFlieObj(fileName, filePath, that);
-      }).then((fileBase64: string) => {
-        that.zone.run(() => {
-          let str = fileBase64.split(",");
-          if(str[0].indexOf("data:image/gif;base64") > -1 ){
-            // that.avatar = fileBase64;
-            // await that.saveAvatar();
-            that.native.toastWarn("ProfileimagePage.avatarEorr");
-          }else{
-            that.imgUrl = fileBase64;
-            that.dataHelper.setSelsectNftImage(fileBase64);
-          }
-        });
-      });
-    } catch (error) {
-
-    }
-  }
-
-  openCamera(that: any) {
-    that.camera.openCamera(
+  openCamera() {
+    this.camera.openCamera(
       30,
       0,
       1,
       (imageUrl: any) => {
-        that.zone.run(() => {
-          that.imgUrl = imageUrl;
-          that.dataHelper.setSelsectNftImage(imageUrl);
+        this.zone.run(() => {
+          this.hidePictureMenuComponent = false;
+          this.imgUrl = imageUrl;
+          this.dataHelper.setSelsectNftImage(imageUrl);
         });
       },
       (err: any) => {
         //Logger.error(TAG, 'Add img err', err);
-        let imgUrl = that.imgUrl || '';
+        let imgUrl = this.imgUrl || '';
         if (imgUrl === "") {
-          that.native.toast_trans('common.noImageSelected');
+          this.native.toast_trans('common.noImageSelected');
         }
       },
     );
@@ -613,5 +587,25 @@ export class CreatenewpostPage implements OnInit {
       : `file://${pathObj['filepath']}`;
 
     return pathObj;
+  }
+
+
+  hidePictureMenu(data: any) {
+    let buttonType = data['buttonType'];
+    switch(buttonType) {
+      case 'photolibary':
+        this.hidePictureMenuComponent = false;
+        break;
+      case 'cancel':
+        this.hidePictureMenuComponent = false;
+        break;
+    }
+  }
+
+  openGallery(data: any) {
+    this.hidePictureMenuComponent = false;
+    let fileBase64  = data["fileBase64"] || "";
+    this.imgUrl = fileBase64;
+    this.dataHelper.setSelsectNftImage(fileBase64);
   }
 }

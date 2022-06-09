@@ -23,6 +23,7 @@ import { CommentComponent } from './comment/comment.component';
 import { SwitchfeedComponent } from './switchfeed/switchfeed.component';
 import { PreviewqrcodeComponent } from './previewqrcode/previewqrcode.component';
 import { SharemenuComponent } from './sharemenu/sharemenu.component';
+import { PicturemenuComponent } from './picturemenu/picturemenu.component';
 import { RoundloadingComponent } from './roundloading/roundloading.component';
 import { PercentageloadingComponent } from './percentageloading/percentageloading.component';
 import { AddassetComponent } from './addasset/addasset.component';
@@ -73,6 +74,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     CommentComponent,
     SwitchfeedComponent,
     SharemenuComponent,
+    PicturemenuComponent,
     VideofullscreenComponent,
     RoundloadingComponent,
     PercentageloadingComponent,
@@ -102,6 +104,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     CommentComponent,
     SwitchfeedComponent,
     SharemenuComponent,
+    PicturemenuComponent,
     VideofullscreenComponent,
     RoundloadingComponent,
     PercentageloadingComponent,

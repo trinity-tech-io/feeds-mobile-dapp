@@ -1,0 +1,31 @@
+<div class="donghua">
+  <div id="picturemenuMask" class="backdrop backdropdonghua" (click)="clickItem('cancel')" [class.darkbackdrop]="theme.darkMode" [class.lightbackdrop]="!theme.darkMode">
+  </div>
+  <div class="feedlist feedlistbackdropdonghua" [class.darkfeedlist]="theme.darkMode" [class.lightfeedlist]="!theme.darkMode">
+      <ion-grid style="padding:0px;">
+
+        <ion-row  (click)="clickOpenCamera()"  class="share">
+          <ion-col
+          size="12">
+          <img src="./assets/images/ios-take-photo.svg"/><span>{{"common.takePicture"|translate}}</span>
+        </ion-col>
+        </ion-row>
+
+        <ion-row  class="share">
+          <ion-col
+          size="12">
+          <ion-input class="file" type="file" id="mintfile1"  [accept]="accept" (click)="handelFile($event)">
+        </ion-input>
+          <img src="./assets/images/ios-photo-gallery.svg"/><span>{{"common.photolibary"|translate}}</span>
+        </ion-col>
+        </ion-row>
+
+        <ion-row (click)="clickItem('cancel')" class="share">
+          <ion-col
+          size="12">
+          <img src="./assets/images/close-circle.svg"/><span>{{"common.cancel"|translate}}</span>
+        </ion-col>
+        </ion-row>
+      </ion-grid>
+  </div>
+  </div>
