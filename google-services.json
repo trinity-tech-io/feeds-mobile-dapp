@@ -1,37 +1,37 @@
 {
   "project_info": {
-    "project_number": "28839232315",
-    "project_id": "trinityfeeds-59006",
-    "storage_bucket": "trinityfeeds-59006.appspot.com"
+    "project_number": "406929509978",
+    "project_id": "feeds-22248",
+    "storage_bucket": "feeds-22248.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:28839232315:android:d1827bcff95ee565686d1e",
+        "mobilesdk_app_id": "1:406929509978:android:631d7e835951e987581263",
         "android_client_info": {
           "package_name": "io.trinitytech.dapp.feedsnetwork"
         }
       },
       "oauth_client": [
         {
-          "client_id": "28839232315-k9d5mfl4tvas358cua0snh7l6qfak4v5.apps.googleusercontent.com",
+          "client_id": "406929509978-0it0i77aqd4gc293qeursogrnicltnj3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAJFS7p_zEnCPJXfOP1zuxjnzyAcPeeLck"
+          "current_key": "AIzaSyCJdmFOcs2GYAtlrdkirxWPEUR7VrfbcDE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "28839232315-k9d5mfl4tvas358cua0snh7l6qfak4v5.apps.googleusercontent.com",
+              "client_id": "406929509978-0it0i77aqd4gc293qeursogrnicltnj3.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "28839232315-m61lrj3vlbbgej7rsif4m075h5p7l5m8.apps.googleusercontent.com",
+              "client_id": "406929509978-pva52k2l3kcf6mfua5fokdpjr3ftpuhe.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "io.trinitytech.dapp.feedsnetwork"
