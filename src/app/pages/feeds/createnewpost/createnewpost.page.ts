@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ElementRef, ViewChild, Testability, } from '@angular/core';
+import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
 import { NavController, ModalController, Platform, IonTextarea, } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { FeedService } from '../../../services/FeedService';
@@ -14,9 +14,6 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/services/logger';
-import { MenuService } from 'src/app/services/MenuService';
-import { File } from '@ionic-native/file/ngx';
-import { FileHelperService } from 'src/app/services/FileHelperService';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
@@ -62,7 +59,6 @@ export class CreatenewpostPage implements OnInit {
   public channelList = [];
   public hideSwitchFeed: boolean = false;
   private isPublishing: boolean = false;
-  public pictureMenu: any = null;
   // 视频data
   private videoData: FeedsData.videoData = null;
   private isUpdateHomePage: boolean = false;
@@ -85,9 +81,6 @@ export class CreatenewpostPage implements OnInit {
     private storageService: StorageService,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-    private menuService: MenuService,
-    private file: File,
-    private fileHelperService: FileHelperService,
     private ipfsService: IPFSService,
     private dataHelper: DataHelper,
 
@@ -146,21 +139,12 @@ export class CreatenewpostPage implements OnInit {
 
     this.initFeed();
 
-    this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
-      this.pauseVideo();
-      this.hideFullScreen();
-    });
   }
 
   ionViewWillLeave() {
 
     this.isLoading = false;
     this.hideSwitchFeed = false;
-    if (this.pictureMenu != null) {
-      this.menuService.hideActionSheet();
-    }
-
-    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.hideFullScreen();
 
     this.imgUrl = '';

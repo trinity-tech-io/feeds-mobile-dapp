@@ -205,6 +205,17 @@ export class MyApp {
               return;
             }
 
+            //分享菜单了 app-picturemenu
+            let picturemenu: HTMLElement = document.querySelector("app-picturemenu") || null;
+            if (picturemenu != null) {
+              let picturemenuMask: HTMLElement = document.getElementById("picturemenuMask") || null;
+              if (picturemenuMask != null) {
+                picturemenuMask.click();
+                picturemenu.remove();
+              }
+              return;
+            }
+
             //分享菜单了 app-sharemenu
             let sharemenu: HTMLElement = document.querySelector("app-sharemenu") || null;
             if (sharemenu != null) {

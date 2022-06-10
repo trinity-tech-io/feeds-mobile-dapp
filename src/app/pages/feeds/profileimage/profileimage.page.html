@@ -1,6 +1,5 @@
 
 <app-titlebar></app-titlebar>
-<!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
   <ion-content>
     <ion-grid>
       <ion-row>
@@ -72,3 +71,12 @@
       </ion-row>
     </ion-grid>
   </ion-content>
+  <!---------------- ADD picture menu---------------->
+<app-picturemenu
+*ngIf="hidePictureMenuComponent"
+[isSupportGif] = "isSupportGif"
+(openCamera) = "openCamera()"
+(openGallery)= "openGallery($event)"
+(hidePictureMenu)="hidePictureMenu($event)"
+>
+</app-picturemenu>
