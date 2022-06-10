@@ -213,13 +213,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'editprofileimage',
-    loadChildren: () =>
-      import('./pages/editprofileimage/editprofileimage.module').then(
-        m => m.EditprofileimagePageModule,
-      ),
-  },
-  {
     path: 'developer',
     loadChildren: () => import('./pages/developer/developer.module').then(m => m.DeveloperPageModule)
   },

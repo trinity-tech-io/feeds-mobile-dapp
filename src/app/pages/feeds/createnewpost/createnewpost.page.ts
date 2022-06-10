@@ -496,7 +496,6 @@ export class CreatenewpostPage implements OnInit {
   }
 
   clickImageMenu() {
-
      this.hidePictureMenuComponent = true;
   }
 
@@ -535,60 +534,6 @@ export class CreatenewpostPage implements OnInit {
     this.imgUrl = "";
     this.dataHelper.setSelsectNftImage("");
   }
-
-  handleImgUri(type: number, that: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      that.camera.openCamera(
-        100,
-        1,
-        type,
-        (imgPath: any) => {
-          resolve(imgPath);
-        },
-        (err: any) => {
-          Logger.error(TAG, 'Add img err', err);
-          let imgUrl = that.imgUrl || '';
-          if (!imgUrl) {
-            this.native.toast_trans('common.noImageSelected');
-            reject(err);
-            return;
-          }
-        }
-      );
-    });
-  }
-
-  getFlieObj(fileName: string, filepath: string, that: any): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const base64Result = await that.fileHelperService.getUserFileBase64Data(filepath, fileName);
-        if (!base64Result) {
-          const error = 'Get File object is null';
-          Logger.error(TAG, 'Get File object error', error)
-          reject(error);
-        }
-        resolve(base64Result);
-      } catch (error) {
-        Logger.error(TAG, 'Get File object error', error)
-        reject(error);
-      }
-    });
-  }
-
-  handleImgUrlPath(fileUri: string) {
-    let pathObj = {};
-    fileUri = fileUri.replace('/storage/emulated/0/', '/sdcard/');
-    let path = fileUri.split('?')[0];
-    let lastIndex = path.lastIndexOf('/');
-    pathObj['fileName'] = path.substring(lastIndex + 1, fileUri.length);
-    pathObj['filepath'] = path.substring(0, lastIndex);
-    pathObj['filepath'] = pathObj['filepath'].startsWith('file://')
-      ? pathObj['filepath']
-      : `file://${pathObj['filepath']}`;
-
-    return pathObj;
-  }
-
 
   hidePictureMenu(data: any) {
     let buttonType = data['buttonType'];
