@@ -628,3 +628,28 @@ audio::-webkit-media-controls {
   height: 10px;
 }
 
+.noLoadImgStyle{
+  width: 100%;
+  height: 304px;
+  margin: 0 auto;
+  -o-object-fit: cover;
+  object-fit: cover;
+  background-color: #0A0710;
+}
+
+.postImgBgColor{
+  background-color: #161c24;
+}
+
+.noLoadVideo{
+  width: 100%;
+  height:200px;
+  margin: 0 auto;
+  -o-object-fit: cover;
+  object-fit: cover;
+  background-color: #0A0710;
+}
+
+
+
+

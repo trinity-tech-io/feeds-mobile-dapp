@@ -172,12 +172,15 @@
         [ngStyle]="imgloadingStyleObj"
         >
         </app-roundloading>
-          <img
+        <div class="noLoadImgStyle" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}postImgKuang>
+        <img
+          *ngIf = "postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
           id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}postimg
-          class="post-img"
-          src="assets/images/loading.png"
+          class="post-img postImgBgColor"
+          [src] = "postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
           style="width: 100%;"
           (click)="showBigImage(post.destDid,post.channelId,post.postId)">
+          </div>
           <img src="./assets/images/avatar.svg" class="avatarImg"
             id={{post.destDid}}-{{post.channelId}}-{{post.postId}}homebidAvatar />
           <img src="./assets/images/videoTypeIcon.svg" class="avatarImg"
@@ -229,12 +232,15 @@
                   <img class="vgfullscreen" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgfullscreenhome
                     src="assets/images/fullscreen.svg"/>
                 </vg-controls>
-
-            <video #media [vgMedia]="media" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}video
-            poster="assets/images/loading.png"
+            <div class="noLoadVideo" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}videoKuang>
+            <video #media [vgMedia]="media"
+            *ngIf="posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
+            id={{post.destDid}}-{{post.channelId}}-{{post.postId}}video
+            [poster] = "posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
             playsinline webkit-playsinline>
             <source type="video/mp4" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}source>
             </video>
+            </div>
             </vg-player>
            </div>
           </div>

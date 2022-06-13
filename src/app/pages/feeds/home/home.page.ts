@@ -177,6 +177,9 @@ export class HomePage implements OnInit {
   private handleDisplayNameMap: any = {};
   public owerCreatChannelNum: Number = 0;
   public channelAvatarMap: any = {};
+  public postImgMap: any = {};
+  public posterImgMap: any = {};
+  private channelMap:any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -694,14 +697,8 @@ export class HomePage implements OnInit {
 
   navTo(destDid: string, channelId: string, postId: number) {
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
-    this.clearData(false);
-    this.native.navigateForward(['/channels', destDid, channelId], '').then((result) => {
-      let sid = setTimeout(() => {
-        this.clearAssets();
-        clearTimeout(sid);
-        sid = null;
-      }, Config.assetsTimer);
-    });
+    this.clearData(true);
+    this.native.navigateForward(['/channels', destDid, channelId], '');
   }
 
   async navToPostDetail(
@@ -728,16 +725,10 @@ export class HomePage implements OnInit {
       }
     }
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
-    this.clearData(false);
+    this.clearData(true);
     this.native
       .getNavCtrl()
-      .navigateForward(['/postdetail', destDid, channelId, postId]).then((result) => {
-        let sid = setTimeout(() => {
-          this.clearAssets();
-          clearTimeout(sid);
-          sid = null;
-        }, Config.assetsTimer);
-      });
+      .navigateForward(['/postdetail', destDid, channelId, postId]);
   }
 
   exploreFeeds() {
@@ -785,8 +776,13 @@ export class HomePage implements OnInit {
   async menuMore(post: FeedsData.PostV3) {
 
     let destDid = post.destDid;
+    console.log('=========11222222222========')
     let ownerDid = (await this.dataHelper.getSigninData()).did;
-    let channelName = await this.getChannelName(post.destDid, post.channelId);
+    let channelName =this.hannelNameMap[post.postId] ||  "";
+    if(channelName === ''){
+        channelName = await this.getChannelName(post.destDid, post.channelId);
+    }
+    console.log('=========11222222333333========');
     if (ownerDid != '' && ownerDid === destDid) {//自己的post
       this.menuService.showHomeMenu(
         post.destDid,
@@ -1037,10 +1033,14 @@ export class HomePage implements OnInit {
           let destDid: string = arr[0];
           let channelId: string = arr[1];
           let postId: string = arr[2];
-          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-
+          let key = destDid+"-"+channelId;
+          let channel: FeedsData.ChannelV3  = this.channelMap[key] || null;
+          if( channel === null ){
+            channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+          }else{
+            channel  =  this.channelMap[key]
+          }
           //this.hiveVaultController.checkPostIsLast();
-
           const post = _.find(this.postList, item => {
             return (
               item.postId === postId
@@ -1188,6 +1188,8 @@ export class HomePage implements OnInit {
           let img = realImg || '';
           if (img != '') {
             this.isImgLoading[this.imgCurKey] = false;
+            let key = destDid+'-'+channelId+'-'+postId;
+            this.postImgMap[key] = img;
             this.viewHelper.openViewer(
               this.titleBar,
               realImg,
@@ -1218,6 +1220,8 @@ export class HomePage implements OnInit {
                 this.isImgLoading[this.imgCurKey] = false;
                 this.isImgPercentageLoading[this.imgCurKey] = false;
                 if (img != '') {
+                  let key = destDid+'-'+channelId+'-'+postId;
+                  this.postImgMap[key] = img;
                   this.viewHelper.openViewer(
                     this.titleBar,
                     realImg,
@@ -1246,12 +1250,13 @@ export class HomePage implements OnInit {
     // 13 存在 12不存在
     let isload = this.isLoadimage[id] || '';
     let rpostimg = document.getElementById(id + 'rpostimg');
-    let postImage = document.getElementById(id + 'postimg');
+    //let postImage = document.getElementById(id + 'postimg');
+    let postImgKuang = document.getElementById(id + 'postImgKuang');
     try {
       if (
         id != '' &&
-        postImage.getBoundingClientRect().top >= - Config.rectTop &&
-        postImage.getBoundingClientRect().bottom <= Config.rectBottom
+        postImgKuang.getBoundingClientRect().top >= - Config.rectTop &&
+        postImgKuang.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -1270,7 +1275,6 @@ export class HomePage implements OnInit {
           let type = elements.type || '';
           if (thumbnailKey === '' || imageKey === '') {
             this.isLoadimage[id] = '13';
-            postImage.style.display = 'none';
             return;
           }
           //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
@@ -1284,7 +1288,8 @@ export class HomePage implements OnInit {
               let realImage = imagedata || '';
               if (realImage != '') {
                 this.isLoadimage[id] = '13';
-                postImage.setAttribute('src', realImage);
+                //postImage.setAttribute('src', realImage);
+                this.postImgMap[id] = realImage;
                 rpostimg.style.display = 'block';
               } else {
                 this.hiveVaultController.
@@ -1293,11 +1298,11 @@ export class HomePage implements OnInit {
                     let thumbImage = thumbImagedata || "";
                     if (thumbImage != '') {
                       this.isLoadimage[id] = '13';
-                      postImage.setAttribute('src', thumbImagedata);
+                      this.postImgMap[id] = thumbImagedata;
                       rpostimg.style.display = 'block';
                     } else {
                       this.isLoadimage[id] = '12';
-                      rpostimg.style.display = 'none';
+                      rpostimg.style.display = 'block';
                     }
                   }).catch(() => {
                     rpostimg.style.display = 'none';
@@ -1313,6 +1318,7 @@ export class HomePage implements OnInit {
             });
         }
       } else {
+        let postImage = document.getElementById(id + 'postimg');
         let postImageSrc = postImage.getAttribute('src') || '';
         if (
           postImage.getBoundingClientRect().top < - Config.rectTop ||
@@ -1321,17 +1327,20 @@ export class HomePage implements OnInit {
           postImageSrc != ''
         ) {
           this.isLoadimage[id] = '';
-          postImage.setAttribute('src', 'assets/images/loading.png');
+          this.postImgMap[id] = '';
         }
       }
     } catch (error) {
       this.isLoadimage[id] = '';
+      this.postImgMap[id] = '';
     }
   }
 
   async handleVideo(id: string, srcId: string, rowindex: number) {
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
     let vgplayer = document.getElementById(id + 'vgplayer');
+
+    let videoKuang: any = document.getElementById(id + 'videoKuang') || '';
     let video: any = document.getElementById(id + 'video') || '';
     let source: any = document.getElementById(id + 'source') || '';
     let downStatus = this.videoDownStatus[id] || '';
@@ -1341,8 +1350,8 @@ export class HomePage implements OnInit {
     try {
       if (
         id != '' &&
-        video.getBoundingClientRect().top >= - Config.rectTop &&
-        video.getBoundingClientRect().bottom <= Config.rectBottom
+        videoKuang.getBoundingClientRect().top >= - Config.rectTop &&
+        videoKuang.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
@@ -1368,19 +1377,17 @@ export class HomePage implements OnInit {
               let image = imagedata || '';
               if (image != '') {
                 this.isLoadVideoiamge[id] = '13';
-                video.setAttribute('poster', image);
-
+                //video.setAttribute('poster', image);
+                this.posterImgMap[id] = image;
                 //video.
                 this.setFullScreen(id);
                 this.setOverPlay(id, srcId, post);
               } else {
                 this.isLoadVideoiamge[id] = '12';
-                video.style.display = 'none';
                 vgplayer.style.display = 'none';
               }
             })
             .catch(reason => {
-              video.style.display = 'none';
               vgplayer.style.display = 'none';
               this.isLoadVideoiamge[id] = '';
               Logger.error(TAG,
@@ -1395,13 +1402,13 @@ export class HomePage implements OnInit {
           video.getBoundingClientRect().top < - Config.rectTop ||
           video.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadVideoiamge[id] === '13' &&
-          postSrc != 'assets/images/loading.png'
+          postSrc != ''
         ) {
-          video.setAttribute('poster', 'assets/images/loading.png');
           let sourcesrc = source.getAttribute('src') || '';
           if (sourcesrc != '') {
             source.removeAttribute('src');
           }
+          this.posterImgMap[id] = "";
           this.isLoadVideoiamge[id] = '';
         }
       }
@@ -1412,11 +1419,11 @@ export class HomePage implements OnInit {
 
 
   ionScroll() {
-
-    this.native.throttle(this.handleScroll(), 200, this, true);
+    // this.native.throttle(this.handleScroll(), 200, this, true);
+    this.handleScroll()
     switch (this.tabType) {
       case 'feeds':
-        this.setVisibleareaImage();
+         this.setVisibleareaImage();
         break;
       case 'pasar':
         if (this.styleType === 'grid') {
@@ -1467,17 +1474,17 @@ export class HomePage implements OnInit {
     for (let id in videoids) {
       let value = videoids[id] || '';
       if (value === '13') {
-        let videoElement: any = document.getElementById(id + 'video') || '';
-        if (videoElement != '') {
-          videoElement.setAttribute('poster', "assets/images/loading.png"); // empty source
-        }
-        let source: any = document.getElementById(id + 'source') || '';
-        if (source != '') {
-          let sourcesrc = source.getAttribute('src') || '';
-          if (source != '' && sourcesrc != '') {
-            source.removeAttribute('src'); // empty source
-          }
-        }
+        // let videoElement: any = document.getElementById(id + 'video') || '';
+        // if (videoElement != '') {
+        //   videoElement.setAttribute('poster', "assets/images/loading.png"); // empty source
+        // }
+        // let source: any = document.getElementById(id + 'source') || '';
+        // if (source != '') {
+        //   let sourcesrc = source.getAttribute('src') || '';
+        //   if (source != '' && sourcesrc != '') {
+        //     source.removeAttribute('src'); // empty source
+        //   }
+        // }
       }
     }
   }
@@ -1527,10 +1534,10 @@ export class HomePage implements OnInit {
   setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplayhome') || '';
-    let source: any = document.getElementById(id + 'source') || '';
     if (vgoverlayplay != '') {
       vgoverlayplay.onclick = () => {
         this.zone.run(() => {
+         let source: any = document.getElementById(id + 'source') || '';
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc === '') {
             this.getVideo(id, srcId, post);
