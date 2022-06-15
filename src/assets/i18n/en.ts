@@ -514,11 +514,11 @@ export const en = {
     synchronizingOtherData: 'Synchronizing other data',
 
     synchronizingComplete: "The synchronization is complete, Let's go",
-    buttonTitle1: 'Try',
+    buttonTitle1: 'Try again',
     welcomeHive: "Let's go",
     titleFail: 'Failed to log in to hive',
     failDes0: 'Essentials authorization login hive failed',
-    failDes1: 'Please check the mobile network (scientific Internet access is recommended)',
+    failDes1: 'Please check the mobile network',
     authorization: 'Authorization',
     description1: 'Connecting to Hive node...',
     authorized: 'Authorized',

@@ -498,7 +498,7 @@ export const zh = {
     channelName: '频道名称',
   },
   GalleriahivePage: {
-    title: '登录Hive中',
+    title: '登录 Hive 中',
     titleSuccess: '登录 Hive 成功',
     description:
       '正在等待 Essentials 授权登录 Hive， 请稍后....',
@@ -513,11 +513,11 @@ export const zh = {
     synchronizingOtherData: '正在同步其他数据',
 
     synchronizingComplete: '同步完成，开始使用',
-    buttonTitle1: '重试',
+    buttonTitle1: '请重试',
     welcomeHive: '开始使用',
     titleFail: '登陆 Hive 失败',
     failDes0: 'Essentials 授权登录 Hive 失败',
-    failDes1: '请检查手机网络（建议科学上网尝试）',
+    failDes1: '请检查手机网络',
     authorization: '授权',
     description1: '正在连接 Hive 节点...',
     authorized: '已授权',
