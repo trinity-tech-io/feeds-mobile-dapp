@@ -90,6 +90,7 @@ import { HiveVaultHelper } from './services/hivevault_helper.service';
 import { HiveVaultController } from './services/hivevault_controller.service';
 import { FeedsSqliteHelper } from './services/sqlite_helper.service';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
+import { Events } from './services/events.service';
 
 Sentry.init({
   dsn:
@@ -100,23 +101,21 @@ Sentry.init({
 
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
-  constructor(private popup: PopupProvider) { }
+  constructor(
+    private native: NativeService,
+    private events: Events,
+    ) { }
 
-  handleError(error) {
+  async handleError(error) {
     // Only send reports to sentry if we are not debugging.
-    if (document.URL.includes('io.trinity-tech.dapp.feeds')) {
+    if (document.URL.includes('localhost')) {
       // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
       /*const eventId = */ Sentry.captureException(
       error.originalError || error,
     );
       //Sentry.showReportDialog({ eventId });
     }
-
-    this.popup.ionicAlert1(
-      'Error',
-      'Sorry, the application encountered an error. This has been reported to the team.',
-      'Close',
-    );
+   this.native.toastWarn('common.errorDialogDes');
   }
 }
 
@@ -237,7 +236,7 @@ export function TranslateLoaderFactory() {
     FeedsSqliteHelper,
     SQLite,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: ErrorHandler, useClass: ErrorHandler },
+    { provide: ErrorHandler, useClass: SentryErrorHandler },
   ],
 })
 export class AppModule { }

@@ -16,31 +16,6 @@ export class PopupProvider {
     private modalController: ModalController,
   ) {}
 
-  public ionicAlert1(
-    title: string,
-    subTitle?: string,
-    okText?: string,
-  ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.alertCtrl
-        .create({
-          header: this.translate.instant(title),
-          subHeader: subTitle ? this.translate.instant(subTitle) : '',
-          backdropDismiss: false,
-          buttons: [
-            {
-              text: okText
-                ? this.translate.instant(okText)
-                : this.translate.instant('confirm'),
-              handler: () => {
-                resolve(null);
-              },
-            },
-          ],
-        })
-        .then(alert => alert.present());
-    });
-  }
 
   public ionicAlert(
     that: any,
@@ -69,6 +44,9 @@ export class PopupProvider {
     imgageName: string,
     okText?: string,
   ) {
+    // if(this.popover != null ){
+    //       return;
+    // }
     this.popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'ConfirmdialogComponent',

@@ -154,7 +154,7 @@
         </ion-col>
       </ion-row>
      <!--- img  video-->
-      <ion-row *ngIf="post.content.mediaType ===1 || post.content.mediaType ===2">
+       <ion-row *ngIf="post.content.mediaType ===1 || post.content.mediaType ===2">
         <ion-col size="12" style="padding: 0px;">
           <div *ngIf="post.status!=1&&post.content.mediaType ===1" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}rpostimg
           style="width: 100%">
@@ -174,7 +174,7 @@
         </app-roundloading>
         <div class="noLoadImgStyle" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}postImgKuang>
         <img
-          *ngIf = "postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
+          *ngIf = "postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId] !='' && postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId] != undefined"
           id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}postimg
           class="post-img postImgBgColor"
           [src] = "postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
@@ -227,14 +227,13 @@
 
             <div style="width:100%;height:200px;display:inline-block;">
               <vg-player>
-                <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplayhome></vg-overlay-play>
+                <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplayhome style="display:none"></vg-overlay-play>
                 <vg-controls id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgcontrolshome style="display: none;">
                   <img class="vgfullscreen" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgfullscreenhome
                     src="assets/images/fullscreen.svg"/>
                 </vg-controls>
             <div class="noLoadVideo" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}videoKuang>
-            <video #media [vgMedia]="media"
-            *ngIf="posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
+            <video #media [vgMedia]="media" style="display:none;"
             id={{post.destDid}}-{{post.channelId}}-{{post.postId}}video
             [poster] = "posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
             playsinline webkit-playsinline>

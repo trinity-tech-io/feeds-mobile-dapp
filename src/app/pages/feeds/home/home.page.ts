@@ -180,6 +180,7 @@ export class HomePage implements OnInit {
   public postImgMap: any = {};
   public posterImgMap: any = {};
   private channelMap:any = {};
+  private ownerDid: string = "";
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -210,6 +211,7 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
+
   }
 
   async initPostListData(scrollToTop: boolean) {
@@ -330,6 +332,7 @@ export class HomePage implements OnInit {
           this.isPostLoading = true;
           this.refreshPostList(true);
           try {
+            this.ownerDid = (await this.dataHelper.getSigninData()).did;
             let channelList = await this.dataHelper.getSelfChannelListV3() || [];
             this.owerCreatChannelNum = channelList.length;
           } catch (error) {
@@ -640,8 +643,6 @@ export class HomePage implements OnInit {
     this.content.scrollToTop(1).then(() => {
       this.homeTittleBar.style.display = "block";
     });
-
-
   }
 
 
@@ -664,17 +665,6 @@ export class HomePage implements OnInit {
 
   getContentImg(content: any): string {
     return this.feedsServiceApi.parsePostContentImg(content);
-  }
-
-  getChannelOwnerName(destDid, channelId): string {
-
-    const key = UtilService.getKey(destDid, channelId);
-    let channel = this.dataHelper.channelsMapV3[key];
-    if (channel === null) {
-      return '';
-    } else {
-      return UtilService.moreNanme(channel['owner_name'], 40);
-    }
   }
 
   like(destDid: string, channelId: string, postId: string) {
@@ -707,13 +697,7 @@ export class HomePage implements OnInit {
     postId: string,
     event?: any,
   ) {
-    //let post = await this.dataHelper.getPostV3ById(destDid, postId);;
-    // if (!this.feedService.checkPostIsAvalible(post)) return;
 
-    // if (this.isPress) {
-    //   this.isPress = false;
-    //   return;
-    // }
     event = event || '';
     if (event != '') {
       let e = event || window.event; //兼容IE8
@@ -737,13 +721,10 @@ export class HomePage implements OnInit {
   }
 
   async parseAvatar(destDid: string, channelId: string): Promise<string> {
-
-    const key = UtilService.getKey(destDid, channelId);
-    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-
-    if (channel === null) return './assets/icon/reserve.svg';
+    const key = destDid+"-"+channelId;
+    let channel: FeedsData.ChannelV3  = this.channelMap[key] || null;
+    if (channel === null) return '';
     return channel.avatar;
-
   }
 
   handleDisplayTime(createTime: number) {
@@ -774,16 +755,12 @@ export class HomePage implements OnInit {
   }
 
   async menuMore(post: FeedsData.PostV3) {
-
     let destDid = post.destDid;
-    console.log('=========11222222222========')
-    let ownerDid = (await this.dataHelper.getSigninData()).did;
     let channelName =this.hannelNameMap[post.postId] ||  "";
     if(channelName === ''){
         channelName = await this.getChannelName(post.destDid, post.channelId);
     }
-    console.log('=========11222222333333========');
-    if (ownerDid != '' && ownerDid === destDid) {//自己的post
+    if (this.ownerDid != '' && this.ownerDid === destDid) {//自己的post
       this.menuService.showHomeMenu(
         post.destDid,
         post.channelId,
@@ -1318,13 +1295,11 @@ export class HomePage implements OnInit {
             });
         }
       } else {
-        let postImage = document.getElementById(id + 'postimg');
-        let postImageSrc = postImage.getAttribute('src') || '';
+
         if (
-          postImage.getBoundingClientRect().top < - Config.rectTop ||
-          postImage.getBoundingClientRect().bottom > Config.rectBottom &&
-          this.isLoadimage[id] === '13' &&
-          postImageSrc != ''
+          postImgKuang.getBoundingClientRect().top < - Config.rectTop ||
+          postImgKuang.getBoundingClientRect().bottom > Config.rectBottom &&
+          this.isLoadimage[id] === '13'
         ) {
           this.isLoadimage[id] = '';
           this.postImgMap[id] = '';
@@ -1341,7 +1316,7 @@ export class HomePage implements OnInit {
     let vgplayer = document.getElementById(id + 'vgplayer');
 
     let videoKuang: any = document.getElementById(id + 'videoKuang') || '';
-    let video: any = document.getElementById(id + 'video') || '';
+    //let video: any = document.getElementById(id + 'video') || '';
     let source: any = document.getElementById(id + 'source') || '';
     let downStatus = this.videoDownStatus[id] || '';
     if (id != '' && source != '' && downStatus === '') {
@@ -1379,6 +1354,8 @@ export class HomePage implements OnInit {
                 this.isLoadVideoiamge[id] = '13';
                 //video.setAttribute('poster', image);
                 this.posterImgMap[id] = image;
+                let video: any = document.getElementById(id + 'video') || '';
+                video.style.display = "block";
                 //video.
                 this.setFullScreen(id);
                 this.setOverPlay(id, srcId, post);
@@ -1397,17 +1374,22 @@ export class HomePage implements OnInit {
             });
         }
       } else {
-        let postSrc = video.getAttribute('poster') || '';
         if (
-          video.getBoundingClientRect().top < - Config.rectTop ||
-          video.getBoundingClientRect().bottom > Config.rectBottom &&
-          this.isLoadVideoiamge[id] === '13' &&
-          postSrc != ''
+          videoKuang.getBoundingClientRect().top < - Config.rectTop ||
+          videoKuang.getBoundingClientRect().bottom > Config.rectBottom &&
+          this.isLoadVideoiamge[id] === '13'
         ) {
           let sourcesrc = source.getAttribute('src') || '';
           if (sourcesrc != '') {
             source.removeAttribute('src');
           }
+          let video: any = document.getElementById(id + 'video') || '';
+          video.style.display = "none";
+
+          let vgoverlayplay: any =
+          document.getElementById(id + 'vgoverlayplayhome') || '';
+          vgoverlayplay.style.display = "none";
+
           this.posterImgMap[id] = "";
           this.isLoadVideoiamge[id] = '';
         }
@@ -1534,10 +1516,11 @@ export class HomePage implements OnInit {
   setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplayhome') || '';
+      vgoverlayplay.style.display = "block";
     if (vgoverlayplay != '') {
       vgoverlayplay.onclick = () => {
         this.zone.run(() => {
-         let source: any = document.getElementById(id + 'source') || '';
+          let source: any = document.getElementById(id + 'source') || '';
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc === '') {
             this.getVideo(id, srcId, post);
@@ -1899,27 +1882,15 @@ export class HomePage implements OnInit {
     }
 
     this.pauseAllVideo();
-    this.clearData(false);
+    this.clearData(true);
     const channels = await this.dataHelper.getSelfChannelListV3();
     if (channels.length === 0) {
-      this.native.navigateForward(['/createnewfeed'], '').then(() => {
-        let sid = setTimeout(() => {
-          this.clearAssets();
-          clearTimeout(sid);
-          sid = null;
-        }, Config.assetsTimer);
-      });
+      this.native.navigateForward(['/createnewfeed'], '');
       return;
     }
 
     this.dataHelper.setSelsectNftImage("");
-    this.native.navigateForward(['createnewpost'], '').then(() => {
-      let sid = setTimeout(() => {
-        this.clearAssets();
-        clearTimeout(sid);
-        sid = null;
-      }, Config.assetsTimer);
-    });
+    this.native.navigateForward(['createnewpost'], '');
   }
 
   createNft() {

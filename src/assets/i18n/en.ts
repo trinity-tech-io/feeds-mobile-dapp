@@ -202,7 +202,9 @@ export const en = {
     yes: 'Yes',
     editChannel: 'Edit Channel',
     likeError: 'Network exception, like failed.',
-    likeError1: 'Like failed, try again later'
+    likeError1: 'Like failed, try again later',
+    errorDialogTitle: "Error",
+    errorDialogDes:"Sorry, the application encountered an error. This has been reported to the team.",
   },
   app: {
     profileDetails: 'Profile Details',
