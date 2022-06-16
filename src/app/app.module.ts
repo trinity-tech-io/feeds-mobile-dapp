@@ -115,7 +115,7 @@ export class SentryErrorHandler implements ErrorHandler {
     );
       //Sentry.showReportDialog({ eventId });
     }
-   this.native.toastWarn('common.errorDialogDes');
+   this.native.toastWarn('common.errorDes');
   }
 }
 
