@@ -292,8 +292,8 @@ export const zh = {
     emptyDes: '去订阅有趣的频道吧',
   },
   LikesComponent: {
-    allempty: '还没有喜欢',
-    emptyLikeDes: '看看时间线上贴了什么！',
+    allempty: '还没有收藏',
+    emptyLikeDes: '看看时间线上发生了什么！',
     timeline: '时间线',
     exploreFeeds: '探索 Feeds'
   },
@@ -369,7 +369,7 @@ export const zh = {
       '频道名称不能包含除字母A-Z、a-z、数字0-9、连字符“-”和下划线“_”以外的字符。',
     feedMaxNumber: '最多可创建5个频道',
     //feedNum: '您最多可以创建5个频道',
-    des1: '在 探索Feeds 中显示频道，以供用户发现和订阅。',
+    des1: '在探索 Feeds 中显示频道，以供用户发现和订阅。',
     tippingAddress: '打赏地址',
     tippingAddressDes: '输入打赏地址',
 
