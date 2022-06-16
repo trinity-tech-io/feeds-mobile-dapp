@@ -58,6 +58,9 @@ export class MenuService {
     channelName: string,
     postId: string,
   ) {
+    if(this.postDetail != null){
+      return;
+    }
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
       buttons: [
@@ -434,6 +437,9 @@ export class MenuService {
     channelName: string,
     postId: string,
   ) {
+    if(this.postDetail != null){
+      return;
+    }
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
 

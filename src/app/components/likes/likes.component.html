@@ -39,7 +39,8 @@
             </p>
 
       </ion-col>
-      <ion-col size="2"  class="menuMore" (click)="menuMore(post.destDid, post.channelId, post.postId)">
+      <ion-col size="0.5" (click)="menuMore(post.destDid, post.channelId, post.postId)"></ion-col>
+      <ion-col size="1.5"  class="menuMore" (click)="menuMore(post.destDid, post.channelId, post.postId)">
         <img
         *ngIf="post.status != 1"
         [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"

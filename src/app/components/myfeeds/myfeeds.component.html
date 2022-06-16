@@ -29,7 +29,7 @@
         </div>
       </ion-col>
       <ion-col
-        size="7.7"
+        size="7.2"
         class="middle-col"
         (click)="navTo(channel.destDid, channel.channelId)"
       >
@@ -42,6 +42,7 @@
           </p>
         </ion-row>
       </ion-col>
+      <ion-col size="0.5" (click)="menuMore(channel.destDid, channel.channelId, channel.name)"></ion-col>
       <ion-col size="1.5" class="right-col" (click)="menuMore(channel.destDid, channel.channelId, channel.name)">
         <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">
       </ion-col>
