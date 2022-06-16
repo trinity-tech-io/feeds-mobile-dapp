@@ -75,7 +75,7 @@ export const en = {
     httperror: 'Service exception, try again later',
     textcopied: 'Copied to clipboard',
     connectionError1: 'This channel is currently offline. Try again later.',
-    emptyElaAddressDes: 'Not set yet',
+    // emptyElaAddressDes: 'Not set yet',
     qRcodePreview: 'QR code Preview',
     details: 'Details',
     sending: 'sending',
@@ -370,7 +370,7 @@ export const en = {
     nameContainInvalidChars:
       'Channel Name cannot include characters except alphabet letters A-Z, a-z, digits 0-9, hyphen “-”, and underscore “_”.',
     feedMaxNumber: '5 channels may be created at maximum',
-    feedNum: 'You can create up to 5 channels',
+    // feedNum: 'You can create up to 5 channels',
     des1: 'Show channel in the Explore Feeds for users to discover.',
     tippingAddress: 'Tipping Address',
     tippingAddressDes: 'Enter tipping address',
@@ -501,7 +501,7 @@ export const en = {
   },
   GalleriahivePage: {
     title: 'Log in to Hive',
-    titleSuccess: 'logged in to hive',
+    // titleSuccess: 'logged in to Hive',
     description:
       'Waiting for Essentials authorization to log in to Hive Node, please wait....',
     buttonTitle: 'start',
