@@ -203,7 +203,7 @@ export const zh = {
     editChannel: '编辑频道',
     likeError: '网络异常，点赞失败。',
     likeError1: '点赞失败,稍后重试',
-    errorDialogDes:"抱歉，程序出错了，已向开发团队报告。",
+    errorDes:"抱歉，程序出错了，已向开发团队报告。",
   },
   app: {
     profileDetails: '档案详情',
