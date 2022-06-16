@@ -758,8 +758,8 @@ export class MyApp {
     let regist_scripting = false;
     let lasterVersion = '';
     let preVersion = '';
-    const signinData = await this.dataHelper.getSigninData();
-    let userDid = signinData.did;
+    const signinData = await this.dataHelper.getSigninData() || {};
+    let userDid = signinData.did || "";
     if (userDid === '' || userDid === undefined || userDid === null) {
       return
     }
