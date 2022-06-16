@@ -116,7 +116,7 @@ export class SentryErrorHandler implements ErrorHandler {
     );
       //Sentry.showReportDialog({ eventId });
     }
-    let message = this.translate.instant("common.errorDialogDes");
+    let message = this.translate.instant("common.errorDes");
     this.toastCtrl
       .create({
         mode: 'ios',
