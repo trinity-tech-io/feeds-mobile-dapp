@@ -78,7 +78,7 @@ export class PopupProvider {
     }
   }
 
-  ionicConfirm(
+ async ionicConfirm(
     that: any,
     title: string,
     message: string,
@@ -90,7 +90,7 @@ export class PopupProvider {
   ) {
     let ok = okText || 'common.confirm';
     let cancel = cancelText || 'common.cancel';
-    return this.showConfirmdialog(
+    return await this.showConfirmdialog(
       that,
       title,
       message,

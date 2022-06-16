@@ -3,7 +3,7 @@ import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
-import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy, Platform, ToastController } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { File } from '@ionic-native/file/ngx';
@@ -90,7 +90,7 @@ import { HiveVaultHelper } from './services/hivevault_helper.service';
 import { HiveVaultController } from './services/hivevault_controller.service';
 import { FeedsSqliteHelper } from './services/sqlite_helper.service';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
-import { Events } from './services/events.service';
+import { Logger } from './services/logger';
 
 Sentry.init({
   dsn:
@@ -102,11 +102,12 @@ Sentry.init({
 @Injectable()
 export class SentryErrorHandler implements ErrorHandler {
   constructor(
-    private native: NativeService,
-    private events: Events,
+    private toastCtrl: ToastController,
+    private translate: TranslateService,
     ) { }
 
-  async handleError(error) {
+  handleError(error) {
+
     // Only send reports to sentry if we are not debugging.
     if (document.URL.includes('localhost')) {
       // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
@@ -115,7 +116,17 @@ export class SentryErrorHandler implements ErrorHandler {
     );
       //Sentry.showReportDialog({ eventId });
     }
-   this.native.toastWarn('common.errorDes');
+    let message = this.translate.instant("common.errorDialogDes");
+    this.toastCtrl
+      .create({
+        mode: 'ios',
+        color: 'warning',
+        message,
+        duration: 3000,
+        position: 'top',
+      })
+      .then(toast => toast.present());
+   throw error;
   }
 }
 
@@ -236,7 +247,8 @@ export function TranslateLoaderFactory() {
     FeedsSqliteHelper,
     SQLite,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: ErrorHandler, useClass: SentryErrorHandler },
+    { provide: ErrorHandler, useClass: SentryErrorHandler }
+    // { provide: ErrorHandler, useClass: ErrorHandler },
   ],
 })
 export class AppModule { }

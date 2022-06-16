@@ -5,6 +5,7 @@ import { FeedService } from '../../services/FeedService';
 import { UtilService } from '../../services/utilService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import _ from 'lodash';
 @Component({
   selector: 'app-switchfeed',
   templateUrl: './switchfeed.component.html',
@@ -15,6 +16,7 @@ export class SwitchfeedComponent implements OnInit {
   @Output() hideComment = new EventEmitter();
   public currentFeed: any = {};
   public avatarList: any = {};
+  public newChannelList = [];
   constructor(
     public theme: ThemeService,
     public native: NativeService,
@@ -24,6 +26,15 @@ export class SwitchfeedComponent implements OnInit {
 
   ngOnInit() {
     this.currentFeed = this.dataHelper.getCurrentChannel();
+    if(this.channelList.length > 1){
+    let index = _.findIndex(this.channelList,(item: FeedsData.ChannelV3)=>{
+       return item.destDid ===  this.currentFeed.destDid && item.channelId === this.currentFeed.channelId;
+    });
+    if(index > -1 && index != 0){
+        this.channelList.splice(index,1);
+        this.channelList.splice(0,0,this.currentFeed);
+    }
+    }
     this.getAllAvatarList();
   }
 

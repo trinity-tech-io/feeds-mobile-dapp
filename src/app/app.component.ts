@@ -29,7 +29,6 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
-import { result } from 'lodash';
 
 let TAG: string = 'app-component';
 
@@ -478,8 +477,8 @@ export class MyApp {
       });
   }
 
-  showSignoutDialog() {
-    this.popover = this.popupProvider.ionicConfirm(
+  async showSignoutDialog() {
+    this.popover = await this.popupProvider.ionicConfirm(
       this,
       'ConfirmdialogComponent.signoutTitle',
       'ConfirmdialogComponent.signoutMessage',

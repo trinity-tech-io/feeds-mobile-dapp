@@ -281,13 +281,16 @@ export class CreatenewpostPage implements OnInit {
     this.uploadProgress = 0;
     this.totalProgress = 0;
     let path = "";
-
-    const videoData = await this.postHelperService.selectvideo((progress: number) => {
-      this.zone.run(() => {
-        this.totalProgress = progress;
+    try{
+      const videoData = await this.postHelperService.selectvideo((progress: number) => {
+        this.zone.run(() => {
+          this.totalProgress = progress;
+        });
       });
-    });
-    this.handleVideoData(videoData);
+      this.handleVideoData(videoData);
+    }catch(err){
+
+    }
   }
 
   handleVideoData(videoData: FeedsData.videoData) {
