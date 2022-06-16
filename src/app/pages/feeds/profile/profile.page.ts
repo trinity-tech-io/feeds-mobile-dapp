@@ -489,13 +489,6 @@ export class ProfilePage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.refreshPage, () => {
-      this.zone.run(() => {
-        this.initMyFeeds();
-        this.initLike();
-      });
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment: FeedsData.CommentV3) => {
       Logger.log(TAG, "======= Receive getCommentFinish ========");
       let postId = comment.postId;
@@ -628,7 +621,6 @@ export class ProfilePage implements OnInit {
     document.getElementById("feedstab").style.display = "block";
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
     this.events.unsubscribe(FeedsEvent.PublishType.channelsDataUpdate);
-    this.events.unsubscribe(FeedsEvent.PublishType.refreshPage);
 
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);

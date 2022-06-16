@@ -3,12 +3,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Events } from 'src/app/services/events.service';
-import { FeedService, SignInData } from 'src/app/services/FeedService';
+import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { IntentService } from 'src/app/services/IntentService';
-import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
-import { UtilService } from 'src/app/services/utilService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import _ from 'lodash';
 import { Config } from 'src/app/services/config';
@@ -16,6 +14,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { Logger } from 'src/app/services/logger';
 import { PopupProvider } from 'src/app/services/popup';
 import { ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
+import { IonRefresher } from '@ionic/angular';
 const TAG: string = 'SubscriptionsPage';
 @Component({
   selector: 'app-subscriptions',
@@ -24,6 +23,7 @@ const TAG: string = 'SubscriptionsPage';
 })
 export class SubscriptionsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  @ViewChild(IonRefresher, { static: true }) ionRefresher: IonRefresher;
   public followingList: any = [];
   public isShowUnfollow: boolean = false;
   public isShowQrcode: boolean = false;
@@ -37,13 +37,13 @@ export class SubscriptionsPage implements OnInit {
   public channelName: string = null;
   public hideSharMenuComponent: boolean = false;
   private followingIsLoadimage: any = {};
-  private clientHeight: number = 0;
   private followingAvatarImageMap: any = {};
   private downFollowingAvatarMap: any = {};
   public isSearch: string = '';
   public scanServiceStyle = { right: '' };
   public subscriptionV3NumMap: any = {};
   public followAvatarMap: any = {};
+  private searchFollowingList: any = [];
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -52,7 +52,6 @@ export class SubscriptionsPage implements OnInit {
     private zone: NgZone,
     private native: NativeService,
     private intentService: IntentService,
-    private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
     private popupProvider: PopupProvider,
@@ -64,7 +63,6 @@ export class SubscriptionsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.clientHeight = screen.availHeight;
     this.initTitle();
     this.addEvents();
     this.initFollowing();
@@ -72,32 +70,9 @@ export class SubscriptionsPage implements OnInit {
 
   addEvents() {
 
-    this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, () => {
-      this.zone.run(() => {
-        this.initFollowing();
-      });
-    });
-
-    this.events.subscribe(FeedsEvent.PublishType.refreshPage, () => {
-      this.zone.run(() => {
-        this.initFollowing();
-      });
-    });
-
-    this.events.subscribe(
-      FeedsEvent.PublishType.refreshSubscribedChannels,
-      () => {
-        this.zone.run(async () => {
-          this.followingList = await this.initFollowing()
-        });
-      },
-    );
   }
 
   removeEvents() {
-    this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.refreshPage);
-    this.events.unsubscribe(FeedsEvent.PublishType.refreshSubscribedChannels);
   }
 
   initTitle() {
@@ -152,6 +127,7 @@ export class SubscriptionsPage implements OnInit {
   async initFollowing() {
     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
     this.followingList = await this.getFollowedChannelList(subscribedChannel);
+    this.searchFollowingList = _.cloneDeep(this.followingList);
     this.refreshFollowingVisibleareaImage();
   }
 
@@ -209,21 +185,18 @@ export class SubscriptionsPage implements OnInit {
           this.native.toastWarn('common.connectionError');
           return;
         }
-        // if (this.checkServerStatus(destDid) != 0) {
-        //   this.native.toastWarn('common.connectionError1');
-        //   return;
-        // }
+
         await this.native.showLoading("common.waitMoment");
         try {
           this.hiveVaultController.unSubscribeChannel(
             destDid, channelId
           ).then(async (result) => {
-            let channel: FeedsData.SubscribedChannelV3 = {
-              destDid: destDid,
-              channelId: channelId
-            };
-            //await this.hiveVaultController.removePostListByChannel(destDid, channelId);
-            this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+
+            let newfollowingList = _.filter(this.followingList,(item)=>{
+                   return item.destDid != destDid && item.channelId != channelId;
+            });
+            this.followingList = _.cloneDeep(newfollowingList);
+            this.searchFollowingList = _.cloneDeep(newfollowingList);
             this.native.hideLoading();
           }).catch(() => {
             this.native.hideLoading();
@@ -488,16 +461,45 @@ export class SubscriptionsPage implements OnInit {
   }
 
   ionClear() {
-
+    this.isSearch = '';
+    if (this.isSearch == '') {
+      this.ionRefresher.disabled = false;
+      this.followingList = _.cloneDeep(this.searchFollowingList);
+      return;
+    }
+    this.ionRefresher.disabled = true;
+    this.handleSearch();
   }
 
-  getItems(event: string) {
-
+  getItems(events: any) {
+    this.isSearch = events.target.value || '';
+    if (
+      (events && events.keyCode === 13) ||
+      (events.keyCode === 8 && this.isSearch === '')
+    ){
+      if (this.isSearch == '') {
+        this.ionRefresher.disabled = false;
+        this.followingList = _.cloneDeep(this.searchFollowingList);
+        return;
+      }
+      this.ionRefresher.disabled = true;
+      this.handleSearch();
+    }
   }
 
   exploreFeeds() {
     this.feedService.setCurTab("search");
     this.native.setRootRouter(['/tabs/search']);
+  }
+
+  handleSearch() {
+    if (this.isSearch === '') {
+      return;
+    }
+
+    this.followingList = _.filter(this.searchFollowingList,(item)=>{
+           return item.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
+    });
   }
 
 }
