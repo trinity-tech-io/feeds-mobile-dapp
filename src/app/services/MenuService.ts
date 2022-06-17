@@ -61,6 +61,7 @@ export class MenuService {
     if(this.postDetail != null){
       return;
     }
+    this.postDetail = "1111";
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
       buttons: [
@@ -374,6 +375,7 @@ export class MenuService {
     if(this.postDetail != null){
            return;
     }
+    this.postDetail = "1111";
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
       buttons: [
@@ -446,6 +448,7 @@ export class MenuService {
     if(this.postDetail != null){
       return;
     }
+    this.postDetail = "1111";
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
 
