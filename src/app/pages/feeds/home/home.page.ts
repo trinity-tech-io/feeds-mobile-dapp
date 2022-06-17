@@ -1165,8 +1165,7 @@ export class HomePage implements OnInit {
           let img = realImg || '';
           if (img != '') {
             this.isImgLoading[this.imgCurKey] = false;
-            let key = destDid+'-'+channelId+'-'+postId;
-            this.postImgMap[key] = img;
+            this.postImgMap[this.imgCurKey] = img;
             this.viewHelper.openViewer(
               this.titleBar,
               realImg,
@@ -1197,8 +1196,7 @@ export class HomePage implements OnInit {
                 this.isImgLoading[this.imgCurKey] = false;
                 this.isImgPercentageLoading[this.imgCurKey] = false;
                 if (img != '') {
-                  let key = destDid+'-'+channelId+'-'+postId;
-                  this.postImgMap[key] = img;
+                  this.postImgMap[this.imgCurKey] = img;
                   this.viewHelper.openViewer(
                     this.titleBar,
                     realImg,
@@ -1452,23 +1450,19 @@ export class HomePage implements OnInit {
   }
 
   removeAllVideo() {
-    let videoids = this.isLoadVideoiamge;
-    for (let id in videoids) {
-      let value = videoids[id] || '';
-      if (value === '13') {
-        // let videoElement: any = document.getElementById(id + 'video') || '';
-        // if (videoElement != '') {
-        //   videoElement.setAttribute('poster', "assets/images/loading.png"); // empty source
-        // }
-        // let source: any = document.getElementById(id + 'source') || '';
-        // if (source != '') {
-        //   let sourcesrc = source.getAttribute('src') || '';
-        //   if (source != '' && sourcesrc != '') {
-        //     source.removeAttribute('src'); // empty source
-        //   }
-        // }
-      }
-    }
+    // let videoids = this.isLoadVideoiamge;
+    // for (let id in videoids) {
+    //   let value = videoids[id] || '';
+    //   if (value === '13') {
+    //     let source: any = document.getElementById(id + 'source') || '';
+    //     if (source != '') {
+    //       let sourcesrc = source.getAttribute('src') || '';
+    //       if (source != '' && sourcesrc != '') {
+    //         source.setAttribute('src', ""); // empty source
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   removeClass(elem, cls) {
@@ -1501,16 +1495,16 @@ export class HomePage implements OnInit {
   }
 
   removeImages() {
-    let iamgseids = this.isLoadimage;
-    for (let id in iamgseids) {
-      let value = iamgseids[id] || '';
-      if (value === '13') {
-        let imgElement: any = document.getElementById(id + 'post-img') || '';
-        if (imgElement != '') {
-          imgElement.setAttribute('src', 'assets/images/loading.png'); // empty source
-        }
-      }
-    }
+    // let iamgseids = this.isLoadimage;
+    // for (let id in iamgseids) {
+    //   let value = iamgseids[id] || '';
+    //   if (value === '13') {
+    //     let imgElement: any = document.getElementById(id + 'post-img') || '';
+    //     if (imgElement != '') {
+    //       imgElement.setAttribute('src', ''); // empty source
+    //     }
+    //   }
+    // }
   }
 
   setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {

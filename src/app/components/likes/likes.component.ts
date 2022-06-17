@@ -44,6 +44,7 @@ export class LikesComponent implements OnInit {
   @Input() isLoadingLikeMap: any = {};
   @Input() handleDisplayNameMap: any = {};
   @Input() channelAvatarMap:any = {};
+  @Input() postImgMap:any = {};
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();

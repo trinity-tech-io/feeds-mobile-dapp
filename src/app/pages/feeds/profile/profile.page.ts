@@ -186,6 +186,7 @@ export class ProfilePage implements OnInit {
   public subscriptionV3NumMap: any = {};
   public likeAvatarMap: any = {};
   public myFeedAvatarMap: any = {};
+  public postImgMap: any = {};
   constructor(
     public theme: ThemeService,
     private events: Events,
@@ -1149,15 +1150,17 @@ export class ProfilePage implements OnInit {
   }
 
   async handlePostImg(id: string, srcId: string, rowindex: number) {
-    // 13 存在 12不存在
+    // 13 存在 12不存在 postImgMap
     let isload = this.isLoadimage[id] || '';
     let rpostImage = document.getElementById(id + 'likerow');
-    let postImage: any = document.getElementById(id + 'postimglike') || '';
+    //let postImage: any = document.getElementById(id + 'postimglike') || '';
+
+    let postImgLikeKuang: any = document.getElementById(id + 'postImgLikeKuang') || '';
     try {
       if (
         id != '' &&
-        postImage.getBoundingClientRect().top >= - Config.rectTop &&
-        postImage.getBoundingClientRect().bottom <= Config.rectBottom
+        postImgLikeKuang.getBoundingClientRect().top >= - Config.rectTop &&
+        postImgLikeKuang.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -1175,7 +1178,6 @@ export class ProfilePage implements OnInit {
           let type = elements.type || '';
           if (thumbnailKey === '' || imageKey === '') {
             this.isLoadimage[id] = '13';
-            postImage.style.display = 'none';
             return;
           }
           //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
@@ -1189,7 +1191,7 @@ export class ProfilePage implements OnInit {
               let realImage = imagedata || '';
               if (realImage != '') {
                 this.isLoadimage[id] = '13';
-                postImage.setAttribute('src', realImage);
+                this.postImgMap[id] = realImage;
               } else {
                 this.hiveVaultController.
                   getV3Data(destDid, thumbnailKey, fileThumbnaiName, type)
@@ -1197,7 +1199,7 @@ export class ProfilePage implements OnInit {
                     let thumbImage = thumbImagedata || '';
                     if (thumbImage != '') {
                       this.isLoadimage[id] = '13';
-                      postImage.setAttribute('src', thumbImagedata);
+                      this.postImgMap[id] = thumbImage;
                     } else {
                       this.isLoadimage[id] = '12';
                       rpostImage.style.display = 'none';
@@ -1216,15 +1218,13 @@ export class ProfilePage implements OnInit {
             });
         }
       } else {
-        let postImageSrc = postImage.getAttribute('src') || '';
         if (
-          postImage.getBoundingClientRect().top < - Config.rectTop ||
-          postImage.getBoundingClientRect().bottom > Config.rectBottom &&
-          this.isLoadimage[id] === '13' &&
-          postImageSrc != ''
+          postImgLikeKuang.getBoundingClientRect().top < - Config.rectTop ||
+          postImgLikeKuang.getBoundingClientRect().bottom > Config.rectBottom &&
+          this.isLoadimage[id] === '13'
         ) {
           this.isLoadimage[id] = '';
-          postImage.setAttribute('src', 'assets/images/loading.png');
+          this.postImgMap[id] = '';
         }
       }
     } catch (error) {
@@ -1499,16 +1499,16 @@ export class ProfilePage implements OnInit {
   }
 
   removeImages() {
-    let iamgseids = this.isLoadimage;
-    for (let id in iamgseids) {
-      let value = iamgseids[id] || '';
-      if (value === '13') {
-        let imgElement: any = document.getElementById(id + 'postimglike') || '';
-        if (imgElement != '') {
-          imgElement.setAttribute('src', 'assets/images/loading.png');
-        }
-      }
-    }
+    // let iamgseids = this.isLoadimage;
+    // for (let id in iamgseids) {
+    //   let value = iamgseids[id] || '';
+    //   if (value === '13') {
+    //     let imgElement: any = document.getElementById(id + 'postimglike') || '';
+    //     if (imgElement != '') {
+    //       //imgElement.setAttribute('src', 'assets/images/loading.png');
+    //     }
+    //   }
+    // }
   }
 
   setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {
@@ -1671,6 +1671,7 @@ export class ProfilePage implements OnInit {
           let img = realImg || '';
           if (img != '') {
             this.isImgLoading[this.imgCurKey] = false;
+            this.postImgMap[this.imgCurKey] = img;
             this.viewHelper.openViewer(
               this.titleBar,
               realImg,
@@ -1698,6 +1699,7 @@ export class ProfilePage implements OnInit {
                 this.isImgLoading[this.imgCurKey] = false;
                 this.imgDownStatus[this.imgDownStatusKey] = '';
                 if (img != '') {
+                  this.postImgMap[this.imgCurKey] = img;
                   this.viewHelper.openViewer(
                     this.titleBar,
                     realImg,
@@ -1826,7 +1828,7 @@ export class ProfilePage implements OnInit {
               destDid: destDid,
               channelId: channelId
             };
-            await this.hiveVaultController.removePostListByChannel(destDid, channelId);
+            //await this.hiveVaultController.removePostListByChannel(destDid, channelId);
             this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
             this.native.hideLoading();
           }).catch(() => {

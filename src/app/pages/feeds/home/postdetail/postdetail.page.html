@@ -27,7 +27,8 @@
           </ion-label>
            <!-- <p>@...</p> -->
         </ion-col>
-        <ion-col class="right-col" size="2" (click)="menuMore()">
+        <ion-col size="0.5" (click)="menuMore()"></ion-col>
+        <ion-col class="right-col" size="1.5" (click)="menuMore()">
           <img *ngIf="postStatus!=1"
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
           >
@@ -41,7 +42,7 @@
           <h2 *ngIf="postStatus===1">
             <pre>{{'common.deleted' | translate}}</pre>
           </h2>
-          <h2 *ngIf="postStatus!=1" (press)="pressContent()" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
+          <h2 *ngIf="postStatus!=1" (press)="pressContent(postContent)" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
             <pre [innerHTML]="postContent | html"></pre>
           </h2>
         </ion-col>

@@ -92,7 +92,10 @@
           <p *ngIf="channelOwner ==='' ">@......</p>
           <p *ngIf="channelOwner !='' ">@{{channelOwner}}</p>
         </ion-col>
-        <ion-col size="2" class="menuMore"  (click)="menuMore(post)">
+        <ion-col size="0.5" (click)="menuMore(post)">
+
+        </ion-col>
+        <ion-col size="1.5" class="menuMore"  (click)="menuMore(post)">
           <img
           *ngIf="post.status != 1"
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
@@ -131,9 +134,7 @@
       <ion-row *ngIf="post.content.mediaType ===1 || post.content.mediaType ===2">
         <ion-col size="12" style="padding: 0px;">
           <div *ngIf="post.status != 1&&post.content.mediaType ===1"  id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}channelrow style="width: 100%">
-            <span class="lefttopostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
               <div style="position:relative;">
-
                 <app-percentageloading
                 *ngIf="isImgPercentageLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
                 [ngStyle]="imgloadingStyleObj"
@@ -147,19 +148,18 @@
                 [ngStyle]="imgloadingStyleObj"
                >
                </app-roundloading>
-
+               <div class="noLoadImgStyle" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}postimgChannelKuang>
                 <img
+                  *ngIf = "postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId] !='' && postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId] != undefined"
                   id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}postimgchannel
-                  class="post-img"
-                  src="assets/images/loading.png"
+                  class="post-img postImgBgColor"
+                  [src] = "postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
                   style="width: 100%;"
                   (click)="showBigImage(post.destDid,post.channelId,post.postId)">
               </div>
-                  <span class="topostdetailimg" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></span>
-          </div>
-
+              </div>
+           </div>
           <!--video-->
-
           <div *ngIf="post.status!=1&&post.content.mediaType ===2" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgplayerchannel style="width:100%;position:relative;">
             <app-roundloading
             *ngIf="isVideoLoading[post.destDid+'-'+post.channelId+'-'+post.postId]"
@@ -177,16 +177,17 @@
 
               <div style="width: 100%;display:inline-block;height:200px;">
                <vg-player>
-                 <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplaychannel></vg-overlay-play>
+                 <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplaychannel style="display:none"></vg-overlay-play>
                  <vg-controls id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgcontrolschannel style="display: none;">
                      <img class="vgfullscreen" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgfullscreenchannel src="assets/images/fullscreen.svg"/>
                  </vg-controls>
-
-             <video #media [vgMedia]="media" id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}videochannel
-             poster="assets/images/loading.png"
+            <div class="noLoadVideo" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}videoChannelKuang>
+             <video #media [vgMedia]="media" style="display:none;" id ={{post.destDid}}-{{post.channelId}}-{{post.postId}}videochannel
+             [poster] = "posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
              playsinline webkit-playsinline>
              <source  type="video/mp4" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}sourcechannel>
              </video>
+            </div>
              </vg-player>
              </div>
           </div>

@@ -129,6 +129,8 @@ export class ChannelsPage implements OnInit {
   private commentNumMap: any = {};
   private isLoadingLikeMap: any = {};
   public lightThemeType: number = 3;
+  public postImgMap: any = {};
+  public posterImgMap: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -249,7 +251,25 @@ export class ChannelsPage implements OnInit {
     }
     let tmpPostList = await this.filterDeletedPostList(posts);
     this.totalData = this.sortPostList(tmpPostList);
-
+    if(this.startIndex != 0){
+      if (this.totalData.length === this.postList.length) {
+        this.postList = this.totalData;
+      } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+        this.postList = this.totalData.slice(
+          0,
+          this.startIndex * this.pageNumber,
+        );
+      } else {
+        this.postList = this.totalData;
+      }
+      this.isLoadimage = {};
+      this.isLoadVideoiamge = {};
+      this.isInitLikeNum = {};
+      this.isInitLikeStatus = {};
+      this.isInitComment = {};
+      this.refreshImage();
+      return;
+    }
     this.startIndex = 0;
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -742,12 +762,13 @@ export class ChannelsPage implements OnInit {
     // 13 存在 12不存在
     let isload = this.isLoadimage[id] || '';
     let rpostImage = document.getElementById(id + 'channelrow');
-    let postImage: any = document.getElementById(id + 'postimgchannel') || '';
+    let postimgChannelKuang = document.getElementById(id + 'postimgChannelKuang');
+    //let postImage: any = document.getElementById(id + 'postimgchannel') || '';
     try {
       if (
         id != '' &&
-        postImage.getBoundingClientRect().top >= - Config.rectTop &&
-        postImage.getBoundingClientRect().bottom <= Config.rectBottom
+        postimgChannelKuang.getBoundingClientRect().top >= - Config.rectTop &&
+        postimgChannelKuang.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
@@ -786,7 +807,7 @@ export class ChannelsPage implements OnInit {
               let realImage = imagedata || '';
               if (realImage != '') {
                 this.isLoadimage[id] = '13';
-                postImage.setAttribute('src', realImage);
+                this.postImgMap[id] = realImage;
               } else {
                 this.hiveVaultController.
                   getV3Data(destDid, thumbnailKey, fileThumbnaiName, type).
@@ -794,7 +815,7 @@ export class ChannelsPage implements OnInit {
                     let thumbImage = thumbImagedata || '';
                     if (thumbImage != '') {
                       this.isLoadimage[id] = '13';
-                      postImage.setAttribute('src', thumbImagedata);
+                      this.postImgMap[id] = thumbImage ;
                     } else {
                       this.isLoadimage[id] = '12';
                       rpostImage.style.display = 'none';
@@ -813,15 +834,13 @@ export class ChannelsPage implements OnInit {
             });
         }
       } else {
-        let postImageSrc = postImage.getAttribute('src') || '';
         if (
-          postImage.getBoundingClientRect().top < - Config.rectTop ||
-          postImage.getBoundingClientRect().bottom > Config.rectBottom &&
-          this.isLoadimage[id] === '13' &&
-          postImageSrc != ''
+          postimgChannelKuang.getBoundingClientRect().top < - Config.rectTop ||
+          postimgChannelKuang.getBoundingClientRect().bottom > Config.rectBottom &&
+          this.isLoadimage[id] === '13'
         ) {
           this.isLoadimage[id] = '';
-          postImage.setAttribute('src', 'assets/images/loading.png');
+          this.postImgMap[id] = '';
         }
       }
     } catch (error) {
@@ -835,7 +854,7 @@ export class ChannelsPage implements OnInit {
   async hanldVideo(id: string, srcId: string, rowindex: number) {
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
     let vgplayer = document.getElementById(id + 'vgplayerchannel');
-    let video: any = document.getElementById(id + 'videochannel');
+    let videoKuang: any = document.getElementById(id + 'videoKuang') || '';
     let source: any = document.getElementById(id + 'sourcechannel');
     let downStatus = this.videoDownStatus[id] || '';
     if (id != '' && source != '' && downStatus === '') {
@@ -844,8 +863,8 @@ export class ChannelsPage implements OnInit {
     try {
       if (
         id != '' &&
-        video.getBoundingClientRect().top >= - Config.rectTop &&
-        video.getBoundingClientRect().bottom <= Config.rectBottom
+        videoKuang.getBoundingClientRect().top >= - Config.rectTop &&
+        videoKuang.getBoundingClientRect().bottom <= Config.rectBottom
       ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
@@ -871,12 +890,13 @@ export class ChannelsPage implements OnInit {
               let image = imagedata || '';
               if (image != '') {
                 this.isLoadVideoiamge[id] = '13';
-                video.setAttribute('poster', image);
+                this.posterImgMap[id] = image;
+                let video: any = document.getElementById(id + 'videochannel') || '';
+                video.style.display = "block";
                 this.setFullScreen(id);
                 this.setOverPlay(id, srcId, post);
               } else {
                 this.isLoadVideoiamge[id] = '12';
-                video.style.display = 'none';
                 vgplayer.style.display = 'none';
               }
             })
@@ -889,18 +909,24 @@ export class ChannelsPage implements OnInit {
             });
         }
       } else {
-        let postSrc = video.getAttribute('poster') || '';
         if (
-          video.getBoundingClientRect().top < - Config.rectTop ||
-          video.getBoundingClientRect().bottom > Config.rectBottom &&
-          this.isLoadVideoiamge[id] === '13' &&
-          postSrc != 'assets/images/loading.png'
+          videoKuang.getBoundingClientRect().top < - Config.rectTop ||
+          videoKuang.getBoundingClientRect().bottom > Config.rectBottom &&
+          this.isLoadVideoiamge[id] === '13'
         ) {
-          video.setAttribute('poster', 'assets/images/loading.png');
           let sourcesrc = source.getAttribute('src') || '';
           if (sourcesrc != '') {
             source.removeAttribute('src');
           }
+
+          let video: any = document.getElementById(id + 'videochannel');
+          video.style.display = "none";
+
+          let vgoverlayplay: any =
+          document.getElementById(id + 'vgoverlayplaychannel') || '';
+          vgoverlayplay.style.display = "none";
+
+          this.posterImgMap[id] = "";
           this.isLoadVideoiamge[id] = '';
         }
       }
@@ -944,6 +970,7 @@ export class ChannelsPage implements OnInit {
           let img = realImg || '';
           if (img != '') {
             this.isImgLoading[this.imgCurKey] = false;
+            this.postImgMap[this.imgCurKey] = img;
             this.viewHelper.openViewer(
               this.titleBar,
               realImg,
@@ -969,6 +996,7 @@ export class ChannelsPage implements OnInit {
                 this.imgDownStatus[this.imgDownStatusKey] = '';
                 this.isImgPercentageLoading[this.imgCurKey] = false;
                 if (img != '') {
+                  this.postImgMap[this.imgCurKey] = img;
                   this.viewHelper.openViewer(
                     this.titleBar,
                     realImg,
@@ -1017,15 +1045,14 @@ export class ChannelsPage implements OnInit {
     for (let id in videoids) {
       let value = videoids[id] || '';
       if (value === '13') {
-        let videoElement: any =
-          document.getElementById(id + 'videochannel') || '';
-        if (videoElement != '') {
-          videoElement.setAttribute('poster', "./assets/images/loading.png"); // empty source
-        }
+        let videochannel: any = document.getElementById(id + 'videochannel') || '';
+        videochannel.style.display="none";
+        let vgoverlayplaychannel: any = document.getElementById(id + 'vgoverlayplaychannel') || '';
+        vgoverlayplaychannel.style.display="none";
         let source: any = document.getElementById(id + 'sourcechannel') || '';
         let sourcesrc = source.getAttribute('src') || '';
         if (source != '' && sourcesrc != '') {
-          source.removeAttribute('src'); // empty source
+          source.setAttribute('src', ""); // empty source
         }
       }
     }
@@ -1053,27 +1080,28 @@ export class ChannelsPage implements OnInit {
   }
 
   removeImages() {
-    let iamgseids = this.isLoadimage;
-    for (let id in iamgseids) {
-      let value = iamgseids[id] || '';
-      if (value === '13') {
-        let imgElement: any =
-          document.getElementById(id + 'postimgchannel') || '';
-        if (imgElement != '') {
-          imgElement.setAttribute('src', 'assets/images/loading.png')
-        }
-      }
-    }
+    // let iamgseids = this.isLoadimage;
+    // for (let id in iamgseids) {
+    //   let value = iamgseids[id] || '';
+    //   if (value === '13') {
+    //     let imgElement: any =
+    //       document.getElementById(id + 'postimgchannel') || '';
+    //     if (imgElement != '') {
+    //         imgElement.setAttribute('src', '')
+    //     }
+    //   }
+    // }
   }
 
   setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplaychannel') || '';
-    let source: any = document.getElementById(id + 'sourcechannel') || '';
+      vgoverlayplay.style.display = "block";
 
     if (vgoverlayplay != '') {
       vgoverlayplay.onclick = () => {
         this.zone.run(() => {
+          let source: any = document.getElementById(id + 'sourcechannel') || '';
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc === '') {
             this.getVideo(id, srcId, post);
