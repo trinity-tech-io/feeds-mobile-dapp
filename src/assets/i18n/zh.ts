@@ -34,7 +34,7 @@ export const zh = {
     save: '保存',
     channel: '频道',
     image: '图片',
-    nochanges: '没有修改内容',
+    nochanges: '未做任何更改',
     editpost: '编辑微说',
     removepost: '删除微说',
     editcomment: '编辑微评',
@@ -169,7 +169,7 @@ export const zh = {
     orderCantFind: '在Pasar上找不到该收藏品',
     orderHasBeenSold: '该收藏品已从 Pasar 售出',
     orderHasBeenCancel: '该收藏品已在 Pasar 下架',
-    orderInvalid: '该收藏品在 Pasar 中无效',
+    orderInvalid: '该收藏品状态无效',
     internalError: '内部异常',
     transferCollectible: '转让收藏品',
     walletAddress: '钱包地址',
@@ -185,14 +185,14 @@ export const zh = {
     dataStorage: '数据缓存',
     cleanPasarData: '清除 Pasar 缓存数据',
     cleanPasarDataTip: '清除 Pasar 缓存数据后，需要重启应用',
-    unpublished: "未公开",
-    published: "已公开",
+    unpublished: '未公开',
+    published: '已公开',
     queryTransactionResult: '已发起交易，正在查询结果',
-    sorry: "抱歉",
-    auction: "此订单为拍卖订单，暂不支持购买",
-    editedContentDes: "确认取消吗？取消将会丢弃您已编辑的内容！",
-    editedContentDes1: "确定",
-    editedContentDes2: "取消",
+    sorry: '抱歉',
+    auction: '此订单为拍卖订单，暂不支持购买',
+    editedContentDes: '确认取消吗？取消将会丢弃您已编辑的内容！',
+    editedContentDes1: '确定',
+    editedContentDes2: '取消',
     migrateFeedsServiceData: '迁移 Feeds Service 数据到 Hive Vault',
     subscribing: '正在订阅...',
     subscribeSuccess: '订阅成功',
@@ -203,7 +203,7 @@ export const zh = {
     editChannel: '编辑频道',
     likeError: '网络异常，点赞失败',
     likeError1: '点赞失败，请稍后重试',
-    errorDes:"抱歉，程序出错了，已向开发团队报告。",
+    errorDes: '抱歉，程序出错了，已向开发团队报告。',
   },
   app: {
     profileDetails: '档案详情',
@@ -336,7 +336,7 @@ export const zh = {
     subscribeChannel: '订阅此频道可查看帖子',
     viewall: '查看全部',
     allempty1: '频道未订阅',
-    emptyDes1: "订阅以查看此频道的内容"
+    emptyDes1: '订阅以查看此频道的内容'
   },
   NotificationPage: {
     allempty: '这里什么都找不到',
@@ -578,15 +578,15 @@ export const zh = {
     SESSION_ADD_STREAM_ERROR: 'Session: 添加Stream出错',
     SESSION_REQUEST_ERROR: 'Session: 请求出错',
     SESSION_START_ERROR: 'Session: 启动出错',
-    HIVE_ERROR_507: '对不起，Hive存储空间不足',
-    HIVE_ERROR_undefined: '网络错误,请重试',
+    HIVE_ERROR_507: '抱歉，可用的Hive存储空间不足',
+    HIVE_ERROR_undefined: '网络错误，请重试',
   },
   EidtchannelPage: {
     title: '编辑频道信息',
     des: '提示框',
-    des1: "此频道已经在探索Feeds公开，需要先从探索Feeds下架，才可以修改。",
-    des2: "此频道已经是收藏品且在探索Feeds公开，需要从探索Feeds下架，销毁收藏品才可以修改。",
-    des3: "此频道已经是收藏品，需要销毁收藏品后才可以修改。",
+    des1: '此频道已经在探索Feeds公开，需要先从探索Feeds下架，才可以修改。',
+    des2: '此频道已经是收藏品且在探索Feeds公开，需要从探索Feeds下架，销毁收藏品才可以修改。',
+    des3: '此频道已经是收藏品，需要销毁收藏品后才可以修改。',
   },
   EditPostPage: {
     title: '编辑微说',
@@ -612,8 +612,8 @@ export const zh = {
     light: '浅色',
     'elastos-api-provider': 'API 提供商',
     'elastos-api-provider-des': 'Elastos & IPFS API 提供商',
-    'elastos-io-des': "Gelaxy",
-    'trinity-tech-cn-des': "Trinity Tech",
+    'elastos-io-des': 'Gelaxy',
+    'trinity-tech-cn-des': 'Trinity Tech',
     'ipfs-provider': 'IPFS API 提供商',
     'ipfs0-provider-des': '主网关',
     'ipfs1-provider-des': '辅助网关',
@@ -669,10 +669,10 @@ export const zh = {
     des: '在探索Feeds中显示',
     des1: '发布收藏品到频道',
     des2: '创建频道收藏品',
-    des3: "取消公开频道收藏品",
-    des4: "是否把频道收藏品从探索Feeds广场下架",
-    des5: "确认",
-    des6: "取消"
+    des3: '取消公开频道收藏品',
+    des4: '是否把频道收藏品从探索Feeds广场下架',
+    des5: '确认',
+    des6: '取消'
   }, /***NFT*/
   MintnftPage: {
     title: '创建收藏品',
@@ -854,20 +854,20 @@ export const zh = {
     title: '已验证原创者'
   },
   AssistpasarPage: {
-    title: "Assist Pasar API",
-    assistProviderDes: "用于读取数据的辅助 Assist Pasar 服务",
+    title: 'Assist Pasar API',
+    assistProviderDes: '用于读取数据的辅助 Assist Pasar 服务',
   },
   ProfilenftimagePage: {
-    title: "选择收藏品"
+    title: '选择收藏品'
   },
   ChannelcollectionsPage: {
-    title: "频道收藏品",
-    openCollections: "公开收藏品",
-    cancelPublicCollections: "取消公开收藏品"
+    title: '频道收藏品',
+    openCollections: '公开收藏品',
+    cancelPublicCollections: '取消公开收藏品'
   },
   GalleriachannelPage: {
-    title: "频道收藏品",
-    publicGallericaFailed: "公开到探索频道失败",
+    title: '频道收藏品',
+    publicGallericaFailed: '公开到探索频道失败',
     mintingData: '正在创建频道收藏品',
     settingApproval: '等待授权委托收藏品到 Galleria 合约处理',
     creatingOrder: '正在创建出售订单',
@@ -879,17 +879,17 @@ export const zh = {
     mintSuccessDesc1: '恭喜您，创建频道收藏品成功，建议删除临时中心化广场上的频道展示',
   },
   ScanPage: {
-    title: "扫描器",
+    title: '扫描器',
     noQrErr: '在所选图片中未检测到二维码。 请再试一次。',
     scanErr: '扫描您选择的照片时出了点问题。 请再试一次。',
     galleryErr: '访问图库时出了点问题。 请再试一次。',
   },
   ApppreferencesPage: {
-    title: "App首选项",
+    title: 'App首选项',
   },
   buyStorageSpaceDialog: {
-    title: "存储不足",
-    noBuy: "不买",
-    buy: "买"
+    title: '存储不足',
+    noBuy: '不买',
+    buy: '买'
   }
 };

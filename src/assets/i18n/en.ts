@@ -21,8 +21,8 @@ export const en = {
     loggingIn: 'Signing in',
     des2: 'Are you sure you want to return to the main page？',
     connectionError: 'Network error, please try again later',
-    success: 'Success',
-    fail: 'Unsuccessful',
+    success: 'Transfer successful',
+    fail: 'Transfer unsuccessful',
     unknownError: 'Unknown error',
     loadingText: 'Loading additional data…',
     noElaAddress: 'Channel owner has not set up an ELA address yet',
@@ -34,7 +34,7 @@ export const en = {
     save: 'Save',
     channel: 'Channel',
     image: 'Image',
-    nochanges: 'No changes',
+    nochanges: 'No changes made',
     editpost: 'Edit Post',
     removepost: 'Delete Post',
     editcomment: 'Edit Comment',
@@ -79,7 +79,7 @@ export const en = {
     qRcodePreview: 'QR code Preview',
     details: 'Details',
     sending: 'sending',
-    sendFail: 'Send fail',
+    sendFail: 'Send failed',
     retry: 'Retry',
     sendingTip: 'This post is being sent, try again later',
     currentPostError: 'Current post is in error',
@@ -169,7 +169,7 @@ export const en = {
     orderCantFind: 'Collectibles cannot be found on Pasar',
     orderHasBeenSold: 'The collectibles has been sold from Pasar',
     orderHasBeenCancel: 'The collectibles has been off the Pasar',
-    orderInvalid: 'Invalid collectibles status invalid',
+    orderInvalid: 'Collectibles status invalid',
     internalError: 'Internal error',
     transferCollectible: 'Transfer Collectible',
     walletAddress: 'Wallet Address',
@@ -185,14 +185,14 @@ export const en = {
     dataStorage: 'Data storage',
     cleanPasarData: 'Clear Pasar data',
     cleanPasarDataTip: 'Need to restart app after clearing Pasar data',
-    unpublished: "Unpublished",
-    published: "Published",
+    unpublished: 'Unpublished',
+    published: 'Published',
     queryTransactionResult: 'A transaction has been initiated and the result is being queried',
-    sorry: "Sorry",
-    auction: "This order is an auction order. Purchase is not supported temporarily",
-    editedContentDes: "Are you sure to cancel? Canceling will discard your edited content!",
-    editedContentDes1: "Confirm",
-    editedContentDes2: "Cancel",
+    sorry: 'Sorry',
+    auction: 'This order is an auction order. Purchase is not supported temporarily',
+    editedContentDes: 'Are you sure to cancel? Canceling will discard your edited content!',
+    editedContentDes1: 'Confirm',
+    editedContentDes2: 'Cancel',
     migrateFeedsServiceData: 'Migrate Feeds Service data to the Hive Vault',
     Subscribing: 'Subscribing...',
     subscribeSuccess: 'Subscription successful',
@@ -203,7 +203,7 @@ export const en = {
     editChannel: 'Edit Channel',
     likeError: 'Like failed due to network exception',
     likeError1: 'Like failed, try again later',
-    errorDes:"Sorry, the application encountered an error. This has been reported to the team.",
+    errorDes: 'Sorry, the application encountered an error. This has been reported to the team.',
   },
   app: {
     profileDetails: 'Profile Details',
@@ -338,7 +338,7 @@ export const en = {
     subscribeChannel: 'Subscribe to view posts from this channel',
     viewall: 'View all',
     allempty1: 'Channel not subscribed',
-    emptyDes1: "Subscribe to view contents from this channel"
+    emptyDes1: 'Subscribe to view contents from this channel'
   },
   NotificationPage: {
     allempty: 'Nothing to find here',
@@ -585,9 +585,9 @@ export const en = {
   EidtchannelPage: {
     title: 'Edit Channel Info',
     des: 'Prompt Box',
-    des1: "This channel is already public on the Explore Feeds and needs to unpublic from the Explore Feeds before it can be edited.",
-    des2: "This channel is already a collection and is public on the  Explore Feeds. It needs to unpublic from the  Explore Feeds and the collection can only be edited after deleting the collection.",
-    des3: "This channel is already a collection, you need to delete the collection before it can be edited.",
+    des1: 'This channel is already public on the Explore Feeds and needs to unpublic from the Explore Feeds before it can be edited.',
+    des2: 'This channel is already a collection and is public on the  Explore Feeds. It needs to unpublic from the  Explore Feeds and the collection can only be edited after deleting the collection.',
+    des3: 'This channel is already a collection, you need to delete the collection before it can be edited.',
   },
   EditPostPage: {
     title: 'Edit Post',
@@ -613,8 +613,8 @@ export const en = {
     light: 'Light',
     'elastos-api-provider': 'API Provider',
     'elastos-api-provider-des': 'Elastos & IPFS API provider',
-    'elastos-io-des': "Gelaxy",
-    'trinity-tech-cn-des': "Trinity Tech",
+    'elastos-io-des': 'Gelaxy',
+    'trinity-tech-cn-des': 'Trinity Tech',
     'ipfs-provider': 'IPFS API Provider',
     'ipfs0-provider-des': 'Primary gateway',
     'ipfs1-provider-des': 'Secondary gateway',
@@ -851,20 +851,20 @@ export const en = {
     title: 'Verified Creators'
   },
   AssistpasarPage: {
-    title: "Assist Pasar API",
-    assistProviderDes: "Secondary assist pasar service for reading data"
+    title: 'Assist Pasar API',
+    assistProviderDes: 'Secondary assist pasar service for reading data'
   },
   ProfilenftimagePage: {
-    title: "Select Collectibles"
+    title: 'Select Collectibles'
   },
   ChannelcollectionsPage: {
-    title: "Channel Collections",
-    openCollections: "Open Collections",
-    cancelPublicCollections: "Cancel public collections"
+    title: 'Channel Collections',
+    openCollections: 'Open Collections',
+    cancelPublicCollections: 'Cancel public collections'
   },
   GalleriachannelPage: {
-    title: "Channel Collections",
-    publicGallericaFailed: "Failed to publish to Explore Feeds",
+    title: 'Channel Collections',
+    publicGallericaFailed: 'Failed to publish to Explore Feeds',
     mintingData: 'Channel Collectible is being created',
     settingApproval: 'Waiting for authorization to delegate Collectible to Galleria',
     creatingOrder: 'Sale order for the Collectible is now being created',
@@ -876,17 +876,17 @@ export const en = {
     mintSuccessDesc1: 'Congratulations, you channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
   },
   ScanPage: {
-    title: "Scanner",
+    title: 'Scanner',
     noQrErr: 'No QR code was detected in the selected picture. Please try again.',
     scanErr: 'Something went wrong while scanning your selected picture. Please try again.',
     galleryErr: 'Something went wrong while accessing your photo library. Please try again.',
   },
   ApppreferencesPage: {
-    title: " App Preferences",
+    title: 'App Preferences',
   },
   buyStorageSpaceDialog: {
-    title: "Insufficient Storage",
+    title: 'Insufficient Storage',
     noBuy: "Don't buy",
-    buy: "Buy"
+    buy: 'Buy'
   }
 };
