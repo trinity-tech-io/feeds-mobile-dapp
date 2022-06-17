@@ -96,9 +96,9 @@ export class SubscriptionsPage implements OnInit {
     this.curItem = item;
     this.isShowTitle = true;
     let ownerDid = (await this.dataHelper.getSigninData()).did;
-    if(ownerDid === item.destDid){
+    if (ownerDid === item.destDid) {
       this.isShowInfo = true;
-    }else{
+    } else {
       this.isShowInfo = false;
     }
     this.isShowQrcode = true;
@@ -171,7 +171,7 @@ export class SubscriptionsPage implements OnInit {
     this.shareChannelId = channelId;
     let name = channel['channelName'] || '';
     let ownerDid = (await this.dataHelper.getSigninData()).did;
-    return "feeds://v3/" + destDid  + "/" + channelId + '/' + encodeURIComponent(name);
+    return "feeds://v3/" + destDid + "/" + channelId + '/' + encodeURIComponent(name);
   }
 
   async hideShareMenu(objParm: any) {
@@ -215,8 +215,7 @@ export class SubscriptionsPage implements OnInit {
         await this.native.showLoading("common.generateSharingLink");
         try {
           let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-          let ownerDid = (await this.dataHelper.getSigninData()).did;
-          const sharedLink = await this.intentService.createShareLink(destDid, channelId, "0", ownerDid, channel);
+          const sharedLink = await this.intentService.createChannelShareLink(channel);
           this.intentService.share(this.intentService.createShareChannelTitle(destDid, channelId, channel), sharedLink);
         } catch (error) {
         }

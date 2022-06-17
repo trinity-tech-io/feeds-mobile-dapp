@@ -346,7 +346,7 @@ export class MenuService {
 
   async hideActionSheet() {
     if (this.postDetail != null) {
-        await this.postDetail.dismiss();
+      await this.postDetail.dismiss();
     }
   }
 
@@ -558,8 +558,6 @@ export class MenuService {
       case 'sharepost':
 
         let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
-        let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
-        let ownerDid = (await this.dataHelper.getSigninData()).did;
         let postContent = '';
         if (post != null) {
           postContent = post.content.content || "";
@@ -572,7 +570,7 @@ export class MenuService {
         }
         await this.native.showLoading("common.generateSharingLink");
         try {
-          const sharedLink = await this.intentService.createShareLink(destDid, channelId, postId, ownerDid, channel);
+          const sharedLink = await this.intentService.createPostShareLink(post);
           this.intentService
             .share(this.intentService.createSharePostTitle(destDid, channelId, postId, postContent), sharedLink);
         } catch (error) {

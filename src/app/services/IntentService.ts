@@ -5,38 +5,30 @@ import { NativeService } from '../services/NativeService';
 import { LanguageService } from 'src/app/services/language.service';
 import { ThemeService } from './../services/theme.service';
 import { DataHelper } from './../services/DataHelper';
-import { CarrierService } from './CarrierService';
-import { Events } from 'src/app/services/events.service';
 import { TranslateService } from '@ngx-translate/core';
 import { UtilService } from 'src/app/services/utilService';
 import { HttpService } from './HttpService';
-import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
-import { IPFSService } from 'src/app/services/ipfs.service';
 
 let TAG: string = 'IntentService';
 declare let intentManager: IntentPlugin.IntentManager;
 
 @Injectable()
 export class IntentService {
+  private static BASEURL_CHANNEL: string = 'https://feeds.trinity-feeds.app/feeds/v3/channel';
+  private static BASEURL_POST: string = 'https://feeds.trinity-feeds.app/feeds/v3/post';
+  private static BASEURL_PASAR: string = 'https://feeds.trinity-feeds.app/pasar';
+  private static BASEURL_NAV: string = 'https://feeds.trinity-feeds.app/nav';
+  private static BASEURL_SHORTEN: string = 'https://s.trinity-feeds.app/api/v2/action/shorten?key=9fa8ef7f86a28829f53375abcb0af5';
   constructor(
     private zone: NgZone,
     private native: NativeService,
     private languageService: LanguageService,
     public theme: ThemeService,
     private dataHelper: DataHelper,
-    private carrierService: CarrierService,
-    private events: Events,
     private translate: TranslateService,
     private httpService: HttpService,
-    private nftContractControllerService: NFTContractControllerService,
     private nftContractHelperService: NFTContractHelperService) { }
-
-  // scanQRCode(): Promise<string> {
-  //   return this.scanService.scanBarcode();
-  // }
-
-
 
   share(title: string, content: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
@@ -306,13 +298,16 @@ export class IntentService {
         });
         break;
 
-      case 'https://feeds.trinity-feeds.app/feeds':
-        this.handleFeedsIntent(params);
+      case IntentService.BASEURL_CHANNEL:
+        this.handleChannelIntent(params);
         break;
-      case 'https://feeds.trinity-feeds.app/pasar':
+      case IntentService.BASEURL_POST:
+        this.handlePostIntent(params);
+        break;
+      case IntentService.BASEURL_PASAR:
         this.handlePasarIntent(params);
         break;
-      case 'https://feeds.trinity-feeds.app/nav':
+      case IntentService.BASEURL_NAV:
         // https://feeds.trinity-feeds.app/nav/?page=home
         break;
     }
@@ -349,24 +344,56 @@ export class IntentService {
     this.languageService.setCurLang(currentLang);
   }
 
-  async createShareLink(destDid: string, channelId: string, postId: string, ownerDid: string, channel: FeedsData.ChannelV3): Promise<string> {
+  async createChannelShareLink(channel: FeedsData.ChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        if (!channel) {
+          reject('Share link channel params is null');
+          return;
+        }
 
+        const destDid: string = channel.destDid || '';
+        const channelId: string = channel.channelId || '';
+        const channelName: string = channel.name || '';
+        const channelDesc: string = channel.intro || '';
 
-        const channelName = channel.name;
-        const channelDesc = channel.intro;
-
-        let url = "https://feeds.trinity-feeds.app/feeds/"
-          + "&channelId=" + channelId
-          + "&channelDesc=" + encodeURIComponent(channelDesc)
-          + "&destDid=" + encodeURIComponent(destDid)
+        let url = IntentService.BASEURL_CHANNEL
+          + "/?targetDid=" + encodeURIComponent(destDid)
+          + "&channelId=" + encodeURIComponent(channelId)
           + "&channelName=" + encodeURIComponent(channelName)
-          + "&ownerDid=" + encodeURIComponent(ownerDid)
-          + "&postId=" + postId
+          + "&channelDesc=" + encodeURIComponent(channelDesc);
 
-        // let encodeURL = encodeURI(url);
-        Logger.log(TAG, "Shared link url is " + url);
+        Logger.log(TAG, "Shared channel link url is " + url);
+
+        const finalURL = await this.shortenURL(url);
+        resolve(finalURL);
+        return finalURL;
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  createPostShareLink(post: FeedsData.PostV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!post || !post.content) {
+          reject('Share link post params is null');
+          return;
+        }
+
+        const destDid: string = post.destDid;
+        const channelId: string = post.channelId;
+        const postId: string = post.postId;
+        const contentText: string = post.content.content;
+
+        let url = IntentService.BASEURL_POST
+          + "/?targetDid=" + encodeURIComponent(destDid)
+          + "&channelId=" + encodeURIComponent(channelId)
+          + "&postId=" + encodeURIComponent(postId)
+          + "&contentText=" + encodeURIComponent(contentText);
+
+        Logger.log(TAG, "Shared post link url is " + url);
 
         const finalURL = await this.shortenURL(url);
         resolve(finalURL);
@@ -434,7 +461,7 @@ export class IntentService {
   async shortenURL(url: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const baseURL = "https://s.trinity-feeds.app/api/v2/action/shorten?key=9fa8ef7f86a28829f53375abcb0af5"
+        const baseURL = IntentService.BASEURL_SHORTEN;
         let body = {
           "url": url
         }
@@ -450,60 +477,21 @@ export class IntentService {
     });
   }
 
-  async handleFeedsIntent(params: any) {
-    const address = params.address;
-    const channelId = params.channelId;
-    const postId = params.postId || 0;
+  handleChannelIntent(params: any) {
+    const targetDid = decodeURIComponent(params.targetDid);
+    const channelId = decodeURIComponent(params.channelId);
+    this.native.getNavCtrl().navigateForward(['/channels', targetDid, channelId]);
+  }
 
-    const serverNodeId = await this.carrierService.getIdFromAddress(address, () => { });
-    const serverList = this.dataHelper.getServerList();
-    const isContain = serverList.some(server => server.nodeId == serverNodeId);
-
-    const nodeChannelId = this.dataHelper.getKey(serverNodeId, channelId, "0", 0,);
-    const channel = this.dataHelper.getChannel(nodeChannelId);
-
-    if (!isContain) {
-      //https://feeds.trinity-feeds.app/feeds/?address=Km3wsaD9zMGnYW7otewZhZKpgXVnYZGms2ihiGrpsUhASNMx1ZKj&channelId=1&postId=1&channelName=xb2&ownerName=Wangran&channelDesc=xb2 live&serverDid=did:elastos:iZ6NDBjZQG8XM8d1jENWQ8HW1ojfdHPqW8&ownerDid=did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D
-      const ownerName = decodeURIComponent(params.ownerName);
-      const channelName = decodeURIComponent(params.channelName);
-      const channelDesc = decodeURIComponent(params.channelDesc);
-      const ownerDid = decodeURIComponent(params.ownerDid);
-      const serverDid = decodeURIComponent(params.serverDid);
-      const feeds = {
-        description: channelDesc,
-        did: serverDid,
-        feedsAvatar: "assets/images/profile-2.svg",
-        feedsUrlHash: "",
-        followers: 0,
-        name: channelName,
-        nodeId: serverNodeId,
-        ownerDid: ownerDid,
-        ownerName: ownerName,
-        url: 'feeds://' + serverDid + "/" + address + "/" + channelId
-      }
-      this.native.go('discoverfeedinfo', {
-        params: feeds,
-      });
-      return;
-    }
-
-    const isSubscribed = channel.isSubscribed || false;
-
-    if (isSubscribed && parseInt(postId) != 0) {
-      this.native.getNavCtrl().navigateForward(['/postdetail', serverNodeId, channelId, postId]);
-      return;
-    }
-
-    if (parseInt(channelId) != 0) {
-      this.native.getNavCtrl().navigateForward(['/channels', serverNodeId, channelId]);
-      return;
-    }
-
-    this.native.setRootRouter(['/tabs/home']);
+  handlePostIntent(params: any) {
+    const targetDid = decodeURIComponent(params.targetDid);
+    const channelId = decodeURIComponent(params.channelId);
+    const postId = decodeURIComponent(params.postId);
+    this.native.getNavCtrl().navigateForward(['/postdetail', targetDid, channelId, postId]);
   }
 
   async handlePasarIntent(params: any) {
-    Logger.log("https://feeds.trinity-feeds.app/pasar, params", params);
+    Logger.log(TAG, "handlePasarIntent, params", params);
     const orderId = params.orderId;
     let nftOrderId = orderId || '';
     if (nftOrderId == '') {

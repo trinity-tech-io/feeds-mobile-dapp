@@ -1852,8 +1852,7 @@ export class ProfilePage implements OnInit {
           await this.native.showLoading("common.generateSharingLink");
           try {
             let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(myDestDid, myChannelId) || null;
-            let ownerDid = (await this.dataHelper.getSigninData()).did;
-            const sharedLink = await this.intentService.createShareLink(myDestDid, myChannelId, myPostId, ownerDid, channel);
+            const sharedLink = await this.intentService.createChannelShareLink(channel);
             const title = this.intentService.createShareChannelTitle(myDestDid, myChannelId, channel) || "";
             this.intentService.share(title, sharedLink);
           } catch (error) {
@@ -1880,7 +1879,7 @@ export class ProfilePage implements OnInit {
           await this.native.showLoading("common.generateSharingLink");
           try {
             //share post
-            const sharedLink = await this.intentService.createShareLink(destDid, channelId, postId, ownerDid, channel);
+            const sharedLink = await this.intentService.createPostShareLink(post);
             this.intentService.share(this.intentService.createSharePostTitle(destDid, channelId, postId, postContent), sharedLink);
           } catch (error) {
           }
