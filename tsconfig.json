@@ -24,7 +24,6 @@
       "@elastosfoundation/elastos-cordova-plugin-intent",
       "@elastosfoundation/elastos-cordova-plugin-carrier",
       "@elastosfoundation/elastos-connectivity-sdk-cordova",
-      "@elastosfoundation/elastos-cordova-plugin-hive",
       "cordova-plugin-file",
       "cordova-plugin-camera",
       "cordova-plugin-device",
