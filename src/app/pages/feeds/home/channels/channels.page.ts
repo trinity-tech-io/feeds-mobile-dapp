@@ -131,6 +131,7 @@ export class ChannelsPage implements OnInit {
   public lightThemeType: number = 3;
   public postImgMap: any = {};
   public posterImgMap: any = {};
+  private postMap = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -455,6 +456,7 @@ export class ChannelsPage implements OnInit {
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
+    this.postMap = {};
     this.native.hideLoading();
     this.hideFullScreen();
     this.native.handleTabsEvents();
@@ -628,6 +630,7 @@ export class ChannelsPage implements OnInit {
         await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
         await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
       }
+      this.postMap = {};
       this.init();
       event.target.complete();
     } catch (error) {
@@ -752,7 +755,7 @@ export class ChannelsPage implements OnInit {
         }
         if (mediaType === '2') {
           //video
-          this.hanldVideo(id, srcId, postgridindex);
+          this.handleVideo(id, srcId, postgridindex);
         }
       }
     }
@@ -782,7 +785,13 @@ export class ChannelsPage implements OnInit {
             return destDid == post.destDid && postId == post.postId;
           })
 
-          const post: FeedsData.PostV3 = posts[0];
+          const post: FeedsData.PostV3 = posts[0] || null;
+
+          if(post === null){
+            this.isLoadimage[id] = '13';
+            rpostImage.style.display = 'none';
+            return;
+          }
           // let post = await this.dataHelper.getPostV3ById(destDid, postId);
           let mediaDatas = post.content.mediaData;
           const elements = mediaDatas[0];
@@ -851,7 +860,7 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  async hanldVideo(id: string, srcId: string, rowindex: number) {
+  async handleVideo(id: string, srcId: string, rowindex: number) {
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
     let vgplayer = document.getElementById(id + 'vgplayerchannel');
     let videoKuang: any = document.getElementById(id + 'videoKuang') || '';
@@ -872,13 +881,24 @@ export class ChannelsPage implements OnInit {
           let destDid = arr[0];
           let postId: any = arr[2];
 
-
-          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let post = this.postMap[postId] || null;
+          if(post === null){
+              post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+              this.postMap[postId] = post;
+           }
+          if(post === null){
+            this.isLoadVideoiamge[id] = '13';
+            return;
+          }
           let mediaDatas = post.content.mediaData;
           const elements = mediaDatas[0];
 
           //缩略图
-          let videoThumbnailKey = elements.thumbnailPath;
+          let videoThumbnailKey = elements.thumbnailPath || '';
+          if(videoThumbnailKey === ''){
+            this.isLoadVideoiamge[id] = '13';
+            return;
+          }
           //原图
           //let imageKey = elements.originMediaPath;
           let type = elements.type;

@@ -209,7 +209,7 @@
         </div>
         </div>
 
-        <div *ngIf="post.status!=1&&post.content.mediaType ===2"
+       <div *ngIf="post.status!=1&&post.content.mediaType ===2"
           id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgplayer style="width: 100%;position:relative;">
 
           <app-roundloading
@@ -227,21 +227,21 @@
           </app-percentageloading>
 
             <div style="width:100%;height:200px;display:inline-block;">
+              <div class="noLoadVideo" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}videoKuang>
               <vg-player>
-                <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplayhome style="display:none"></vg-overlay-play>
+                <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplayhome style="display: none;"></vg-overlay-play>
                 <vg-controls id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgcontrolshome style="display: none;">
                   <img class="vgfullscreen" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgfullscreenhome
                     src="assets/images/fullscreen.svg"/>
                 </vg-controls>
-            <div class="noLoadVideo" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}videoKuang>
-            <video #media [vgMedia]="media" style="display:none;"
+            <video #media [vgMedia]="media" style="display: none;"
             id={{post.destDid}}-{{post.channelId}}-{{post.postId}}video
-            [poster] = "posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
+            [poster]="posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
             playsinline webkit-playsinline>
             <source type="video/mp4" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}source>
             </video>
-            </div>
             </vg-player>
+          </div>
            </div>
           </div>
         </ion-col>

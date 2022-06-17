@@ -187,6 +187,8 @@ export class ProfilePage implements OnInit {
   public likeAvatarMap: any = {};
   public myFeedAvatarMap: any = {};
   public postImgMap: any = {};
+  private postMap = {};
+
   constructor(
     public theme: ThemeService,
     private events: Events,
@@ -639,6 +641,7 @@ export class ProfilePage implements OnInit {
 
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
     this.events.unsubscribe(FeedsEvent.PublishType.clickDisconnectWallet);
+    this.postImgMap = {};
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();
@@ -726,6 +729,7 @@ export class ProfilePage implements OnInit {
           await this.hiveVaultController.syncAllLikeData();
           this.startIndex = 0;
           this.handleDisplayNameMap = {};
+          this.postImgMap = {};
           this.initLike();
           event.target.complete();
         } catch (error) {
@@ -1143,7 +1147,7 @@ export class ProfilePage implements OnInit {
         }
         if (mediaType === '2') {
           //video
-          this.hanldVideo(id, srcId, postgridindex);
+          this.handleVideo(id, srcId, postgridindex);
         }
       }
     }
@@ -1168,7 +1172,15 @@ export class ProfilePage implements OnInit {
           let destDid = arr[0];
           let postId: any = arr[2];
 
-          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let post = this.postMap[postId] || null;
+          if(post === null){
+              post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+              this.postMap[postId] = post;
+           }
+          if(post === null){
+             this.isLoadimage[id] = '13';
+             return;
+          }
           let mediaDatas = post.content.mediaData;
           const elements = mediaDatas[0];
           //缩略图
@@ -1347,7 +1359,7 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  async hanldVideo(id: string, srcId: string, rowindex: number) {
+  async handleVideo(id: string, srcId: string, rowindex: number) {
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
     let vgplayer = document.getElementById(id + 'vgplayerlike');
     let video: any = document.getElementById(id + 'videolike');
@@ -1367,12 +1379,24 @@ export class ProfilePage implements OnInit {
           let arr = srcId.split('-');
           let destDid = arr[0];
           let postId: any = arr[2];
-          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let post = this.postMap[postId] || null;
+          if(post === null){
+              post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+              this.postMap[postId] = post;
+           }
+          if(post === null){
+            this.isLoadVideoiamge[id] = '13';
+            return;
+          }
           let mediaDatas = post.content.mediaData;
           const elements = mediaDatas[0];
 
           //缩略图
-          let videoThumbnailKey = elements.thumbnailPath;
+          let videoThumbnailKey = elements.thumbnailPath || '';
+          if(videoThumbnailKey === ''){
+            this.isLoadVideoiamge[id] = '13';
+            return;
+          }
           //原图
           //let imageKey = elements.originMediaPath;
           let type = elements.type;

@@ -181,6 +181,7 @@ export class HomePage implements OnInit {
   public posterImgMap: any = {};
   private channelMap:any = {};
   private ownerDid: string = "";
+  private postMap: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -634,6 +635,8 @@ export class HomePage implements OnInit {
     if (isClearAssets) {
       this.clearAssets();
     }
+    this.postMap = {};
+    this.channelMap ={};
   }
 
   ionViewDidLeave() {
@@ -854,6 +857,8 @@ export class HomePage implements OnInit {
           await this.hiveVaultController.syncAllComments();
           await this.hiveVaultController.syncAllLikeData();
           this.handleDisplayNameMap = {};
+          this.postMap = {};
+          this.channelMap ={};
           await this.initPostListData(true);
           if (event != null) event.target.complete();
           this.refreshEvent = null;
@@ -1239,8 +1244,15 @@ export class HomePage implements OnInit {
 
           let destDid: string = arr[0];
           let postId: string = arr[2];
-
-          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let post = this.postMap[postId] || null;
+          if(post === null){
+              post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+              this.postMap[postId] = post;
+           }
+          if(post === null){
+            this.isLoadimage[id] = 13;
+            return;
+          }
           let mediaDatas = post.content.mediaData;
           const elements = mediaDatas[0];
           //缩略图
@@ -1333,12 +1345,25 @@ export class HomePage implements OnInit {
           let destDid = arr[0];
           let postId: string = arr[2];
 
-          let post = await this.dataHelper.getPostV3ById(destDid, postId);
+          let post = this.postMap[postId] || null;
+
+          if(post === null){
+              post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+              this.postMap[postId] = post;
+           }
+
+           if(post === null){
+            this.isLoadVideoiamge[id] = '13';
+          }
           let mediaDatas = post.content.mediaData;
           const elements = mediaDatas[0];
 
           //缩略图
-          let videoThumbnailKey = elements.thumbnailPath;
+          let videoThumbnailKey = elements.thumbnailPath || '';
+          if (videoThumbnailKey === '') {
+            this.isLoadimage[id] = '13';
+            return;
+          }
           //原图
           //let imageKey = elements.originMediaPath;
           let type = elements.type;
