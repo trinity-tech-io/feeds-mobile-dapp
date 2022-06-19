@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgZone, ViewChild } from '@angular/core';
 import { NativeService } from '../services/NativeService';
 import { FeedService, SignInData } from '../services/FeedService';
-import { CarrierService } from '../services/CarrierService';
 import { PopupProvider } from 'src/app/services/popup';
 import { LanguageService } from 'src/app/services/language.service';
-import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { UtilService } from './utilService';
 import { Events } from 'src/app/services/events.service';
@@ -19,10 +16,8 @@ export class AppService {
   public popover: any = null;
   constructor(
     private router: Router,
-    private zone: NgZone,
     private native: NativeService,
     private feedService: FeedService,
-    private carrierService: CarrierService,
     public popupProvider: PopupProvider,
     private languageService: LanguageService, // private titleBarService: TitleBarService
     private dataHelper: DataHelper,

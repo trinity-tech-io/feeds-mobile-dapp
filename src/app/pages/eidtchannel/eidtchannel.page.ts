@@ -15,7 +15,6 @@ import _ from 'lodash';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
-import { CarrierService } from 'src/app/services/CarrierService';
 import { PopupProvider } from 'src/app/services/popup';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
@@ -62,7 +61,6 @@ export class EidtchannelPage implements OnInit {
     private dataHelper: DataHelper,
     private nftContractControllerService: NFTContractControllerService,
     private pasarAssistService: PasarAssistService,
-    private carrierService: CarrierService,
     private popupProvider: PopupProvider,
     private feedsServiceApi: FeedsServiceApi,
     private hiveVaultController: HiveVaultController
@@ -381,12 +379,6 @@ export class EidtchannelPage implements OnInit {
     channelCollections.entry = item.entry;
     channelCollections.ownerDid = item.tokenDid.did;
     channelCollections.ownerName = (await this.dataHelper.getSigninData()).name;
-    let url: string = channelCollections.entry.url;
-    let urlArr = url.replace("feeds://", "").split("/");
-    channelCollections.did = urlArr[0];
-    let carrierAddress = urlArr[1];
-    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress, () => { });
-    channelCollections.nodeId = nodeId;
     return channelCollections;
   }
 

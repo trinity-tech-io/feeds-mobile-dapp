@@ -31,7 +31,6 @@ import { en } from './../assets/i18n/en';
 import { NgxIonicImageViewerModule } from 'ngx-ionic-image-viewer';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { CarrierService } from './services/CarrierService';
 import { NativeService } from './services/NativeService';
 import { FeedService } from './services/FeedService';
 import { StorageService } from './services/StorageService';
@@ -194,7 +193,6 @@ export function TranslateLoaderFactory() {
     Platform,
     Clipboard,
     Network,
-    CarrierService,
     NativeService,
     SessionService,
     FeedService,

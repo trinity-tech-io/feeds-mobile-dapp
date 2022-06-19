@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { CarrierService } from 'src/app/services/CarrierService';
+// import { CarrierService } from 'src/app/services/CarrierService';
 import { Events } from 'src/app/services/events.service';
 import { JsonRPCService } from 'src/app/services/JsonRPCService';
 import { StorageService } from 'src/app/services/StorageService';
@@ -116,7 +116,7 @@ export class FeedService {
     private platform: Platform,
     private events: Events,
     private jsonRPCService: JsonRPCService,
-    private carrierService: CarrierService,
+    // private carrierService: CarrierService,
     private native: NativeService,
     private translate: TranslateService,
     private storeService: StorageService,
@@ -418,21 +418,21 @@ export class FeedService {
   restoreRelation() {
     this.storeService.get('SelfAddress').then(address => {
       let realAddress = address;
-      let newAddress = this.carrierService.getAddress();
+      // let newAddress = this.carrierService.getAddress();
 
-      if (realAddress != newAddress) {
-        this.storeService.set('SelfAddress', newAddress);
-        let serverList = this.getServerList();
-        for (let index = 0; index < serverList.length; index++) {
-          let carrierAddress = serverList[index].carrierAddress || '';
-          this.carrierService.addFriend(
-            carrierAddress,
-            'hi',
-            () => { },
-            err => { },
-          );
-        }
-      }
+      // if (realAddress != newAddress) {
+      //   this.storeService.set('SelfAddress', newAddress);
+      //   let serverList = this.getServerList();
+      //   for (let index = 0; index < serverList.length; index++) {
+      //     let carrierAddress = serverList[index].carrierAddress || '';
+      //     this.carrierService.addFriend(
+      //       carrierAddress,
+      //       'hi',
+      //       () => { },
+      //       err => { },
+      //     );
+      //   }
+      // }
     });
   }
 
@@ -960,7 +960,7 @@ export class FeedService {
 
   loginRequest(nodeId: string) {
     this.nonce = this.generateNonce();
-    this.realm = this.carrierService.getAddress();
+    // this.realm = this.carrierService.getAddress();
     let payload = {
       application: 'feeds',
       version: '0.1',
@@ -3099,18 +3099,18 @@ export class FeedService {
       return;
     }
 
-    this.carrierService.getIdFromAddress(carrierAddress, nodeId => {
-      let server = this.generateServer(
-        name,
-        owner,
-        introduction,
-        did,
-        carrierAddress,
-        serverUrl,
-        nodeId,
-      );
-      this.resolveServer(server, null);
-    });
+    // this.carrierService.getIdFromAddress(carrierAddress, nodeId => {
+    //   let server = this.generateServer(
+    //     name,
+    //     owner,
+    //     introduction,
+    //     did,
+    //     carrierAddress,
+    //     serverUrl,
+    //     nodeId,
+    //   );
+    //   this.resolveServer(server, null);
+    // });
   }
 
   generateServer(
@@ -4343,38 +4343,38 @@ export class FeedService {
         this.native.toast_trans('AddServerPage.serverAlreadyAdded');
         onSuccess();
       } else {
-        this.carrierService.isValidAddress(
-          carrierAddress,
-          isValid => {
-            if (!isValid) {
-              this.native.toast_trans('common.addressinvalid');
-              onError('Address invalid');
-              return;
-            }
+        // this.carrierService.isValidAddress(
+        //   carrierAddress,
+        //   isValid => {
+        //     if (!isValid) {
+        //       this.native.toast_trans('common.addressinvalid');
+        //       onError('Address invalid');
+        //       return;
+        //     }
 
-            this.carrierService.addFriend(
-              carrierAddress,
-              friendRequest,
-              () => {
-                this.saveServer(
-                  name,
-                  owner,
-                  introduction,
-                  did,
-                  carrierAddress,
-                  feedsUrl,
-                  null,
-                );
-              },
-              err => {
-                this.alertError('Add server error: ' + err);
-              },
-            );
-          },
-          (error: string) => {
-            this.alertError('Address error: ' + error);
-          },
-        );
+        //     // this.carrierService.addFriend(
+        //     //   carrierAddress,
+        //     //   friendRequest,
+        //     //   () => {
+        //     //     this.saveServer(
+        //     //       name,
+        //     //       owner,
+        //     //       introduction,
+        //     //       did,
+        //     //       carrierAddress,
+        //     //       feedsUrl,
+        //     //       null,
+        //     //     );
+        //     //   },
+        //     //   err => {
+        //     //     this.alertError('Add server error: ' + err);
+        //     //   },
+        //     // );
+        //   },
+        //   (error: string) => {
+        //     this.alertError('Address error: ' + error);
+        //   },
+        // );
       }
     });
   }
@@ -4540,34 +4540,34 @@ export class FeedService {
     onSuccess: () => void,
     onError: (error) => void,
   ) {
-    this.carrierService.isFriends(nodeId, isFriend => {
-      if (isFriend) {
-        this.carrierService.removeFriend(
-          nodeId,
-          () => {
-            onSuccess();
-          },
-          error => {
-            onError(error);
-          },
-        );
-      } else {
-        onSuccess();
-      }
-    });
+    // this.carrierService.isFriends(nodeId, isFriend => {
+    //   if (isFriend) {
+    //     this.carrierService.removeFriend(
+    //       nodeId,
+    //       () => {
+    //         onSuccess();
+    //       },
+    //       error => {
+    //         onError(error);
+    //       },
+    //     );
+    //   } else {
+    //     onSuccess();
+    //   }
+    // });
   }
 
   removeAllServerFriends() {
     let list = this.dataHelper.getServerList();
     for (let index = 0; index < list.length; index++) {
       const server = list[index];
-      this.carrierService.removeFriend(
-        server.nodeId,
-        () => { },
-        err => {
-          Logger.error(TAG, 'Remove Friend error, error msg is', err);
-        },
-      );
+      // this.carrierService.removeFriend(
+      //   server.nodeId,
+      //   () => { },
+      //   err => {
+      //     Logger.error(TAG, 'Remove Friend error, error msg is', err);
+      //   },
+      // );
     }
   }
 
@@ -4692,14 +4692,14 @@ export class FeedService {
     carrierAddress: string,
     onSuccess: (isFriends: boolean) => void,
   ) {
-    this.carrierService.getIdFromAddress(carrierAddress, userId => {
-      if (this.dataHelper.isContainsServer(userId)) {
-        onSuccess(true);
-        return;
-      }
-      onSuccess(false);
-      return;
-    });
+    // this.carrierService.getIdFromAddress(carrierAddress, userId => {
+    //   if (this.dataHelper.isContainsServer(userId)) {
+    //     onSuccess(true);
+    //     return;
+    //   }
+    //   onSuccess(false);
+    //   return;
+    // });
   }
 
   async pay(
@@ -4908,7 +4908,7 @@ export class FeedService {
   }
 
   destroyCarrier() {
-    this.carrierService.destroyCarrier();
+    //this.carrierService.destroyCarrier();
   }
 
   resetConnectionStatus() {
@@ -5062,11 +5062,11 @@ export class FeedService {
       case 6:
       case 7:
       case -1:
-        this.sessionService.createSession(
-          nodeId,
-          memo,
-          (session, stream) => { },
-        );
+        // this.sessionService.createSession(
+        //   nodeId,
+        //   memo,
+        //   (session, stream) => { },
+        // );
         return false;
     }
   }

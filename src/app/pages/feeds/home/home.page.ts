@@ -40,7 +40,6 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { CommonPageService } from 'src/app/services/common.page.service';
 import { HiveVaultHelper } from 'src/app/services/hivevault_helper.service';
-import { config } from 'process';
 import { Config } from 'src/app/services/config';
 let TAG: string = 'Feeds-home';
 @Component({
@@ -959,6 +958,7 @@ export class HomePage implements OnInit {
     let postgridList = document.getElementsByClassName('post-grid');
     let postgridNum = document.getElementsByClassName('post-grid').length;
     for (let postgridindex = 0; postgridindex < postgridNum; postgridindex++) {
+     let sid = setTimeout(()=>{
       let srcId = postgridList[postgridindex].getAttribute('id') || '';
       if (srcId != '') {
         let arr = srcId.split('-');
@@ -994,6 +994,8 @@ export class HomePage implements OnInit {
           this.clientHeight, this.hiveVaultController,
           this.isInitComment, this.commentNumMap);
       }
+      clearTimeout(sid);
+      },0);
     }
   }
 
@@ -1424,11 +1426,10 @@ export class HomePage implements OnInit {
 
 
   ionScroll() {
-    // this.native.throttle(this.handleScroll(), 200, this, true);
-    this.handleScroll()
+    this.native.throttle(this.handleScroll(), 200, this, true);
     switch (this.tabType) {
       case 'feeds':
-         this.setVisibleareaImage();
+         this.native.throttle(this.setVisibleareaImage(),10, this, true);
         break;
       case 'pasar':
         if (this.styleType === 'grid') {
@@ -1443,11 +1444,7 @@ export class HomePage implements OnInit {
   }
 
   refreshImage() {
-    let sid = setTimeout(() => {
-      this.setVisibleareaImage();
-      clearTimeout(sid);
-      sid = null;
-    }, 0);
+    this.native.throttle(this.setVisibleareaImage(),10, this, true);
   }
 
   pauseVideo(id: string) {

@@ -19,7 +19,6 @@ import _ from 'lodash';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
-import { CarrierService } from 'src/app/services/CarrierService';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
@@ -103,7 +102,6 @@ export class SearchPage implements OnInit {
     private dataHelper: DataHelper,
     private nftContractHelperService: NFTContractHelperService,
     private ipfsService: IPFSService,
-    private carrierService: CarrierService,
     private fileHelperService: FileHelperService,
     private pasarAssistService: PasarAssistService,
     private feedsServiceApi: FeedsServiceApi,
@@ -942,9 +940,6 @@ export class SearchPage implements OnInit {
       let url: string = channelCollections.entry.url;
       let urlArr = url.replace("feeds://", "").split("/");
       channelCollections.did = urlArr[0];
-      let carrierAddress = urlArr[1];
-      let nodeId = await this.carrierService.getIdFromAddress(carrierAddress, () => { });
-      channelCollections.nodeId = nodeId;
       this.channelCollectionList.push(channelCollections);
     }
     this.dataHelper.setPublishedActivePanelList(this.channelCollectionList);

@@ -78,7 +78,7 @@ export class SelectNetPage implements OnInit {
       this.popover = null;
 
       that.feedService.resetConnectionStatus();
-      that.feedService.destroyCarrier();
+      //that.feedService.destroyCarrier();
       that.globalService.restartApp();
     }
   }

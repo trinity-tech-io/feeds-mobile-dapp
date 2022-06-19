@@ -18,7 +18,6 @@ import { NFTContractControllerService } from 'src/app/services/nftcontract_contr
 import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
-import { CarrierService } from 'src/app/services/CarrierService';
 import { MenuService } from 'src/app/services/MenuService';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
@@ -69,7 +68,6 @@ export class FeedspreferencesPage implements OnInit {
     private dataHelper: DataHelper,
     private nftContractHelperService: NFTContractHelperService,
     private ipfsService: IPFSService,
-    private carrierService: CarrierService,
     private menuService: MenuService,
     private pasarAssistService: PasarAssistService,
     private feedsServiceApi: FeedsServiceApi,
@@ -427,9 +425,6 @@ export class FeedspreferencesPage implements OnInit {
     let url: string = tokenJson["entry"]["url"];
     let urlArr = url.replace("feeds://", "").split("/");
     channelCollections.did = urlArr[0];
-    let carrierAddress = urlArr[1];
-    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress, () => { });
-    channelCollections.nodeId = nodeId;
     return channelCollections;
   }
 
@@ -503,9 +498,6 @@ export class FeedspreferencesPage implements OnInit {
     let url: string = channelCollections.entry.url;
     let urlArr = url.replace("feeds://", "").split("/");
     channelCollections.did = urlArr[0];
-    let carrierAddress = urlArr[1];
-    let nodeId = await this.carrierService.getIdFromAddress(carrierAddress, () => { });
-    channelCollections.nodeId = nodeId;
     return channelCollections;
   }
 

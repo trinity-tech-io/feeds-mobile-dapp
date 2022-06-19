@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Events } from 'src/app/services/events.service';
-import { CarrierService } from 'src/app/services/CarrierService';
+// import { CarrierService } from 'src/app/services/CarrierService';
 import { StorageService } from 'src/app/services/StorageService';
 import { Logger } from './logger';
 
@@ -15,7 +15,7 @@ export class AddFeedService {
     [nodeId: string]: { [feedId: string]: FeedsData.ToBeAddedFeed };
   } = {};
   constructor(
-    private carrierService: CarrierService,
+    //private carrierService: CarrierService,
     private storageService: StorageService,
     private events: Events
   ) {
@@ -270,18 +270,18 @@ export class AddFeedService {
 
   getNodeIdFromAddress(carrierAddress: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      this.carrierService.getIdFromAddress(
-        carrierAddress,
-        userId => {
-          Logger.log(TAG, 'CarriernodeId is ', userId);
-          resolve(userId);
-        },
-        error => {
-          let err = 'Get nodeId error ';
-          Logger.error(TAG, err, error);
-          reject(err);
-        },
-      );
+      // this.carrierService.getIdFromAddress(
+      //   carrierAddress,
+      //   userId => {
+      //     Logger.log(TAG, 'CarriernodeId is ', userId);
+      //     resolve(userId);
+      //   },
+      //   error => {
+      //     let err = 'Get nodeId error ';
+      //     Logger.error(TAG, err, error);
+      //     reject(err);
+      //   },
+      // );
     });
   }
 
@@ -434,16 +434,16 @@ export class AddFeedService {
 
   checkIsFriends(nodeId: string): Promise<Boolean> {
     return new Promise((resolve, reject) => {
-      this.carrierService.isFriends(
-        nodeId,
-        res => {
-          resolve(res.isFriend);
-        },
-        err => {
-          Logger.error(TAG, 'Check is Friend error', err);
-          reject('Check is Friend error');
-        },
-      );
+      // this.carrierService.isFriends(
+      //   nodeId,
+      //   res => {
+      //     resolve(res.isFriend);
+      //   },
+      //   err => {
+      //     Logger.error(TAG, 'Check is Friend error', err);
+      //     reject('Check is Friend error');
+      //   },
+      // );
     });
   }
 
@@ -485,19 +485,19 @@ export class AddFeedService {
   addFriend(carrierAddress: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
       Logger.log(TAG, 'Prepare add friend, server carrierAddress is ', carrierAddress);
-      this.carrierService.addFriend(
-        carrierAddress,
-        'addFeed',
-        () => {
-          Logger.log(TAG, 'Add friend success, carrier address is ', carrierAddress);
-          resolve();
-        },
-        err => {
-          let error = 'Add friends error, error is ' + JSON.stringify(err);
-          Logger.error(TAG, error);
-          reject(error);
-        },
-      );
+      // this.carrierService.addFriend(
+      //   carrierAddress,
+      //   'addFeed',
+      //   () => {
+      //     Logger.log(TAG, 'Add friend success, carrier address is ', carrierAddress);
+      //     resolve();
+      //   },
+      //   err => {
+      //     let error = 'Add friends error, error is ' + JSON.stringify(err);
+      //     Logger.error(TAG, error);
+      //     reject(error);
+      //   },
+      // );
     });
   }
 

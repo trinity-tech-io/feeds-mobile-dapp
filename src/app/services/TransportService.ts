@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Events } from 'src/app/services/events.service';
-import { CarrierService } from 'src/app/services/CarrierService';
+// import { CarrierService } from 'src/app/services/CarrierService';
 import { FeedService } from 'src/app/services/FeedService';
 let eventBus = null;
 
 @Injectable()
 export class TransportService {
   private signInServerList = [];
-  constructor(private carrierService: CarrierService, private events: Events) {
+  constructor(
+    // private carrierService: CarrierService,
+    private events: Events) {
     eventBus = events;
 
     this.events.subscribe(
@@ -53,7 +55,7 @@ export class TransportService {
     onSuccess: () => void,
     onError?: (err: string) => void,
   ) {
-    this.carrierService.sendMessage(nodeId, msg, onSuccess, onError);
+    //this.carrierService.sendMessage(nodeId, msg, onSuccess, onError);
   }
 
   sendArrayMessage(
@@ -62,6 +64,6 @@ export class TransportService {
     onSuccess: () => void,
     onError?: (err: string) => void,
   ) {
-    this.carrierService.sendBinaryMessage(nodeId, msg, onSuccess, onError);
+    //this.carrierService.sendBinaryMessage(nodeId, msg, onSuccess, onError);
   }
 }

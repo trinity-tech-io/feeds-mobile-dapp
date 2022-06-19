@@ -4,7 +4,6 @@ import { Platform } from '@ionic/angular';
 import { FeedService, Avatar } from '../../../../services/FeedService';
 import { NativeService } from '../../../../services/NativeService';
 import { ThemeService } from '../../../../services/theme.service';
-import { CarrierService } from '../../../../services/CarrierService';
 import { AppService } from '../../../../services/AppService';
 import { StorageService } from '../../../../services/StorageService';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
@@ -70,7 +69,6 @@ export class ProfiledetailPage implements OnInit {
     private translate: TranslateService,
     public theme: ThemeService,
     private events: Events,
-    private carrierService: CarrierService,
     private appService: AppService,
     private platform: Platform,
     private storageService: StorageService,
@@ -99,14 +97,6 @@ export class ProfiledetailPage implements OnInit {
       type: 'ProfiledetailPage.did',
       details: this.did,
     });
-
-    if (this.developerMode) {
-      let carrierUserId = this.carrierService.getNodeId();
-      this.profileDetails.push({
-        type: 'NodeId',
-        details: carrierUserId,
-      });
-    }
 
     if (
       this.telephone != '还未设置' &&

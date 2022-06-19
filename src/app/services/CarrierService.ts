@@ -25,12 +25,12 @@ import { Platform } from '@ionic/angular';
 import { FileHelperService } from 'src/app/services/FileHelperService';
 import { Events } from 'src/app/services/events.service';
 
-declare let carrierManager: CarrierPlugin.CarrierManager;
+// declare let carrierManager: CarrierPlugin.CarrierManager;
 
-let FriendInfo: CarrierPlugin.FriendInfo;
-let UserInfo: CarrierPlugin.UserInfo;
-let carrierInst: CarrierPlugin.Carrier;
-let eventBus: Events = null;
+// let FriendInfo: CarrierPlugin.FriendInfo;
+// let UserInfo: CarrierPlugin.UserInfo;
+// let carrierInst: CarrierPlugin.Carrier;
+   let eventBus: Events = null;
 // var connectStatus ;
 
 // const bootstrapsOpts = [
@@ -93,8 +93,8 @@ export class CarrierService {
   }
 
   createCarrierInstanceSuccess(ret: any) {
-    carrierInst = ret;
-    carrierInst.start(50, null, null);
+    //carrierInst = ret;
+    //carrierInst.start(50, null, null);
   }
 
   createCarrierInstanceError(err: string) {
@@ -144,10 +144,10 @@ export class CarrierService {
   }
 
   destroyCarrier() {
-    if (carrierInst != null) {
-      carrierInst.destroy();
-      carrierInst = null;
-    }
+    // if (carrierInst != null) {
+    //   carrierInst.destroy();
+    //   carrierInst = null;
+    // }
   }
 
   private processDid(did: string): string {
@@ -162,50 +162,50 @@ export class CarrierService {
     } catch (error) {}
 
     let createOption = this.generateCreateOption(newName);
-    carrierManager.createObject(
-      this.callbacks,
-      createOption,
-      (ret: any) => {
-        success(ret);
-      },
-      (err: string) => {
-        error(err);
-      },
-    );
+    // carrierManager.createObject(
+    //   this.callbacks,
+    //   createOption,
+    //   (ret: any) => {
+    //     success(ret);
+    //   },
+    //   (err: string) => {
+    //     error(err);
+    //   },
+    // );
   }
 
   isValidAddress(address, success, error) {
-    carrierManager.isValidAddress(
-      address,
-      (isValid: boolean) => {
-        success(isValid);
-      },
-      (err: string) => {
-        // alert(err);
-      },
-    );
+    // carrierManager.isValidAddress(
+    //   address,
+    //   (isValid: boolean) => {
+    //     success(isValid);
+    //   },
+    //   (err: string) => {
+    //     // alert(err);
+    //   },
+    // );
   }
 
-  getUserId(): string {
-    if (this.platform.platforms().indexOf('cordova') < 0) {
-      return 'deafultUserId';
-    }
-    return carrierInst.userId;
-  }
+  // getUserId(): string {
+  //   if (this.platform.platforms().indexOf('cordova') < 0) {
+  //     return 'deafultUserId';
+  //   }
+  //   return carrierInst.userId;
+  // }
 
-  getNodeId(): string {
-    if (this.platform.platforms().indexOf('cordova') < 0) {
-      return 'deafultNodeId';
-    }
-    return carrierInst.nodeId;
-  }
+  // getNodeId(): string {
+  //   if (this.platform.platforms().indexOf('cordova') < 0) {
+  //     return 'deafultNodeId';
+  //   }
+  //   return carrierInst.nodeId;
+  // }
 
-  getAddress(): string {
-    if (this.platform.platforms().indexOf('cordova') < 0) {
-      return 'EXfdeeeeeeeeeeeeeeeeeee';
-    }
-    return carrierInst.address;
-  }
+  // getAddress(): string {
+  //   if (this.platform.platforms().indexOf('cordova') < 0) {
+  //     return 'EXfdeeeeeeeeeeeeeeeeeee';
+  //   }
+  //   return carrierInst.address;
+  // }
 
   getSelfInfo(success: any, error: any) {
     if (this.platform.platforms().indexOf('cordova') < 0) {
@@ -213,48 +213,48 @@ export class CarrierService {
       return;
     }
 
-    carrierInst.getSelfInfo(
-      // (userInfo) =>{
-      //     userInfo.userId,
-      //     userInfo.name,
-      //     userInfo.description,
-      //     userInfo.hasAvatar,
-      //     userInfo.gender,
-      //     userInfo.phone,
-      //     userInfo.email,
-      //     userInfo.region
-      // },
-      ret => {
-        success(ret);
-      },
-      err => {
-        this.errorFun(err, error);
-      },
-    );
+    // carrierInst.getSelfInfo(
+    //   // (userInfo) =>{
+    //   //     userInfo.userId,
+    //   //     userInfo.name,
+    //   //     userInfo.description,
+    //   //     userInfo.hasAvatar,
+    //   //     userInfo.gender,
+    //   //     userInfo.phone,
+    //   //     userInfo.email,
+    //   //     userInfo.region
+    //   // },
+    //   ret => {
+    //     success(ret);
+    //   },
+    //   err => {
+    //     this.errorFun(err, error);
+    //   },
+    // );
   }
 
-  setSelfInfo(key: string, value: string) {
-    carrierInst.setSelfInfo(
-      key,
-      value,
-      () => {},
-      err => {
-        this.errorFun(err, null);
-      },
-    );
-  }
+  // setSelfInfo(key: string, value: string) {
+  //   carrierInst.setSelfInfo(
+  //     key,
+  //     value,
+  //     () => {},
+  //     err => {
+  //       this.errorFun(err, null);
+  //     },
+  //   );
+  // }
 
-  getFriends(
-    onSuccess: (friends: CarrierPlugin.FriendInfo[]) => void,
-    onError?: (err: string) => void,
-  ) {
-    if (this.platform.platforms().indexOf('cordova') < 0) {
-      onSuccess(null);
-      return;
-    }
+  // getFriends(
+  //   onSuccess: (friends: CarrierPlugin.FriendInfo[]) => void,
+  //   onError?: (err: string) => void,
+  // ) {
+  //   if (this.platform.platforms().indexOf('cordova') < 0) {
+  //     onSuccess(null);
+  //     return;
+  //   }
 
-    carrierInst.getFriends(onSuccess, onError);
-  }
+  //   carrierInst.getFriends(onSuccess, onError);
+  // }
 
   isFriends(
     userId: string,
@@ -266,7 +266,7 @@ export class CarrierService {
       return;
     }
 
-    carrierInst.isFriend(userId, onSuccess, onError);
+    //carrierInst.isFriend(userId, onSuccess, onError);
   }
 
   addFriend(address, hello: string, success, error: (err: string) => void) {
@@ -279,16 +279,16 @@ export class CarrierService {
       return;
     }
 
-    carrierInst.addFriend(
-      address,
-      hello,
-      () => {
-        success();
-      },
-      err => {
-        this.errorFun(err, error);
-      },
-    );
+    // carrierInst.addFriend(
+    //   address,
+    //   hello,
+    //   () => {
+    //     success();
+    //   },
+    //   err => {
+    //     this.errorFun(err, error);
+    //   },
+    // );
   }
 
   removeFriend(
@@ -300,15 +300,15 @@ export class CarrierService {
       return onSuccess();
     }
 
-    carrierInst.removeFriend(
-      userId,
-      () => {
-        onSuccess();
-      },
-      err => {
-        onError(err);
-      },
-    );
+    // carrierInst.removeFriend(
+    //   userId,
+    //   () => {
+    //     onSuccess();
+    //   },
+    //   err => {
+    //     onError(err);
+    //   },
+    // );
   }
 
   sendMessage(nodeId: string, message: string, success: any, error: any) {
@@ -317,16 +317,16 @@ export class CarrierService {
       return;
     }
 
-    carrierInst.sendFriendMessage(
-      nodeId,
-      message,
-      () => {
-        success();
-      },
-      err => {
-        this.errorFun(err, error);
-      },
-    );
+    // carrierInst.sendFriendMessage(
+    //   nodeId,
+    //   message,
+    //   () => {
+    //     success();
+    //   },
+    //   err => {
+    //     this.errorFun(err, error);
+    //   },
+    // );
   }
 
   sendBinaryMessage(
@@ -340,16 +340,16 @@ export class CarrierService {
       return;
     }
 
-    carrierInst.sendFriendBinaryMessage(
-      nodeId,
-      message,
-      () => {
-        onSuccess();
-      },
-      err => {
-        onError(err);
-      },
-    );
+    // carrierInst.sendFriendBinaryMessage(
+    //   nodeId,
+    //   message,
+    //   () => {
+    //     onSuccess();
+    //   },
+    //   err => {
+    //     onError(err);
+    //   },
+    // );
   }
 
   sendFriendBinaryMessageWithReceipt(
@@ -363,17 +363,17 @@ export class CarrierService {
       return;
     }
 
-    carrierInst.sendFriendBinaryMessageWithReceipt(
-      nodeId,
-      message,
-      (messageId: number, state: Number) => {},
-      () => {
-        onSuccess();
-      },
-      err => {
-        onError(err);
-      },
-    );
+    // carrierInst.sendFriendBinaryMessageWithReceipt(
+    //   nodeId,
+    //   message,
+    //   (messageId: number, state: Number) => {},
+    //   () => {
+    //     onSuccess();
+    //   },
+    //   err => {
+    //     onError(err);
+    //   },
+    // );
   }
 
   errorFun(err, errorFun = null) {
@@ -387,89 +387,89 @@ export class CarrierService {
     onError?: (err: string) => void,
   ): Promise<string> {
     return new Promise((resolve, reject) => {
-      carrierManager.getIdFromAddress(address, (userId: string) => {
-        if (userId) {
-          onSuccess(userId);
-          resolve(userId);
-        } else {
-          reject();
-        }
-      }, onError);
+      // carrierManager.getIdFromAddress(address, (userId: string) => {
+      //   if (userId) {
+      //     onSuccess(userId);
+      //     resolve(userId);
+      //   } else {
+      //     reject();
+      //   }
+      // }, onError);
     });
   }
 
-  newSession(
-    to: string,
-    onSuccess: (session: CarrierPlugin.Session) => void,
-    onError?: (err: string) => void,
-  ) {
-    carrierInst.newSession(to, onSuccess, onError);
-  }
+  // newSession(
+  //   to: string,
+  //   onSuccess: (session: CarrierPlugin.Session) => void,
+  //   onError?: (err: string) => void,
+  // ) {
+  //   carrierInst.newSession(to, onSuccess, onError);
+  // }
 
-  sessionRequest(
-    session: CarrierPlugin.Session,
-    handler: CarrierPlugin.OnSessionRequestComplete,
-    onSuccess: () => void,
-    onError?: (err: string) => void,
-  ) {
-    session.request(handler, onSuccess, onError);
-  }
+  // sessionRequest(
+  //   session: CarrierPlugin.Session,
+  //   handler: CarrierPlugin.OnSessionRequestComplete,
+  //   onSuccess: () => void,
+  //   onError?: (err: string) => void,
+  // ) {
+  //   session.request(handler, onSuccess, onError);
+  // }
 
-  sessionStart(
-    session: CarrierPlugin.Session,
-    sdp: string,
-    onSuccess: () => void,
-    onError?: (err: string) => void,
-  ) {
-    session.start(sdp, onSuccess, onError);
-  }
+  // sessionStart(
+  //   session: CarrierPlugin.Session,
+  //   sdp: string,
+  //   onSuccess: () => void,
+  //   onError?: (err: string) => void,
+  // ) {
+  //   session.start(sdp, onSuccess, onError);
+  // }
 
-  sessionClose(
-    session: CarrierPlugin.Session,
-    onSuccess?: () => void,
-    onError?: (err: string) => void,
-  ) {
-    session.close(onSuccess, onError);
-  }
+  // sessionClose(
+  //   session: CarrierPlugin.Session,
+  //   onSuccess?: () => void,
+  //   onError?: (err: string) => void,
+  // ) {
+  //   session.close(onSuccess, onError);
+  // }
 
-  sessionAddStream(
-    session: CarrierPlugin.Session,
-    type: CarrierPlugin.StreamType,
-    options: number,
-    callbacks: CarrierPlugin.StreamCallbacks,
-    onSuccess: (stream: CarrierPlugin.Stream) => void,
-    onError?: (err: string) => void,
-  ) {
-    session.addStream(type, options, callbacks, onSuccess, onError);
-  }
+  // sessionAddStream(
+  //   session: CarrierPlugin.Session,
+  //   type: CarrierPlugin.StreamType,
+  //   options: number,
+  //   callbacks: CarrierPlugin.StreamCallbacks,
+  //   onSuccess: (stream: CarrierPlugin.Stream) => void,
+  //   onError?: (err: string) => void,
+  // ) {
+  //   session.addStream(type, options, callbacks, onSuccess, onError);
+  // }
 
-  sessionRemoveStream(
-    session: CarrierPlugin.Session,
-    stream: CarrierPlugin.Stream,
-    onSuccess: (stream: CarrierPlugin.Stream) => void,
-    onError?: (err: string) => void,
-  ) {
-    session.removeStream(stream, onSuccess, onError);
-  }
+  // sessionRemoveStream(
+  //   session: CarrierPlugin.Session,
+  //   stream: CarrierPlugin.Stream,
+  //   onSuccess: (stream: CarrierPlugin.Stream) => void,
+  //   onError?: (err: string) => void,
+  // ) {
+  //   session.removeStream(stream, onSuccess, onError);
+  // }
 
-  sessionReplyRequest(
-    session: CarrierPlugin.Session,
-    status: number,
-    reason: string,
-    onSuccess: () => void,
-    onError?: (err: string) => void,
-  ) {
-    session.replyRequest(status, reason, onSuccess, onError);
-  }
+  // sessionReplyRequest(
+  //   session: CarrierPlugin.Session,
+  //   status: number,
+  //   reason: string,
+  //   onSuccess: () => void,
+  //   onError?: (err: string) => void,
+  // ) {
+  //   session.replyRequest(status, reason, onSuccess, onError);
+  // }
 
-  streamWrite(
-    stream: CarrierPlugin.Stream,
-    data: Uint8Array,
-    onSuccess: (bytesSent: Number) => void,
-    onError?: (err: string) => void,
-  ) {
-    stream.write(data, onSuccess, onError);
-  }
+  // streamWrite(
+  //   stream: CarrierPlugin.Stream,
+  //   data: Uint8Array,
+  //   onSuccess: (bytesSent: Number) => void,
+  //   onError?: (err: string) => void,
+  // ) {
+  //   stream.write(data, onSuccess, onError);
+  // }
 
   generateCreateOption(path: string) {
     return {

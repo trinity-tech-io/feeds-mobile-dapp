@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from '@ngx-translate/core';
-import { CarrierService } from 'src/app/services/CarrierService';
+// import { CarrierService } from 'src/app/services/CarrierService';
 import { SerializeDataService } from 'src/app/services/SerializeDataService';
 import { StorageService } from 'src/app/services/StorageService';
 import { Logger } from './logger';
@@ -12,8 +12,8 @@ let TAG: string = 'Feeds-session';
 let autoIncreaseId: number = 1;
 type WorkedSession = {
   nodeId: string;
-  session: CarrierPlugin.Session;
-  stream: CarrierPlugin.Stream;
+  //session: CarrierPlugin.Session;
+  //stream: CarrierPlugin.Stream;
   sdp: string;
   StreamState: FeedsData.StreamState;
   sessionTimeout: NodeJS.Timer;
@@ -67,7 +67,7 @@ let eventBus: Events = null;
 let workedSessions: { [nodeId: string]: WorkedSession } = {};
 let progress: { [nodeId: string]: Progress } = {};
 let cacheData: { [nodeId: string]: CachedData } = {};
-let mCarrierService: CarrierService;
+//let mCarrierService: CarrierService;
 let mSerializeDataService: SerializeDataService;
 let mStorageService: StorageService;
 let sessionConnectionTimeOut = 1 * 60 * 1000;
@@ -79,214 +79,214 @@ export class SessionService {
     private events: Events,
     private native: NativeService,
     private translate: TranslateService,
-    private carrierService: CarrierService,
+    //private carrierService: CarrierService,
     private serializeDataService: SerializeDataService,
     private storageService: StorageService
   ) {
     eventBus = events;
     mStorageService = this.storageService;
-    mCarrierService = this.carrierService;
+    //mCarrierService = this.carrierService;
     mSerializeDataService = this.serializeDataService;
   }
 
-  createSession(
-    nodeId: string,
-    memo: FeedsData.SessionMemoData,
-    onSuccess: (
-      session: CarrierPlugin.Session,
-      stream: CarrierPlugin.Stream,
-    ) => void,
-    onError?: (err: string) => void,
-  ) {
-    this.carrierService.newSession(
-      nodeId,
-      mSession => {
-        isBusy = true;
-        workedSessions[nodeId] = {
-          nodeId: nodeId,
-          session: mSession,
-          stream: null,
-          sdp: '',
-          StreamState: FeedsData.StreamState.RAW,
-          sessionTimeout: null,
-        };
+  // createSession(
+  //   nodeId: string,
+  //   memo: FeedsData.SessionMemoData,
+  //   onSuccess: (
+  //     session: CarrierPlugin.Session,
+  //     stream: CarrierPlugin.Stream,
+  //   ) => void,
+  //   onError?: (err: string) => void,
+  // ) {
+  //   // this.carrierService.newSession(
+  //   //   nodeId,
+  //   //   mSession => {
+  //   //     isBusy = true;
+  //   //     workedSessions[nodeId] = {
+  //   //       nodeId: nodeId,
+  //   //       session: mSession,
+  //   //       stream: null,
+  //   //       sdp: '',
+  //   //       StreamState: FeedsData.StreamState.RAW,
+  //   //       sessionTimeout: null,
+  //   //     };
 
-        this.carrierService.sessionAddStream(
-          mSession,
-          CarrierPlugin.StreamType.APPLICATION,
-          CarrierPlugin.StreamMode.RELIABLE,
-          {
-            onStateChanged: function(event: any) {
-              if (workedSessions[nodeId] == undefined) {
-                isBusy = false;
-                Logger.log(TAG, 'Session was closed, nodeId is ', nodeId);
-                return;
-              }
+  //   //     // this.carrierService.sessionAddStream(
+  //   //     //   mSession,
+  //   //     //   CarrierPlugin.StreamType.APPLICATION,
+  //   //     //   CarrierPlugin.StreamMode.RELIABLE,
+  //   //     //   {
+  //   //     //     onStateChanged: function(event: any) {
+  //   //     //       if (workedSessions[nodeId] == undefined) {
+  //   //     //         isBusy = false;
+  //   //     //         Logger.log(TAG, 'Session was closed, nodeId is ', nodeId);
+  //   //     //         return;
+  //   //     //       }
 
-              if (event == undefined) {
-                Logger.log(TAG, 'Session state change to unknow, nodeId is ', nodeId);
-                workedSessions[nodeId].StreamState =
-                  FeedsData.StreamState.UNKNOW;
-              } else {
-                workedSessions[nodeId].StreamState = event.state;
-              }
+  //   //     //       if (event == undefined) {
+  //   //     //         Logger.log(TAG, 'Session state change to unknow, nodeId is ', nodeId);
+  //   //     //         workedSessions[nodeId].StreamState =
+  //   //     //           FeedsData.StreamState.UNKNOW;
+  //   //     //       } else {
+  //   //     //         workedSessions[nodeId].StreamState = event.state;
+  //   //     //       }
 
-              var state_name = [
-                'raw',
-                'initialized',
-                'transport_ready',
-                'connecting',
-                'connected',
-                'deactivated',
-                'closed',
-                'failed',
-                'unknow',
-              ];
-              Logger.log(TAG, 'Session stream [', event.stream.id, '] state change to ', state_name[workedSessions[nodeId].StreamState], ' nodeId is ', nodeId);
-              let streamStateChangedData: FeedsEvent.StreamStateChangedData = {
-                nodeId: nodeId,
-                streamState: workedSessions[nodeId].StreamState,
-              };
+  //   //     //       var state_name = [
+  //   //     //         'raw',
+  //   //     //         'initialized',
+  //   //     //         'transport_ready',
+  //   //     //         'connecting',
+  //   //     //         'connected',
+  //   //     //         'deactivated',
+  //   //     //         'closed',
+  //   //     //         'failed',
+  //   //     //         'unknow',
+  //   //     //       ];
+  //   //     //       Logger.log(TAG, 'Session stream [', event.stream.id, '] state change to ', state_name[workedSessions[nodeId].StreamState], ' nodeId is ', nodeId);
+  //   //     //       let streamStateChangedData: FeedsEvent.StreamStateChangedData = {
+  //   //     //         nodeId: nodeId,
+  //   //     //         streamState: workedSessions[nodeId].StreamState,
+  //   //     //       };
 
-              eventBus.publish(
-                FeedsEvent.PublishType.innerStreamStateChanged,
-                streamStateChangedData,
-              );
+  //   //     //       eventBus.publish(
+  //   //     //         FeedsEvent.PublishType.innerStreamStateChanged,
+  //   //     //         streamStateChangedData,
+  //   //     //       );
 
-              if (
-                workedSessions[nodeId] != undefined &&
-                FeedsData.StreamState.INITIALIZED ==
-                  workedSessions[nodeId].StreamState
-              ) {
-                workedSessions[nodeId].sessionTimeout = setTimeout(() => {
-                  if (
-                    workedSessions[nodeId] != undefined &&
-                    workedSessions[nodeId].StreamState !=
-                      FeedsData.StreamState.CONNECTED
-                  ) {
-                    workedSessions[nodeId].StreamState =
-                      FeedsData.StreamState.NOTINIT;
-                    publishError(nodeId, createCreateSessionTimeout(), memo);
-                  }
-                  if (workedSessions[nodeId] != undefined)
-                    clearTimeout(workedSessions[nodeId].sessionTimeout);
-                }, sessionConnectionTimeOut);
+  //   //     //       if (
+  //   //     //         workedSessions[nodeId] != undefined &&
+  //   //     //         FeedsData.StreamState.INITIALIZED ==
+  //   //     //           workedSessions[nodeId].StreamState
+  //   //     //       ) {
+  //   //     //         workedSessions[nodeId].sessionTimeout = setTimeout(() => {
+  //   //     //           if (
+  //   //     //             workedSessions[nodeId] != undefined &&
+  //   //     //             workedSessions[nodeId].StreamState !=
+  //   //     //               FeedsData.StreamState.CONNECTED
+  //   //     //           ) {
+  //   //     //             workedSessions[nodeId].StreamState =
+  //   //     //               FeedsData.StreamState.NOTINIT;
+  //   //     //             publishError(nodeId, createCreateSessionTimeout(), memo);
+  //   //     //           }
+  //   //     //           if (workedSessions[nodeId] != undefined)
+  //   //     //             clearTimeout(workedSessions[nodeId].sessionTimeout);
+  //   //     //         }, sessionConnectionTimeOut);
 
-                Logger.log(TAG, 'Prepare send session request to the friend, nodeId is ', nodeId);
-                mCarrierService.sessionRequest(
-                  mSession,
-                  function(event: any) {
-                    let sdp = event.sdp;
-                    workedSessions[nodeId].sdp = sdp;
-                    Logger.log(TAG, 'Receive the session response, nodeId is ', nodeId, ', sdp is ', sdp);
-                    if (
-                      workedSessions[nodeId] != undefined &&
-                      workedSessions[nodeId].StreamState ==
-                        FeedsData.StreamState.TRANSPORT_READY
-                    ) {
-                      sessionStart(nodeId, mSession, sdp, memo);
-                    }
-                  },
-                  () => {
-                    Logger.log(TAG, 'Session request success, nodeId is ', nodeId);
-                  },
-                  err => {
-                    publishError(nodeId, createSessionRequestError(), memo);
-                    Logger.error(TAG, 'Session request error, nodeId is ', nodeId, ' error msg is ', err);
-                  },
-                );
-              }
+  //   //     //         Logger.log(TAG, 'Prepare send session request to the friend, nodeId is ', nodeId);
+  //   //     //         // mCarrierService.sessionRequest(
+  //   //     //         //   mSession,
+  //   //     //         //   function(event: any) {
+  //   //     //         //     let sdp = event.sdp;
+  //   //     //         //     workedSessions[nodeId].sdp = sdp;
+  //   //     //         //     Logger.log(TAG, 'Receive the session response, nodeId is ', nodeId, ', sdp is ', sdp);
+  //   //     //         //     if (
+  //   //     //         //       workedSessions[nodeId] != undefined &&
+  //   //     //         //       workedSessions[nodeId].StreamState ==
+  //   //     //         //         FeedsData.StreamState.TRANSPORT_READY
+  //   //     //         //     ) {
+  //   //     //         //       sessionStart(nodeId, mSession, sdp, memo);
+  //   //     //         //     }
+  //   //     //         //   },
+  //   //     //         //   () => {
+  //   //     //         //     Logger.log(TAG, 'Session request success, nodeId is ', nodeId);
+  //   //     //         //   },
+  //   //     //         //   err => {
+  //   //     //         //     publishError(nodeId, createSessionRequestError(), memo);
+  //   //     //         //     Logger.error(TAG, 'Session request error, nodeId is ', nodeId, ' error msg is ', err);
+  //   //     //         //   },
+  //   //     //         // );
+  //   //     //       }
 
-              if (
-                workedSessions[nodeId] != undefined &&
-                FeedsData.StreamState.TRANSPORT_READY ==
-                  workedSessions[nodeId].StreamState
-              ) {
-                let sdp = workedSessions[nodeId].sdp;
-                Logger.log(TAG, "Get ready to execute 'start session', nodeId is ", nodeId, ' transport ready, sdp is ', sdp);
-                if (sdp != '') {
-                  sessionStart(nodeId, mSession, sdp, memo);
-                }
-              }
+  //   //     //       if (
+  //   //     //         workedSessions[nodeId] != undefined &&
+  //   //     //         FeedsData.StreamState.TRANSPORT_READY ==
+  //   //     //           workedSessions[nodeId].StreamState
+  //   //     //       ) {
+  //   //     //         let sdp = workedSessions[nodeId].sdp;
+  //   //     //         Logger.log(TAG, "Get ready to execute 'start session', nodeId is ", nodeId, ' transport ready, sdp is ', sdp);
+  //   //     //         if (sdp != '') {
+  //   //     //           //sessionStart(nodeId, mSession, sdp, memo);
+  //   //     //         }
+  //   //     //       }
 
-              if (
-                workedSessions[nodeId] != undefined &&
-                FeedsData.StreamState.ERROR ==
-                  workedSessions[nodeId].StreamState
-              ) {
-                publishError(nodeId, createStateError(), memo);
-              }
+  //   //     //       if (
+  //   //     //         workedSessions[nodeId] != undefined &&
+  //   //     //         FeedsData.StreamState.ERROR ==
+  //   //     //           workedSessions[nodeId].StreamState
+  //   //     //       ) {
+  //   //     //         publishError(nodeId, createStateError(), memo);
+  //   //     //       }
 
-              if (
-                workedSessions[nodeId] != undefined &&
-                FeedsData.StreamState.DEACTIVATED ==
-                  workedSessions[nodeId].StreamState
-              ) {
-                publishError(nodeId, createStateDeactivated(), memo);
-              }
+  //   //     //       if (
+  //   //     //         workedSessions[nodeId] != undefined &&
+  //   //     //         FeedsData.StreamState.DEACTIVATED ==
+  //   //     //           workedSessions[nodeId].StreamState
+  //   //     //       ) {
+  //   //     //         publishError(nodeId, createStateDeactivated(), memo);
+  //   //     //       }
 
-              if (
-                workedSessions[nodeId] != undefined &&
-                FeedsData.StreamState.CLOSED ==
-                  workedSessions[nodeId].StreamState
-              ) {
-                publishCloseSession(nodeId);
-              }
-            },
+  //   //     //       if (
+  //   //     //         workedSessions[nodeId] != undefined &&
+  //   //     //         FeedsData.StreamState.CLOSED ==
+  //   //     //           workedSessions[nodeId].StreamState
+  //   //     //       ) {
+  //   //     //         publishCloseSession(nodeId);
+  //   //     //       }
+  //   //     //     },
 
-            onStreamData: function(event: any) {
-              let tmpData: Uint8Array = event.data;
-              Logger.log(TAG, 'Receive stream data callback, nodeId is', nodeId, 'data length is', tmpData.length);
-              if (cacheData[nodeId] == undefined) {
-                cacheData[nodeId] = {
-                  nodeId: nodeId,
-                  data: new Uint8Array(0),
-                  pointer: 0,
-                  headSize: 0,
-                  bodySize: 0,
-                  state: DecodeState.prepare,
-                  method: '',
-                  key: '',
-                  mediaType: '',
-                  unprocessLength: 0,
-                  unProcessDatas: [],
-                };
-              }
+  //   //     //     onStreamData: function(event: any) {
+  //   //     //       let tmpData: Uint8Array = event.data;
+  //   //     //       Logger.log(TAG, 'Receive stream data callback, nodeId is', nodeId, 'data length is', tmpData.length);
+  //   //     //       if (cacheData[nodeId] == undefined) {
+  //   //     //         cacheData[nodeId] = {
+  //   //     //           nodeId: nodeId,
+  //   //     //           data: new Uint8Array(0),
+  //   //     //           pointer: 0,
+  //   //     //           headSize: 0,
+  //   //     //           bodySize: 0,
+  //   //     //           state: DecodeState.prepare,
+  //   //     //           method: '',
+  //   //     //           key: '',
+  //   //     //           mediaType: '',
+  //   //     //           unprocessLength: 0,
+  //   //     //           unProcessDatas: [],
+  //   //     //         };
+  //   //     //       }
 
-              if (DecodeState.decodeBody == cacheData[nodeId].state) {
-                checkBody(nodeId, tmpData);
-                return;
-              }
+  //   //     //       if (DecodeState.decodeBody == cacheData[nodeId].state) {
+  //   //     //         checkBody(nodeId, tmpData);
+  //   //     //         return;
+  //   //     //       }
 
-              let cache: Uint8Array = cacheData[nodeId].data;
-              cacheData[nodeId].data = new Uint8Array(
-                tmpData.length + cache.length,
-              );
-              cacheData[nodeId].data.set(cache, 0);
-              cacheData[nodeId].data.set(tmpData, cache.length);
-              decodeData(nodeId);
-            },
-          },
-          mStream => {
-            workedSessions[nodeId].stream = mStream;
-            workedSessions[nodeId].session = mSession;
-            onSuccess(mSession, mStream);
-            Logger.log(TAG, "Excute 'addStream' success, nodeId is ", nodeId);
-          },
-          err => {
-            onError(err);
-            publishError(nodeId, createAddStreamError(), memo);
-            Logger.error(TAG, "Excute 'addStream' error, nodeId is ", nodeId, ' error msg is ', err);
-          },
-        );
-      },
-      err => {
-        onError(err);
-        publishError(nodeId, createNewSessionError(), memo);
-        Logger.error(TAG, "Excute 'newSession' error, nodeId is", nodeId, ' error msg is', err);
-      },
-    );
-  }
+  //   //     //       let cache: Uint8Array = cacheData[nodeId].data;
+  //   //     //       cacheData[nodeId].data = new Uint8Array(
+  //   //     //         tmpData.length + cache.length,
+  //   //     //       );
+  //   //     //       cacheData[nodeId].data.set(cache, 0);
+  //   //     //       cacheData[nodeId].data.set(tmpData, cache.length);
+  //   //     //       decodeData(nodeId);
+  //   //     //     },
+  //   //     //   },
+  //   //     //   mStream => {
+  //   //     //     //workedSessions[nodeId].stream = mStream;
+  //   //     //     //workedSessions[nodeId].session = mSession;
+  //   //     //     onSuccess(mSession, mStream);
+  //   //     //     Logger.log(TAG, "Excute 'addStream' success, nodeId is ", nodeId);
+  //   //     //   },
+  //   //     //   err => {
+  //   //     //     onError(err);
+  //   //     //     publishError(nodeId, createAddStreamError(), memo);
+  //   //     //     Logger.error(TAG, "Excute 'addStream' error, nodeId is ", nodeId, ' error msg is ', err);
+  //   //     //   },
+  //   //     // );
+  //   //   },
+  //   //   err => {
+  //   //     onError(err);
+  //   //     publishError(nodeId, createNewSessionError(), memo);
+  //   //     Logger.error(TAG, "Excute 'newSession' error, nodeId is", nodeId, ' error msg is', err);
+  //   //   },
+  //   // );
+  // }
 
   streamAddMagicNum(nodeId: string, memo: any) {
     let bytesData = encodeNum(magicNumber, 8);
@@ -410,7 +410,7 @@ export class SessionService {
       return;
     }
 
-    let stream = workedSessions[nodeId].stream;
+    //let stream = workedSessions[nodeId].stream;
 
     let base64 = uint8arrayToBase64(data);
 
@@ -422,15 +422,15 @@ export class SessionService {
       calculateProgress(nodeId);
     }
 
-    stream.write(
-      base64,
-      bytesSent => {
-      },
-      err => {
-        publishError(nodeId, createWriteDataError(), memo);
-        Logger.error(TAG, 'Write date to ', nodeId, ' error ', err);
-      },
-    );
+    // stream.write(
+    //   base64,
+    //   bytesSent => {
+    //   },
+    //   err => {
+    //     publishError(nodeId, createWriteDataError(), memo);
+    //     Logger.error(TAG, 'Write date to ', nodeId, ' error ', err);
+    //   },
+    // );
   }
 
   sessionClose(nodeId: string): Promise<string> {
@@ -443,30 +443,30 @@ export class SessionService {
       if (item === '') {
         return;
       }
-      let session = workedSessions[nodeId].session || '';
-      if (session === '') {
-        return;
-      }
+      //let session = workedSessions[nodeId].session || '';
+      // if (session === '') {
+      //   return;
+      // }
       Logger.log(TAG, 'Close session , nodeId is ', nodeId);
-      this.carrierService.sessionClose(
-        workedSessions[nodeId].session,
-        () => {
-          workedSessions[nodeId] = undefined;
-          delete workedSessions[nodeId];
+      // this.carrierService.sessionClose(
+      //   workedSessions[nodeId].session,
+      //   () => {
+      //     workedSessions[nodeId] = undefined;
+      //     delete workedSessions[nodeId];
 
-          progress[nodeId] = undefined;
-          delete progress[nodeId];
+      //     progress[nodeId] = undefined;
+      //     delete progress[nodeId];
 
-          cacheData[nodeId] = undefined;
-          delete cacheData[nodeId];
-          Logger.log(TAG, 'Close session success, nodeId is ', nodeId);
-          isBusy = false;
-          resolve('success');
-        },
-        error => {
-          reject('error');
-        },
-      );
+      //     cacheData[nodeId] = undefined;
+      //     delete cacheData[nodeId];
+      //     Logger.log(TAG, 'Close session success, nodeId is ', nodeId);
+      //     isBusy = false;
+      //     resolve('success');
+      //   },
+      //   error => {
+      //     reject('error');
+      //   },
+      // );
     });
   }
 
@@ -1086,20 +1086,20 @@ function checkBody(nodeId: string, data: Uint8Array) {
 
 function sessionStart(
   nodeId: string,
-  mSession: CarrierPlugin.Session,
+  //mSession: CarrierPlugin.Session,
   sdp: string,
   memo: FeedsData.SessionMemoData,
 ) {
   Logger.log(TAG, 'Start session , nodeId is ', nodeId);
-  mCarrierService.sessionStart(
-    mSession,
-    sdp,
-    () => {
-      Logger.log(TAG, 'Start session success, nodeId is ', nodeId);
-    },
-    err => {
-      Logger.error(TAG, 'Start session error , nodeId is ', nodeId, ' error is ', err);
-      publishError(nodeId, createSessionStartError(), memo);
-    },
-  );
+  // mCarrierService.sessionStart(
+  //   mSession,
+  //   sdp,
+  //   () => {
+  //     Logger.log(TAG, 'Start session success, nodeId is ', nodeId);
+  //   },
+  //   err => {
+  //     Logger.error(TAG, 'Start session error , nodeId is ', nodeId, ' error is ', err);
+  //     publishError(nodeId, createSessionStartError(), memo);
+  //   },
+  // );
 }
