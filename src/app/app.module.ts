@@ -115,16 +115,21 @@ export class SentryErrorHandler implements ErrorHandler {
     );
       //Sentry.showReportDialog({ eventId });
     }
-    let message = this.translate.instant("common.errorDes");
-    this.toastCtrl
-      .create({
-        mode: 'ios',
-        color: 'warning',
-        message,
-        duration: 3000,
-        position: 'top',
-      })
-      .then(toast => toast.present());
+    if (error.promise && error.promise.__zone_symbol__value && 'skipsentry' === error.promise.__zone_symbol__value.type) {
+      // Do not popop error dialog, but still send to sentry for debug.
+      Logger.error("Sentry", 'This exception has been handled:', error);
+    } else {
+      let message = this.translate.instant("common.errorDes");
+      this.toastCtrl
+        .create({
+          mode: 'ios',
+          color: 'warning',
+          message,
+          duration: 3000,
+          position: 'top',
+        })
+        .then(toast => toast.present());
+    }
    throw error;
   }
 }

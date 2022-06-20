@@ -1318,7 +1318,7 @@ export class HiveVaultController {
     });
   }
 
-  getReplyCommentListMap(postId: string): Promise<{ [refCommentId: string]: FeedsData.CommentV3[] }> {
+  getReplyCommentListMap(postId: string, hideDeletedComments:boolean): Promise<{ [refCommentId: string]: FeedsData.CommentV3[] }> {
     return new Promise(async (resolve, reject) => {
       try {
         const commentList = await this.getCommentList(postId, '0');
@@ -1336,6 +1336,11 @@ export class HiveVaultController {
             return -Number(item.createdAt);
           });
 
+          if (!hideDeletedComments) {
+            replyCommentList = _.filter(replyCommentList, (item: any) => {
+              return item.status != 1;
+            });
+          }
           replyCommentsMap[comment.commentId] = replyCommentList;
         }
 

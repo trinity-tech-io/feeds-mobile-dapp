@@ -138,6 +138,7 @@ export class PostdetailPage implements OnInit {
   public channelOwnerName: string = '';
   public replyCommentsMap: { [refcommentId: string]: FeedsData.CommentV3[] } = {};
   public ownerDid: string = "";
+
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -178,8 +179,8 @@ export class PostdetailPage implements OnInit {
       this.refreshCommentList();
     }
 
-
-    this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMap(this.postId);
+    this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
+    this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMap(this.postId,this.hideDeletedComments);
     this.initRelyCommentExtradata();
   }
 
@@ -404,20 +405,6 @@ export class PostdetailPage implements OnInit {
       }
 
     });
-
-    this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
-      Logger.log(TAG, 'Received openRightMenu event');
-      this.isImgLoading = false;
-      this.isImgPercentageLoading = false;
-      this.imgDownStatus = '';
-      this.isVideoPercentageLoading = false;
-      this.isVideoLoading = false;
-      this.videoDownStatus = '';
-      this.native.hideLoading();
-      this.pauseVideo();
-      this.hideFullScreen();
-    });
-
   }
 
   ionViewWillLeave() {
@@ -430,7 +417,6 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
-    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.native.handleTabsEvents();
     this.isInitLikeNum = {};
     this.isInitComment = {};
@@ -993,18 +979,17 @@ export class PostdetailPage implements OnInit {
 
   clearVideo() {
     if (this.postStatus != 1 && this.mediaType === 2) {
-      this.posterImg = '';
-      this.videoObj = '';
+
       let id = this.destDid + this.channelId + this.postId;
       let video: any = document.getElementById(id + 'postdetailvideo') || '';
       if (video != '') {
-      }
+        let source: any = document.getElementById(id + 'postdetailsource') || '';
+        if (source != '') {
+          source.removeAttribute('src'); // empty source
+        }
 
-      let source: any = document.getElementById(id + 'postdetailsource') || '';
-      if (source != '') {
-        source.removeAttribute('src'); // empty source
-      }
-      if (video != '') {
+        this.posterImg = '';
+        this.videoObj = '';
       }
     }
   }
@@ -1044,14 +1029,12 @@ export class PostdetailPage implements OnInit {
     if (vgoverlayplay != '') {
       vgoverlayplay.onclick = () => {
         this.zone.run(() => {
-          // if (this.checkServerStatus(this.destDid) != 0) {
-          //   this.pauseVideo();
-          //   this.native.toastWarn('common.connectionError1');
-          //   return;
-          // }
 
           let source: any =
             document.getElementById(id + 'postdetailsource') || '';
+          if(source === ''){
+            return;
+          }
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc != '') return;
 

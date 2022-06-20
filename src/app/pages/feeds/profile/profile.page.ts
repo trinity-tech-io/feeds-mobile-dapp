@@ -1433,11 +1433,13 @@ export class ProfilePage implements OnInit {
           this.isLoadVideoiamge[id] === '13' &&
           postSrc != ''
         ) {
-          video.setAttribute('poster', 'assets/images/loading.png');
-          let sourcesrc = source.getAttribute('src') || '';
-          if (sourcesrc != '') {
-            source.removeAttribute('src');
+          if(source != ''){
+            let sourcesrc = source.getAttribute('src') || '';
+            if (sourcesrc != '') {
+              source.removeAttribute('src');
+            }
           }
+          video.setAttribute('poster', 'assets/images/loading.png');
           this.isLoadVideoiamge[id] = '';
         }
       }

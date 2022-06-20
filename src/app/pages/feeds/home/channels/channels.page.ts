@@ -934,9 +934,11 @@ export class ChannelsPage implements OnInit {
           videoKuang.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadVideoiamge[id] === '13'
         ) {
-          let sourcesrc = source.getAttribute('src') || '';
-          if (sourcesrc != '') {
-            source.removeAttribute('src');
+          if( source != ''){
+            let sourcesrc = source.getAttribute('src') || '';
+            if (sourcesrc != '') {
+              source.removeAttribute('src');
+            }
           }
 
           let video: any = document.getElementById(id + 'videochannel');

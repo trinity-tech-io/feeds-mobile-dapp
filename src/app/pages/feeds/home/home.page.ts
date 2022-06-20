@@ -959,6 +959,12 @@ export class HomePage implements OnInit {
     let postgridNum = document.getElementsByClassName('post-grid').length;
     for (let postgridindex = 0; postgridindex < postgridNum; postgridindex++) {
      let sid = setTimeout(()=>{
+      let postgrid = postgridList[postgridindex] || '';
+      if(postgrid === ''){
+        clearTimeout(sid);
+        sid = null;
+        return;
+      }
       let srcId = postgridList[postgridindex].getAttribute('id') || '';
       if (srcId != '') {
         let arr = srcId.split('-');
@@ -1404,10 +1410,14 @@ export class HomePage implements OnInit {
           videoKuang.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadVideoiamge[id] === '13'
         ) {
-          let sourcesrc = source.getAttribute('src') || '';
-          if (sourcesrc != '') {
-            source.removeAttribute('src');
+
+          if(source != ''){
+            let sourcesrc = source.getAttribute('src') || '';
+            if (sourcesrc != '') {
+              source.removeAttribute('src');
+            }
           }
+
           let video: any = document.getElementById(id + 'video') || '';
           video.style.display = "none";
 
@@ -1444,7 +1454,11 @@ export class HomePage implements OnInit {
   }
 
   refreshImage() {
-    this.native.throttle(this.setVisibleareaImage(),10, this, true);
+  let sid = setTimeout(()=>{
+    this.setVisibleareaImage();
+    clearTimeout(sid);
+    sid = null;
+   },10)
   }
 
   pauseVideo(id: string) {
@@ -1499,12 +1513,18 @@ export class HomePage implements OnInit {
     let vgfullscreen = document.getElementById(id + 'vgfullscreenhome');
     vgfullscreen.onclick = () => {
       this.pauseVideo(id);
-      let postImg: string = document
-        .getElementById(id + 'video')
-        .getAttribute('poster');
-      let videoSrc: string = document
-        .getElementById(id + 'source')
-        .getAttribute('src');
+      let video = document.getElementById(id + 'video') || null;
+      let postImg = '';
+      if(video != null){
+        postImg = video.getAttribute('poster') || '';
+      }
+      let source =  document.getElementById(id + 'source') || null;
+      let videoSrc = '';
+      if(source != null){
+        videoSrc = source.getAttribute('src') || '';
+      }
+
+      if(postImg != '' &&  videoSrc != '')
       this.fullScreenmodal = this.native.setVideoFullScreen(postImg, videoSrc);
     };
   }
@@ -1537,9 +1557,11 @@ export class HomePage implements OnInit {
       vgoverlayplay.onclick = () => {
         this.zone.run(() => {
           let source: any = document.getElementById(id + 'source') || '';
-          let sourceSrc = source.getAttribute('src') || '';
-          if (sourceSrc === '') {
-            this.getVideo(id, srcId, post);
+          if(source != ''){
+            let sourceSrc = source.getAttribute('src') || '';
+            if (sourceSrc === '') {
+              this.getVideo(id, srcId, post);
+            }
           }
         });
       };

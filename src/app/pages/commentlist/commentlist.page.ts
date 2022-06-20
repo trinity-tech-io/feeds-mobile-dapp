@@ -106,7 +106,6 @@ export class CommentlistPage implements OnInit {
     this.totalData = await this.sortCommentList();
     if (this.totalData.length - this.pageNumber > 0) {
       this.replayCommentList = this.totalData.slice(0, this.pageNumber);
-
       this.startIndex++;
     } else {
       this.replayCommentList = this.totalData;
