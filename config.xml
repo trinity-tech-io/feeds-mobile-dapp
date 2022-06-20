@@ -34,7 +34,7 @@
         <preference name="android-targetSdkVersion" value="30" />
         <preference name="android-minSdkVersion" value="24" />
         <preference name="AndroidLaunchMode" value="singleTask" />
-        <preference name="IntentRedirecturlFilter" value="feeds://" />
+        <preference name="IntentRedirecturlFilter" value="feedsnetwork://" />
         <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -46,7 +46,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="feeds" />
+                <data android:scheme="feedsnetwork" />
             </intent-filter>
         </config-file>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
@@ -75,7 +75,7 @@
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
     </platform>
     <platform name="ios">
-        <preference name="IntentRedirecturlFilter" value="https://feeds.trinity-tech.io" />
+        <preference name="IntentRedirecturlFilter" value="https://feeds.trinity-feeds.app" />
         <preference name="SwiftVersion" value="5.2" />
         <preference name="UseSwiftLanguageVersion" value="5.2" />
         <config-file parent="com.apple.developer.associated-domains" target="*-Debug.plist">
