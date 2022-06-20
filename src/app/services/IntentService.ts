@@ -400,8 +400,8 @@ export class IntentService {
   async createSharePasarLink(orderId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        let url = "https://feeds.trinity-feeds.app/pasar/"
-          + "?orderId=" + orderId
+        let url = IntentService.BASEURL_PASAR
+          + "/?orderId=" + orderId
 
         // let encodeURL = encodeURI(url);
         Logger.log(TAG, "Shared Pasar link url is " + url);

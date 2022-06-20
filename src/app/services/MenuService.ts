@@ -65,31 +65,23 @@ export class MenuService {
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
       buttons: [
-        // {
-        //   text: this.translate.instant('common.share'),
-        //   icon: 'ios-share1',
-        //   handler: async () => {
-        //     let post: any = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-        //     // let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-        //     // let ownerDid = (await this.dataHelper.getSigninData()).did;
-        //     // let postContent = '';
-        //     // if (post != null) {
-        //     // postContent = post.content.content || "";
-        //     // }
-        //     if (this.postDetail != null) {
-        //       this.postDetail.dismiss();
-        //       this.postDetail = null;
-        //     }
-        //     await this.native.showLoading("common.generateSharingLink");
-        //     try {
-        //       const sharedLink = await this.intentService.createPostShareLink(post);
-        //       this.intentService
-        //         .share(this.intentService.createSharePostTitle(destDid, channelId, postId, postContent), sharedLink);
-        //     } catch (error) {
-        //     }
-        //     this.native.hideLoading();
-        //   },
-        // },
+        {
+          /**
+           * share post
+           */
+          text: this.translate.instant('common.share'),
+          icon: 'ios-share1',
+          handler: async () => {
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            await this.native.showLoading("common.generateSharingLink");
+            try {
+              const sharedLink = await this.intentService.createPostShareLink(post);
+              this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
+            } catch (error) {
+            }
+            this.native.hideLoading();
+          },
+        },
         {
           text: this.translate.instant('common.unsubscribe'),
           role: 'destructive',
@@ -156,38 +148,30 @@ export class MenuService {
     channelName?: string,
     postId?: string,
   ) {
-    if(this.postDetail != null){
+    if (this.postDetail != null) {
       return;
     }
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
       buttons: [
-        // {
-        //   text: this.translate.instant('common.share'),
-        //   icon: 'ios-share1',
-        //   handler: async () => {
-        //     let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
-        //     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
-        //     let ownerDid = (await this.dataHelper.getSigninData()).did;
-        //     let postContent = '';
-        //     if (post != null) {
-        //       postContent = post.content.content || "";
-        //     }
-        //     if (this.postDetail != null) {
-        //       this.postDetail.dismiss();
-        //       this.postDetail = null;
-        //     }
-        //     //Share post
-        //     await this.native.showLoading("common.generateSharingLink");
-        //     try {
-        //       const sharedLink = await this.intentService.createShareLink(nodeId, channelId, postId, ownerDid, channel);
-        //       this.intentService
-        //         .share(this.intentService.createSharePostTitle(nodeId, channelId, postId, postContent), sharedLink);
-        //     } catch (error) {
-        //     }
-        //     this.native.hideLoading();
-        //   },
-        // },
+        {
+          /**
+           * share post
+           */
+          text: this.translate.instant('common.share'),
+          icon: 'ios-share1',
+          handler: async () => {
+            let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
+            //Share post
+            await this.native.showLoading("common.generateSharingLink");
+            try {
+              const sharedLink = await this.intentService.createPostShareLink(post);
+              this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
+            } catch (error) {
+            }
+            this.native.hideLoading();
+          },
+        },
         {
           text: this.translate.instant('common.cancel'),
           icon: 'ios-cancel',
@@ -372,26 +356,29 @@ export class MenuService {
     channelName: string,
     postId: string,
   ) {
-    if(this.postDetail != null){
-           return;
+    if (this.postDetail != null) {
+      return;
     }
     this.postDetail = "1111";
     this.postDetail = await this.actionSheetController.create({
       cssClass: 'editPost',
       buttons: [
-        // {
-        //   text: this.translate.instant('common.sharepost'),
-        //   icon: 'ios-share1',
-        //   handler: async () => {
-        //     await this.handlePostDetailMenun(
-        //       nodeId,
-        //       channelId,
-        //       channelName,
-        //       postId,
-        //       'sharepost',
-        //     );
-        //   },
-        // },
+        {
+          /**
+           * share post
+           */
+          text: this.translate.instant('common.sharepost'),
+          icon: 'ios-share1',
+          handler: async () => {
+            await this.handlePostDetailMenun(
+              nodeId,
+              channelId,
+              channelName,
+              postId,
+              'sharepost',
+            );
+          },
+        },
         {
           text: this.translate.instant('common.editpost'),
           icon: 'ios-edit1',
@@ -453,19 +440,22 @@ export class MenuService {
       cssClass: 'editPost',
 
       buttons: [
-        // {
-        //   text: this.translate.instant('common.sharepost'),
-        //   icon: 'ios-share1',
-        //   handler: () => {
-        //     this.handlePostDetailMenun(
-        //       destDid,
-        //       channelId,
-        //       channelName,
-        //       postId,
-        //       'sharepost',
-        //     );
-        //   },
-        // },
+        {
+          /**
+           * share post
+           */
+          text: this.translate.instant('common.sharepost'),
+          icon: 'ios-share1',
+          handler: () => {
+            this.handlePostDetailMenun(
+              destDid,
+              channelId,
+              channelName,
+              postId,
+              'sharepost',
+            );
+          },
+        },
         {
           text: this.translate.instant('common.editpost'),
           icon: 'ios-edit1',
@@ -565,26 +555,15 @@ export class MenuService {
         });
         break;
       case 'sharepost':
-
-        // let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
-        // let postContent = '';
-        // if (post != null) {
-        //   postContent = post.content.content || "";
-        // }
-
-        // //home share post
-        // if (this.postDetail != null) {
-        //   this.postDetail.dismiss();
-        //   this.postDetail = null;
-        // }
-        // await this.native.showLoading("common.generateSharingLink");
-        // try {
-        //   const sharedLink = await this.intentService.createPostShareLink(post);
-        //   this.intentService
-        //     .share(this.intentService.createSharePostTitle(destDid, channelId, postId, postContent), sharedLink);
-        // } catch (error) {
-        // }
-        // this.native.hideLoading();
+        let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
+        //home share post
+        await this.native.showLoading("common.generateSharingLink");
+        try {
+          const sharedLink = await this.intentService.createPostShareLink(post);
+          this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
+        } catch (error) {
+        }
+        this.native.hideLoading();
 
         break;
       case 'removePost':
