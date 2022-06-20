@@ -132,6 +132,7 @@ export class ChannelsPage implements OnInit {
   public postImgMap: any = {};
   public posterImgMap: any = {};
   private postMap = {};
+  private curPostId: string = "";
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -217,7 +218,6 @@ export class ChannelsPage implements OnInit {
   async init() {
     await this.initChannelData();
     await this.initRefresh();
-    //this.initStatus(this.postList);
   }
 
   async filterDeletedPostList(postList: any) {
@@ -252,25 +252,25 @@ export class ChannelsPage implements OnInit {
     }
     let tmpPostList = await this.filterDeletedPostList(posts);
     this.totalData = this.sortPostList(tmpPostList);
-    if(this.startIndex != 0){
-      if (this.totalData.length === this.postList.length) {
-        this.postList = this.totalData;
-      } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
-        this.postList = this.totalData.slice(
-          0,
-          this.startIndex * this.pageNumber,
-        );
-      } else {
-        this.postList = this.totalData;
-      }
-      this.isLoadimage = {};
-      this.isLoadVideoiamge = {};
-      this.isInitLikeNum = {};
-      this.isInitLikeStatus = {};
-      this.isInitComment = {};
-      this.refreshImage();
-      return;
+    if(this.postList.length > 0){
+       if(this.curPostId != ''){
+          let newPost: any =  _.find(this.totalData,(item: FeedsData.PostV3)=>{
+               return item.postId === this.curPostId;
+          }) || null;
+        if(newPost === null){
+          return;
+        }
+        let postIndex = _.findIndex(this.postList,(item: FeedsData.PostV3)=>{
+             return item.postId === this.curPostId;
+        });
+        if(postIndex > -1){
+          this.postList.splice(postIndex,1,newPost);
+        }
+        this.curPostId = '';
+       }
+          return;
     }
+
     this.startIndex = 0;
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -516,10 +516,6 @@ export class ChannelsPage implements OnInit {
     return size;
   }
 
-  getChannelOwnerName(destDid: string, channelId: string) {//todo
-
-  }
-
   navToPostDetail(
     destDid: string,
     channelId: string,
@@ -547,6 +543,7 @@ export class ChannelsPage implements OnInit {
       }
     }
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
+    this.curPostId = postId;
     this.native
       .getNavCtrl()
       .navigateForward(['/postdetail', destDid, channelId, postId]);
@@ -599,6 +596,7 @@ export class ChannelsPage implements OnInit {
 
     this.pauseAllVideo();
     let isMine = await this.checkChannelIsMine();
+    this.curPostId = post.postId;
     if (isMine === 1 && post.status != 1) {
       this.menuService.showPostDetailMenu(
         post.destDid,
@@ -1367,6 +1365,7 @@ export class ChannelsPage implements OnInit {
       ownerDid: ownerDid,
       tippingAddress: this.tippingAddress
     });
+    this.curPostId = '';
     this.native.navigateForward(['/feedinfo'], '');
   }
 
