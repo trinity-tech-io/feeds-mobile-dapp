@@ -176,11 +176,11 @@ export class HiveVaultHelper {
         let errorDes = "ErrorInfo.HIVE_ERROR_" + errorCode;
         if (errorCode === 507) {
             if (this.buyStorageSpaceDialog === null) {
-              await this.showBuyStorageSpaceDialog(errorDes);
+                await this.showBuyStorageSpaceDialog(errorDes);
             }
         } else if (errorCode === undefined) {
             this.native.toastWarn("common.likeError");
-        }else{
+        } else {
             this.native.toastWarn("common.likeError1");
         }
         return error
@@ -411,7 +411,6 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, { "channel_id": channelId })
-                console.log("callChannel result ======= ", result)
                 resolve(result)
             } catch (error) {
                 Logger.error(TAG, 'callGetAllPostScripting error:', error)
@@ -1421,7 +1420,7 @@ export class HiveVaultHelper {
                     "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SELF_LIKE_BY_ID, params);
-                Logger.log( TAG, "Query like from scripting , result is", result);
+                Logger.log(TAG, "Query like from scripting , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query like from scripting , error:', error);

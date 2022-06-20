@@ -58,7 +58,7 @@ export class MenuService {
     channelName: string,
     postId: string,
   ) {
-    if(this.postDetail != null){
+    if (this.postDetail != null) {
       return;
     }
     this.postDetail = "1111";
@@ -70,19 +70,19 @@ export class MenuService {
         //   icon: 'ios-share1',
         //   handler: async () => {
         //     let post: any = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-        //     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-        //     let ownerDid = (await this.dataHelper.getSigninData()).did;
-        //     let postContent = '';
-        //     if (post != null) {
-        //       postContent = post.content.content || "";
-        //     }
+        //     // let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+        //     // let ownerDid = (await this.dataHelper.getSigninData()).did;
+        //     // let postContent = '';
+        //     // if (post != null) {
+        //     // postContent = post.content.content || "";
+        //     // }
         //     if (this.postDetail != null) {
         //       this.postDetail.dismiss();
         //       this.postDetail = null;
         //     }
         //     await this.native.showLoading("common.generateSharingLink");
         //     try {
-        //       const sharedLink = await this.intentService.createShareLink(destDid, channelId, postId, ownerDid, channel);
+        //       const sharedLink = await this.intentService.createPostShareLink(post);
         //       this.intentService
         //         .share(this.intentService.createSharePostTitle(destDid, channelId, postId, postContent), sharedLink);
         //     } catch (error) {
@@ -445,7 +445,7 @@ export class MenuService {
     channelName: string,
     postId: string,
   ) {
-    if(this.postDetail != null){
+    if (this.postDetail != null) {
       return;
     }
     this.postDetail = "1111";
@@ -566,25 +566,25 @@ export class MenuService {
         break;
       case 'sharepost':
 
-        let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
-        let postContent = '';
-        if (post != null) {
-          postContent = post.content.content || "";
-        }
+        // let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
+        // let postContent = '';
+        // if (post != null) {
+        //   postContent = post.content.content || "";
+        // }
 
-        //home share post
-        if (this.postDetail != null) {
-          this.postDetail.dismiss();
-          this.postDetail = null;
-        }
-        await this.native.showLoading("common.generateSharingLink");
-        try {
-          const sharedLink = await this.intentService.createPostShareLink(post);
-          this.intentService
-            .share(this.intentService.createSharePostTitle(destDid, channelId, postId, postContent), sharedLink);
-        } catch (error) {
-        }
-        this.native.hideLoading();
+        // //home share post
+        // if (this.postDetail != null) {
+        //   this.postDetail.dismiss();
+        //   this.postDetail = null;
+        // }
+        // await this.native.showLoading("common.generateSharingLink");
+        // try {
+        //   const sharedLink = await this.intentService.createPostShareLink(post);
+        //   this.intentService
+        //     .share(this.intentService.createSharePostTitle(destDid, channelId, postId, postContent), sharedLink);
+        // } catch (error) {
+        // }
+        // this.native.hideLoading();
 
         break;
       case 'removePost':

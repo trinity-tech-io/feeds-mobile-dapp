@@ -15,8 +15,8 @@ declare let intentManager: IntentPlugin.IntentManager;
 
 @Injectable()
 export class IntentService {
-  private static BASEURL_CHANNEL: string = 'https://feeds.trinity-feeds.app/feeds/v3/channel';
-  private static BASEURL_POST: string = 'https://feeds.trinity-feeds.app/feeds/v3/post';
+  private static BASEURL_CHANNEL: string = 'https://feeds.trinity-feeds.app/v3channel';
+  private static BASEURL_POST: string = 'https://feeds.trinity-feeds.app/v3post';
   private static BASEURL_PASAR: string = 'https://feeds.trinity-feeds.app/pasar';
   private static BASEURL_NAV: string = 'https://feeds.trinity-feeds.app/nav';
   private static BASEURL_SHORTEN: string = 'https://s.trinity-feeds.app/api/v2/action/shorten?key=9fa8ef7f86a28829f53375abcb0af5';
@@ -283,21 +283,9 @@ export class IntentService {
     Logger.log(TAG, "Intent received, now dispatching to listeners", receivedIntent);
 
     const action = receivedIntent.action;
-    const params = receivedIntent.params
-    switch (action) {
-      case 'addsource':
-        this.zone.run(async () => {
-          this.native
-            .getNavCtrl()
-            .navigateForward([
-              '/menu/servers/server-info',
-              receivedIntent.params.source,
-              '0',
-              false,
-            ]);
-        });
-        break;
+    const params = receivedIntent.params;
 
+    switch (action) {
       case IntentService.BASEURL_CHANNEL:
         this.handleChannelIntent(params);
         break;
@@ -310,8 +298,13 @@ export class IntentService {
       case IntentService.BASEURL_NAV:
         // https://feeds.trinity-feeds.app/nav/?page=home
         break;
+      default:
+        this.native.toast('toast.invalidParams');
+        break;
     }
   }
+
+
 
   onMessageReceived(msg: IntentPlugin.ReceivedIntent) {
     Logger.log(TAG, 'Received intent ', msg);
@@ -422,11 +415,18 @@ export class IntentService {
     });
   }
 
-  createSharePostTitle(destDid: string, channelId: string, postId: string, postText: string): string {
-    // const key = this.dataHelper.getKey(destDid, channelId, postId, 0);
-    // const post = this.dataHelper.getPost(key);
-    // const content = post.content || null;
-    // let text: string = content.text || '';
+  createSharePostTitle(post: FeedsData.PostV3): string {
+    if (!post) {
+      return '';
+    }
+
+    const content = post.content || null;
+
+    if (!content) {
+      return '';
+    }
+
+    let postText: string = content.content || '';
 
     if (postText.replace(/(^[\s\n\t]+|[\s\n\t]+$)/g, "") == '')
       return this.translate.instant("common.sharesharingPost");

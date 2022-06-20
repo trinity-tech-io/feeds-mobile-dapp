@@ -1870,11 +1870,8 @@ export class ProfilePage implements OnInit {
         break;
       case 'share':
         if (this.selectType === 'ProfilePage.myFeeds') {
-          let content = this.getQrCodeString(this.curItem);
-
           const myDestDid = this.curItem['destDid'];
           const myChannelId = this.curItem['channelId'];
-          const myPostId = this.curItem['postId'] || 0;
           this.hideSharMenuComponent = false;
           document.getElementById("feedstab").style.display = "block";
           await this.native.showLoading("common.generateSharingLink");
@@ -1894,9 +1891,7 @@ export class ProfilePage implements OnInit {
           destDid = this.curItem['destDid'];
           channelId = this.curItem['channelId'];
           let postId = this.curItem['postId'];
-          let post: any = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-          let ownerDid = (await this.dataHelper.getSigninData()).did;
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
           let postContent = '';
           if (post != null) {
             postContent = post.content.content || "";
@@ -1908,7 +1903,7 @@ export class ProfilePage implements OnInit {
           try {
             //share post
             const sharedLink = await this.intentService.createPostShareLink(post);
-            this.intentService.share(this.intentService.createSharePostTitle(destDid, channelId, postId, postContent), sharedLink);
+            this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
           } catch (error) {
           }
           this.native.hideLoading();

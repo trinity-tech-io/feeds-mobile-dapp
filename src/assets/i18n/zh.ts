@@ -891,5 +891,8 @@ export const zh = {
     title: '存储不足',
     noBuy: '不买',
     buy: '买'
+  },
+  toast: {
+    invalidParams: '参数无效，暂不支持'
   }
 };

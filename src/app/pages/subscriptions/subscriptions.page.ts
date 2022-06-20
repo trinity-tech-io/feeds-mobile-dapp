@@ -192,8 +192,8 @@ export class SubscriptionsPage implements OnInit {
             destDid, channelId
           ).then(async (result) => {
 
-            let newfollowingList = _.filter(this.followingList,(item)=>{
-                   return item.destDid != destDid && item.channelId != channelId;
+            let newfollowingList = _.filter(this.followingList, (item) => {
+              return item.destDid != destDid && item.channelId != channelId;
             });
             this.followingList = _.cloneDeep(newfollowingList);
             this.searchFollowingList = _.cloneDeep(newfollowingList);
@@ -475,7 +475,7 @@ export class SubscriptionsPage implements OnInit {
     if (
       (events && events.keyCode === 13) ||
       (events.keyCode === 8 && this.isSearch === '')
-    ){
+    ) {
       if (this.isSearch == '') {
         this.ionRefresher.disabled = false;
         this.followingList = _.cloneDeep(this.searchFollowingList);
@@ -496,8 +496,8 @@ export class SubscriptionsPage implements OnInit {
       return;
     }
 
-    this.followingList = _.filter(this.searchFollowingList,(item)=>{
-           return item.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
+    this.followingList = _.filter(this.searchFollowingList, (item) => {
+      return item.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     });
   }
 

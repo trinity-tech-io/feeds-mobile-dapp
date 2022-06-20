@@ -888,5 +888,8 @@ export const en = {
     title: 'Insufficient Storage',
     noBuy: "Don't buy",
     buy: 'Buy'
+  },
+  toast: {
+    invalidParams: 'Invalid params'
   }
 };
