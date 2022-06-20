@@ -890,6 +890,6 @@ export const en = {
     buy: 'Buy'
   },
   toast: {
-    invalidParams: 'Invalid params'
+    linkageInvalidParams: 'The linkage is invalid or not supported to open'
   }
 };

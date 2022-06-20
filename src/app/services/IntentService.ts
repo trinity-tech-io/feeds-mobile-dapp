@@ -299,7 +299,7 @@ export class IntentService {
         // https://feeds.trinity-feeds.app/nav/?page=home
         break;
       default:
-        this.native.toast('toast.invalidParams');
+        this.native.toast('toast.linkageInvalidParams');
         break;
     }
   }

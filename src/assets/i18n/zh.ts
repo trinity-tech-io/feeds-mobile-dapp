@@ -893,6 +893,6 @@ export const zh = {
     buy: '买'
   },
   toast: {
-    invalidParams: '参数无效，暂不支持'
+    linkageInvalidParams: '分享链接无效或者不支持，无法打开链接'
   }
 };
