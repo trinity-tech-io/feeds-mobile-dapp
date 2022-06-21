@@ -252,23 +252,23 @@ export class ChannelsPage implements OnInit {
     }
     let tmpPostList = await this.filterDeletedPostList(posts);
     this.totalData = this.sortPostList(tmpPostList);
-    if(this.postList.length > 0){
-       if(this.curPostId != ''){
-          let newPost: any =  _.find(this.totalData,(item: FeedsData.PostV3)=>{
-               return item.postId === this.curPostId;
-          }) || null;
-        if(newPost === null){
+    if (this.postList.length > 0) {
+      if (this.curPostId != '') {
+        let newPost: any = _.find(this.totalData, (item: FeedsData.PostV3) => {
+          return item.postId === this.curPostId;
+        }) || null;
+        if (newPost === null) {
           return;
         }
-        let postIndex = _.findIndex(this.postList,(item: FeedsData.PostV3)=>{
-             return item.postId === this.curPostId;
+        let postIndex = _.findIndex(this.postList, (item: FeedsData.PostV3) => {
+          return item.postId === this.curPostId;
         });
-        if(postIndex > -1){
-          this.postList.splice(postIndex,1,newPost);
+        if (postIndex > -1) {
+          this.postList.splice(postIndex, 1, newPost);
         }
         this.curPostId = '';
-       }
-          return;
+      }
+      return;
     }
 
     this.startIndex = 0;
@@ -618,7 +618,7 @@ export class ChannelsPage implements OnInit {
     try {
       this.images = {};
       this.startIndex = 0;
-      // await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
+      await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
       await this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId);
       if (this.followStatus) {
         this.dataHelper.cleanCachedComment();
@@ -785,7 +785,7 @@ export class ChannelsPage implements OnInit {
 
           const post: FeedsData.PostV3 = posts[0] || null;
 
-          if(post === null){
+          if (post === null) {
             this.isLoadimage[id] = '13';
             rpostImage.style.display = 'none';
             return;
@@ -822,7 +822,7 @@ export class ChannelsPage implements OnInit {
                     let thumbImage = thumbImagedata || '';
                     if (thumbImage != '') {
                       this.isLoadimage[id] = '13';
-                      this.postImgMap[id] = thumbImage ;
+                      this.postImgMap[id] = thumbImage;
                     } else {
                       this.isLoadimage[id] = '12';
                       rpostImage.style.display = 'none';
@@ -880,11 +880,11 @@ export class ChannelsPage implements OnInit {
           let postId: any = arr[2];
 
           let post = this.postMap[postId] || null;
-          if(post === null){
-              post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-              this.postMap[postId] = post;
-           }
-          if(post === null){
+          if (post === null) {
+            post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            this.postMap[postId] = post;
+          }
+          if (post === null) {
             this.isLoadVideoiamge[id] = '13';
             return;
           }
@@ -893,7 +893,7 @@ export class ChannelsPage implements OnInit {
 
           //缩略图
           let videoThumbnailKey = elements.thumbnailPath || '';
-          if(videoThumbnailKey === ''){
+          if (videoThumbnailKey === '') {
             this.isLoadVideoiamge[id] = '13';
             return;
           }
@@ -932,7 +932,7 @@ export class ChannelsPage implements OnInit {
           videoKuang.getBoundingClientRect().bottom > Config.rectBottom &&
           this.isLoadVideoiamge[id] === '13'
         ) {
-          if( source != ''){
+          if (source != '') {
             let sourcesrc = source.getAttribute('src') || '';
             if (sourcesrc != '') {
               source.removeAttribute('src');
@@ -943,7 +943,7 @@ export class ChannelsPage implements OnInit {
           video.style.display = "none";
 
           let vgoverlayplay: any =
-          document.getElementById(id + 'vgoverlayplaychannel') || '';
+            document.getElementById(id + 'vgoverlayplaychannel') || '';
           vgoverlayplay.style.display = "none";
 
           this.posterImgMap[id] = "";
@@ -1066,9 +1066,9 @@ export class ChannelsPage implements OnInit {
       let value = videoids[id] || '';
       if (value === '13') {
         let videochannel: any = document.getElementById(id + 'videochannel') || '';
-        videochannel.style.display="none";
+        videochannel.style.display = "none";
         let vgoverlayplaychannel: any = document.getElementById(id + 'vgoverlayplaychannel') || '';
-        vgoverlayplaychannel.style.display="none";
+        vgoverlayplaychannel.style.display = "none";
         let source: any = document.getElementById(id + 'sourcechannel') || '';
         let sourcesrc = source.getAttribute('src') || '';
         if (source != '' && sourcesrc != '') {
@@ -1116,7 +1116,7 @@ export class ChannelsPage implements OnInit {
   setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplaychannel') || '';
-      vgoverlayplay.style.display = "block";
+    vgoverlayplay.style.display = "block";
 
     if (vgoverlayplay != '') {
       vgoverlayplay.onclick = () => {

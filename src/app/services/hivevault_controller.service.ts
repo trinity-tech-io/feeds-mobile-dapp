@@ -760,7 +760,7 @@ export class HiveVaultController {
   getV3Data(destDid: string, remotePath: string, fileName: string, type: string, isDownload?: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        if(destDid === '' || fileName === '' || remotePath === ''){
+        if (destDid === '' || fileName === '' || remotePath === '') {
           resolve('');
           return;
         }
@@ -1324,7 +1324,7 @@ export class HiveVaultController {
     });
   }
 
-  getReplyCommentListMap(postId: string, hideDeletedComments:boolean): Promise<{ [refCommentId: string]: FeedsData.CommentV3[] }> {
+  getReplyCommentListMap(postId: string, hideDeletedComments: boolean): Promise<{ [refCommentId: string]: FeedsData.CommentV3[] }> {
     return new Promise(async (resolve, reject) => {
       try {
         const commentList = await this.getCommentList(postId, '0');

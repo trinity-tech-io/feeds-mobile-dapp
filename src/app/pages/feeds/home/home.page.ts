@@ -178,7 +178,7 @@ export class HomePage implements OnInit {
   public channelAvatarMap: any = {};
   public postImgMap: any = {};
   public posterImgMap: any = {};
-  private channelMap:any = {};
+  private channelMap: any = {};
   private ownerDid: string = "";
   private postMap: any = {};
   constructor(
@@ -220,15 +220,15 @@ export class HomePage implements OnInit {
     if (scrollToTop) {
       this.postList = this.totalData = await this.sortPostList();
       this.scrollToTop(1);
-    }else{
-     let newList = await this.sortPostList();
-     _.each(this.postList,(item: FeedsData.PostV3,index)=>{
-      let postId = item.postId;
-      let post = _.find(newList,(newItem: FeedsData.PostV3)=>{
-                  return newItem.postId === postId;
+    } else {
+      let newList = await this.sortPostList();
+      _.each(this.postList, (item: FeedsData.PostV3, index) => {
+        let postId = item.postId;
+        let post = _.find(newList, (newItem: FeedsData.PostV3) => {
+          return newItem.postId === postId;
         }) || null;
-        if( post != null && !(_.isEqual(item,post))){
-          this.postList.splice(index,1,post);
+        if (post != null && !(_.isEqual(item, post))) {
+          this.postList.splice(index, 1, post);
         }
       });
     }
@@ -634,7 +634,7 @@ export class HomePage implements OnInit {
       this.clearAssets();
     }
     this.postMap = {};
-    this.channelMap ={};
+    this.channelMap = {};
   }
 
   ionViewDidLeave() {
@@ -722,8 +722,8 @@ export class HomePage implements OnInit {
   }
 
   async parseAvatar(destDid: string, channelId: string): Promise<string> {
-    const key = destDid+"-"+channelId;
-    let channel: FeedsData.ChannelV3  = this.channelMap[key] || null;
+    const key = destDid + "-" + channelId;
+    let channel: FeedsData.ChannelV3 = this.channelMap[key] || null;
     if (channel === null) return '';
     return channel.avatar;
   }
@@ -757,9 +757,9 @@ export class HomePage implements OnInit {
 
   async menuMore(post: FeedsData.PostV3) {
     let destDid = post.destDid;
-    let channelName =this.hannelNameMap[post.postId] ||  "";
-    if(channelName === ''){
-        channelName = await this.getChannelName(post.destDid, post.channelId);
+    let channelName = this.hannelNameMap[post.postId] || "";
+    if (channelName === '') {
+      channelName = await this.getChannelName(post.destDid, post.channelId);
     }
     if (this.ownerDid != '' && this.ownerDid === destDid) {//自己的post
       this.menuService.showHomeMenu(
@@ -851,12 +851,15 @@ export class HomePage implements OnInit {
           this.dataHelper.cleanCachedComment();
           this.dataHelper.cleanCacheLikeNum();
           this.dataHelper.cleanCachedLikeStatus();
+
+          await this.hiveVaultController.syncAllChannelInfo();
           await this.hiveVaultController.syncAllPost();
           await this.hiveVaultController.syncAllComments();
           await this.hiveVaultController.syncAllLikeData();
+
           this.handleDisplayNameMap = {};
           this.postMap = {};
-          this.channelMap ={};
+          this.channelMap = {};
           await this.initPostListData(true);
           if (event != null) event.target.complete();
           this.refreshEvent = null;
@@ -957,50 +960,50 @@ export class HomePage implements OnInit {
     let postgridList = document.getElementsByClassName('post-grid');
     let postgridNum = document.getElementsByClassName('post-grid').length;
     for (let postgridindex = 0; postgridindex < postgridNum; postgridindex++) {
-     let sid = setTimeout(()=>{
-      let postgrid = postgridList[postgridindex] || '';
-      if(postgrid === ''){
-        clearTimeout(sid);
-        sid = null;
-        return;
-      }
-      let srcId = postgridList[postgridindex].getAttribute('id') || '';
-      if (srcId != '') {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let mediaType = arr[3];
-        let id = destDid + '-' + channelId + '-' + postId;
-        //post Avatar
-        this.handlePostAvatar(id, srcId, postgridindex);
-        //postImg
-        if (mediaType === '1') {
-          this.handlePostImg(id, srcId, postgridindex);
+      let sid = setTimeout(() => {
+        let postgrid = postgridList[postgridindex] || '';
+        if (postgrid === '') {
+          clearTimeout(sid);
+          sid = null;
+          return;
         }
-        if (mediaType === '2') {
-          //video
-          this.handleVideo(id, srcId, postgridindex);
-        }
+        let srcId = postgridList[postgridindex].getAttribute('id') || '';
+        if (srcId != '') {
+          let arr = srcId.split('-');
+          let destDid = arr[0];
+          let channelId = arr[1];
+          let postId = arr[2];
+          let mediaType = arr[3];
+          let id = destDid + '-' + channelId + '-' + postId;
+          //post Avatar
+          this.handlePostAvatar(id, srcId, postgridindex);
+          //postImg
+          if (mediaType === '1') {
+            this.handlePostImg(id, srcId, postgridindex);
+          }
+          if (mediaType === '2') {
+            //video
+            this.handleVideo(id, srcId, postgridindex);
+          }
 
-        //post like status
-        CommonPageService.handlePostLikeStatusData(
-          id, srcId, postgridindex, postgridList[postgridindex],
-          this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
-          this.likeMap, this.isLoadingLikeMap)
-        //处理post like number
-        CommonPageService.handlePostLikeNumData(
-          id, srcId, postgridindex, postgridList[postgridindex],
-          this.clientHeight, this.hiveVaultController,
-          this.likeNumMap, this.isInitLikeNum);
-        //处理post comment
-        CommonPageService.handlePostCommentData(
-          id, srcId, postgridindex, postgridList[postgridindex],
-          this.clientHeight, this.hiveVaultController,
-          this.isInitComment, this.commentNumMap);
-      }
-      clearTimeout(sid);
-      },0);
+          //post like status
+          CommonPageService.handlePostLikeStatusData(
+            id, srcId, postgridindex, postgridList[postgridindex],
+            this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+            this.likeMap, this.isLoadingLikeMap)
+          //处理post like number
+          CommonPageService.handlePostLikeNumData(
+            id, srcId, postgridindex, postgridList[postgridindex],
+            this.clientHeight, this.hiveVaultController,
+            this.likeNumMap, this.isInitLikeNum);
+          //处理post comment
+          CommonPageService.handlePostCommentData(
+            id, srcId, postgridindex, postgridList[postgridindex],
+            this.clientHeight, this.hiveVaultController,
+            this.isInitComment, this.commentNumMap);
+        }
+        clearTimeout(sid);
+      }, 0);
     }
   }
 
@@ -1022,12 +1025,12 @@ export class HomePage implements OnInit {
           let destDid: string = arr[0];
           let channelId: string = arr[1];
           let postId: string = arr[2];
-          let key = destDid+"-"+channelId;
-          let channel: FeedsData.ChannelV3  = this.channelMap[key] || null;
-          if( channel === null ){
+          let key = destDid + "-" + channelId;
+          let channel: FeedsData.ChannelV3 = this.channelMap[key] || null;
+          if (channel === null) {
             channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-          }else{
-            channel  =  this.channelMap[key]
+          } else {
+            channel = this.channelMap[key]
           }
           //this.hiveVaultController.checkPostIsLast();
           const post = _.find(this.postList, item => {
@@ -1252,11 +1255,11 @@ export class HomePage implements OnInit {
           let destDid: string = arr[0];
           let postId: string = arr[2];
           let post = this.postMap[postId] || null;
-          if(post === null){
-              post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-              this.postMap[postId] = post;
-           }
-          if(post === null){
+          if (post === null) {
+            post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            this.postMap[postId] = post;
+          }
+          if (post === null) {
             this.isLoadimage[id] = 13;
             return;
           }
@@ -1354,12 +1357,12 @@ export class HomePage implements OnInit {
 
           let post = this.postMap[postId] || null;
 
-          if(post === null){
-              post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-              this.postMap[postId] = post;
-           }
+          if (post === null) {
+            post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            this.postMap[postId] = post;
+          }
 
-           if(post === null){
+          if (post === null) {
             this.isLoadVideoiamge[id] = '13';
           }
           let mediaDatas = post.content.mediaData;
@@ -1410,7 +1413,7 @@ export class HomePage implements OnInit {
           this.isLoadVideoiamge[id] === '13'
         ) {
 
-          if(source != ''){
+          if (source != '') {
             let sourcesrc = source.getAttribute('src') || '';
             if (sourcesrc != '') {
               source.removeAttribute('src');
@@ -1421,7 +1424,7 @@ export class HomePage implements OnInit {
           video.style.display = "none";
 
           let vgoverlayplay: any =
-          document.getElementById(id + 'vgoverlayplayhome') || '';
+            document.getElementById(id + 'vgoverlayplayhome') || '';
           vgoverlayplay.style.display = "none";
 
           this.posterImgMap[id] = "";
@@ -1438,7 +1441,7 @@ export class HomePage implements OnInit {
     this.native.throttle(this.handleScroll(), 200, this, true);
     switch (this.tabType) {
       case 'feeds':
-         this.native.throttle(this.setVisibleareaImage(),10, this, true);
+        this.native.throttle(this.setVisibleareaImage(), 10, this, true);
         break;
       case 'pasar':
         if (this.styleType === 'grid') {
@@ -1453,11 +1456,11 @@ export class HomePage implements OnInit {
   }
 
   refreshImage() {
-  let sid = setTimeout(()=>{
-    this.setVisibleareaImage();
-    clearTimeout(sid);
-    sid = null;
-   },10)
+    let sid = setTimeout(() => {
+      this.setVisibleareaImage();
+      clearTimeout(sid);
+      sid = null;
+    }, 10)
   }
 
   pauseVideo(id: string) {
@@ -1514,17 +1517,17 @@ export class HomePage implements OnInit {
       this.pauseVideo(id);
       let video = document.getElementById(id + 'video') || null;
       let postImg = '';
-      if(video != null){
+      if (video != null) {
         postImg = video.getAttribute('poster') || '';
       }
-      let source =  document.getElementById(id + 'source') || null;
+      let source = document.getElementById(id + 'source') || null;
       let videoSrc = '';
-      if(source != null){
+      if (source != null) {
         videoSrc = source.getAttribute('src') || '';
       }
 
-      if(postImg != '' &&  videoSrc != '')
-      this.fullScreenmodal = this.native.setVideoFullScreen(postImg, videoSrc);
+      if (postImg != '' && videoSrc != '')
+        this.fullScreenmodal = this.native.setVideoFullScreen(postImg, videoSrc);
     };
   }
 
@@ -1551,12 +1554,12 @@ export class HomePage implements OnInit {
   setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplayhome') || '';
-      vgoverlayplay.style.display = "block";
+    vgoverlayplay.style.display = "block";
     if (vgoverlayplay != '') {
       vgoverlayplay.onclick = () => {
         this.zone.run(() => {
           let source: any = document.getElementById(id + 'source') || '';
-          if(source != ''){
+          if (source != '') {
             let sourceSrc = source.getAttribute('src') || '';
             if (sourceSrc === '') {
               this.getVideo(id, srcId, post);

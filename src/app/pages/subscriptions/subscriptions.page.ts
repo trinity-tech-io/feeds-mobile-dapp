@@ -128,6 +128,7 @@ export class SubscriptionsPage implements OnInit {
 
   async initFollowing() {
     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+    console.log('subscribedChannel=========', subscribedChannel);
     this.followingList = await this.getFollowedChannelList(subscribedChannel);
     this.searchFollowingList = _.cloneDeep(this.followingList);
     this.refreshFollowingVisibleareaImage();
@@ -139,6 +140,7 @@ export class SubscriptionsPage implements OnInit {
       let destDid = item.destDid;
       let channelId = item.channelId;
       let channel: any = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+
       if (channel != null) {
         list.push(channel);
       }
@@ -441,17 +443,20 @@ export class SubscriptionsPage implements OnInit {
     }
     const feedsUrl = scanResult.feedsUrl;
 
-      await this.native.showLoading("common.waitMoment");
-      try {
+    await this.native.showLoading("common.waitMoment");
+    try {
+      const channel = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+      if (!channel) {
         await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-        this.native.hideLoading();
-        this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId], '');
-        this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
-      } catch (error) {
-        this.native.hideLoading();
-        this.native.toast("common.subscribeFail");
       }
-   }
+      this.native.hideLoading();
+      this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId], '');
+      this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
+    } catch (error) {
+      this.native.hideLoading();
+      this.native.toast("common.subscribeFail");
+    }
+  }
 
   ionClear() {
     this.isSearch = '';

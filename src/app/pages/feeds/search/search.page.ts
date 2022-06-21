@@ -447,16 +447,19 @@ export class SearchPage implements OnInit {
     const feedsUrl = scanResult.feedsUrl;
 
 
-      await this.native.showLoading("common.waitMoment");
-      try {
+    await this.native.showLoading("common.waitMoment");
+    try {
+      const channel = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+      if (!channel) {
         await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-        this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId], '');
-        this.native.hideLoading();
-        this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
-      } catch (error) {
-        this.native.hideLoading();
-        this.native.toastWarn("common.subscribeFail");
       }
+      this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId], '');
+      this.native.hideLoading();
+      this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
+    } catch (error) {
+      this.native.hideLoading();
+      this.native.toastWarn("common.subscribeFail");
+    }
   }
 
   loadData(events: any) {
