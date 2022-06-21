@@ -15,6 +15,7 @@ import { Logger } from 'src/app/services/logger';
 import { PopupProvider } from 'src/app/services/popup';
 import { ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
 import { IonRefresher } from '@ionic/angular';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 const TAG: string = 'SubscriptionsPage';
 @Component({
   selector: 'app-subscriptions',
@@ -55,6 +56,7 @@ export class SubscriptionsPage implements OnInit {
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
     private popupProvider: PopupProvider,
+    private keyboard: Keyboard,
     public theme: ThemeService
   ) { }
 
@@ -476,6 +478,7 @@ export class SubscriptionsPage implements OnInit {
       (events && events.keyCode === 13) ||
       (events.keyCode === 8 && this.isSearch === '')
     ) {
+      this.keyboard.hide();
       if (this.isSearch == '') {
         this.ionRefresher.disabled = false;
         this.followingList = _.cloneDeep(this.searchFollowingList);
