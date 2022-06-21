@@ -129,13 +129,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'commentlist',
-    loadChildren: () =>
-      import('./pages/commentlist/commentlist.module').then(
-        m => m.CommentlistPageModule,
-      ),
-  },
-  {
     path: 'feedspreferences',
     loadChildren: () =>
       import('./pages/feedspreferences/feedspreferences.module').then(
