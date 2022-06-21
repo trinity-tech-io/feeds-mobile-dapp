@@ -183,10 +183,9 @@ export class HiveVaultHelper {
         } else {
             this.native.toastWarn("common.likeError1");
         }
-        return error
+
+        return error;
     }
-
-
 
     createFeedsScripting(lasterVersion: string, preVersion: string, registScripting: boolean = false) {
         return this.insertDataToFeedsScriptingDB(lasterVersion, preVersion, registScripting);
@@ -1820,7 +1819,21 @@ export class HiveVaultHelper {
     downloadScripting(targetDid: string, avatarHiveURL: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
+                if (!avatarHiveURL || avatarHiveURL == '') {
+                    const errorMsg = 'Input param null';
+                    Logger.warn(TAG, errorMsg);
+                    reject(errorMsg);
+                    return;
+                }
+
                 const transaction_id = await this.downloadScriptingTransactionID(targetDid, avatarHiveURL);
+                if (!transaction_id || transaction_id == '') {
+                    const errorMsg = 'Download transactionId null';
+                    Logger.warn(TAG, errorMsg);
+                    reject(errorMsg);
+                    return;
+                }
+
                 const data = await this.downloadScriptingDataWithString(targetDid, transaction_id);
                 // const rawImage = await rawImageToBase64DataUrl(dataBuffer)
 
@@ -1833,13 +1846,22 @@ export class HiveVaultHelper {
     }
 
     // avatarHiveURL = scriptName@remoteName
-    private async downloadScriptingTransactionID(targetDid: string, avatarHiveURL: string) {
-        const params = avatarHiveURL.split("@")
-        const scriptName = params[0]
-        const remoteName = params[1]
-        const result = await this.callScript(targetDid, scriptName, { "path": remoteName })
-        const transaction_id = result[scriptName]["transaction_id"]
-        return transaction_id
+    private downloadScriptingTransactionID(targetDid: string, avatarHiveURL: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            if (!avatarHiveURL || !avatarHiveURL.includes('@')) {
+                // reject('Input avatar url is null');
+                resolve('');
+                return;
+            }
+
+            const params = avatarHiveURL.split("@")
+            const scriptName = params[0]
+            const remoteName = params[1]
+
+            const result = await this.callScript(targetDid, scriptName, { "path": remoteName })
+            const transaction_id = result[scriptName]["transaction_id"]
+            resolve(transaction_id);
+        });
     }
 
     private async downloadScriptingDataWithString(targetDid: string, transactionID: string) {

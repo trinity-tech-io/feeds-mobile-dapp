@@ -3,7 +3,6 @@ import { Executable, InsertOptions, File as HiveFile, ScriptRunner, Vault, AppCo
 import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { Console } from 'console';
-import { resolve } from 'url';
 import { FileService } from 'src/app/services/FileService';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
@@ -165,7 +164,7 @@ export class HiveService {
 
     if (this.scriptRunner === undefined || this.scriptRunner === null) {
       this.scriptRunner = await this.creatScriptRunner(userDid)
-     }
+    }
     return this.scriptRunner
   }
 

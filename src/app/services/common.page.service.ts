@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import _, { reject } from 'lodash';
 import { UtilService } from './utilService';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
-import { resolve } from 'url';
 import { DataHelper } from './DataHelper';
 import { Config } from './config';
 @Injectable()
@@ -16,8 +15,8 @@ export class CommonPageService {
         let id = key + "-" + elementId;
         let htmlElement: HTMLElement = document.getElementById(id) || null;
         if (htmlElement != null) {
-            htmlElement.removeAttribute('src');
-            htmlElement.style.display = "none";
+          htmlElement.removeAttribute('src');
+          htmlElement.style.display = "none";
         }
       }
     }
@@ -34,7 +33,7 @@ export class CommonPageService {
     hiveVaultController: any,
     ownerDid: string = "",
     channelName?: string,
-    ) {
+  ) {
     try {
       if (
         id != '' &&
@@ -48,7 +47,7 @@ export class CommonPageService {
         let userDid = arr[4];
         let isInit = isInitUserNameMap[commentId] || '';
         if (isInit === '') {
-          if(destDid === userDid ){
+          if (destDid === userDid) {
             isInitUserNameMap[commentId] = "11";
             userNameMap[destDid] = channelName;
             return;

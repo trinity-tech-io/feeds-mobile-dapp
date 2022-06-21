@@ -4,7 +4,6 @@ import { NativeService } from 'src/app/services/NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { PopoverController } from '@ionic/angular';
 import _ from 'lodash';
-import { resolve } from 'url';
 import { Logger } from './logger';
 export type HttpOptions = {
   headers?: HttpHeaders | {
@@ -57,7 +56,7 @@ export class HttpService {
     public native: NativeService,
     public popupProvider: PopupProvider,
     private popoverController: PopoverController,
-  ) {}
+  ) { }
 
   /**
    * Base http get function
@@ -128,7 +127,7 @@ export class HttpService {
 
   ajaxGet(url: string, isLoading: boolean = true) {
     if (isLoading) {
-      this.native.showLoading('common.waitMoment', isDismiss => {});
+      this.native.showLoading('common.waitMoment', isDismiss => { });
     }
     return new Promise((resove, reject) => {
       this.httpClient.get(url).subscribe(
@@ -157,11 +156,11 @@ export class HttpService {
 
   ajaxPost(url: string, json: Object, isLoading: boolean = true) {
     if (isLoading) {
-      this.native.showLoading('common.waitMoment', isDismiss => {});
+      this.native.showLoading('common.waitMoment', isDismiss => { });
     }
     return new Promise((resove, reject) => {
       this.httpClient
-        .post(url, JSON.stringify(json),this.httpOptions)
+        .post(url, JSON.stringify(json), this.httpOptions)
         .subscribe(
           response => {
             this.native.hideLoading();
@@ -230,22 +229,22 @@ export class HttpService {
     }
   }
 
-  getElaPrice():Promise<string>{
+  getElaPrice(): Promise<string> {
     return new Promise((resove, reject) => {
-      try{
-       this.httpClient.get('https://assist.trinity-feeds.app/feeds/api/v1/price')
-       .subscribe((result)=>{
-        let newResult = result || {};
-         let elaPrice =  newResult["ELA"] || "";
-         if(elaPrice!=""){
-          resove(elaPrice)
-         }else{
-          reject(null);
-         }
-       },(err)=>{
-          reject(null);
-       });
-      }catch(err){
+      try {
+        this.httpClient.get('https://assist.trinity-feeds.app/feeds/api/v1/price')
+          .subscribe((result) => {
+            let newResult = result || {};
+            let elaPrice = newResult["ELA"] || "";
+            if (elaPrice != "") {
+              resove(elaPrice)
+            } else {
+              reject(null);
+            }
+          }, (err) => {
+            reject(null);
+          });
+      } catch (err) {
         reject(null);
       }
     });
