@@ -196,7 +196,7 @@ export const zh = {
     migrateFeedsServiceData: '迁移 Feeds Service 数据到 Hive Vault',
     subscribing: '正在订阅...',
     subscribeSuccess: '订阅成功',
-    subscribeFail: '订阅失败',
+    subscribeFail: '订阅失败（请检查手机网络）',
     didSigninError1: '用户登录时出错',
     didSigninError2: '解析用户数据时出错',
     yes: '是',

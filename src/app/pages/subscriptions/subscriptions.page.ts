@@ -440,26 +440,18 @@ export class SubscriptionsPage implements OnInit {
       return;
     }
     const feedsUrl = scanResult.feedsUrl;
-    try {
+
       await this.native.showLoading("common.waitMoment");
       try {
         await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-      } catch (error) {
-      }
-
-      try {
+        this.native.hideLoading();
+        this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId], '');
         this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
       } catch (error) {
+        this.native.hideLoading();
+        this.native.toast("common.subscribeFail");
       }
-
-      this.native.hideLoading();
-      this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId], '');
-    } catch (error) {
-      this.native.hideLoading();
-      this.native.toast("common.subscribeFail");
-    }
-
-  }
+   }
 
   ionClear() {
     this.isSearch = '';

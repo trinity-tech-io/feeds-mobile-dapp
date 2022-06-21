@@ -760,6 +760,10 @@ export class HiveVaultController {
   getV3Data(destDid: string, remotePath: string, fileName: string, type: string, isDownload?: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        if(destDid === '' || fileName === '' || remotePath === ''){
+          resolve('');
+          return;
+        }
         let defaultAvatar = UtilService.getDefaultAvatarHash(fileName) || "";
         if (defaultAvatar != "") {
           resolve(defaultAvatar);
@@ -778,12 +782,14 @@ export class HiveVaultController {
         }
 
         if (result == '' && isDownload === '') {
-          const downloadResult = await this.hiveVaultApi.downloadScripting(destDid, remotePath);
-          await this.fileHelperService.saveV3Data(fileName, downloadResult);
-          resolve(downloadResult);
+          try {
+            const downloadResult = await this.hiveVaultApi.downloadScripting(destDid, remotePath);
+            await this.fileHelperService.saveV3Data(fileName, downloadResult);
+            resolve(downloadResult);
+          } catch (error) {
+          }
           return;
         }
-
         resolve('')
       } catch (error) {
         Logger.error(TAG, 'Get data error', error);
