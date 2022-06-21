@@ -196,7 +196,7 @@ export const en = {
     migrateFeedsServiceData: 'Migrate Feeds Service data to the Hive Vault',
     Subscribing: 'Subscribing...',
     subscribeSuccess: 'Subscription successful',
-    subscribeFail: 'Subscription failed (please check the mobile network)',
+    subscribeFail: 'Subscription failed (please check mobile network)',
     didSigninError1: 'An error occurred when the user logged in',
     didSigninError2: 'An error occurred while parsing user data',
     yes: 'Yes',
@@ -890,6 +890,6 @@ export const en = {
     buy: 'Buy'
   },
   toast: {
-    linkageInvalidParams: 'The linkage is invalid or not supported to open'
+    linkageInvalidParams: 'The linkage is invalid or cannot be opened'
   }
 };
