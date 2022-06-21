@@ -7,6 +7,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger } from 'src/app/services/logger';
 import { ThemeService } from 'src/app/services/theme.service';
+import { FeedService } from 'src/app/services/FeedService';
 let TAG: string = 'Galleria-Hive';
 @Component({
   selector: 'app-galleriahive',
@@ -23,6 +24,7 @@ export class GalleriahivePage implements OnInit {
     private native: NativeService,
     private dataHelper: DataHelper,
     private zone: NgZone,
+    private feedService: FeedService,
     public theme: ThemeService
   ) {
 
@@ -94,16 +96,32 @@ export class GalleriahivePage implements OnInit {
       });
   }
 
-  TryButton() {
+  async TryButton() {
 
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    this.authorizationStatus = 0;
-    this.events.publish(FeedsEvent.PublishType.signinSuccess);
 
+    await this.doSignin();
+
+  }
+
+  async doSignin() {
+    try {
+      this.feedService.signIn().then(isSuccess => {
+        if (isSuccess) {
+          this.authorizationStatus = 0;
+          this.events.publish(FeedsEvent.PublishType.signinSuccess);
+          return;
+        }else{
+        }
+      }).catch((err)=>{
+        this.native.toastWarn(err);
+      });
+    } catch (error) {
+    }
   }
 
 }

@@ -94,14 +94,19 @@ export class StandardAuthService {
     return new Promise(async (resolve, reject) => {
       let didAccess = new DID.DIDAccess();
       try {
-        let instanceDIDInfo = await didAccess.getOrCreateAppInstanceDID();
+        let instanceDIDInfo = await didAccess.getOrCreateAppInstanceDID() || null;
         if(instanceDIDInfo != null){
-          instanceDIDInfo.didStore.loadDidDocument(
-            instanceDIDInfo.did.getDIDString(),
-            didDocument => {
-              resolve(didDocument.toJson());
-            },
-          );
+          let didStore = instanceDIDInfo.didStore || null;
+          if(didStore != null){
+            instanceDIDInfo.didStore.loadDidDocument(
+              instanceDIDInfo.did.getDIDString(),
+              didDocument => {
+                resolve(didDocument.toJson());
+              },
+            );
+          }else{
+            this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
+          }
         }else{
          this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
          }
@@ -362,11 +367,7 @@ export class StandardAuthService {
           return;
         }
         this.events.publish(FeedsEvent.PublishType.authEssentialFail,{type:0})
-        let error =
-          'Get app identity credential error, credential is ' +
-          JSON.stringify(mAppIdCredential);
-        Logger.error(TAG, error);
-        reject(error);
+        Logger.error(TAG, 'Get app identity credential error, credential is ', mAppIdCredential);
       } catch (error) {
         reject(error);
         Logger.error(TAG, error);

@@ -219,21 +219,20 @@ export class HomePage implements OnInit {
     this.startIndex = 0;
     if (scrollToTop) {
       this.postList = this.totalData = await this.sortPostList();
-    }
-    // if (this.totalData.length - this.pageNumber > 0) {
-    //   this.postList = this.totalData.slice(0, this.pageNumber);
-
-
-    //   this.startIndex++;
-    //   //this.infiniteScroll.disabled = false;
-    // } else {
-
-    //   this.postList = this.totalData;
-    //   //this.infiniteScroll.disabled = true;
-    // }
-    if (scrollToTop) {
       this.scrollToTop(1);
+    }else{
+     let newList = await this.sortPostList();
+     _.each(this.postList,(item: FeedsData.PostV3,index)=>{
+      let postId = item.postId;
+      let post = _.find(newList,(newItem: FeedsData.PostV3)=>{
+                  return newItem.postId === postId;
+        }) || null;
+        if( post != null && !(_.isEqual(item,post))){
+          this.postList.splice(index,1,post);
+        }
+      });
     }
+
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
     this.avatarImageMap = {};
@@ -521,7 +520,7 @@ export class HomePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
       Logger.log(TAG, "======= Receive editPostFinish ========")
       this.zone.run(() => {
-        this.refreshPostList();
+        this.refreshPostList(false);
       });
     });
 
