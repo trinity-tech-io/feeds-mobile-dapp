@@ -343,11 +343,17 @@ export class SubscriptionsPage implements OnInit {
                     channel.destDid, channel.channelId).
                     then((result) => {
                       result = result || 0;
+                      if (result == 0) {
+                        this.hiveVaultController.querySubscriptionChannelById(channel.destDid, channel.channelId).then(() => {
+                          this.zone.run(async () => {
+                            this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
+                          });
+                        })
+                      }
                       this.subscriptionV3NumMap[channelId] = result;
 
                     }).catch(() => {
                       this.subscriptionV3NumMap[channelId] = 0;
-
                     });
                 } catch (error) {
                 }

@@ -343,6 +343,13 @@ export class ChannelsPage implements OnInit {
     }
     this.channelDesc = channel.intro;
     this.channelSubscribes = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
+    if (this.channelSubscribes == 0) {
+      this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId).then(() => {
+        this.zone.run(async () => {
+          this.channelSubscribes = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
+        });
+      })
+    }
     this.tippingAddress = channel.tipping_address || '';
     let channelAvatarUri = channel.avatar || '';
     this.channelAvatarUri = channelAvatarUri;
