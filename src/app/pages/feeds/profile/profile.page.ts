@@ -898,8 +898,14 @@ export class ProfilePage implements OnInit {
                     channel.destDid, channel.channelId).
                     then((result) => {
                       result = result || 0;
+                      if (result == 0) {
+                        this.hiveVaultController.querySubscriptionChannelById(channel.destDid, channel.channelId).then(() => {
+                          this.zone.run(async () => {
+                            this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
+                          });
+                        })
+                      }
                       this.subscriptionV3NumMap[channelId] = result;
-
                     }).catch(() => {
                       this.subscriptionV3NumMap[channelId] = 0;
 
@@ -1173,13 +1179,13 @@ export class ProfilePage implements OnInit {
           let postId: any = arr[2];
 
           let post = this.postMap[postId] || null;
-          if(post === null){
-              post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-              this.postMap[postId] = post;
-           }
-          if(post === null){
-             this.isLoadimage[id] = '13';
-             return;
+          if (post === null) {
+            post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            this.postMap[postId] = post;
+          }
+          if (post === null) {
+            this.isLoadimage[id] = '13';
+            return;
           }
           let mediaDatas = post.content.mediaData;
           const elements = mediaDatas[0];
@@ -1380,11 +1386,11 @@ export class ProfilePage implements OnInit {
           let destDid = arr[0];
           let postId: any = arr[2];
           let post = this.postMap[postId] || null;
-          if(post === null){
-              post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-              this.postMap[postId] = post;
-           }
-          if(post === null){
+          if (post === null) {
+            post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            this.postMap[postId] = post;
+          }
+          if (post === null) {
             this.isLoadVideoiamge[id] = '13';
             return;
           }
@@ -1393,7 +1399,7 @@ export class ProfilePage implements OnInit {
 
           //缩略图
           let videoThumbnailKey = elements.thumbnailPath || '';
-          if(videoThumbnailKey === ''){
+          if (videoThumbnailKey === '') {
             this.isLoadVideoiamge[id] = '13';
             return;
           }
@@ -1433,7 +1439,7 @@ export class ProfilePage implements OnInit {
           this.isLoadVideoiamge[id] === '13' &&
           postSrc != ''
         ) {
-          if(source != ''){
+          if (source != '') {
             let sourcesrc = source.getAttribute('src') || '';
             if (sourcesrc != '') {
               source.removeAttribute('src');
