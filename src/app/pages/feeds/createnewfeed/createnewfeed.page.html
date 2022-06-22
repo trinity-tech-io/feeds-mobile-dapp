@@ -21,12 +21,11 @@
             <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc ></ion-input>
         </ion-item>
 
-        <ion-item lines="none">
+        <!-- <ion-item lines="none">
           <ion-label position="stacked">{{ 'CreatenewfeedPage.tippingAddress' | translate }}</ion-label>
-          <!-- <ion-col size="11" style="padding-top: 0px;"> -->
             <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.tippingAddressDes'|translate}}"  [(ngModel)]="tippingAddress"></ion-input>
             <img class="qrCodeLine" src="./assets/images/qrCodeLine.svg" *ngIf="tippingAddress==='' || tippingAddress===null" (click)="scanWalletAddress()">
-       </ion-item>
+       </ion-item> -->
 
         <!-- <ion-item lines="none">
           <ion-row class="section dev-mode">

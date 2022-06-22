@@ -1029,8 +1029,17 @@ export class HomePage implements OnInit {
           let channel: FeedsData.ChannelV3 = this.channelMap[key] || null;
           if (channel === null) {
             channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+            if(channel === null){
+                try {
+                  const newChannel = await this.hiveVaultController.getChannelInfoById(destDid, channelId) || null;
+                  this.channelMap[key] = newChannel;
+                  channel = this.channelMap[key];
+                } catch (error) {
+
+                }
+            }
           } else {
-            channel = this.channelMap[key]
+            channel = this.channelMap[key];
           }
           //this.hiveVaultController.checkPostIsLast();
           const post = _.find(this.postList, item => {
