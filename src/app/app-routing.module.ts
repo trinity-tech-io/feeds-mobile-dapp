@@ -171,13 +171,6 @@ const routes: Routes = [
   //     ),
   // },
   {
-    path: 'learnmore',
-    loadChildren: () =>
-      import('./pages/learnmore/learnmore.module').then(
-        m => m.LearnmorePageModule,
-      ),
-  },
-  {
     path: 'walletteach',
     loadChildren: () =>
       import('./pages/walletteach/walletteach.module').then(

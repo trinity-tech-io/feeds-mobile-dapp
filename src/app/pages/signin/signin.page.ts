@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FeedService } from 'src/app/services/FeedService';
-import { LoadingController } from '@ionic/angular';
+import { IonSlides, LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
@@ -21,12 +21,15 @@ const TAG: string = 'SigninPage';
 })
 export class SigninPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  @ViewChild('slide', { static: false }) slides: IonSlides;
+
   public signedIn: boolean = false;
   public did: string = '';
   public userName: string = '';
   public emailAddress: string = '';
   public lightThemeType: number = 2;
   public isShowLearnMore:boolean = false;
+
   constructor(
     private native: NativeService,
     private feedService: FeedService,
@@ -94,9 +97,6 @@ export class SigninPage implements OnInit {
     }
   }
 
-  onSlideDidChange() {
-
-  }
 
   skip() {
     localStorage.setItem('org.elastos.dapp.feeds.isLearnMore', '11');
