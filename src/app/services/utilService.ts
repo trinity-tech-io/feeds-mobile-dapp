@@ -767,25 +767,25 @@ export class UtilService {
     return new Date().getTime();
   }
 
-  public static generateChannelId(did: string, channelName: string) {
+  public static generateChannelId(did: string, channelName: string): string {
     return UtilService.SHA256(did + channelName);
   }
 
-  public static generatePostId(did: string, channelId: string, postContent: string) {
+  public static generatePostId(did: string, channelId: string, postContent: string): string {
     const currentTime = UtilService.getCurrentTimeNum() / (1000 * 10);
     return UtilService.SHA256(did + channelId + postContent + currentTime);
   }
 
-  public static generateCommentId(did: string, postId: string, refCommentId: string, commentContent: string) {
+  public static generateCommentId(did: string, postId: string, refCommentId: string, commentContent: string): string {
     const currentTime = UtilService.getCurrentTimeNum() / (1000 * 10);
     return UtilService.SHA256(did + postId + refCommentId + commentContent + currentTime);
   }
 
-  public static generateLikeId(postId: string, commentId: string, userDid: string) {
+  public static generateLikeId(postId: string, commentId: string, userDid: string): string {
     return UtilService.SHA256(postId + commentId + userDid);
   }
 
-  public static getKey(did: string, id: string) {
+  public static getKey(did: string, id: string): string {
     return did + '#' + id;
   }
 
@@ -812,10 +812,10 @@ export class UtilService {
   }
   //did:elastos:icZdMxZ...PhjC
   public static userDidDisplay(userDid: string) {
-    if(userDid === ''){
-       return '';
+    if (userDid === '') {
+      return '';
     }
     let len = userDid.length;
-    return userDid = userDid.substring(0,19)+'...'+userDid.substring(len-4,len);
+    return userDid = userDid.substring(0, 19) + '...' + userDid.substring(len - 4, len);
   }
 }

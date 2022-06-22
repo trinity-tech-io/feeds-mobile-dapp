@@ -352,9 +352,9 @@ export class IntentService {
 
         let url = IntentService.BASEURL_CHANNEL
           + "/?targetDid=" + encodeURIComponent(destDid)
-          + "&channelId=" + encodeURIComponent(channelId)
-          + "&channelName=" + encodeURIComponent(channelName)
-          + "&channelDesc=" + encodeURIComponent(channelDesc);
+          + "&channelId=" + encodeURIComponent(channelId);
+        // + "&channelName=" + encodeURIComponent(channelName)
+        // + "&channelDesc=" + encodeURIComponent(channelDesc);
 
         Logger.log(TAG, "Shared channel link url is " + url);
 
@@ -383,8 +383,8 @@ export class IntentService {
         let url = IntentService.BASEURL_POST
           + "/?targetDid=" + encodeURIComponent(destDid)
           + "&channelId=" + encodeURIComponent(channelId)
-          + "&postId=" + encodeURIComponent(postId)
-          + "&contentText=" + encodeURIComponent(contentText);
+          + "&postId=" + encodeURIComponent(postId);
+        // + "&contentText=" + encodeURIComponent(contentText);
 
         Logger.log(TAG, "Shared post link url is " + url);
 
