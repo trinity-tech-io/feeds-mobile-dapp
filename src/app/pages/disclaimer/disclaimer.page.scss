@@ -2,6 +2,9 @@
 .container{
   ion-grid {
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     .bg{
       background:#f6f5f6;
       // height:540px;
