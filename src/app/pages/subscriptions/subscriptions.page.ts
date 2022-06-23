@@ -16,6 +16,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.service';
 import { IonRefresher } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { UtilService } from 'src/app/services/utilService';
 const TAG: string = 'SubscriptionsPage';
 @Component({
   selector: 'app-subscriptions',
@@ -173,9 +174,7 @@ export class SubscriptionsPage implements OnInit {
     this.shareDestDid = destDid;
     let channelId = channel['channelId'] || '';
     this.shareChannelId = channelId;
-    let name = channel['channelName'] || '';
-    let ownerDid = (await this.dataHelper.getSigninData()).did;
-    return "feeds://v3/" + destDid + "/" + channelId + '/' + encodeURIComponent(name);
+    return UtilService.generateFeedsQrCodeString(destDid, channelId);
   }
 
   async hideShareMenu(objParm: any) {

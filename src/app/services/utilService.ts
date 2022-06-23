@@ -811,11 +811,28 @@ export class UtilService {
     })
   }
   //did:elastos:icZdMxZ...PhjC
-  public static userDidDisplay(userDid: string) {
+  public static userDidDisplay(userDid: string): string {
     if (userDid === '') {
       return '';
     }
     let len = userDid.length;
     return userDid = userDid.substring(0, 19) + '...' + userDid.substring(len - 4, len);
+  }
+
+  public static generateFeedsQrCodeString(targetDid: string, channelId: string): string {
+    return "feeds://v3/" + targetDid + "/" + channelId;
+  }
+
+  public static generateChannelShareLink(baseUrl: string, targetDid: string, channelId: string): string {
+    return baseUrl
+      + "/?targetDid=" + targetDid
+      + "&channelId=" + channelId;
+  }
+
+  public static generatePostShareLink(baseUrl: string, targetDid: string, channelId: string, postId: string): string {
+    return baseUrl
+      + "/?targetDid=" + targetDid
+      + "&channelId=" + channelId
+      + "&postId=" + postId;
   }
 }

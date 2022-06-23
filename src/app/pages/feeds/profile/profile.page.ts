@@ -1952,11 +1952,9 @@ export class ProfilePage implements OnInit {
   async getQrCodeString(feed: any) {
     let destDid = feed['destDid'];
     this.shareDestDid = destDid;
-    let channelName = feed['channelName'] || '';
     let channelId = feed['channelId'] || '';
     this.shareChannelId = channelId;
-    //let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    let qrcodeString = "feeds://v3/" + destDid + "/" + channelId + '/' + encodeURIComponent(channelName);
+    let qrcodeString = UtilService.generateFeedsQrCodeString(destDid, channelId);
     return qrcodeString;
   }
 

@@ -350,12 +350,7 @@ export class IntentService {
         const channelName: string = channel.name || '';
         const channelDesc: string = channel.intro || '';
 
-        let url = IntentService.BASEURL_CHANNEL
-          + "/?targetDid=" + encodeURIComponent(destDid)
-          + "&channelId=" + encodeURIComponent(channelId);
-        // + "&channelName=" + encodeURIComponent(channelName)
-        // + "&channelDesc=" + encodeURIComponent(channelDesc);
-
+        const url = UtilService.generateChannelShareLink(IntentService.BASEURL_CHANNEL, destDid, channelId);
         Logger.log(TAG, "Shared channel link url is " + url);
 
         const finalURL = await this.shortenURL(url);
@@ -378,13 +373,8 @@ export class IntentService {
         const destDid: string = post.destDid;
         const channelId: string = post.channelId;
         const postId: string = post.postId;
-        const contentText: string = post.content.content;
 
-        let url = IntentService.BASEURL_POST
-          + "/?targetDid=" + encodeURIComponent(destDid)
-          + "&channelId=" + encodeURIComponent(channelId)
-          + "&postId=" + encodeURIComponent(postId);
-        // + "&contentText=" + encodeURIComponent(contentText);
+        const url = UtilService.generatePostShareLink(IntentService.BASEURL_POST, destDid, channelId, postId);
 
         Logger.log(TAG, "Shared post link url is " + url);
 

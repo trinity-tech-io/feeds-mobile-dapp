@@ -29,9 +29,9 @@ export class ScannerHelper {
     const version = urlArr[0];
     const destDid = urlArr[1];
     const channelId = urlArr[2];
-    const channelName = urlArr[3];
+    // const channelName = urlArr[3] || '';
 
-    if (!version || !destDid || !channelId || !channelName) {
+    if (!version || !destDid || !channelId) {
       return { code: ScannerCode.INVALID_FORMAT, feedsUrl: null };
     }
 
@@ -39,7 +39,7 @@ export class ScannerHelper {
       version: version,
       destDid: destDid,
       channelId: channelId,
-      channelName: channelName
+      // channelName: channelName
     }
     return { code: ScannerCode.VALID, feedsUrl: feedsUrl };
   }
@@ -49,7 +49,7 @@ export type FeedsUrl = {
   version: string,
   destDid: string,
   channelId: string,
-  channelName: string
+  // channelName: string
 }
 
 export type ParseResult = {
