@@ -268,6 +268,12 @@ export class ChannelsPage implements OnInit {
         }
         this.curPostId = '';
       }
+      this.isLoadimage = {};
+      this.isLoadVideoiamge = {};
+      this.isInitLikeNum = {};
+      this.isInitLikeStatus = {};
+      this.isInitComment = {};
+      this.refreshImage();
       return;
     }
 
@@ -366,11 +372,12 @@ export class ChannelsPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.theme.setTheme1();
+    //document.body.addEventListener('touchmove',this.preventDefault, {passive: false});
     let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
-    if( appChannels != null){
-       appChannels.style.backgroundColor = "#010101";
+      if( appChannels != null){
+        appChannels.style.backgroundColor = "#010101";
     }
+    this.theme.setTheme1();
     this.isMine = await this.checkChannelIsMine();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
@@ -436,6 +443,7 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    //document.body.removeEventListener("touchmove",this.preventDefault,false);
     this.theme.restTheme();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
@@ -1411,5 +1419,7 @@ export class ChannelsPage implements OnInit {
 
   retry(destDid: string, channelId: string, postId: string) {
   }
+
+  preventDefault(e:any) { e.preventDefault(); };
 
 }

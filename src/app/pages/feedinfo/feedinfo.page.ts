@@ -115,6 +115,7 @@ export class FeedinfoPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    document.body.addEventListener('touchmove',this.preventDefault, {passive: false});
     this.theme.setTheme1();
     this.developerMode = this.feedService.getDeveloperMode();
     this.initChannelInfo();
@@ -190,6 +191,7 @@ export class FeedinfoPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    document.body.removeEventListener("touchmove",this.preventDefault,false);
     this.theme.restTheme();
     this.removeEvents();
   }
@@ -294,5 +296,7 @@ export class FeedinfoPage implements OnInit {
       })
       .catch(() => { });
   }
+
+  preventDefault(e:any) { e.preventDefault(); };
 
 }
