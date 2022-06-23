@@ -591,6 +591,10 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillLeave() {
+    let appProfile: HTMLBaseElement = document.querySelector("app-profile") || null;
+    if( appProfile != null){
+       appProfile.removeAttribute("style");
+    }
     this.events.unsubscribe(FeedsEvent.PublishType.addProflieEvent);
     this.clearData();
   }

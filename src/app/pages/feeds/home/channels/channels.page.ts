@@ -372,7 +372,6 @@ export class ChannelsPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    //document.body.addEventListener('touchmove',this.preventDefault, {passive: false});
     let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
       if( appChannels != null){
         appChannels.style.backgroundColor = "#010101";
@@ -443,7 +442,10 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    //document.body.removeEventListener("touchmove",this.preventDefault,false);
+    let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
+    if( appChannels != null){
+      appChannels.removeAttribute("style");
+    }
     this.theme.restTheme();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
@@ -1419,7 +1421,5 @@ export class ChannelsPage implements OnInit {
 
   retry(destDid: string, channelId: string, postId: string) {
   }
-
-  preventDefault(e:any) { e.preventDefault(); };
 
 }
