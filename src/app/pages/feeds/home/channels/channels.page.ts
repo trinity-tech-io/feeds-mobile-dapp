@@ -367,6 +367,10 @@ export class ChannelsPage implements OnInit {
 
   async ionViewWillEnter() {
     this.theme.setTheme1();
+    let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
+    if( appChannels != null){
+       appChannels.style.backgroundColor = "#010101";
+    }
     this.isMine = await this.checkChannelIsMine();
     if (this.platform.is('ios')) {
       this.isAndroid = false;

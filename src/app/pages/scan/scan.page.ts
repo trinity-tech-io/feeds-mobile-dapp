@@ -130,11 +130,11 @@ async hideCamera() {
   }
 
   ionViewDidLeave() {
-    let sid = setTimeout(()=>{
-      document.body.removeAttribute("style");
-      clearTimeout(sid);
-      sid = null;
-    },300);
+    // let sid = setTimeout(()=>{
+    //   document.body.removeAttribute("style");
+    //   clearTimeout(sid);
+    //   sid = null;
+    // },300);
   }
 
   stopScanning() {
@@ -291,7 +291,7 @@ async hideCamera() {
     this.popover.onWillDismiss().then(() => {
       if (this.popover != null) {
         this.popover = null;
-        document.body.removeAttribute("style");
+        //document.body.removeAttribute("style");
       }
     });
     await this.popover.present();

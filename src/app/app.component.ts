@@ -110,6 +110,7 @@ export class MyApp {
 
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
+      document.body.addEventListener('touchmove',this.preventDefault, {passive: false});
       this.getAvatar();
       this.initProfileData();
     })
@@ -821,5 +822,8 @@ export class MyApp {
 
   menuClose() {
     this.theme.restTheme();
+    document.body.removeEventListener("touchmove",this.preventDefault,false);
   }
+
+  preventDefault(e:any) { e.preventDefault(); };
 }

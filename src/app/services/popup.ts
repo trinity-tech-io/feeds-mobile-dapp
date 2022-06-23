@@ -163,7 +163,7 @@ export class PopupProvider {
         mode: 'ios',
         component:ScanPage,
         cssClass:"transparentBody",
-        animated: false,
+        animated: true,
         showBackdrop:false,
       });
       modal.onWillDismiss().then((scanText)=>{

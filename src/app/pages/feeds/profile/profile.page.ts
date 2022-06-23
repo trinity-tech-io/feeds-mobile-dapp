@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild, ElementRef } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -190,6 +190,7 @@ export class ProfilePage implements OnInit {
   private postMap = {};
 
   constructor(
+    private elmRef: ElementRef,
     public theme: ThemeService,
     private events: Events,
     private zone: NgZone,
@@ -559,6 +560,10 @@ export class ProfilePage implements OnInit {
 
   async ionViewWillEnter() {
     this.theme.setTheme1();//改变状态栏
+    let appProfile: HTMLBaseElement = document.querySelector("app-profile") || null;
+    if( appProfile != null){
+       appProfile.style.backgroundColor = "#010101";
+    }
     this.initTitleBar();
     this.elaPrice = this.dataHelper.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {

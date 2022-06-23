@@ -6750,11 +6750,11 @@ export class FeedService {
   async getUserAvatar(userDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let signinData = this.getSignInData();
-      let userDid = signinData.did;
-      if (!signinData) {
+      if (signinData == null || signinData == undefined)  {
         resolve('assets/images/default-contact.svg');
         return;
       }
+      let userDid = signinData.did;
       let avatar = await this.dataHelper.loadUserAvatar(userDid);
       if (avatar) {
         resolve(avatar);
