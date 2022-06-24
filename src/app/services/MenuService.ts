@@ -143,7 +143,7 @@ export class MenuService {
   }
 
   async showShareMenu(
-    nodeId?: string,
+    destDid?: string,
     channelId?: string,
     channelName?: string,
     postId?: string,
@@ -161,7 +161,7 @@ export class MenuService {
           text: this.translate.instant('common.share'),
           icon: 'ios-share1',
           handler: async () => {
-            let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId) || null;
+            let post: any = await this.dataHelper.getPostV3ById(destDid, postId) || null;
             //Share post
             await this.native.showLoading("common.generateSharingLink");
             try {
@@ -351,7 +351,7 @@ export class MenuService {
   }
 
   async showPostDetailMenu(
-    nodeId: string,
+    destDid: string,
     channelId: string,
     channelName: string,
     postId: string,
@@ -371,7 +371,7 @@ export class MenuService {
           icon: 'ios-share1',
           handler: async () => {
             await this.handlePostDetailMenun(
-              nodeId,
+              destDid,
               channelId,
               channelName,
               postId,
@@ -384,7 +384,7 @@ export class MenuService {
           icon: 'ios-edit1',
           handler: () => {
             this.handlePostDetailMenun(
-              nodeId,
+              destDid,
               channelId,
               channelName,
               postId,
@@ -398,7 +398,7 @@ export class MenuService {
           icon: 'ios-delete',
           handler: () => {
             this.handlePostDetailMenun(
-              nodeId,
+              destDid,
               channelId,
               channelName,
               postId,
