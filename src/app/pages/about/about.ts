@@ -13,7 +13,7 @@ import { LanguageService } from 'src/app/services/language.service';
 })
 export class AboutPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public version = '3.0.1';
+  public version = '3.0.2';
   public currentLanguage = '';
   public lightThemeType: number = 3;
   constructor(

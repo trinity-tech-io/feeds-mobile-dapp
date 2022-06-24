@@ -94,7 +94,7 @@ import { Logger } from './services/logger';
 Sentry.init({
   dsn:
     'https://4196003a1c864f5798dd2be18be5cb48@o339076.ingest.sentry.io/5524842',
-  release: '3.0.1',
+  release: '3.0.2',
   integrations: [new RewriteFrames()],
 });
 
@@ -103,7 +103,7 @@ export class SentryErrorHandler implements ErrorHandler {
   constructor(
     private toastCtrl: ToastController,
     private translate: TranslateService,
-    ) { }
+  ) { }
 
   handleError(error) {
 
@@ -130,7 +130,7 @@ export class SentryErrorHandler implements ErrorHandler {
         })
         .then(toast => toast.present());
     }
-   throw error;
+    throw error;
   }
 }
 
