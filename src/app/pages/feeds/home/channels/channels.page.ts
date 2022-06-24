@@ -133,6 +133,7 @@ export class ChannelsPage implements OnInit {
   public posterImgMap: any = {};
   private postMap = {};
   private curPostId: string = "";
+  private isRefresh: boolean = false;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -252,7 +253,7 @@ export class ChannelsPage implements OnInit {
     }
     let tmpPostList = await this.filterDeletedPostList(posts);
     this.totalData = this.sortPostList(tmpPostList);
-    if (this.postList.length > 0) {
+    if (this.postList.length > 0 && !this.isRefresh) {
       if (this.curPostId != '') {
         let newPost: any = _.find(this.totalData, (item: FeedsData.PostV3) => {
           return item.postId === this.curPostId;
@@ -276,7 +277,7 @@ export class ChannelsPage implements OnInit {
       this.refreshImage();
       return;
     }
-
+    this.isRefresh = false;
     this.startIndex = 0;
     if (this.totalData.length - this.pageNumber > 0) {
       this.postList = this.totalData.slice(0, this.pageNumber);
@@ -372,6 +373,7 @@ export class ChannelsPage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    this.isRefresh = false;
     let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
       if( appChannels != null){
         appChannels.style.backgroundColor = "#010101";
@@ -650,6 +652,7 @@ export class ChannelsPage implements OnInit {
         await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
       }
       this.postMap = {};
+      this.isRefresh = true;
       this.init();
       event.target.complete();
     } catch (error) {
