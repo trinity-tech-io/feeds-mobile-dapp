@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.trinitytech.dapp.feedsnetwork",
+      "sha256_cert_fingerprints": [
+        "BB:12:E0:92:BF:C7:57:39:C2:9A:3E:A8:34:93:51:ED:05:2E:1A:FB:D5:90:8F:5E:83:47:7F:79:36:AC:46:DF",
+        "3E:98:C3:F0:94:FB:8E:3D:C7:45:F4:AD:CE:3A:F4:84:99:96:6A:89:05:D4:33:81:9F:19:55:08:3A:49:52:3C"
+      ]
+    }
+  }
+]
