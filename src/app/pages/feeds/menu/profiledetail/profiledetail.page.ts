@@ -133,6 +133,8 @@ export class ProfiledetailPage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    document.body.addEventListener('touchmove',this.preventDefault, {passive: false});
+
     this.theme.setTheme1();
     this.walletAddress =
       this.nftContractControllerService.getAccountAddress() || '';
@@ -176,6 +178,7 @@ export class ProfiledetailPage implements OnInit {
   ionViewWillUnload() { }
 
   async ionViewWillLeave() {
+    document.body.removeEventListener("touchmove",this.preventDefault,false);
     this.theme.restTheme();
     this.native.handleTabsEvents();
   }
@@ -284,5 +287,7 @@ export class ProfiledetailPage implements OnInit {
         break;
     }
   }
+
+  preventDefault(e:any) { e.preventDefault(); };
 
 }
