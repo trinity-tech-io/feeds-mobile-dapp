@@ -90,6 +90,7 @@ import { HiveVaultController } from './services/hivevault_controller.service';
 import { FeedsSqliteHelper } from './services/sqlite_helper.service';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
 import { Logger } from './services/logger';
+import { Events } from './services/events.service';
 
 Sentry.init({
   dsn:
@@ -103,10 +104,14 @@ export class SentryErrorHandler implements ErrorHandler {
   constructor(
     private toastCtrl: ToastController,
     private translate: TranslateService,
+    private events: Events,
   ) { }
 
   handleError(error) {
 
+    if(document.URL.includes('localhost/galleriahive')){
+      this.events.publish(FeedsEvent.PublishType.authEssentialFail,{type:0})
+    }
     // Only send reports to sentry if we are not debugging.
     if (document.URL.includes('localhost')) {
       // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
