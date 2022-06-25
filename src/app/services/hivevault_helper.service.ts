@@ -1825,7 +1825,6 @@ export class HiveVaultHelper {
                     reject(errorMsg);
                     return;
                 }
-
                 const transaction_id = await this.downloadScriptingTransactionID(targetDid, avatarHiveURL);
                 if (!transaction_id || transaction_id == '') {
                     const errorMsg = 'Download transactionId null';
@@ -1833,7 +1832,6 @@ export class HiveVaultHelper {
                     reject(errorMsg);
                     return;
                 }
-
                 const data = await this.downloadScriptingDataWithString(targetDid, transaction_id);
                 // const rawImage = await rawImageToBase64DataUrl(dataBuffer)
 
@@ -1848,6 +1846,8 @@ export class HiveVaultHelper {
     // avatarHiveURL = scriptName@remoteName
     private downloadScriptingTransactionID(targetDid: string, avatarHiveURL: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
+            try {
+
             if (!avatarHiveURL || !avatarHiveURL.includes('@')) {
                 // reject('Input avatar url is null');
                 resolve('');
@@ -1861,13 +1861,20 @@ export class HiveVaultHelper {
             const result = await this.callScript(targetDid, scriptName, { "path": remoteName })
             const transaction_id = result[scriptName]["transaction_id"]
             resolve(transaction_id);
+        } catch (error) {
+            reject(error)
+        }
         });
     }
 
     private async downloadScriptingDataWithString(targetDid: string, transactionID: string) {
-        let dataBuffer = await this.hiveService.downloadScripting(targetDid, transactionID)
-        let jsonString = dataBuffer.toString();
-        return jsonString
+        try {
+            let dataBuffer = await this.hiveService.downloadScripting(targetDid, transactionID)
+            let jsonString = dataBuffer.toString();
+            return jsonString
+        } catch (error) {
+            throw error
+        }
     }
 
     private async downloadScriptingDataWithBuffer(targetDid: string, transactionID: string) {
@@ -1887,7 +1894,8 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'callScript error:', error);
-                reject(this.handleError(error))
+                //reject(this.handleError(error))
+                reject(error);
             }
         });
     }

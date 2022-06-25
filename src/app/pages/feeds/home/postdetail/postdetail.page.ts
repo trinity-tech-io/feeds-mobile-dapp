@@ -970,7 +970,8 @@ export class PostdetailPage implements OnInit {
     if (this.postStatus != 1 && this.mediaType === 2) {
       let id = this.destDid + this.channelId + this.postId;
       let video: any = document.getElementById(id + 'postdetailvideo') || '';
-      if (!video.paused) {
+      let source: any = document.getElementById(id + 'postdetailsource') || '';
+      if (video !='' && source != '' && !video.paused) {
         //判断是否处于暂停状态
         video.pause(); //停止播放
       }

@@ -160,12 +160,17 @@ export class HiveService {
   }
 
   async getScriptRunner(userDid: string): Promise<ScriptRunner> {
-    this.scriptRunner = this.scriptRunners[userDid]
+    try {
+      this.scriptRunner = this.scriptRunners[userDid]
 
-    if (this.scriptRunner === undefined || this.scriptRunner === null) {
-      this.scriptRunner = await this.creatScriptRunner(userDid)
+      if (this.scriptRunner === undefined || this.scriptRunner === null) {
+        this.scriptRunner = await this.creatScriptRunner(userDid)
+      }
+      return this.scriptRunner
+    } catch (error) {
+      throw error
     }
-    return this.scriptRunner
+
   }
 
   async getVault(): Promise<Vault> {

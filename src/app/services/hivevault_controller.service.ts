@@ -787,6 +787,7 @@ export class HiveVaultController {
             await this.fileHelperService.saveV3Data(fileName, downloadResult);
             resolve(downloadResult);
           } catch (error) {
+            reject(error);
           }
           return;
         }

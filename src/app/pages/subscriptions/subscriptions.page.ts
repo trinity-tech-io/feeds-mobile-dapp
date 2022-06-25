@@ -162,6 +162,7 @@ export class SubscriptionsPage implements OnInit {
       }
       await this.hiveVaultController.syncSubscribedChannelFromBackup();
       await this.hiveVaultController.syncAllChannelInfo();
+      this.subscriptionV3NumMap = {};
       this.initFollowing();
       event.target.complete();
     } catch (err) {

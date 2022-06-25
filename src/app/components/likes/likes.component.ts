@@ -255,13 +255,8 @@ export class LikesComponent implements OnInit {
   pauseVideo(id: string) {
     let videoElement: any = document.getElementById(id + 'videolike') || '';
     let source: any = document.getElementById(id + 'sourcelike') || '';
-    if (source != '') {
+    if (videoElement != '' && source != '') {
       videoElement.pause();
-      source.removeAttribute('src'); // empty source
-      let sid = setTimeout(() => {
-        videoElement.load();
-        clearTimeout(sid);
-      }, 10);
     }
   }
 

@@ -1063,7 +1063,7 @@ export class ChannelsPage implements OnInit {
   pauseVideo(id: string) {
     let videoElement: any = document.getElementById(id + 'videochannel') || '';
     let source: any = document.getElementById(id + 'sourcechannel') || '';
-    if (source != '') {
+    if (videoElement !='' && source != '') {
       if (!videoElement.paused) {
         //判断是否处于暂停状态
         videoElement.pause();

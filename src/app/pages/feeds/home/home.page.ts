@@ -1432,8 +1432,7 @@ export class HomePage implements OnInit {
           let video: any = document.getElementById(id + 'video') || '';
           video.style.display = "none";
 
-          let vgoverlayplay: any =
-            document.getElementById(id + 'vgoverlayplayhome') || '';
+          let vgoverlayplay: any = document.getElementById(id + 'vgoverlayplayhome') || '';
           vgoverlayplay.style.display = "none";
 
           this.posterImgMap[id] = "";
@@ -1475,7 +1474,7 @@ export class HomePage implements OnInit {
   pauseVideo(id: string) {
     let videoElement: any = document.getElementById(id + 'video') || '';
     let source: any = document.getElementById(id + 'source') || '';
-    if (source != '') {
+    if (videoElement != '' && source != '') {
       if (!videoElement.paused) {
         //判断是否处于暂停状态
         videoElement.pause();
@@ -1563,7 +1562,7 @@ export class HomePage implements OnInit {
   setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplayhome') || '';
-    vgoverlayplay.style.display = "block";
+      vgoverlayplay.style.display = "block";
     if (vgoverlayplay != '') {
       vgoverlayplay.onclick = () => {
         this.zone.run(() => {
@@ -1609,15 +1608,9 @@ export class HomePage implements OnInit {
         this.zone.run(() => {
           let videodata = videoResult || '';
           if (videodata == '') {
-
-            // if (!this.feedService.checkPostIsAvalible(post)) {
-            //   this.isVideoLoading[this.videoCurKey] = false;
-            //   this.pauseVideo(id);
-            //   return;
-            // }
-
             if (this.isExitDown()) {
               this.isVideoLoading[this.videoCurKey] = false;
+              this.isVideoLoading[this.videoDownStatusKey] = false;
               this.pauseVideo(id);
               this.openAlert();
               return;
@@ -1627,7 +1620,6 @@ export class HomePage implements OnInit {
             this.videoDownStatus[this.videoDownStatusKey] = '1';
             this.isVideoLoading[this.videoDownStatusKey] = true;
             this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-
             this.hiveVaultController
               .getV3Data(destDid, originKey, fileName, type)
               .then((downVideoResult: string) => {
@@ -1638,19 +1630,29 @@ export class HomePage implements OnInit {
                   this.zone.run(() => {
                     this.loadVideo(id, downVideodata);
                   });
+                }else{
+                  this.videoDownStatus[this.videoDownStatusKey] = '';
+                  this.isVideoLoading[this.videoCurKey] = false;
+                  this.isVideoLoading[this.videoDownStatusKey] = false;
+                  this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
+                  this.pauseVideo(id);
                 }
               }).catch((err) => {
                 this.videoDownStatus[this.videoDownStatusKey] = '';
+                this.isVideoLoading[this.videoCurKey] = false;
                 this.isVideoLoading[this.videoDownStatusKey] = false;
                 this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
                 this.pauseVideo(id);
               });
             return;
           }
+          this.videoDownStatus[this.videoDownStatusKey] = '';
+          this.isVideoLoading[this.videoCurKey] = false;
           this.isVideoLoading[this.videoCurKey] = false;
           this.loadVideo(id, videodata);
         });
       }).catch((err) => {
+        this.isVideoLoading[this.videoCurKey] = false;
         this.videoDownStatus[this.videoDownStatusKey] = '';
         this.isVideoLoading[this.videoCurKey] = false;
       });

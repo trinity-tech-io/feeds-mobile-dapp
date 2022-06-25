@@ -707,7 +707,7 @@ export class ProfilePage implements OnInit {
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         try {
-          this.subscriptionV3NumMap = {};
+
           const did = (await this.dataHelper.getSigninData()).did;
           const selfchannels = await this.hiveVaultController.syncSelfChannel(did);
 
@@ -715,8 +715,8 @@ export class ProfilePage implements OnInit {
             const selfchannel = selfchannels[index];
             await this.hiveVaultController.querySubscriptionChannelById(selfchannel.destDid, selfchannel.channelId);
           }
-
           await this.hiveVaultController.syncSubscribedChannelFromBackup();
+          this.subscriptionV3NumMap = {};
           await this.initMyFeeds(selfchannels);
           event.target.complete();
         } catch (error) {
@@ -1476,7 +1476,7 @@ export class ProfilePage implements OnInit {
   pauseVideo(id: string) {
     let videoElement: any = document.getElementById(id + 'videolike') || '';
     let source: any = document.getElementById(id + 'sourcelike') || '';
-    if (source != '') {
+    if (videoElement !='' && source != '') {
       if (!videoElement.paused) {
         //判断是否处于暂停状态
         videoElement.pause();

@@ -434,7 +434,9 @@ export class CreatenewpostPage implements OnInit {
       return;
     }
     let video: any = document.getElementById('videocreatepost') || '';
-    if (!video.paused) {
+    let source: any = document.getElementById('sourcecreatepost') || '';
+
+    if (video !='' && source != '' && !video.paused) {
       //判断是否处于暂停状态
       video.pause(); //停止播放
     }
