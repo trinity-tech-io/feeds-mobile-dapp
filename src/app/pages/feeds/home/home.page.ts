@@ -181,6 +181,8 @@ export class HomePage implements OnInit {
   private channelMap: any = {};
   private ownerDid: string = "";
   private postMap: any = {};
+  private visibleareaItemIndex:number = 0;
+  private assetSid: any = null;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -580,6 +582,7 @@ export class HomePage implements OnInit {
   }
 
   clearData(isClearAssets: boolean = true) {
+    this.clearAssetSid();
     this.isPostLoading = false;
     this.doRefreshCancel();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
@@ -914,7 +917,9 @@ export class HomePage implements OnInit {
 
   scrollToTop(int) {
     let sid = setTimeout(() => {
-      this.content.scrollToTop(1);
+      this.content.scrollToTop(1).then(()=>{
+        this.visibleareaItemIndex = 0;
+      });
       clearTimeout(sid);
     }, int);
   }
@@ -955,56 +960,136 @@ export class HomePage implements OnInit {
     this.hideComment = true;
   }
 
-  setVisibleareaImage() {
+  // setVisibleareaImage() {
+  //   let postgridList = document.getElementsByClassName('post-grid');
+  //   let postgridNum = document.getElementsByClassName('post-grid').length;
+  //   this.getVisibleareaItemIndex(postgridList,postgridNum);
+  //   let startindex = 0;
+  //   if(this.visibleareaItemIndex < 6){
+  //     startindex = 0;
+  //     postgridNum = 6;
+  //   }else{
+  //      if(this.visibleareaItemIndex - 3 > 0){
+  //         startindex = this.visibleareaItemIndex - 3;
+  //      }
+  //     if(this.visibleareaItemIndex + 3 < postgridNum){
+  //       postgridNum = this.visibleareaItemIndex + 3;
+  //     }
+  //   }
+  //   for (let postgridindex = startindex; postgridindex < postgridNum; postgridindex++) {
+  //     let sid = setTimeout(() => {
+  //       let postgrid = postgridList[postgridindex] || '';
+  //       if (postgrid === '') {
+  //         clearTimeout(sid);
+  //         sid = null;
+  //         return;
+  //       }
+  //       let srcId = postgridList[postgridindex].getAttribute('id') || '';
+  //       if (srcId != '') {
+  //         let arr = srcId.split('-');
+  //         let destDid = arr[0];
+  //         let channelId = arr[1];
+  //         let postId = arr[2];
+  //         let mediaType = arr[3];
+  //         let id = destDid + '-' + channelId + '-' + postId;
+  //         //post Avatar
+  //         this.handlePostAvatar(id, srcId, postgridindex);
+  //         //postImg
+  //         if (mediaType === '1') {
+  //           this.handlePostImg(id, srcId, postgridindex);
+  //         }
+  //         if (mediaType === '2') {
+  //           //video
+  //           this.handleVideo(id, srcId, postgridindex);
+  //         }
 
+  //         //post like status
+  //         CommonPageService.handlePostLikeStatusData(
+  //           id, srcId, postgridindex, postgridList[postgridindex],
+  //           this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+  //           this.likeMap, this.isLoadingLikeMap)
+  //         //处理post like number
+  //         CommonPageService.handlePostLikeNumData(
+  //           id, srcId, postgridindex, postgridList[postgridindex],
+  //           this.clientHeight, this.hiveVaultController,
+  //           this.likeNumMap, this.isInitLikeNum);
+  //         //处理post comment
+  //         CommonPageService.handlePostCommentData(
+  //           id, srcId, postgridindex, postgridList[postgridindex],
+  //           this.clientHeight, this.hiveVaultController,
+  //           this.isInitComment, this.commentNumMap);
+  //       }
+  //       clearTimeout(sid);
+  //     }, 0);
+  //   }
+  // }
+
+
+  setVisibleareaImageV2() {
     let postgridList = document.getElementsByClassName('post-grid');
     let postgridNum = document.getElementsByClassName('post-grid').length;
-    for (let postgridindex = 0; postgridindex < postgridNum; postgridindex++) {
-      let sid = setTimeout(() => {
-        let postgrid = postgridList[postgridindex] || '';
-        if (postgrid === '') {
-          clearTimeout(sid);
-          sid = null;
-          return;
-        }
-        let srcId = postgridList[postgridindex].getAttribute('id') || '';
-        if (srcId != '') {
-          let arr = srcId.split('-');
-          let destDid = arr[0];
-          let channelId = arr[1];
-          let postId = arr[2];
-          let mediaType = arr[3];
-          let id = destDid + '-' + channelId + '-' + postId;
-          //post Avatar
-          this.handlePostAvatar(id, srcId, postgridindex);
-          //postImg
-          if (mediaType === '1') {
-            this.handlePostImg(id, srcId, postgridindex);
-          }
-          if (mediaType === '2') {
-            //video
-            this.handleVideo(id, srcId, postgridindex);
-          }
-
-          //post like status
-          CommonPageService.handlePostLikeStatusData(
-            id, srcId, postgridindex, postgridList[postgridindex],
-            this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
-            this.likeMap, this.isLoadingLikeMap)
-          //处理post like number
-          CommonPageService.handlePostLikeNumData(
-            id, srcId, postgridindex, postgridList[postgridindex],
-            this.clientHeight, this.hiveVaultController,
-            this.likeNumMap, this.isInitLikeNum);
-          //处理post comment
-          CommonPageService.handlePostCommentData(
-            id, srcId, postgridindex, postgridList[postgridindex],
-            this.clientHeight, this.hiveVaultController,
-            this.isInitComment, this.commentNumMap);
-        }
-        clearTimeout(sid);
-      }, 0);
+    this.getVisibleareaItemIndex(postgridList,postgridNum);
+    let startindex = 0;
+    if(this.visibleareaItemIndex < 6){
+      startindex = 0;
+      postgridNum = 6;
+    }else{
+       if(this.visibleareaItemIndex - 3 > 0){
+          startindex = this.visibleareaItemIndex - 3;
+       }
+      if(this.visibleareaItemIndex + 3 < postgridNum){
+        postgridNum = this.visibleareaItemIndex + 3;
+      }
     }
+    this.clearAssetSid();
+    let postgridindex = startindex;
+    this.assetSid = setInterval(()=>{
+         if(postgridindex < postgridNum){
+            let postgrid = postgridList[postgridindex] || '';
+            if (postgrid === '') {
+                 postgridindex++;
+                return;
+            }
+            let srcId = postgridList[postgridindex].getAttribute('id') || '';
+            if (srcId != '') {
+              let arr = srcId.split('-');
+              let destDid = arr[0];
+              let channelId = arr[1];
+              let postId = arr[2];
+              let mediaType = arr[3];
+              let id = destDid + '-' + channelId + '-' + postId;
+              //post Avatar
+              this.handlePostAvatar(id, srcId, postgridindex);
+              //postImg
+              if (mediaType === '1') {
+                this.handlePostImg(id, srcId, postgridindex);
+              }
+              if (mediaType === '2') {
+                //video
+                this.handleVideo(id, srcId, postgridindex);
+              }
+
+              //post like status
+              CommonPageService.handlePostLikeStatusData(
+                id, srcId, postgridindex, postgridList[postgridindex],
+                this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+                this.likeMap, this.isLoadingLikeMap)
+              //处理post like number
+              CommonPageService.handlePostLikeNumData(
+                id, srcId, postgridindex, postgridList[postgridindex],
+                this.clientHeight, this.hiveVaultController,
+                this.likeNumMap, this.isInitLikeNum);
+              //处理post comment
+              CommonPageService.handlePostCommentData(
+                id, srcId, postgridindex, postgridList[postgridindex],
+                this.clientHeight, this.hiveVaultController,
+                this.isInitComment, this.commentNumMap);
+            }
+            postgridindex++;
+         }else{
+           this.clearAssetSid();
+         }
+    },10)
   }
 
   async handlePostAvatar(id: string, srcId: string, rowindex: number) {
@@ -1403,11 +1488,11 @@ export class HomePage implements OnInit {
                 this.setOverPlay(id, srcId, post);
               } else {
                 this.isLoadVideoiamge[id] = '12';
-                vgplayer.style.display = 'none';
+                //vgplayer.style.display = 'none';
               }
             })
             .catch(reason => {
-              vgplayer.style.display = 'none';
+              //vgplayer.style.display = 'none';
               this.isLoadVideoiamge[id] = '';
               Logger.error(TAG,
                 "Excute 'hanldVideo' in home page is error , get image data error, error msg is ",
@@ -1449,7 +1534,8 @@ export class HomePage implements OnInit {
     this.native.throttle(this.handleScroll(), 200, this, true);
     switch (this.tabType) {
       case 'feeds':
-        this.native.throttle(this.setVisibleareaImage(), 10, this, true);
+        // this.native.throttle(this.setVisibleareaImageV2(), 60, this, true);
+        this.setVisibleareaImageV2();
         break;
       case 'pasar':
         if (this.styleType === 'grid') {
@@ -1465,7 +1551,7 @@ export class HomePage implements OnInit {
 
   refreshImage() {
     let sid = setTimeout(() => {
-      this.setVisibleareaImage();
+      this.setVisibleareaImageV2();
       clearTimeout(sid);
       sid = null;
     }, 10)
@@ -1648,13 +1734,11 @@ export class HomePage implements OnInit {
           }
           this.videoDownStatus[this.videoDownStatusKey] = '';
           this.isVideoLoading[this.videoCurKey] = false;
-          this.isVideoLoading[this.videoCurKey] = false;
           this.loadVideo(id, videodata);
         });
       }).catch((err) => {
         this.isVideoLoading[this.videoCurKey] = false;
         this.videoDownStatus[this.videoDownStatusKey] = '';
-        this.isVideoLoading[this.videoCurKey] = false;
       });
   }
 
@@ -1860,6 +1944,7 @@ export class HomePage implements OnInit {
     this.doRefreshCancel();
     switch (type) {
       case 'feeds':
+        this.visibleareaItemIndex = 0;
         await this.content.scrollToTop(0);
         if (this.syncHiveDataStatus === 6) {
           this.handleRefresherInfinite(false);
@@ -2385,4 +2470,27 @@ export class HomePage implements OnInit {
     this.dataHelper.setSyncHiveData({ status: this.syncHiveDataStatus, describe: this.syncHiveDataDes });
     this.events.publish(FeedsEvent.PublishType.initHiveData);
   }
+
+
+  getVisibleareaItemIndex(postgridList: any, postgridNum: any){
+
+    for(let positionIndex = 0;positionIndex < postgridNum;positionIndex++){
+       let postgrid = postgridList[positionIndex] || null;
+       if (
+        postgrid  != null &&
+        postgrid.getBoundingClientRect().top >= 0 &&
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom/2
+      ) {
+        this.visibleareaItemIndex=  positionIndex;
+      }
+    }
+  }
+
+  clearAssetSid(){
+    if(this.assetSid != null){
+      clearInterval(this.assetSid);
+      this.assetSid = null;
+    }
+  }
+
 }

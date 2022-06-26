@@ -1428,12 +1428,12 @@ export class ProfilePage implements OnInit {
                 this.setOverPlay(id, srcId, post);
               } else {
                 this.isLoadVideoiamge[id] = '12';
-                video.style.display = 'none';
-                vgplayer.style.display = 'none';
+                //video.style.display = 'none';
+                //vgplayer.style.display = 'none';
               }
             })
             .catch(reason => {
-              vgplayer.style.display = 'none';
+              //vgplayer.style.display = 'none';
               Logger.error(TAG,
                 "Excute 'hanldVideo' in profile page is error , get video data error, error msg is ",
                 reason
@@ -1601,20 +1601,8 @@ export class ProfilePage implements OnInit {
           let videodata = videoResult || '';
           if (videodata == '') {
 
-            // if (!this.feedService.checkPostIsAvalible(post)) {
-            //   this.isVideoLoading[this.videoCurKey] = false;
-            //   this.pauseVideo(id);
-            //   return;
-            // }
-
-            // if (this.checkServerStatus(destDid) != 0) {
-            //   this.isVideoLoading[this.videoCurKey] = false;
-            //   this.pauseVideo(id);
-            //   this.native.toastWarn('common.connectionError1');
-            //   return;
-            // }
-
             if (this.isExitDown()) {
+              this.isVideoLoading[this.videoDownStatusKey] = false;
               this.isVideoLoading[this.videoCurKey] = false;
               this.pauseVideo(id);
               this.openAlert();
@@ -1637,12 +1625,14 @@ export class ProfilePage implements OnInit {
                 }
               }).catch((err) => {
                 this.videoDownStatus[this.videoDownStatusKey] = '';
+                this.isVideoLoading[this.videoCurKey] = false;
                 this.isVideoLoading[this.videoDownStatusKey] = false;
                 this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
                 this.pauseVideo(id);
               });
             return;
           }
+          this.videoDownStatus[this.videoDownStatusKey] = '';
           this.isVideoLoading[this.videoCurKey] = false;
           this.loadVideo(id, videodata);
         });

@@ -351,11 +351,15 @@ export class ChannelsPage implements OnInit {
     this.channelDesc = channel.intro;
     this.channelSubscribes = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
     if (this.channelSubscribes == 0) {
-      this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId).then(() => {
-        this.zone.run(async () => {
-          this.channelSubscribes = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
-        });
-      })
+      try {
+        this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId).then(() => {
+          this.zone.run(async () => {
+            this.channelSubscribes = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
+          });
+        })
+      } catch (error) {
+
+      }
     }
     this.tippingAddress = channel.tipping_address || '';
     let channelAvatarUri = channel.avatar || '';
@@ -939,11 +943,11 @@ export class ChannelsPage implements OnInit {
                 this.setOverPlay(id, srcId, post);
               } else {
                 this.isLoadVideoiamge[id] = '12';
-                vgplayer.style.display = 'none';
+                //vgplayer.style.display = 'none';
               }
             })
             .catch(reason => {
-              vgplayer.style.display = 'none';
+              //vgplayer.style.display = 'none';
               Logger.error(TAG,
                 "Excute 'hanldVideo' in feeds page is error , get video data error, error msg is",
                 reason
@@ -1187,21 +1191,10 @@ export class ChannelsPage implements OnInit {
           let videodata = videoResult || '';
           if (videodata == '') {
 
-            // if (!this.feedService.checkPostIsAvalible(post)) {
-            //   this.isVideoLoading[this.videoCurKey] = false;
-            //   this.pauseVideo(id);
-            //   return;
-            // }
-
-            // if (this.checkServerStatus(destDid) != 0) {
-            //   this.isVideoLoading[this.videoCurKey] = false;
-            //   this.pauseVideo(id);
-            //   this.native.toastWarn('common.connectionError1');
-            //   return;
-            // }
 
             if (this.isExitDown()) {
               this.isVideoLoading[this.videoCurKey] = false;
+              this.isVideoLoading[this.videoDownStatusKey] = false;
               this.pauseVideo(id);
               this.openAlert();
               return;
@@ -1225,12 +1218,14 @@ export class ChannelsPage implements OnInit {
                 }
               }).catch((err) => {
                 this.videoDownStatus[this.videoDownStatusKey] = '';
+                this.isVideoLoading[this.videoCurKey] = false;
                 this.isVideoLoading[this.videoDownStatusKey] = false;
                 this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
                 this.pauseVideo(id);
               });
             return;
           }
+          this.videoDownStatus[this.videoDownStatusKey] = '';
           this.isVideoLoading[this.videoCurKey] = false;
           this.loadVideo(id, videodata);
         });

@@ -120,7 +120,7 @@ export class SentryErrorHandler implements ErrorHandler {
     );
       //Sentry.showReportDialog({ eventId });
     }
-    if (error.promise && error.promise.__zone_symbol__value && 'skipsentry' === error.promise.__zone_symbol__value.type) {
+    if (error.promise) {
       // Do not popop error dialog, but still send to sentry for debug.
       Logger.error("Sentry", 'This exception has been handled:', error);
     } else {
