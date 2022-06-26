@@ -1554,7 +1554,7 @@ export class HomePage implements OnInit {
       this.setVisibleareaImageV2();
       clearTimeout(sid);
       sid = null;
-    }, 10)
+    }, 100)
   }
 
   pauseVideo(id: string) {
