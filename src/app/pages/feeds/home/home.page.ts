@@ -220,8 +220,10 @@ export class HomePage implements OnInit {
     this.infiniteScroll.disabled = true;
     this.startIndex = 0;
     if (scrollToTop) {
+      this.visibleareaItemIndex = 0;
       this.postList = this.totalData = await this.sortPostList();
       this.scrollToTop(1);
+
     } else {
       let newList = await this.sortPostList();
       _.each(this.postList, (item: FeedsData.PostV3, index) => {
@@ -1030,16 +1032,11 @@ export class HomePage implements OnInit {
     let postgridNum = document.getElementsByClassName('post-grid').length;
     this.getVisibleareaItemIndex(postgridList,postgridNum);
     let startindex = 0;
-    if(this.visibleareaItemIndex < 6){
-      startindex = 0;
-      postgridNum = 6;
-    }else{
-       if(this.visibleareaItemIndex - 3 > 0){
-          startindex = this.visibleareaItemIndex - 3;
-       }
-      if(this.visibleareaItemIndex + 3 < postgridNum){
-        postgridNum = this.visibleareaItemIndex + 3;
-      }
+    if(this.visibleareaItemIndex - 6 > 0){
+      startindex = this.visibleareaItemIndex - 6;
+    }
+    if(this.visibleareaItemIndex + 6 < postgridNum){
+      postgridNum = this.visibleareaItemIndex + 6;
     }
     this.clearAssetSid();
     let postgridindex = startindex;
@@ -2481,9 +2478,14 @@ export class HomePage implements OnInit {
         postgrid.getBoundingClientRect().top >= 0 &&
         postgrid.getBoundingClientRect().bottom <= Config.rectBottom/2
       ) {
-        this.visibleareaItemIndex=  positionIndex;
+        if( positionIndex === 0 ){
+          this.visibleareaItemIndex = positionIndex;
+          return;
+        }
+        this.visibleareaItemIndex = positionIndex;
       }
     }
+
   }
 
   clearAssetSid(){
