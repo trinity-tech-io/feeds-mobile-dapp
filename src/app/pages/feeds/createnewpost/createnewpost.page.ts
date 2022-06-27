@@ -200,7 +200,7 @@ export class CreatenewpostPage implements OnInit {
           this.backHome();
         } catch (error) {
           if(error["code"] != 507){
-            this.native.toast('common.sendFail'); // 需要更改错误提示
+            this.native.toastWarn('common.sendFail'); // 需要更改错误提示
           }
           this.isLoading = false;
           this.isPublishing = false;
