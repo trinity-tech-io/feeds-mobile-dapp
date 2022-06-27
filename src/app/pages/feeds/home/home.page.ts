@@ -1032,11 +1032,11 @@ export class HomePage implements OnInit {
     let postgridNum = document.getElementsByClassName('post-grid').length;
     this.getVisibleareaItemIndex(postgridList,postgridNum);
     let startindex = 0;
-    if(this.visibleareaItemIndex - 6 > 0){
-      startindex = this.visibleareaItemIndex - 6;
+    if(this.visibleareaItemIndex - 4 > 0){
+      startindex = this.visibleareaItemIndex - 4;
     }
-    if(this.visibleareaItemIndex + 6 < postgridNum){
-      postgridNum = this.visibleareaItemIndex + 6;
+    if(this.visibleareaItemIndex + 4 < postgridNum){
+      postgridNum = this.visibleareaItemIndex + 4;
     }
     this.clearAssetSid();
     let postgridindex = startindex;
