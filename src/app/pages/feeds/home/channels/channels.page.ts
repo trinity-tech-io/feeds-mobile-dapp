@@ -134,6 +134,7 @@ export class ChannelsPage implements OnInit {
   private postMap = {};
   private curPostId: string = "";
   private isRefresh: boolean = false;
+  private postTime: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -478,6 +479,7 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.channelRightMenu);
     this.removeImages();
     this.removeAllVideo();
+    this.postTime = {};
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
     this.isInitLikeNum = {};
@@ -592,30 +594,44 @@ export class ChannelsPage implements OnInit {
     }
     this.followStatus = true;
   }
-  handleDisplayTime(createTime: number) {
+  handleDisplayTime(postId: string,createTime: number) {
+    let newPostTime = this.postTime[postId] || null;
+    if(newPostTime != null){
+      return this.postTime[postId];
+    }
     let obj = UtilService.handleDisplayTime(createTime);
     if (obj.type === 's') {
-      return this.translate.instant('common.just');
+      this.postTime[postId] =  this.translate.instant('common.just');
+      return this.postTime[postId];
     }
     if (obj.type === 'm') {
       if (obj.content === 1) {
-        return obj.content + this.translate.instant('HomePage.oneminuteAgo');
+        this.postTime[postId] =  obj.content + this.translate.instant('HomePage.oneminuteAgo');
+        return this.postTime[postId];
       }
-      return obj.content + this.translate.instant('HomePage.minutesAgo');
+      this.postTime[postId] = obj.content + this.translate.instant('HomePage.minutesAgo');
+      return this.postTime[postId];
     }
     if (obj.type === 'h') {
       if (obj.content === 1) {
-        return obj.content + this.translate.instant('HomePage.onehourAgo');
+        this.postTime[postId] = obj.content + this.translate.instant('HomePage.onehourAgo');
+        return this.postTime[postId];
       }
-      return obj.content + this.translate.instant('HomePage.hoursAgo');
+      this.postTime[postId] = obj.content + this.translate.instant('HomePage.hoursAgo');
+      return this.postTime[postId];
     }
+
     if (obj.type === 'day') {
       if (obj.content === 1) {
-        return this.translate.instant('common.yesterday');
+        this.postTime[postId] = this.translate.instant('common.yesterday');
+        return  this.postTime[postId];
       }
-      return obj.content + this.translate.instant('HomePage.daysAgo');
+      this.postTime[postId] = obj.content + this.translate.instant('HomePage.daysAgo');
+
+      return this.postTime[postId];
     }
-    return obj.content;
+    this.postTime[postId] = obj.content;
+    return this.postTime[postId];
   }
 
   async menuMore(post: FeedsData.PostV3) {

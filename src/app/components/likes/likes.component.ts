@@ -45,6 +45,7 @@ export class LikesComponent implements OnInit {
   @Input() handleDisplayNameMap: any = {};
   @Input() channelAvatarMap:any = {};
   @Input() postImgMap:any = {};
+  @Input() postTime: any = {};
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();
@@ -171,31 +172,45 @@ export class LikesComponent implements OnInit {
     return channel.avatar;
   }
 
-  handleDisplayTime(createTime: number) {
+  handleDisplayTime(postId: string,createTime: number) {
+    let newPostTime = this.postTime[postId] || null;
+    if(newPostTime != null){
+      return this.postTime[postId];
+    }
     let obj = UtilService.handleDisplayTime(createTime);
-    if (obj.type === 's') {
-      return this.translate.instant('common.just');
-    }
-    if (obj.type === 'm') {
-      if (obj.content === 1) {
-        return obj.content + this.translate.instant('HomePage.oneminuteAgo');
+      if (obj.type === 's') {
+        this.postTime[postId] =  this.translate.instant('common.just');
+        return this.postTime[postId];
       }
-      return obj.content + this.translate.instant('HomePage.minutesAgo');
-    }
-    if (obj.type === 'h') {
-      if (obj.content === 1) {
-        return obj.content + this.translate.instant('HomePage.onehourAgo');
+      if (obj.type === 'm') {
+        if (obj.content === 1) {
+          this.postTime[postId] =  obj.content + this.translate.instant('HomePage.oneminuteAgo');
+          return this.postTime[postId];
+        }
+        this.postTime[postId] = obj.content + this.translate.instant('HomePage.minutesAgo');
+        return this.postTime[postId];
       }
-      return obj.content + this.translate.instant('HomePage.hoursAgo');
-    }
-    if (obj.type === 'day') {
-      if (obj.content === 1) {
-        return this.translate.instant('common.yesterday');
+      if (obj.type === 'h') {
+        if (obj.content === 1) {
+          this.postTime[postId] = obj.content + this.translate.instant('HomePage.onehourAgo');
+          return this.postTime[postId];
+        }
+        this.postTime[postId] = obj.content + this.translate.instant('HomePage.hoursAgo');
+        return this.postTime[postId];
       }
-      return obj.content + this.translate.instant('HomePage.daysAgo');
+
+      if (obj.type === 'day') {
+        if (obj.content === 1) {
+          this.postTime[postId] = this.translate.instant('common.yesterday');
+          return  this.postTime[postId];
+        }
+        this.postTime[postId] = obj.content + this.translate.instant('HomePage.daysAgo');
+
+        return this.postTime[postId];
+      }
+      this.postTime[postId] = obj.content;
+      return this.postTime[postId];
     }
-    return obj.content;
-  }
 
  async menuMore(destDid: string, channelId: string, postId: string) {
     let channelName = await this.getChannelName(destDid, channelId) || '';

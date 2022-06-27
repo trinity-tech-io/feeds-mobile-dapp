@@ -188,7 +188,7 @@ export class ProfilePage implements OnInit {
   public myFeedAvatarMap: any = {};
   public postImgMap: any = {};
   private postMap = {};
-
+  public postTime = {};
   constructor(
     private elmRef: ElementRef,
     public theme: ThemeService,
@@ -651,6 +651,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
     this.events.unsubscribe(FeedsEvent.PublishType.clickDisconnectWallet);
     this.postImgMap = {};
+    this.postTime = {};
     this.clearDownStatus();
     this.native.hideLoading();
     this.hideFullScreen();

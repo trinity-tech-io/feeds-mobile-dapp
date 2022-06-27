@@ -138,7 +138,8 @@ export class PostdetailPage implements OnInit {
   public channelOwnerName: string = '';
   public replyCommentsMap: { [refcommentId: string]: FeedsData.CommentV3[] } = {};
   public ownerDid: string = "";
-
+  public updatedTimeStr: string = "";
+  private commentTime: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -305,7 +306,7 @@ export class PostdetailPage implements OnInit {
     this.mediaType = post.content.mediaType;
     this.postContent = post.content.content;
     this.updatedTime = post.updatedAt;
-
+    this.updatedTimeStr = this.handleUpdateDate(this.updatedTime);
     if (this.mediaType === FeedsData.MediaType.containsImg) {
       this.getImage(post);
     }
@@ -408,6 +409,7 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.commentTime = {};
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();
@@ -1091,30 +1093,44 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  handleDisplayTime(createTime: number) {
+  handleDisplayTime(commentId: string,createTime: number) {
+   let newCommentTime = this.commentTime[commentId] || null;
+   if( newCommentTime != null ){
+      return newCommentTime;
+   }
     let obj = UtilService.handleDisplayTime(createTime);
     if (obj.type === 's') {
-      return this.translate.instant('common.just');
+      this.commentTime[commentId] =  this.translate.instant('common.just');
+      return this.commentTime[commentId];
     }
     if (obj.type === 'm') {
       if (obj.content === 1) {
-        return obj.content + this.translate.instant('HomePage.oneminuteAgo');
+        this.commentTime[commentId] =  obj.content + this.translate.instant('HomePage.oneminuteAgo');
+        return this.commentTime[commentId];
       }
-      return obj.content + this.translate.instant('HomePage.minutesAgo');
+      this.commentTime[commentId] = obj.content + this.translate.instant('HomePage.minutesAgo');
+      return this.commentTime[commentId];
     }
     if (obj.type === 'h') {
       if (obj.content === 1) {
-        return obj.content + this.translate.instant('HomePage.onehourAgo');
+        this.commentTime[commentId] = obj.content + this.translate.instant('HomePage.onehourAgo');
+        return this.commentTime[commentId];
       }
-      return obj.content + this.translate.instant('HomePage.hoursAgo');
+      this.commentTime[commentId] = obj.content + this.translate.instant('HomePage.hoursAgo');
+      return this.commentTime[commentId];
     }
+
     if (obj.type === 'day') {
       if (obj.content === 1) {
-        return this.translate.instant('common.yesterday');
+        this.commentTime[commentId] = this.translate.instant('common.yesterday');
+        return  this.commentTime[commentId];
       }
-      return obj.content + this.translate.instant('HomePage.daysAgo');
+      this.commentTime[commentId] = obj.content + this.translate.instant('HomePage.daysAgo');
+
+      return this.commentTime[commentId];
     }
-    return obj.content;
+    this.commentTime[commentId] = obj.content;
+    return this.commentTime[commentId];
   }
 
   async clickDashang() {

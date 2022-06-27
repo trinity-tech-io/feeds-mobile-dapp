@@ -183,6 +183,7 @@ export class HomePage implements OnInit {
   private postMap: any = {};
   private visibleareaItemIndex:number = 0;
   private assetSid: any = null;
+  private postTime: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -610,6 +611,7 @@ export class HomePage implements OnInit {
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
+    this.postTime = {};
 
     let isImgPercentageLoadingkeys: string[] = Object.keys(this.isImgPercentageLoading) || [];
     for (let index = 0; index < isImgPercentageLoadingkeys.length; index++) {
@@ -733,31 +735,44 @@ export class HomePage implements OnInit {
     return channel.avatar;
   }
 
-  handleDisplayTime(createTime: number) {
-    let obj = UtilService.handleDisplayTime(createTime);
+  handleDisplayTime(postId: string,createTime: number) {
+  let newPostTime = this.postTime[postId] || null;
+  if(newPostTime != null){
+    return this.postTime[postId];
+  }
+  let obj = UtilService.handleDisplayTime(createTime);
     if (obj.type === 's') {
-      return this.translate.instant('common.just');
+      this.postTime[postId] =  this.translate.instant('common.just');
+      return this.postTime[postId];
     }
     if (obj.type === 'm') {
       if (obj.content === 1) {
-        return obj.content + this.translate.instant('HomePage.oneminuteAgo');
+        this.postTime[postId] =  obj.content + this.translate.instant('HomePage.oneminuteAgo');
+        return this.postTime[postId];
       }
-      return obj.content + this.translate.instant('HomePage.minutesAgo');
+      this.postTime[postId] = obj.content + this.translate.instant('HomePage.minutesAgo');
+      return this.postTime[postId];
     }
     if (obj.type === 'h') {
       if (obj.content === 1) {
-        return obj.content + this.translate.instant('HomePage.onehourAgo');
+        this.postTime[postId] = obj.content + this.translate.instant('HomePage.onehourAgo');
+        return this.postTime[postId];
       }
-      return obj.content + this.translate.instant('HomePage.hoursAgo');
+      this.postTime[postId] = obj.content + this.translate.instant('HomePage.hoursAgo');
+      return this.postTime[postId];
     }
 
     if (obj.type === 'day') {
       if (obj.content === 1) {
-        return this.translate.instant('common.yesterday');
+        this.postTime[postId] = this.translate.instant('common.yesterday');
+        return  this.postTime[postId];
       }
-      return obj.content + this.translate.instant('HomePage.daysAgo');
+      this.postTime[postId] = obj.content + this.translate.instant('HomePage.daysAgo');
+
+      return this.postTime[postId];
     }
-    return obj.content;
+    this.postTime[postId] = obj.content;
+    return this.postTime[postId];
   }
 
   async menuMore(post: FeedsData.PostV3) {

@@ -87,7 +87,7 @@
         <ion-col class="content-col" size="6.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
               <ion-label>
                 {{ channelName }}
-                <span> {{ handleDisplayTime(post.createdAt) }}</span>
+                <span> {{ handleDisplayTime(post.postId,post.createdAt) }}</span>
               </ion-label>
           <p *ngIf="channelOwner ==='' ">@......</p>
           <p *ngIf="channelOwner !='' ">@{{channelOwner}}</p>
