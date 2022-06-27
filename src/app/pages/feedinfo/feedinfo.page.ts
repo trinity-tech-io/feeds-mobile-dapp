@@ -219,14 +219,14 @@ export class FeedinfoPage implements OnInit {
       return;
     }
 
-    const signinData = await this.dataHelper.getSigninData();
-    let userDid = signinData.did
+    // const signinData = await this.dataHelper.getSigninData();
+    // let userDid = signinData.did
     await this.native.showLoading('common.waitMoment');
     try {
-      await this.hiveVaultController.subscribeChannel(userDid, this.channelId);
-      await this.hiveVaultController.syncPostFromChannel(userDid, this.channelId);
-      await this.hiveVaultController.syncCommentFromChannel(userDid, this.channelId);
-      await this.hiveVaultController.syncLikeDataFromChannel(userDid, this.channelId);
+      await this.hiveVaultController.subscribeChannel(this.destDid, this.channelId);
+      await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
+      await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
+      await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
       this.followStatus = true;
       this.native.hideLoading();
     } catch (error) {
