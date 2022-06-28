@@ -266,13 +266,6 @@ export class IntentService {
   }
 
   async dispatchIntent(receivedIntent: IntentPlugin.ReceivedIntent) {
-    let isDisclaimer =
-      localStorage.getItem('org.elastos.dapp.feeds.disclaimer') || '';
-    if (!isDisclaimer) {
-      Logger.log(TAG, "Not disclaimer");
-      this.native.setRootRouter('disclaimer');
-      return;
-    }
 
     const signinData = await this.dataHelper.getSigninData();
     if (!signinData) {

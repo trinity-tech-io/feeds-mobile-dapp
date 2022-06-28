@@ -36,6 +36,15 @@
                 </div>
             </ion-menu-toggle>
 
+
+            <ion-menu-toggle>
+                <div (click)="termsOfService()">
+                    <img src="./assets/images/menu/terms.svg" *ngIf="!theme.darkMode">
+                    <img src="./assets/images/darkmode/menu/terms.svg" *ngIf="theme.darkMode">
+                    <h1>{{ 'app.termsOfService' | translate }}</h1>
+                </div>
+            </ion-menu-toggle>
+
             <ion-menu-toggle>
                 <div (click)="privacyPolicy()">
                     <img src="./assets/images/menu/policy.svg" *ngIf="!theme.darkMode">

@@ -58,7 +58,7 @@
 
 <ion-footer class="ion-no-border" *ngIf="!isShowLearnMore">
    <ion-grid class="slide">
-    <ion-row class="btn-row btn-row-bottom" >
+    <ion-row class="btn-row btn-row-bottom">
      <ion-button (click)="signIn()">
        <ion-label>
           {{ "SigninPage.signIn"| translate }}
@@ -69,6 +69,9 @@
      line-height: 45px;" (click)="learnMore()">
       {{ "SigninPage.learnMore" | translate }}
     </div>
+   </ion-row>
+   <ion-row class="rowDes">
+    <div class="des">{{ "SigninPage.des11" | translate }} <span (click)="termsOfService()">{{ "app.termsOfService" | translate}}</span>{{ "SigninPage.and" | translate}}<span (click)="privacyPolicy()">{{ "app.privacyPolicy" | translate}}</span></div>
    </ion-row>
    </ion-grid>
 

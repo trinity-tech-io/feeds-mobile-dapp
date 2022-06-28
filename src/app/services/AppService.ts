@@ -34,8 +34,7 @@ export class AppService {
       navigator['app'].exitApp();
     } else if (this.router.url === "/tabs/home" ||
       this.router.url === "/tabs/notification" ||
-      this.router.url === "/signin" ||
-      this.router.url === "/disclaimer") {
+      this.router.url === "/signin") {
       navigator['app'].exitApp();
     } else {
       this.native.pop();

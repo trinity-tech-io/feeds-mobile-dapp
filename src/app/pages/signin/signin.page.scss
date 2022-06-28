@@ -42,7 +42,7 @@ ion-slides{
 }
 
 .btn-row-bottom{
-  margin-bottom: 115.13px
+  margin-bottom: 90px;
 }
 
 .darkSlides {
@@ -76,40 +76,59 @@ ion-slides{
 
   }
   }
-  .darkMessageBox{
-    width: 100%;
-    height: 380px;
-    background: #323B45;
-    border-radius: 40px 40px 0px 0px;
-    padding: 0px;
-    ion-col{
-    justify-content: center;
-    display: flex;
-    padding: 0px;
-    }
 
-    .slide-title{
-      font-weight: 700;
-      font-size: 25px;
-      color: #FFFFFF;
-      margin-bottom: 20px;
-    }
+.darkMessageBox{
+  width: 100%;
+  height: 380px;
+  background: #323B45;
+  border-radius: 40px 40px 0px 0px;
+  padding: 0px;
+  ion-col{
+  justify-content: center;
+  display: flex;
+  padding: 0px;
+  }
 
-    .slide-des{
-      font-style: normal;
-      font-weight: 400;
-      font-size: 15px;
-      text-align: center;
-      color: #C4C4C4;
-      margin-bottom: 15px;
-    }
+  .slide-title{
+    font-weight: 700;
+    font-size: 25px;
+    color: #FFFFFF;
+    margin-bottom: 20px;
+  }
 
-    .skip {
+  .slide-des{
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    text-align: center;
+    color: #C4C4C4;
+    margin-bottom: 15px;
+  }
+
+  .skip {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 13.4937px;
+  color: #FFFFFF;
+  text-align: center;
+  margin-top: 20px;
+  }
+ }
+
+ .rowDes{
+  display:flex;
+  justify-content: center;
+  margin-bottom: 78px;
+
+  .des{
     font-style: normal;
     font-weight: 700;
-    font-size: 13.4937px;
-    color: #FFFFFF;
+    font-size: 14px;
     text-align: center;
-    margin-top: 20px;
+    color: #FFFFFF;
+    width: 265px;
+    span{
+     color: #378BFF;
     }
    }
+ }

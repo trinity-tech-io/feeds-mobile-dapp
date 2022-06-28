@@ -399,19 +399,6 @@ export class MyApp {
   initDisclaimer() {
     this.appService.initTranslateConfig();
     this.appService.init();
-    let isDisclaimer =
-      localStorage.getItem('org.elastos.dapp.feeds.disclaimer') || '';
-    if (isDisclaimer === '') {
-      this.native.navigateForward(['/disclaimer'], {});
-      return;
-    }
-
-    // let isLearnMore =
-    //   localStorage.getItem('org.elastos.dapp.feeds.isLearnMore') || '';
-    // if (isLearnMore === '') {
-    //   this.native.navigateForward(['/learnmore'], {});
-    //   return;
-    // }
 
     this.appService.initializeApp();
   }
@@ -818,6 +805,10 @@ export class MyApp {
 
   privacyPolicy() {
     this.native.openUrl('https://trinity-tech.io/privacy_policy.html');
+  }
+
+  termsOfService() {
+    this.native.openUrl('https://trinity-feeds.app/disclaimer');
   }
 
   menuClose() {

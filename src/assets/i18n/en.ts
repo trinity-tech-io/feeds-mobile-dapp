@@ -213,7 +213,8 @@ export const en = {
     signout: 'Sign out',
     des: 'Signed out',
     settings: 'Settings',
-    privacyPolicy: 'Privacy Policy'
+    privacyPolicy: 'Privacy Policy',
+    termsOfService: 'Terms of Service'
   },
   SigninPage: {
     signIn: 'Sign In',
@@ -232,7 +233,9 @@ export const en = {
     secure: 'Security',
     freemarket: '#freemarket',
     learnMore: 'Learn more',
-    des10: 'Web3 Social Network'
+    des10: 'Web3 Social Network',
+    and: ' and ',
+    des11:'By signing in, you agree to the'
   },
   FeedsPage: {
     tabTitle1: 'Home',

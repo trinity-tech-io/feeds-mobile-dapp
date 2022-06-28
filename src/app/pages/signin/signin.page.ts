@@ -106,4 +106,13 @@ export class SigninPage implements OnInit {
   learnMore() {
     this.isShowLearnMore = true;
   }
+
+
+  privacyPolicy() {
+    this.native.openUrl('https://trinity-tech.io/privacy_policy.html');
+  }
+
+  termsOfService() {
+    this.native.openUrl('https://trinity-feeds.app/disclaimer');
+  }
 }

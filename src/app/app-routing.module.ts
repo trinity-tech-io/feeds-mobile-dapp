@@ -73,13 +73,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'disclaimer',
-    loadChildren: () =>
-      import('./pages/disclaimer/disclaimer.module').then(
-        m => m.DisclaimerPageModule,
-      ),
-  },
-  {
     path: 'eidtchannel',
     loadChildren: () =>
       import('./pages/eidtchannel/eidtchannel.module').then(
