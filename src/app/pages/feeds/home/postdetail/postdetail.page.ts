@@ -71,8 +71,6 @@ export class PostdetailPage implements OnInit {
 
   public mediaType: FeedsData.MediaType;
 
-  public fullScreenmodal: any = '';
-
   public hideDeletedComments: boolean = false;
 
   public maxTextSize = 240;
@@ -442,7 +440,6 @@ export class PostdetailPage implements OnInit {
     this.isFullContent = {};
     this.isOwnComment = {};
     this.clearVideo();
-    this.hideFullScreen();
   }
 
   ionViewDidEnter() { }
@@ -1002,7 +999,7 @@ export class PostdetailPage implements OnInit {
     let vgfullscreen: any =
       document.getElementById(id + 'vgfullscreenpostdetail') || '';
     if (vgfullscreen != '') {
-      vgfullscreen.onclick = () => {
+      vgfullscreen.onclick = async () => {
         this.pauseVideo();
         let postImg: string = document
           .getElementById(id + 'postdetailvideo')
@@ -1010,7 +1007,7 @@ export class PostdetailPage implements OnInit {
         let videoSrc: string = document
           .getElementById(id + 'postdetailsource')
           .getAttribute('src');
-        this.fullScreenmodal = this.native.setVideoFullScreen(
+          await this.native.setVideoFullScreen(
           postImg,
           videoSrc,
         );
@@ -1018,12 +1015,6 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  hideFullScreen() {
-    if (this.fullScreenmodal != '') {
-      this.modalController.dismiss();
-      this.fullScreenmodal = '';
-    }
-  }
 
   setOverPlay() {
     let id = this.destDid + this.channelId + this.postId;

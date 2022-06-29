@@ -83,8 +83,6 @@ export class ProfilePage implements OnInit {
   public cacheGetBinaryRequestKey: string = '';
   public cachedMediaType = '';
 
-  public fullScreenmodal: any = '';
-
   public curPostId: string = '';
 
   public popover: any = '';
@@ -540,7 +538,6 @@ export class ProfilePage implements OnInit {
       this.videoDownStatus[this.videoDownStatusKey] = '';
       this.curPostId = '';
       this.pauseAllVideo();
-      this.hideFullScreen();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.tabSendPost, () => {
@@ -654,7 +651,6 @@ export class ProfilePage implements OnInit {
     this.postTime = {};
     this.clearDownStatus();
     this.native.hideLoading();
-    this.hideFullScreen();
     if (isClearAssets) {
       this.clearAssets();
     }
@@ -1521,7 +1517,7 @@ export class ProfilePage implements OnInit {
 
   setFullScreen(id: string) {
     let vgfullscreen = document.getElementById(id + 'vgfullscreelike');
-    vgfullscreen.onclick = () => {
+    vgfullscreen.onclick = async () => {
       this.pauseVideo(id);
       let postImg: string = document
         .getElementById(id + 'videolike')
@@ -1529,15 +1525,8 @@ export class ProfilePage implements OnInit {
       let videoSrc: string = document
         .getElementById(id + 'sourcelike')
         .getAttribute('src');
-      this.fullScreenmodal = this.native.setVideoFullScreen(postImg, videoSrc);
+        await this.native.setVideoFullScreen(postImg, videoSrc);
     };
-  }
-
-  hideFullScreen() {
-    if (this.fullScreenmodal != '') {
-      this.modalController.dismiss();
-      this.fullScreenmodal = '';
-    }
   }
 
   removeImages() {

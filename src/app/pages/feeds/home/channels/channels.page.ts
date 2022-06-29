@@ -78,8 +78,6 @@ export class ChannelsPage implements OnInit {
 
   public maxTextSize = 240;
 
-  public fullScreenmodal: any = '';
-
   public hideDeletedPosts: boolean = false;
 
   public isPress: boolean = false;
@@ -430,30 +428,17 @@ export class ChannelsPage implements OnInit {
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
-      this.isImgPercentageLoading[this.imgDownStatusKey] = false;
-      this.isImgLoading[this.imgDownStatusKey] = false;
-      this.imgDownStatus[this.imgDownStatusKey] = '';
-
-      this.isVideoPercentageLoading[this.videoDownStatusKey] = false;
-      this.isVideoLoading[this.videoDownStatusKey] = false;
-      this.videoDownStatus[this.videoDownStatusKey] = '';
-
-      this.pauseAllVideo();
-      this.hideFullScreen();
-    });
-
     this.events.subscribe(FeedsEvent.PublishType.channelRightMenu, () => {
       this.clickAvatar();
     });
   }
 
   ionViewWillLeave() {
+    this.theme.restTheme();
     let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
     if( appChannels != null){
       appChannels.removeAttribute("style");
     }
-    this.theme.restTheme();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();
@@ -475,7 +460,6 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
-    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.channelRightMenu);
     this.removeImages();
     this.removeAllVideo();
@@ -487,7 +471,6 @@ export class ChannelsPage implements OnInit {
     this.isInitComment = {};
     this.postMap = {};
     this.native.hideLoading();
-    this.hideFullScreen();
     this.native.handleTabsEvents();
   }
 
@@ -1124,7 +1107,7 @@ export class ChannelsPage implements OnInit {
 
   setFullScreen(id: string) {
     let vgfullscreen = document.getElementById(id + 'vgfullscreenchannel');
-    vgfullscreen.onclick = () => {
+    vgfullscreen.onclick = async () => {
       this.pauseVideo(id);
       let postImg: string = document
         .getElementById(id + 'videochannel')
@@ -1132,16 +1115,10 @@ export class ChannelsPage implements OnInit {
       let videoSrc: string = document
         .getElementById(id + 'sourcechannel')
         .getAttribute('src');
-      this.fullScreenmodal = this.native.setVideoFullScreen(postImg, videoSrc);
+       await this.native.setVideoFullScreen(postImg, videoSrc);
     };
   }
 
-  hideFullScreen() {
-    if (this.fullScreenmodal != '') {
-      this.modalController.dismiss();
-      this.fullScreenmodal = '';
-    }
-  }
 
   removeImages() {
     // let iamgseids = this.isLoadimage;

@@ -54,8 +54,6 @@ export class CreatenewpostPage implements OnInit {
 
   public totalProgress: number = 0;
 
-  public fullScreenmodal: any = '';
-
   public channelList = [];
   public hideSwitchFeed: boolean = false;
   private isPublishing: boolean = false;
@@ -145,8 +143,6 @@ export class CreatenewpostPage implements OnInit {
 
     this.isLoading = false;
     this.hideSwitchFeed = false;
-    this.hideFullScreen();
-
     this.imgUrl = '';
     this.transcode = 0;
     this.uploadProgress = 0;
@@ -362,7 +358,7 @@ export class CreatenewpostPage implements OnInit {
     if (vgfullscreen === '') {
       return;
     }
-    vgfullscreen.onclick = () => {
+    vgfullscreen.onclick = async () => {
       this.pauseVideo();
       let postImg: string = document
         .getElementById('videocreatepost')
@@ -370,15 +366,8 @@ export class CreatenewpostPage implements OnInit {
       let videoSrc: string = document
         .getElementById('sourcecreatepost')
         .getAttribute('src');
-      this.fullScreenmodal = this.native.setVideoFullScreen(postImg, videoSrc);
+       await this.native.setVideoFullScreen(postImg, videoSrc);
     };
-  }
-
-  hideFullScreen() {
-    if (this.fullScreenmodal != '') {
-      this.modalController.dismiss();
-      this.fullScreenmodal = '';
-    }
   }
 
   setOverPlay(fileUri: string) {

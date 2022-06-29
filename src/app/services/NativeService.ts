@@ -288,12 +288,17 @@ export class NativeService {
   }
 
   async setVideoFullScreen(postImg: string, videoSrc: string) {
-    const modal = await this.modalController.create({
+    let modal = await this.modalController.create({
       component: VideofullscreenComponent,
       componentProps: {
         postImg: postImg,
         videoSrc: videoSrc,
       },
+    });
+    modal.onWillDismiss().then(() => {
+      if (modal != null) {
+          modal = null;
+      }
     });
     await modal.present();
     return modal;

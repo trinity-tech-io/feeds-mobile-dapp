@@ -22,7 +22,6 @@ export class VideoService {
     vgoverlayplayId: '',
     vgfullscreeId: ''
   }
-  public fullScreenmodal: any = '';
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -65,7 +64,7 @@ export class VideoService {
     let vgfullscreen: any =
       document.getElementById(this.videoIdObj.vgfullscreeId) || '';
     if (vgfullscreen != '') {
-      vgfullscreen.onclick = () => {
+      vgfullscreen.onclick = async () => {
         this.pauseVideo();
         let postImg: string = document
           .getElementById(this.videoIdObj.videoId)
@@ -73,7 +72,7 @@ export class VideoService {
         let videoSrc: string = document
           .getElementById(this.videoIdObj.sourceId)
           .getAttribute('src');
-        this.fullScreenmodal = this.native.setVideoFullScreen(
+          await this.native.setVideoFullScreen(
           postImg,
           videoSrc,
         );
@@ -90,13 +89,6 @@ export class VideoService {
         //判断是否处于暂停状态
         video.pause(); //停止播放
       }
-  }
-
-  hideFullScreen() {
-    if (this.fullScreenmodal != '') {
-      this.modalController.dismiss();
-      this.fullScreenmodal = '';
-    }
   }
 
    setOverPlay(file:any,type:string) {

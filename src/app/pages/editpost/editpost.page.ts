@@ -50,9 +50,7 @@ export class EditPostPage implements OnInit {
   public duration: any = 0;
 
   public totalProgress: number = 0;
-
   public isShowVideo: boolean = false;
-  public fullScreenmodal: any = '';
   private postData: FeedsData.PostV3 = null;
   public mediaType: FeedsData.MediaType;
   private originPostData: FeedsData.PostV3 = null;
@@ -95,20 +93,12 @@ export class EditPostPage implements OnInit {
       this.initTitle();
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.openRightMenu, () => {
-      this.pauseVideo();
-      this.hideFullScreen();
-    });
-
   }
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
-    this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
-
     this.imgUrl = '';
     this.native.hideLoading();
-    this.hideFullScreen();
     this.removeVideo();
     if(this.isUpdateTab) {
       this.events.publish(FeedsEvent.PublishType.editPostFinish);
@@ -291,7 +281,7 @@ export class EditPostPage implements OnInit {
     let vgfullscreen: any =
       document.getElementById(id + 'vgfullscreeneditpost') || '';
     if (vgfullscreen != '') {
-      vgfullscreen.onclick = () => {
+      vgfullscreen.onclick = async () => {
         this.pauseVideo();
         let postImg: string = document
           .getElementById(id + 'videoeditpost')
@@ -299,18 +289,11 @@ export class EditPostPage implements OnInit {
         let videoSrc: string = document
           .getElementById(id + 'sourceeditpost')
           .getAttribute('src');
-        this.fullScreenmodal = this.native.setVideoFullScreen(
+          await this.native.setVideoFullScreen(
           postImg,
           videoSrc,
         );
       };
-    }
-  }
-
-  hideFullScreen() {
-    if (this.fullScreenmodal != '') {
-      this.modalController.dismiss();
-      this.fullScreenmodal = '';
     }
   }
 

@@ -89,8 +89,6 @@ export class HomePage implements OnInit {
 
   public maxTextSize = 240;
 
-  public fullScreenmodal: any = '';
-
   public popover: any = '';
 
   public hideDeletedPosts: boolean = false;
@@ -184,6 +182,7 @@ export class HomePage implements OnInit {
   private visibleareaItemIndex:number = 0;
   private assetSid: any = null;
   private postTime: any = {};
+  private refreshImageSid: any = null;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -556,7 +555,6 @@ export class HomePage implements OnInit {
       this.isVideoLoading[this.videoDownStatusKey] = false;
       this.videoDownStatus[this.videoDownStatusKey] = '';
 
-      this.hideFullScreen();
       this.pauseAllVideo();
 
     });
@@ -585,6 +583,7 @@ export class HomePage implements OnInit {
   }
 
   clearData(isClearAssets: boolean = true) {
+    this.clearRefreshImageSid();
     this.clearAssetSid();
     this.isPostLoading = false;
     this.doRefreshCancel();
@@ -634,8 +633,6 @@ export class HomePage implements OnInit {
     this.videoDownStatus[this.videoDownStatusKey] = '';
     this.videoPercent = 0;
     this.videoRotateNum['transform'] = 'rotate(0deg)';
-
-    this.hideFullScreen();
     this.native.hideLoading();
     if (isClearAssets) {
       this.clearAssets();
@@ -1043,6 +1040,7 @@ export class HomePage implements OnInit {
 
 
   setVisibleareaImageV2() {
+
     let postgridList = document.getElementsByClassName('post-grid');
     let postgridNum = document.getElementsByClassName('post-grid').length;
     this.getVisibleareaItemIndex(postgridList,postgridNum);
@@ -1056,6 +1054,7 @@ export class HomePage implements OnInit {
     this.clearAssetSid();
     let postgridindex = startindex;
     this.assetSid = setInterval(()=>{
+         console.log('========assetSid=======');
          if(postgridindex < postgridNum){
             let postgrid = postgridList[postgridindex] || '';
             if (postgrid === '') {
@@ -1101,7 +1100,7 @@ export class HomePage implements OnInit {
          }else{
            this.clearAssetSid();
          }
-    },10)
+    },10);
   }
 
   async handlePostAvatar(id: string, srcId: string, rowindex: number) {
@@ -1116,9 +1115,7 @@ export class HomePage implements OnInit {
       ) {
         if (isload === '') {
           this.isLoadAvatarImage[id] = '11';
-          //postAvatar.setAttribute('src', '/assets/icon/reserve.svg');
           let arr = srcId.split('-');
-
           let destDid: string = arr[0];
           let channelId: string = arr[1];
           let postId: string = arr[2];
@@ -1126,24 +1123,15 @@ export class HomePage implements OnInit {
           let channel: FeedsData.ChannelV3 = this.channelMap[key] || null;
           if (channel === null) {
             channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-            // if(channel === null){
-            //     try {
-            //       const newChannel = await this.hiveVaultController.getChannelInfoById(destDid, channelId) || null;
-            //       this.channelMap[key] = newChannel;
-            //       channel = this.channelMap[key];
-            //     } catch (error) {
-
-            //     }
-            // }
           } else {
             channel = this.channelMap[key];
           }
           //this.hiveVaultController.checkPostIsLast();
-          const post = _.find(this.postList, item => {
-            return (
-              item.postId === postId
-            );
-          });
+          // const post = _.find(this.postList, item => {
+          //   return (
+          //     item.postId === postId
+          //   );
+          // });
           // this.hiveVaultController.checkPostIsLast(post);
 
           let avatarUri = "";
@@ -1562,11 +1550,18 @@ export class HomePage implements OnInit {
   }
 
   refreshImage() {
-    let sid = setTimeout(() => {
+    this.clearRefreshImageSid();
+    this.refreshImageSid = setTimeout(() => {
       this.setVisibleareaImageV2();
-      clearTimeout(sid);
-      sid = null;
-    }, 100)
+      this.clearRefreshImageSid();
+    }, 100);
+  }
+
+  clearRefreshImageSid() {
+    if(this.refreshImageSid != null){
+      clearTimeout(this.refreshImageSid);
+      this.refreshImageSid = null;
+    }
   }
 
   pauseVideo(id: string) {
@@ -1619,7 +1614,7 @@ export class HomePage implements OnInit {
 
   setFullScreen(id: string) {
     let vgfullscreen = document.getElementById(id + 'vgfullscreenhome');
-    vgfullscreen.onclick = () => {
+    vgfullscreen.onclick = async () => {
       this.pauseVideo(id);
       let video = document.getElementById(id + 'video') || null;
       let postImg = '';
@@ -1633,15 +1628,8 @@ export class HomePage implements OnInit {
       }
 
       if (postImg != '' && videoSrc != '')
-        this.fullScreenmodal = this.native.setVideoFullScreen(postImg, videoSrc);
+         await this.native.setVideoFullScreen(postImg, videoSrc);
     };
-  }
-
-  hideFullScreen() {
-    if (this.fullScreenmodal != '') {
-      this.modalController.dismiss();
-      this.fullScreenmodal = '';
-    }
   }
 
   removeImages() {
@@ -2001,7 +1989,6 @@ export class HomePage implements OnInit {
         this.videoPercent = 0;
         this.videoRotateNum['transform'] = 'rotate(0deg)';
 
-        this.hideFullScreen();
         this.native.hideLoading();
 
         // if (!this.pasarList || this.pasarList.length == 0) {
