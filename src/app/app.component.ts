@@ -110,7 +110,7 @@ export class MyApp {
 
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
-      document.body.addEventListener('touchmove',this.preventDefault, {passive: false});
+      document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
       this.getAvatar();
       this.initProfileData();
     })
@@ -679,13 +679,6 @@ export class MyApp {
   }
 
   async initScript() {
-
-    try {
-      await this.hiveVaultController.downloadEssAvatar();
-      await this.hiveVaultController.downloadCustomeAvatar("custome");
-    } catch (error) {
-    }
-
     const signinData = await this.dataHelper.getSigninData() || {};
     let userDid = signinData.did || "";
 
@@ -739,6 +732,21 @@ export class MyApp {
         this.dataHelper.setSyncHiveData(syncHiveData6);
       }
     }
+
+    //async get avatar 
+    this.hiveVaultController.parseDidDocumentAvatar(userDid).then((value: {
+      avatarParam: string;
+      avatarScriptName: string;
+      tarDID: string;
+      tarAppDID: string;
+    }) => {
+      if (!value) {
+        return;
+      }
+      this.hiveVaultController.downloadEssAvatar(value.avatarParam, value.avatarScriptName, value.tarDID, value.tarAppDID);
+    }).catch((error) => { });
+
+    this.hiveVaultController.downloadCustomeAvatar("custome").catch((error) => { });
   }
 
   async initRegisterScript(isForce: boolean) {
@@ -812,8 +820,8 @@ export class MyApp {
 
   menuClose() {
     this.theme.restTheme();
-    document.body.removeEventListener("touchmove",this.preventDefault,false);
+    document.body.removeEventListener("touchmove", this.preventDefault, false);
   }
 
-  preventDefault(e:any) { e.preventDefault(); };
+  preventDefault(e: any) { e.preventDefault(); };
 }

@@ -2,16 +2,12 @@ import { Injectable } from '@angular/core';
 import { Executable, InsertOptions, File as HiveFile, ScriptRunner, Vault, AppContext, Logger as HiveLogger, UpdateResult, UpdateOptions, Condition, InsertResult } from "@elastosfoundation/hive-js-sdk";
 import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
-import { Console } from 'console';
 import { FileService } from 'src/app/services/FileService';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
-// import { InsertResult } from '@dchagastelles/elastos-hive-js-sdk/typings/restclient/database/insertresult';
-import { } from '@elastosfoundation/hive-js-sdk'
 import { isEqual, isNil, reject } from 'lodash';
 let TAG: string = 'Feeds-HiveService';
 import { Events } from 'src/app/services/events.service';
-import { on } from 'process';
 
 @Injectable()
 export class HiveService {
@@ -25,10 +21,6 @@ export class HiveService {
   public appinstanceDid: string
   private vault: Vault
   private scriptRunner: ScriptRunner
-  private avatarScriptName: string
-  private tarDID: string
-  private tarAppDID: string
-  private avatarParam: string
   private scriptRunners: { [key: string]: ScriptRunner } = {}
 
   constructor(
@@ -106,10 +98,7 @@ export class HiveService {
       let scriptRunner = await this.creatScriptRunner(userDid)
       this.scriptRunners[userDid] = scriptRunner
       const vault = new Vault(context)
-      const userDID = DID.from(userDid)
-      const userDIDDocument = await userDID.resolve()
 
-      this.parseUserDIDDocument(userDid, userDIDDocument)
       Logger.log(TAG, 'Create vault ', userDid, this.vault)
       return vault
     }
@@ -120,43 +109,63 @@ export class HiveService {
     }
   }
 
-  parseUserDIDDocument(userDid: string, userDIDDocument: DIDDocument) {
-    const avatarDid = userDid + "#avatar"
-    const avatarVC = userDIDDocument.getCredential(avatarDid)
-    if (avatarVC != null) { // 有头像
-      const sub = avatarVC.getSubject()
-      const pro = sub.getProperty("avatar")
-      const data: string = pro["data"]
-      const type = pro["type"]
-      const prefix = "hive://"
-      const avatarParam = data.substr(prefix.length)
-      this.avatarParam = avatarParam
-      const parts = avatarParam.split("/")
-      if (parts.length < 2) // TODO 验证parts是否大于2个 ，否则 抛出异常
-        throw "userDIDDocument 中缺少参数"
+  parseUserDIDDocumentForUserAvatar(userDid: string): Promise<{
+    avatarParam: string;
+    avatarScriptName: string;
+    tarDID: string;
+    tarAppDID: string;
+  }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userDID = DID.from(userDid)
+        const userDIDDocument = await userDID.resolve()
 
-      const dids = parts[0].split("@")
-      if (dids.length != 2) // TODO 验证dids是否等于2个 ，否则 抛出异常
-        throw "userDIDDocument 中缺少参数"
+        const avatarDid = userDid + "#avatar"
+        const avatarVC = userDIDDocument.getCredential(avatarDid)
+        if (!avatarVC) {// 没有有头像
+          Logger.warn(TAG, 'Not found avatar from did document');
+          return null;
+        }
 
-      const star = data.length - (prefix.length + parts[0].length + 1)
-      const values = parts[1].split("?")
-      if (values.length != 2) // TODO 验证values是否等于2个 ，否则 抛出异常
-        throw "userDIDDocument 中缺少参数"
+        const sub = avatarVC.getSubject()
+        const pro = sub.getProperty("avatar")
+        const data: string = pro["data"]
+        // const type = pro["type"]
+        const prefix = "hive://"
+        const avatarParam = data.substr(prefix.length)
+        // this.avatarParam = avatarParam
+        const parts = avatarParam.split("/")
+        if (parts.length < 2) // TODO 验证parts是否大于2个 ，否则 抛出异常
+          throw "userDIDDocument 中缺少参数"
 
-      const avatarScriptName = values[0]
-      this.avatarScriptName = avatarScriptName
-      const paramStr = values[1]
-      const scriptParam = JSON.parse(paramStr.substr(7))
-      const tarDID = dids[0]
-      const tarAppDID = dids[1]
-      this.tarDID = tarDID
-      this.tarAppDID = tarAppDID
-    }
-    const serviceDid = userDid + "#hivevault"
-    const service = userDIDDocument.getService(serviceDid)
-    const provider = service.getServiceEndpoint() + ":443"
-    return provider
+        const dids = parts[0].split("@")
+        if (dids.length != 2) // TODO 验证dids是否等于2个 ，否则 抛出异常
+          throw "userDIDDocument 中缺少参数"
+
+        // const star = data.length - (prefix.length + parts[0].length + 1)
+        const values = parts[1].split("?")
+        if (values.length != 2) // TODO 验证values是否等于2个 ，否则 抛出异常
+          throw "userDIDDocument 中缺少参数"
+
+        const avatarScriptName = values[0]
+        // this.avatarScriptName = avatarScriptName
+        // const paramStr = values[1]
+        // const scriptParam = JSON.parse(paramStr.substr(7))
+        const tarDID = dids[0]
+        const tarAppDID = dids[1]
+
+        const res = {
+          avatarParam: avatarParam,
+          avatarScriptName: avatarScriptName,
+          tarDID: tarDID,
+          tarAppDID: tarAppDID
+        }
+
+        return res;
+      } catch (error) {
+        Logger.warn(TAG, 'Parse avatar error');
+      }
+    });
   }
 
   async getScriptRunner(userDid: string): Promise<ScriptRunner> {
@@ -250,18 +259,17 @@ export class HiveService {
     return scriptRunner.uploadFile(transactionId, data)
   }
 
-  async downloadEssAvatarTransactionId() {
+  async downloadEssAvatarTransactionId(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string) {
     try {
-      const avatarParam = this.avatarParam
       if (avatarParam === null || avatarParam === undefined) {
         return
       }
       let userDid = (await this.dataHelper.getSigninData()).did
       const scriptRunner = await this.getScriptRunner(userDid)
-      const avatarScriptName = this.avatarScriptName
-      const tarDID = this.tarDID
-      const tarAppDID = this.tarAppDID
-      return await scriptRunner.callScript(avatarScriptName, avatarParam, tarDID, tarAppDID)
+      // const avatarScriptName = this.avatarScriptName
+      // const tarDID = this.tarDID
+      // const tarAppDID = this.tarAppDID
+      return await scriptRunner.callScript<any>(avatarScriptName, avatarParam, tarDID, tarAppDID)
     } catch (error) {
       Logger.error(TAG, "Download Ess Avatar transactionId error: ", error)
       reject(error)

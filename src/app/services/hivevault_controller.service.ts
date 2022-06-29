@@ -726,7 +726,11 @@ export class HiveVaultController {
     });
   }
 
-  downloadEssAvatar(): Promise<any> {
+  parseDidDocumentAvatar(userDid: string) {
+    return this.hiveVaultApi.parseDidDocumentAvatar(userDid);
+  }
+
+  downloadEssAvatar(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         // 检测本地是否存在
@@ -737,7 +741,7 @@ export class HiveVaultController {
           resolve(essavatar);
           return
         }
-        const rawImage = await this.hiveVaultApi.downloadEssAvatar();
+        const rawImage = await this.hiveVaultApi.downloadEssAvatar(avatarParam, avatarScriptName, tarDID, tarAppDID);
         if (rawImage === undefined || rawImage === null) {
           resolve(null)
           return
@@ -1742,5 +1746,8 @@ export class HiveVaultController {
 
   loadLocalChannelPostData(channelId: string, end: number): Promise<FeedsData.PostV3[]> {
     return this.dataHelper.queryChannelPostDataByTime(channelId, 0, end);
+  }
+
+  processHiveFunction(method: Function) {
   }
 }

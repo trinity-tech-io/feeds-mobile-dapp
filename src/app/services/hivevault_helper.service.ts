@@ -1733,13 +1733,17 @@ export class HiveVaultHelper {
     }
     /** update like end */
 
+    parseDidDocumentAvatar(userDid: string) {
+        return this.hiveService.parseUserDIDDocumentForUserAvatar(userDid);
+    }
+
     /** download essential avatar start */
-    private downloadEssAvatarData(): Promise<any> {
+    private downloadEssAvatarData(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 let userDid = (await this.dataHelper.getSigninData()).did
-                const result = await this.hiveService.downloadEssAvatarTransactionId()
-                if (result === undefined) {
+                const result = await this.hiveService.downloadEssAvatarTransactionId(avatarParam, avatarScriptName, tarDID, tarAppDID)
+                if (!result) {
                     resolve(null)
                     return
                 }
@@ -1755,8 +1759,8 @@ export class HiveVaultHelper {
         });
     }
 
-    downloadEssAvatar(): Promise<any> {
-        return this.downloadEssAvatarData()
+    downloadEssAvatar(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<any> {
+        return this.downloadEssAvatarData(avatarParam, avatarScriptName, tarDID, tarAppDID);
     }
     /** download essential avatar end */
 
@@ -1848,22 +1852,22 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
 
-            if (!avatarHiveURL || !avatarHiveURL.includes('@')) {
-                // reject('Input avatar url is null');
-                resolve('');
-                return;
+                if (!avatarHiveURL || !avatarHiveURL.includes('@')) {
+                    // reject('Input avatar url is null');
+                    resolve('');
+                    return;
+                }
+
+                const params = avatarHiveURL.split("@")
+                const scriptName = params[0]
+                const remoteName = params[1]
+
+                const result = await this.callScript(targetDid, scriptName, { "path": remoteName })
+                const transaction_id = result[scriptName]["transaction_id"]
+                resolve(transaction_id);
+            } catch (error) {
+                reject(error)
             }
-
-            const params = avatarHiveURL.split("@")
-            const scriptName = params[0]
-            const remoteName = params[1]
-
-            const result = await this.callScript(targetDid, scriptName, { "path": remoteName })
-            const transaction_id = result[scriptName]["transaction_id"]
-            resolve(transaction_id);
-        } catch (error) {
-            reject(error)
-        }
         });
     }
 
