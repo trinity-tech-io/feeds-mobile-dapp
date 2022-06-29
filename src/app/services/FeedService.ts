@@ -6140,11 +6140,11 @@ export class FeedService {
       let isSuccess: boolean = false;
       this.storeService
         .remove('signInData')
-        .then(() => {
+        .then(async () => {
           //this.resetConnectionStatus();
           //this.destroyCarrier();
+          await this.dataHelper.removeData("feeds.currentChannel");
           isSuccess = true;
-          this.storeService.set(FeedsData.PersistenceKey.isSignOut, isSuccess);
           resolve(isSuccess);
         })
         .catch(err => {

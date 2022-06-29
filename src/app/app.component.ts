@@ -444,7 +444,7 @@ export class MyApp {
     }
     await that.dataHelper.removeData("feeds.initHive");
     that.clearData();
-    that.disconnectWallet();
+    //that.disconnectWallet();
   }
 
   async disconnectWallet() {
@@ -458,7 +458,6 @@ export class MyApp {
       .then(() => {
         this.events.publish(FeedsEvent.PublishType.clearHomeEvent);
         this.globalService.restartApp();
-        this.native.setRootRouter(['/signin']);
       })
       .catch(err => {
         //TODO
