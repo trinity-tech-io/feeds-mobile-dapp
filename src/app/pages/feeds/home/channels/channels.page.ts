@@ -133,6 +133,9 @@ export class ChannelsPage implements OnInit {
   private curPostId: string = "";
   private isRefresh: boolean = false;
   private postTime: any = {};
+  private refreshImageSid: any = null;
+  private visibleareaItemIndex:number = 0;
+  private assetSid: any = null;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -434,6 +437,8 @@ export class ChannelsPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.clearRefreshImageSid();
+    this.clearAssetSid();
     this.theme.restTheme();
     let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
     if( appChannels != null){
@@ -642,8 +647,6 @@ export class ChannelsPage implements OnInit {
 
   async doRefresh(event: any) {
     try {
-      this.images = {};
-      this.startIndex = 0;
       await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
       await this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId);
       if (this.followStatus) {
@@ -654,6 +657,9 @@ export class ChannelsPage implements OnInit {
         await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
         await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
       }
+      this.images = {};
+      this.startIndex = 0;
+      this.visibleareaItemIndex = 0;
       this.postMap = {};
       this.isRefresh = true;
       this.init();
@@ -744,46 +750,109 @@ export class ChannelsPage implements OnInit {
   }
 
   ionScroll() {
-    this.native.throttle(this.setVisibleareaImage(), 200, this, true);
+    //this.native.throttle(this.setVisibleareaImage(), 200, this, true);
+    this.setVisibleareaImageV2();
   }
 
-  setVisibleareaImage() {
+  // setVisibleareaImage() {
+  //   let postgridList = document.getElementsByClassName('channelgird');
+  //   let postgridNum = document.getElementsByClassName('channelgird').length;
+  //   for (let postgridindex = 0; postgridindex < postgridNum; postgridindex++) {
+  //     let srcId = postgridList[postgridindex].getAttribute('id') || '';
+  //     if (srcId != '') {
+  //       let arr = srcId.split('-');
+  //       let destDid = arr[0];
+  //       let channelId = arr[1];
+  //       let postId = arr[2];
+  //       let mediaType = arr[3];
+  //       let id = destDid + '-' + channelId + '-' + postId;
+  //       //post like status
+  //       CommonPageService.handlePostLikeStatusData(
+  //         id, srcId, postgridindex, postgridList[postgridindex],
+  //         this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+  //         this.likeMap, this.isLoadingLikeMap)
+  //       //处理post like number
+  //       CommonPageService.handlePostLikeNumData(
+  //         id, srcId, postgridindex, postgridList[postgridindex],
+  //         this.clientHeight, this.hiveVaultController,
+  //         this.likeNumMap, this.isInitLikeNum);
+  //       //处理post comment
+  //       CommonPageService.handlePostCommentData(
+  //         id, srcId, postgridindex, postgridList[postgridindex],
+  //         this.clientHeight, this.hiveVaultController,
+  //         this.isInitComment, this.commentNumMap);
+  //       //postImg
+  //       if (mediaType === '1') {
+  //         this.handlePostImg(id, srcId, postgridindex);
+  //       }
+  //       if (mediaType === '2') {
+  //         //video
+  //         this.handleVideo(id, srcId, postgridindex);
+  //       }
+  //     }
+  //   }
+  // }
+
+
+  setVisibleareaImageV2() {
     let postgridList = document.getElementsByClassName('channelgird');
     let postgridNum = document.getElementsByClassName('channelgird').length;
-    for (let postgridindex = 0; postgridindex < postgridNum; postgridindex++) {
-      let srcId = postgridList[postgridindex].getAttribute('id') || '';
-      if (srcId != '') {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let mediaType = arr[3];
-        let id = destDid + '-' + channelId + '-' + postId;
-        //post like status
-        CommonPageService.handlePostLikeStatusData(
-          id, srcId, postgridindex, postgridList[postgridindex],
-          this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
-          this.likeMap, this.isLoadingLikeMap)
-        //处理post like number
-        CommonPageService.handlePostLikeNumData(
-          id, srcId, postgridindex, postgridList[postgridindex],
-          this.clientHeight, this.hiveVaultController,
-          this.likeNumMap, this.isInitLikeNum);
-        //处理post comment
-        CommonPageService.handlePostCommentData(
-          id, srcId, postgridindex, postgridList[postgridindex],
-          this.clientHeight, this.hiveVaultController,
-          this.isInitComment, this.commentNumMap);
-        //postImg
-        if (mediaType === '1') {
-          this.handlePostImg(id, srcId, postgridindex);
-        }
-        if (mediaType === '2') {
-          //video
-          this.handleVideo(id, srcId, postgridindex);
-        }
-      }
+    this.getVisibleareaItemIndex(postgridList,postgridNum);
+    let startindex = 0;
+    if(this.visibleareaItemIndex - 4 > 0){
+      startindex = this.visibleareaItemIndex - 4;
     }
+    if(this.visibleareaItemIndex + 4 < postgridNum){
+      postgridNum = this.visibleareaItemIndex + 4;
+    }
+    this.clearAssetSid();
+    let postgridindex = startindex;
+    this.assetSid = setInterval(()=>{
+      if(postgridindex < postgridNum){
+        let postgrid = postgridList[postgridindex] || '';
+        if (postgrid === '') {
+             postgridindex++;
+            return;
+        }
+
+        let srcId = postgridList[postgridindex].getAttribute('id') || '';
+        if (srcId != '') {
+          let arr = srcId.split('-');
+          let destDid = arr[0];
+          let channelId = arr[1];
+          let postId = arr[2];
+          let mediaType = arr[3];
+          let id = destDid + '-' + channelId + '-' + postId;
+          //post like status
+          CommonPageService.handlePostLikeStatusData(
+            id, srcId, postgridindex, postgridList[postgridindex],
+            this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+            this.likeMap, this.isLoadingLikeMap)
+          //处理post like number
+          CommonPageService.handlePostLikeNumData(
+            id, srcId, postgridindex, postgridList[postgridindex],
+            this.clientHeight, this.hiveVaultController,
+            this.likeNumMap, this.isInitLikeNum);
+          //处理post comment
+          CommonPageService.handlePostCommentData(
+            id, srcId, postgridindex, postgridList[postgridindex],
+            this.clientHeight, this.hiveVaultController,
+            this.isInitComment, this.commentNumMap);
+          //postImg
+          if (mediaType === '1') {
+            this.handlePostImg(id, srcId, postgridindex);
+          }
+          if (mediaType === '2') {
+            //video
+            this.handleVideo(id, srcId, postgridindex);
+          }
+        }
+        postgridindex++;
+      }else{
+        this.clearAssetSid();
+      }
+    },10);
+
   }
 
   async handlePostImg(id: string, srcId: string, rowindex: number) {
@@ -981,11 +1050,19 @@ export class ChannelsPage implements OnInit {
   }
 
   refreshImage() {
-    let sid = setTimeout(() => {
-      this.setVisibleareaImage();
-      clearTimeout(sid);
-    }, 0);
+    this.clearRefreshImageSid();
+    this.refreshImageSid = setTimeout(() => {
+      this.setVisibleareaImageV2();
+      this.clearRefreshImageSid();
+    }, 100);
   }
+
+  clearRefreshImageSid() {
+    if(this.refreshImageSid != null){
+      clearTimeout(this.refreshImageSid);
+      this.refreshImageSid = null;
+    }
+   }
 
   showBigImage(destDid: string, channelId: string, postId: string) {
     this.pauseAllVideo();
@@ -1411,6 +1488,32 @@ export class ChannelsPage implements OnInit {
   }
 
   retry(destDid: string, channelId: string, postId: string) {
+  }
+
+  getVisibleareaItemIndex(postgridList: any, postgridNum: any){
+
+    for(let positionIndex = 0;positionIndex < postgridNum;positionIndex++){
+       let postgrid = postgridList[positionIndex] || null;
+       if (
+        postgrid  != null &&
+        postgrid.getBoundingClientRect().top >= 0 &&
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom/2
+      ) {
+        if( positionIndex === 0 ){
+          this.visibleareaItemIndex = positionIndex;
+          return;
+        }
+        this.visibleareaItemIndex = positionIndex;
+      }
+    }
+
+  }
+
+  clearAssetSid(){
+    if(this.assetSid != null){
+      clearInterval(this.assetSid);
+      this.assetSid = null;
+    }
   }
 
 }

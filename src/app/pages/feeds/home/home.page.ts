@@ -1054,7 +1054,6 @@ export class HomePage implements OnInit {
     this.clearAssetSid();
     let postgridindex = startindex;
     this.assetSid = setInterval(()=>{
-         console.log('========assetSid=======');
          if(postgridindex < postgridNum){
             let postgrid = postgridList[postgridindex] || '';
             if (postgrid === '') {

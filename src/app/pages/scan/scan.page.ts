@@ -22,6 +22,7 @@ export class ScanPage{
   public lightThemeType: number = 1;
   light: boolean;//判断闪光灯
   popover: any = null;
+  private styleSid: any = null;
   constructor(
     private popoverController: PopoverController,
     private zone: NgZone,
@@ -130,11 +131,18 @@ async hideCamera() {
   }
 
   ionViewDidLeave() {
-    let sid = setTimeout(()=>{
+    this.clearStyleSid();
+    this.styleSid = setTimeout(()=>{
       document.body.removeAttribute("style");
-      clearTimeout(sid);
-      sid = null;
+      this.clearStyleSid();
     },300);
+  }
+
+  clearStyleSid() {
+   if(this.styleSid != null) {
+       clearTimeout(this.styleSid);
+       this.styleSid = null;
+   }
   }
 
   stopScanning() {

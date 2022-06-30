@@ -46,6 +46,8 @@ export class SubscriptionsPage implements OnInit {
   public subscriptionV3NumMap: any = {};
   public followAvatarMap: any = {};
   private searchFollowingList: any = [];
+  private refreshFollowingImageSid: any = null;
+  private setFollowingSid: any = null;
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -87,6 +89,8 @@ export class SubscriptionsPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.clearSetFollowingSid();
+    this.clearRefreshFollowingImageSid();
     this.followingIsLoadimage = {};
     this.followingAvatarImageMap = {};
     this.downFollowingAvatarMap = {};
@@ -129,7 +133,6 @@ export class SubscriptionsPage implements OnInit {
 
   async initFollowing() {
     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
-    console.log('subscribedChannel=========', subscribedChannel);
     this.followingList = await this.getFollowedChannelList(subscribedChannel);
     this.searchFollowingList = _.cloneDeep(this.followingList);
     this.refreshFollowingVisibleareaImage();
@@ -305,18 +308,43 @@ export class SubscriptionsPage implements OnInit {
   }
 
   ionScroll() {
-    this.native.throttle(this.setFollowingVisibleareaImage(), 200, this, true);
+    this.setFollowingVisibleareaImageV2();
   }
 
-  async setFollowingVisibleareaImage() {
+
+  async setFollowingVisibleareaImageV2() {
+    if(this.setFollowingSid != null ){
+      return;
+    }
     let ionRowFollowing = document.getElementsByClassName("ionRowFollowing") || null;
     let len = ionRowFollowing.length;
-    for (let itemIndex = 0; itemIndex < len; itemIndex++) {
-      let item = ionRowFollowing[itemIndex];
-      let id = item.getAttribute("id") || "";
-      if (id === "") {
-        continue;
-      }
+    let itemIndex = 0;
+    this.setFollowingSid = setInterval(()=>{
+        if(itemIndex < len){
+            let item = ionRowFollowing[itemIndex] || null;
+            if(item === null){
+              itemIndex++;
+                return;
+            }
+            let id = item.getAttribute("id") || "";
+            if (id === "") {
+              itemIndex++;
+              return;
+            }
+
+            try {
+              this.handleFollingAvatar(id);
+            } catch (error) {
+
+            }
+           itemIndex++;
+        }else{
+          this.clearSetFollowingSid();
+        }
+    },10)
+  }
+
+  async handleFollingAvatar(id: string) {
       let followingAvatarKuang = document.getElementById(id + "-followingAvatarKuang");
       let isload = this.followingIsLoadimage[id] || '';
       try {
@@ -363,7 +391,7 @@ export class SubscriptionsPage implements OnInit {
             this.followingAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
             let isDown = this.downFollowingAvatarMap[fileName] || "";
             if (isDown != '') {
-              continue;
+                return;
             }
             this.downFollowingAvatarMap[fileName] = fileName;
             this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
@@ -417,19 +445,33 @@ export class SubscriptionsPage implements OnInit {
         this.followingIsLoadimage[id] = '';
         delete this.followingAvatarImageMap[id];
       }
+  }
 
+  clearSetFollowingSid() {
+    if(this.setFollowingSid != null ){
+       clearInterval(this.setFollowingSid);
+       this.setFollowingSid = null;
     }
   }
 
   refreshFollowingVisibleareaImage() {
-    let sid = setTimeout(() => {
+    if(this.refreshFollowingImageSid != null){
+          return;
+    }
+    this.refreshFollowingImageSid = setTimeout(() => {
       this.followingIsLoadimage = {};
       this.followingAvatarImageMap = {};
       this.downFollowingAvatarMap = {};
-      this.setFollowingVisibleareaImage();
-      clearTimeout(sid);
+      this.setFollowingVisibleareaImageV2();
+      this.clearRefreshFollowingImageSid();
     }, 100);
+  }
 
+  clearRefreshFollowingImageSid() {
+       if(this.refreshFollowingImageSid != null ){
+           clearTimeout(this.refreshFollowingImageSid);
+           this.refreshFollowingImageSid = null;
+       }
   }
 
   async scanService() {

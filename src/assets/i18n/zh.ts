@@ -214,7 +214,7 @@ export const zh = {
     des: '登出成功',
     settings: '设置',
     privacyPolicy: '隐私政策',
-    termsOfService: '服务条款'
+    termsOfService: '条款'
   },
   SigninPage: {
     signIn: '登录',
@@ -233,8 +233,8 @@ export const zh = {
     freemarket: '#自由市场',
     learnMore: '了解更多',
     des10: 'Web3 社交网络',
-    and: ' 和 ',
-    des11:'通过登录，您已同意'
+    and: '、',
+    des11:'登录表明你同意我们的'
   },
   FeedsPage: {
     tabTitle1: '主页',
