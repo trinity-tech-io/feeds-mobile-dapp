@@ -48,6 +48,7 @@ export class SubscriptionsPage implements OnInit {
   private searchFollowingList: any = [];
   private refreshFollowingImageSid: any = null;
   private setFollowingSid: any = null;
+  private visibleareaItemIndex:number = 0;
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -166,6 +167,7 @@ export class SubscriptionsPage implements OnInit {
       await this.hiveVaultController.syncSubscribedChannelFromBackup();
       await this.hiveVaultController.syncAllChannelInfo();
       this.subscriptionV3NumMap = {};
+      this.visibleareaItemIndex = 0;
       this.initFollowing();
       event.target.complete();
     } catch (err) {
@@ -313,12 +315,25 @@ export class SubscriptionsPage implements OnInit {
 
 
   async setFollowingVisibleareaImageV2() {
-    if(this.setFollowingSid != null ){
-      return;
-    }
     let ionRowFollowing = document.getElementsByClassName("ionRowFollowing") || null;
     let len = ionRowFollowing.length;
-    let itemIndex = 0;
+    this.getVisibleareaItemIndex(ionRowFollowing,len);
+    this.clearSetFollowingSid();
+    let startindex = 0;
+    if(this.visibleareaItemIndex - 6 > 0){
+      startindex = this.visibleareaItemIndex - 6;
+    }
+    if(startindex === 0){
+      if(this.visibleareaItemIndex + 12 < len){
+        len = this.visibleareaItemIndex + 12;
+      }
+    }else{
+      if(this.visibleareaItemIndex + 6 < len){
+        len = this.visibleareaItemIndex + 6;
+      }
+    }
+
+    let itemIndex = startindex;
     this.setFollowingSid = setInterval(()=>{
         if(itemIndex < len){
             let item = ionRowFollowing[itemIndex] || null;
@@ -547,6 +562,24 @@ export class SubscriptionsPage implements OnInit {
     this.followingList = _.filter(this.searchFollowingList, (item) => {
       return item.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     });
+  }
+
+  getVisibleareaItemIndex(postgridList: any, postgridNum: any){
+
+    for(let positionIndex = 0;positionIndex < postgridNum;positionIndex++){
+       let postgrid = postgridList[positionIndex] || null;
+       if (
+        postgrid  != null &&
+        postgrid.getBoundingClientRect().top >= 0 &&
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom/2
+      ) {
+        if( positionIndex === 0 ){
+          this.visibleareaItemIndex = positionIndex;
+          return ;
+        }
+        this.visibleareaItemIndex = positionIndex;
+      }
+    }
   }
 
 }
