@@ -48,7 +48,7 @@ export class SubscriptionsPage implements OnInit {
   private searchFollowingList: any = [];
   private refreshFollowingImageSid: any = null;
   private setFollowingSid: any = null;
-  private visibleareaItemIndex:number = 0;
+  private visibleareaItemIndex: number = 0;
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -160,12 +160,21 @@ export class SubscriptionsPage implements OnInit {
   async doRefresh(event: any) {
     try {
       let subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+      let promiseList: Promise<any>[] = [];
       for (let index = 0; index < subscribedChannels.length; index++) {
         const subscribedChannel = subscribedChannels[index];
-        await this.hiveVaultController.querySubscriptionChannelById(subscribedChannel.destDid, subscribedChannel.channelId);
+        const querySubscriptionPromise = this.hiveVaultController.querySubscriptionChannelById(subscribedChannel.destDid, subscribedChannel.channelId);
+        promiseList.push(querySubscriptionPromise);
       }
-      await this.hiveVaultController.syncSubscribedChannelFromBackup();
-      await this.hiveVaultController.syncAllChannelInfo();
+
+      const syncSCPromise = this.hiveVaultController.syncSubscribedChannelFromBackup();
+      promiseList.push(syncSCPromise);
+
+      const syncChannelInfoPromise = this.hiveVaultController.syncAllChannelInfo();
+      promiseList.push(syncChannelInfoPromise);
+
+      await Promise.all(promiseList)
+
       this.subscriptionV3NumMap = {};
       this.visibleareaItemIndex = 0;
       this.initFollowing();
@@ -317,161 +326,161 @@ export class SubscriptionsPage implements OnInit {
   async setFollowingVisibleareaImageV2() {
     let ionRowFollowing = document.getElementsByClassName("ionRowFollowing") || null;
     let len = ionRowFollowing.length;
-    this.getVisibleareaItemIndex(ionRowFollowing,len);
+    this.getVisibleareaItemIndex(ionRowFollowing, len);
     this.clearSetFollowingSid();
     let startindex = 0;
-    if(this.visibleareaItemIndex - 6 > 0){
+    if (this.visibleareaItemIndex - 6 > 0) {
       startindex = this.visibleareaItemIndex - 6;
     }
-    if(startindex === 0){
-      if(this.visibleareaItemIndex + 12 < len){
+    if (startindex === 0) {
+      if (this.visibleareaItemIndex + 12 < len) {
         len = this.visibleareaItemIndex + 12;
       }
-    }else{
-      if(this.visibleareaItemIndex + 6 < len){
+    } else {
+      if (this.visibleareaItemIndex + 6 < len) {
         len = this.visibleareaItemIndex + 6;
       }
     }
 
     let itemIndex = startindex;
-    this.setFollowingSid = setInterval(()=>{
-        if(itemIndex < len){
-            let item = ionRowFollowing[itemIndex] || null;
-            if(item === null){
-              itemIndex++;
-                return;
-            }
-            let id = item.getAttribute("id") || "";
-            if (id === "") {
-              itemIndex++;
-              return;
-            }
-
-            try {
-              this.handleFollingAvatar(id);
-            } catch (error) {
-
-            }
-           itemIndex++;
-        }else{
-          this.clearSetFollowingSid();
+    this.setFollowingSid = setInterval(() => {
+      if (itemIndex < len) {
+        let item = ionRowFollowing[itemIndex] || null;
+        if (item === null) {
+          itemIndex++;
+          return;
         }
-    },10)
+        let id = item.getAttribute("id") || "";
+        if (id === "") {
+          itemIndex++;
+          return;
+        }
+
+        try {
+          this.handleFollingAvatar(id);
+        } catch (error) {
+
+        }
+        itemIndex++;
+      } else {
+        this.clearSetFollowingSid();
+      }
+    }, 10)
   }
 
   async handleFollingAvatar(id: string) {
-      let followingAvatarKuang = document.getElementById(id + "-followingAvatarKuang");
-      let isload = this.followingIsLoadimage[id] || '';
-      try {
-        if (
-          id != '' &&
-          followingAvatarKuang.getBoundingClientRect().top >= - Config.rectTop &&
-          followingAvatarKuang.getBoundingClientRect().bottom <= Config.rectBottom
-        ) {
-          if (isload === "") {
-            let arr = id.split("-");
-            this.followingIsLoadimage[id] = '11';
-            let destDid = arr[0];
-            let channelId = arr[1];
-            let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-            let avatarUri = "";
-            if (channel != null) {
-              avatarUri = channel.avatar;
-              //关注数
-              let follower = this.subscriptionV3NumMap[channelId] || '';
-              if (follower === "") {
-                try {
-                  this.subscriptionV3NumMap[channelId] = "...";
-                  this.dataHelper.getSubscriptionV3NumByChannelId(
-                    channel.destDid, channel.channelId).
-                    then((result) => {
-                      result = result || 0;
-                      if (result == 0) {
-                        this.hiveVaultController.querySubscriptionChannelById(channel.destDid, channel.channelId).then(() => {
-                          this.zone.run(async () => {
-                            this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
-                          });
-                        })
-                      }
-                      this.subscriptionV3NumMap[channelId] = result;
+    let followingAvatarKuang = document.getElementById(id + "-followingAvatarKuang");
+    let isload = this.followingIsLoadimage[id] || '';
+    try {
+      if (
+        id != '' &&
+        followingAvatarKuang.getBoundingClientRect().top >= - Config.rectTop &&
+        followingAvatarKuang.getBoundingClientRect().bottom <= Config.rectBottom
+      ) {
+        if (isload === "") {
+          let arr = id.split("-");
+          this.followingIsLoadimage[id] = '11';
+          let destDid = arr[0];
+          let channelId = arr[1];
+          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+          let avatarUri = "";
+          if (channel != null) {
+            avatarUri = channel.avatar;
+            //关注数
+            let follower = this.subscriptionV3NumMap[channelId] || '';
+            if (follower === "") {
+              try {
+                this.subscriptionV3NumMap[channelId] = "...";
+                this.dataHelper.getSubscriptionV3NumByChannelId(
+                  channel.destDid, channel.channelId).
+                  then((result) => {
+                    result = result || 0;
+                    if (result == 0) {
+                      this.hiveVaultController.querySubscriptionChannelById(channel.destDid, channel.channelId).then(() => {
+                        this.zone.run(async () => {
+                          this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
+                        });
+                      })
+                    }
+                    this.subscriptionV3NumMap[channelId] = result;
 
-                    }).catch(() => {
-                      this.subscriptionV3NumMap[channelId] = 0;
-                    });
-                } catch (error) {
-                }
+                  }).catch(() => {
+                    this.subscriptionV3NumMap[channelId] = 0;
+                  });
+              } catch (error) {
               }
             }
-            let fileName: string = avatarUri.split("@")[0];
-            this.followingAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
-            let isDown = this.downFollowingAvatarMap[fileName] || "";
-            if (isDown != '') {
-                return;
-            }
-            this.downFollowingAvatarMap[fileName] = fileName;
-            this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
-              this.zone.run(() => {
-                this.downFollowingAvatarMap[fileName] = '';
-                let srcData = data || "";
-                if (srcData != "") {
-                  for (let key in this.followingAvatarImageMap) {
-                    let uri = this.followingAvatarImageMap[key] || "";
-                    if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
-                      this.followingIsLoadimage[key] = '13';
-                      this.followAvatarMap[key] = srcData;
-                      delete this.followingAvatarImageMap[key];
-                    }
-                  }
-                } else {
-                  for (let key in this.followingAvatarImageMap) {
-                    let uri = this.followingAvatarImageMap[key] || "";
-                    if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
-                      this.followingIsLoadimage[key] = '13';
-                      delete this.followingAvatarImageMap[key];
-                    }
+          }
+          let fileName: string = avatarUri.split("@")[0];
+          this.followingAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
+          let isDown = this.downFollowingAvatarMap[fileName] || "";
+          if (isDown != '') {
+            return;
+          }
+          this.downFollowingAvatarMap[fileName] = fileName;
+          this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
+            this.zone.run(() => {
+              this.downFollowingAvatarMap[fileName] = '';
+              let srcData = data || "";
+              if (srcData != "") {
+                for (let key in this.followingAvatarImageMap) {
+                  let uri = this.followingAvatarImageMap[key] || "";
+                  if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
+                    this.followingIsLoadimage[key] = '13';
+                    this.followAvatarMap[key] = srcData;
+                    delete this.followingAvatarImageMap[key];
                   }
                 }
-              });
-            }).catch((err) => {
-              this.downFollowingAvatarMap[fileName] = '';
-              for (let key in this.followingAvatarImageMap) {
-                let uri = this.followingAvatarImageMap[key] || "";
-                if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
-                  this.followingIsLoadimage[key] = '13';
-                  delete this.followingAvatarImageMap[key];
+              } else {
+                for (let key in this.followingAvatarImageMap) {
+                  let uri = this.followingAvatarImageMap[key] || "";
+                  if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
+                    this.followingIsLoadimage[key] = '13';
+                    delete this.followingAvatarImageMap[key];
+                  }
                 }
               }
             });
-          }
-        } else {
-          let srcStr = this.followAvatarMap[id] || "./assets/icon/reserve.svg";
-          if (
-            followingAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
-            followingAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
-            this.followingIsLoadimage[id] === '13' &&
-            srcStr != './assets/icon/reserve.svg'
-          ) {
-            this.followAvatarMap[id] = null;
-            this.followingIsLoadimage[id] = '';
-            delete this.followingAvatarImageMap[id];
-          }
+          }).catch((err) => {
+            this.downFollowingAvatarMap[fileName] = '';
+            for (let key in this.followingAvatarImageMap) {
+              let uri = this.followingAvatarImageMap[key] || "";
+              if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
+                this.followingIsLoadimage[key] = '13';
+                delete this.followingAvatarImageMap[key];
+              }
+            }
+          });
         }
-      } catch (error) {
-        this.followingIsLoadimage[id] = '';
-        delete this.followingAvatarImageMap[id];
+      } else {
+        let srcStr = this.followAvatarMap[id] || "./assets/icon/reserve.svg";
+        if (
+          followingAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
+          followingAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
+          this.followingIsLoadimage[id] === '13' &&
+          srcStr != './assets/icon/reserve.svg'
+        ) {
+          this.followAvatarMap[id] = null;
+          this.followingIsLoadimage[id] = '';
+          delete this.followingAvatarImageMap[id];
+        }
       }
+    } catch (error) {
+      this.followingIsLoadimage[id] = '';
+      delete this.followingAvatarImageMap[id];
+    }
   }
 
   clearSetFollowingSid() {
-    if(this.setFollowingSid != null ){
-       clearInterval(this.setFollowingSid);
-       this.setFollowingSid = null;
+    if (this.setFollowingSid != null) {
+      clearInterval(this.setFollowingSid);
+      this.setFollowingSid = null;
     }
   }
 
   refreshFollowingVisibleareaImage() {
-    if(this.refreshFollowingImageSid != null){
-          return;
+    if (this.refreshFollowingImageSid != null) {
+      return;
     }
     this.refreshFollowingImageSid = setTimeout(() => {
       this.followingIsLoadimage = {};
@@ -483,10 +492,10 @@ export class SubscriptionsPage implements OnInit {
   }
 
   clearRefreshFollowingImageSid() {
-       if(this.refreshFollowingImageSid != null ){
-           clearTimeout(this.refreshFollowingImageSid);
-           this.refreshFollowingImageSid = null;
-       }
+    if (this.refreshFollowingImageSid != null) {
+      clearTimeout(this.refreshFollowingImageSid);
+      this.refreshFollowingImageSid = null;
+    }
   }
 
   async scanService() {
@@ -564,18 +573,18 @@ export class SubscriptionsPage implements OnInit {
     });
   }
 
-  getVisibleareaItemIndex(postgridList: any, postgridNum: any){
+  getVisibleareaItemIndex(postgridList: any, postgridNum: any) {
 
-    for(let positionIndex = 0;positionIndex < postgridNum;positionIndex++){
-       let postgrid = postgridList[positionIndex] || null;
-       if (
-        postgrid  != null &&
+    for (let positionIndex = 0; positionIndex < postgridNum; positionIndex++) {
+      let postgrid = postgridList[positionIndex] || null;
+      if (
+        postgrid != null &&
         postgrid.getBoundingClientRect().top >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom/2
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom / 2
       ) {
-        if( positionIndex === 0 ){
+        if (positionIndex === 0) {
           this.visibleareaItemIndex = positionIndex;
-          return ;
+          return;
         }
         this.visibleareaItemIndex = positionIndex;
       }
