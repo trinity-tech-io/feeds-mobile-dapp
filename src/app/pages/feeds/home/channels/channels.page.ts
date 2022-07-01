@@ -134,7 +134,7 @@ export class ChannelsPage implements OnInit {
   private isRefresh: boolean = false;
   private postTime: any = {};
   private refreshImageSid: any = null;
-  private visibleareaItemIndex:number = 0;
+  private visibleareaItemIndex: number = 0;
   private assetSid: any = null;
   constructor(
     private platform: Platform,
@@ -646,16 +646,22 @@ export class ChannelsPage implements OnInit {
 
   async doRefresh(event: any) {
     try {
-      await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
-      await this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId);
+      await Promise.all([
+        this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId),
+        this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId),
+      ]);
+
       if (this.followStatus) {
         this.dataHelper.cleanCachedComment();
         this.dataHelper.cleanCacheLikeNum();
         this.dataHelper.cleanCachedLikeStatus();
-        await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
-        await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
-        await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
+        await Promise.all([
+          this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId),
+          this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId),
+          this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId)
+        ])
       }
+
       this.images = {};
       this.startIndex = 0;
       this.visibleareaItemIndex = 0;
@@ -796,22 +802,22 @@ export class ChannelsPage implements OnInit {
   setVisibleareaImageV2() {
     let postgridList = document.getElementsByClassName('channelgird');
     let postgridNum = document.getElementsByClassName('channelgird').length;
-    this.getVisibleareaItemIndex(postgridList,postgridNum);
+    this.getVisibleareaItemIndex(postgridList, postgridNum);
     let startindex = 0;
-    if(this.visibleareaItemIndex - 4 > 0){
+    if (this.visibleareaItemIndex - 4 > 0) {
       startindex = this.visibleareaItemIndex - 4;
     }
-    if(this.visibleareaItemIndex + 4 < postgridNum){
+    if (this.visibleareaItemIndex + 4 < postgridNum) {
       postgridNum = this.visibleareaItemIndex + 4;
     }
     this.clearAssetSid();
     let postgridindex = startindex;
-    this.assetSid = setInterval(()=>{
-      if(postgridindex < postgridNum){
+    this.assetSid = setInterval(() => {
+      if (postgridindex < postgridNum) {
         let postgrid = postgridList[postgridindex] || '';
         if (postgrid === '') {
-             postgridindex++;
-            return;
+          postgridindex++;
+          return;
         }
 
         let srcId = postgridList[postgridindex].getAttribute('id') || '';
@@ -847,10 +853,10 @@ export class ChannelsPage implements OnInit {
           }
         }
         postgridindex++;
-      }else{
+      } else {
         this.clearAssetSid();
       }
-    },10);
+    }, 10);
 
   }
 
@@ -1057,11 +1063,11 @@ export class ChannelsPage implements OnInit {
   }
 
   clearRefreshImageSid() {
-    if(this.refreshImageSid != null){
+    if (this.refreshImageSid != null) {
       clearTimeout(this.refreshImageSid);
       this.refreshImageSid = null;
     }
-   }
+  }
 
   showBigImage(destDid: string, channelId: string, postId: string) {
     this.pauseAllVideo();
@@ -1191,7 +1197,7 @@ export class ChannelsPage implements OnInit {
       let videoSrc: string = document
         .getElementById(id + 'sourcechannel')
         .getAttribute('src');
-       await this.native.setVideoFullScreen(postImg, videoSrc);
+      await this.native.setVideoFullScreen(postImg, videoSrc);
     };
   }
 
@@ -1489,16 +1495,16 @@ export class ChannelsPage implements OnInit {
   retry(destDid: string, channelId: string, postId: string) {
   }
 
-  getVisibleareaItemIndex(postgridList: any, postgridNum: any){
+  getVisibleareaItemIndex(postgridList: any, postgridNum: any) {
 
-    for(let positionIndex = 0;positionIndex < postgridNum;positionIndex++){
-       let postgrid = postgridList[positionIndex] || null;
-       if (
-        postgrid  != null &&
+    for (let positionIndex = 0; positionIndex < postgridNum; positionIndex++) {
+      let postgrid = postgridList[positionIndex] || null;
+      if (
+        postgrid != null &&
         postgrid.getBoundingClientRect().top >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom/2
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom / 2
       ) {
-        if( positionIndex === 0 ){
+        if (positionIndex === 0) {
           this.visibleareaItemIndex = positionIndex;
           return;
         }
@@ -1508,8 +1514,8 @@ export class ChannelsPage implements OnInit {
 
   }
 
-  clearAssetSid(){
-    if(this.assetSid != null){
+  clearAssetSid() {
+    if (this.assetSid != null) {
       clearInterval(this.assetSid);
       this.assetSid = null;
     }
