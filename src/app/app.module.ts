@@ -95,7 +95,7 @@ import { Events } from './services/events.service';
 Sentry.init({
   dsn:
     'https://4196003a1c864f5798dd2be18be5cb48@o339076.ingest.sentry.io/5524842',
-  release: '3.0.2',
+  release: '3.0.3',
   integrations: [new RewriteFrames()],
 });
 
@@ -109,8 +109,8 @@ export class SentryErrorHandler implements ErrorHandler {
 
   handleError(error) {
 
-    if(document.URL.includes('localhost/galleriahive')){
-      this.events.publish(FeedsEvent.PublishType.authEssentialFail,{type:0})
+    if (document.URL.includes('localhost/galleriahive')) {
+      this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 0 })
     }
     // Only send reports to sentry if we are not debugging.
     if (document.URL.includes('localhost')) {
