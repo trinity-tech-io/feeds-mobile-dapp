@@ -145,10 +145,6 @@ export class EidtchannelPage implements OnInit {
       return;
     }
 
-    // if (this.feedService.getServerStatusFromId(this.destDid) != 0) {
-    //   this.native.toastWarn('common.connectionError1');
-    //   return;
-    // }
     // await this.native.showLoading('common.waitMoment', isDismiss => { })
     // await this.getPublicStatus();
     // this.native.hideLoading();
@@ -214,12 +210,12 @@ export class EidtchannelPage implements OnInit {
     let nameValue = this.channelName || '';
     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue === '') {
-      this.native.toast_trans('CreatenewfeedPage.inputName');
+      this.native.toastWarn('CreatenewfeedPage.inputName');
       return false;
     }
 
     if (this.channelName.length > 32) {
-      this.native.toast_trans('CreatenewfeedPage.tipMsgLength1');
+      this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
       return;
     }
 
@@ -227,17 +223,17 @@ export class EidtchannelPage implements OnInit {
     descValue = this.native.iGetInnerText(descValue);
 
     if (descValue === '') {
-      this.native.toast_trans('CreatenewfeedPage.inputFeedDesc');
+      this.native.toastWarn('CreatenewfeedPage.inputFeedDesc');
       return false;
     }
 
     if (this.channelDes.length > 128) {
-      this.native.toast_trans('CreatenewfeedPage.tipMsgLength');
+      this.native.toastWarn('CreatenewfeedPage.tipMsgLength');
       return;
     }
 
     if (this.channelAvatar === '') {
-      this.native.toast_trans('CreatenewfeedPage.des');
+      this.native.toastWarn('CreatenewfeedPage.des');
       return false;
     }
 
@@ -247,7 +243,7 @@ export class EidtchannelPage implements OnInit {
       this.tippingAddress === this.tippingObj[0].address &&
       this.oldChannelAvatar === this.channelAvatar
     ) {
-      this.native.toast_trans('common.nochanges');
+      this.native.toastWarn('common.nochanges');
       return false;
     }
 

@@ -98,7 +98,7 @@ export class CommentComponent implements OnInit {
   sendComment() {
     let newComment = this.native.iGetInnerText(this.newComment) || '';
     if (newComment === '') {
-      this.native.toast_trans('CommentPage.inputComment');
+      this.native.toastWarn('CommentPage.inputComment');
       return false;
     }
 

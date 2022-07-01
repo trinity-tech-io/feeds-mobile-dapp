@@ -178,11 +178,11 @@ export class CreatenewpostPage implements OnInit {
       }
 
       if (newPost === '' && this.imgUrl === '' && this.flieUri === '') {
-        this.native.toast_trans('CreatenewpostPage.tipMsg');
+        this.native.toastWarn('CreatenewpostPage.tipMsg');
         return false;
       }
       if (this.posterImg != '' && this.flieUri === '') {
-        this.native.toast_trans('CreatenewpostPage.tipMsg2');
+        this.native.toastWarn('CreatenewpostPage.tipMsg2');
         return false;
       }
       if (!this.isPublishing) {
@@ -502,7 +502,7 @@ export class CreatenewpostPage implements OnInit {
         //Logger.error(TAG, 'Add img err', err);
         let imgUrl = this.imgUrl || '';
         if (imgUrl === "") {
-          this.native.toast_trans('common.noImageSelected');
+          this.imgUrl = "";
         }
       },
     );

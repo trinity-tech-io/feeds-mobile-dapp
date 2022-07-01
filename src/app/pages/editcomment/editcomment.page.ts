@@ -119,12 +119,12 @@ export class EditCommentPage implements OnInit {
 
     let newComment = this.native.iGetInnerText(this.newComment) || '';
     if (newComment === '') {
-      this.native.toast_trans('CommentPage.inputComment');
+      this.native.toastWarn('CommentPage.inputComment');
       return false;
     }
 
     if (this.newComment === this.oldNewComment) {
-      this.native.toast_trans('EditCommentPage.notModifiedYet');
+      this.native.toastWarn('EditCommentPage.notModifiedYet');
       return false;
     }
 

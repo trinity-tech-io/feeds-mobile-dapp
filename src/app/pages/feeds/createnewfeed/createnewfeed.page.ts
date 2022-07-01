@@ -107,24 +107,24 @@ export class CreatenewfeedPage implements OnInit {
     let nameValue = name.value || '';
     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue == '') {
-      this.native.toast_trans('CreatenewfeedPage.tipMsg1');
+      this.native.toastWarn('CreatenewfeedPage.tipMsg1');
       return;
     }
 
     if (name.value.length > 32) {
-      this.native.toast_trans('CreatenewfeedPage.tipMsgLength1');
+      this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
       return;
     }
 
     let descValue = desc.value || '';
     descValue = this.native.iGetInnerText(descValue);
     if (descValue == '') {
-      this.native.toast_trans('CreatenewfeedPage.tipMsg2');
+      this.native.toastWarn('CreatenewfeedPage.tipMsg2');
       return;
     }
 
     if (desc.value.length > 128) {
-      this.native.toast_trans('CreatenewfeedPage.tipMsgLength');
+      this.native.toastWarn('CreatenewfeedPage.tipMsgLength');
       return;
     }
 
@@ -139,7 +139,7 @@ export class CreatenewfeedPage implements OnInit {
 
     let checkRes = this.feedService.checkValueValid(name.value);
     if (checkRes) {
-      this.native.toast_trans('CreatenewfeedPage.nameContainInvalidChars');
+      this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
       return;
     }
 
@@ -161,7 +161,7 @@ export class CreatenewfeedPage implements OnInit {
             });
       if(list.length > 0){
         this.native.hideLoading();
-        this.native.toast('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
+        this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
           return;
       }
       await this.uploadChannel(name.value, desc.value);

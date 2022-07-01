@@ -161,12 +161,12 @@ export class EditPostPage implements OnInit {
 
     let editContent = this.native.iGetInnerText(this.editContent);
     if (editContent === '') {
-      this.native.toast_trans('CreatenewpostPage.tipMsg');
+      this.native.toastWarn('CreatenewpostPage.tipMsg');
       return false;
     }
 
     if (this.unEditContent === editContent) {
-      this.native.toast_trans('common.nochanges');
+      this.native.toastWarn('common.nochanges');
       return false;
     }
 
