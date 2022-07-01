@@ -569,6 +569,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.pasarListGrid);
     this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
     this.clearData();
+    this.visibleareaItemIndex = 0;
   }
 
   clearAssets() {

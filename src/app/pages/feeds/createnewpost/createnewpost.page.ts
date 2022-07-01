@@ -94,7 +94,7 @@ export class CreatenewpostPage implements OnInit {
     let sid = setTimeout(() => {
       this.newPostIonTextarea.setFocus();
       clearTimeout(sid);
-    }, 300);
+    }, 500);
   }
 
   newPostTextArea() {
