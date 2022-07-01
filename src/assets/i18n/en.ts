@@ -235,7 +235,7 @@ export const en = {
     learnMore: 'Learn more',
     des10: 'Web3 Social Network',
     and: ' and ',
-    des11:'By signing in, you agree to the'
+    des11: 'By signing in, you agree to the'
   },
   FeedsPage: {
     tabTitle1: 'Home',
@@ -268,7 +268,9 @@ export const en = {
     priceHightoLow: 'Price: High to Low',
     search: 'Search',
     addChannel: 'Add Channel',
-    createPost: 'Create Post'
+    createPost: 'Create Post',
+    show: 'Show',
+    posts: 'Posts',
   },
   ProfilePage: {
     myFeeds: 'Channels',

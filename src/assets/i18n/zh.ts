@@ -234,7 +234,7 @@ export const zh = {
     learnMore: '了解更多',
     des10: 'Web3 社交网络',
     and: '、',
-    des11:'登录表明你同意我们的'
+    des11: '登录表明你同意我们的'
   },
   FeedsPage: {
     tabTitle1: '主页',
@@ -267,7 +267,9 @@ export const zh = {
     priceHightoLow: '价格：从高到低',
     search: '搜索',
     addChannel: '创建频道',
-    createPost: '创建微说'
+    createPost: '创建微说',
+    show: '显示',
+    posts: '帖子',
   },
   ProfilePage: {
     myFeeds: '频道',
