@@ -764,9 +764,7 @@ export class FeedService {
           this.handleNotification(result.nodeId, result.method, result.params); //TODO
           break;
         case 0:
-          console.log('result==============', result);
           if (result.request.memo.callbackMethod == FeedsData.CallbackMethod.SyncFeedsServiceData) {
-            console.log('Callback ==============', result);
             eventBus.publish(FeedsEvent.PublishType.migrateDataToHive, result);
           } else {
             this.handleResult(
@@ -3879,7 +3877,6 @@ export class FeedService {
     if (originChannel == null) return;
 
     originChannel.subscribers = subscribesCount;
-    console.log("+++++++ updateLocalSubscribesCount =====" + nodeChannelId + " id = " + originChannel.id + " name  =" + originChannel.name);
     this.dataHelper.updateChannel(nodeChannelId, originChannel);
     // this.hiveService.updateOne(originChannelForHive, originChannel)
   }
@@ -6750,7 +6747,7 @@ export class FeedService {
   async getUserAvatar(userDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let signinData = this.getSignInData();
-      if (signinData == null || signinData == undefined)  {
+      if (signinData == null || signinData == undefined) {
         resolve('assets/images/default-contact.svg');
         return;
       }

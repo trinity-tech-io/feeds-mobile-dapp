@@ -266,9 +266,6 @@ export class HiveService {
       }
       let userDid = (await this.dataHelper.getSigninData()).did
       const scriptRunner = await this.getScriptRunner(userDid)
-      // const avatarScriptName = this.avatarScriptName
-      // const tarDID = this.tarDID
-      // const tarAppDID = this.tarAppDID
       return await scriptRunner.callScript<any>(avatarScriptName, avatarParam, tarDID, tarAppDID)
     } catch (error) {
       Logger.error(TAG, "Download Ess Avatar transactionId error: ", error)
@@ -281,7 +278,7 @@ export class HiveService {
       const scriptRunner = await this.getScriptRunner(targetDid)
       return await scriptRunner.downloadFile(transaction_id)
     } catch (error) {
-      console.log("scriptingService.downloadFile error: ==== ", error)
+      Logger.error(TAG, "scriptingService.downloadFile error: ", error)
       throw error
     }
   }

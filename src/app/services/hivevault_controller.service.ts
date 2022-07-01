@@ -41,7 +41,7 @@ export class HiveVaultController {
           this.dataHelper.cleanOldestPostV3();
 
           try {
-            const posts = await this.queryRemotePostWithTime(destDid, channelId, endTime);
+            const posts = await this.queryRemotePostWithTime(destDid, channelId, endTime, null);
             postList = _.differenceWith(postList, posts);
           } catch (error) {
           }
@@ -73,7 +73,7 @@ export class HiveVaultController {
           this.dataHelper.cleanOldestPostV3();
 
           try {
-            const posts = await this.queryRemotePostWithTime(destDid, channelId, UtilService.getCurrentTimeNum());
+            const posts = await this.queryRemotePostWithTime(destDid, channelId, UtilService.getCurrentTimeNum(), null);
             postList.push(posts);
           } catch (error) {
           }
@@ -190,6 +190,112 @@ export class HiveVaultController {
             likeList.push(likes);
           } catch (error) {
           }
+        }
+
+        resolve(likeList);
+      } catch (error) {
+        Logger.error(TAG, 'Sync all like data error', error);
+        reject(error);
+      }
+    });
+  }
+
+
+  refreshHomeData(callback: (postNum: number) => void) {
+    this.asyncGetAllChannelInfo();
+    this.asyncGetAllPost(callback);
+    this.asyncGetAllComments();
+    this.asyncGetAllLikeData();
+  }
+
+  asyncGetAllChannelInfo(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const subscribedChannel = subscribedChannels[index];
+          const destDid = subscribedChannel.destDid;
+          const channelId = subscribedChannel.channelId;
+
+          this.getChannelInfoById(destDid, channelId).catch((error) => {
+            Logger.warn(TAG, 'Get channel info from', destDid, channelId, 'occur error,', error);
+          });
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Sync all like data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  asyncGetAllPost(callback: (postNum: number) => void): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        if (subscribedChannels.length === 0) {
+          resolve('FINISH');
+          return;
+        }
+
+        this.dataHelper.cleanOldestPostV3();
+
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const subscribedChannel = subscribedChannels[index];
+          const channelId = subscribedChannel.channelId
+          const destDid = subscribedChannel.destDid
+
+          this.queryRemotePostWithTime(destDid, channelId, UtilService.getCurrentTimeNum(), callback).catch((error) => {
+            Logger.warn(TAG, 'Get remote posts from', destDid, channelId, 'occur error,', error);
+          });
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Get all post error', error);
+        reject(error);
+      }
+    });
+  }
+
+  asyncGetAllComments(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        if (!subscribedChannels) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const subscribedChannel = subscribedChannels[index];
+          const destDid = subscribedChannel.destDid;
+          const channelId = subscribedChannel.channelId;
+
+          this.queryCommentByChannel(destDid, channelId).catch((error) => {
+            Logger.warn(TAG, 'Get remote comments from', destDid, channelId, 'occur error', error);
+          });
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Sync all comment error', error);
+        reject(error);
+      }
+    });
+  }
+
+  asyncGetAllLikeData(): Promise<FeedsData.LikeV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        let likeList = [];
+        for (let index = 0; index < subscribedChannels.length; index++) {
+          const subscribedChannel = subscribedChannels[index];
+          const destDid = subscribedChannel.destDid;
+          const channelId = subscribedChannel.channelId;
+
+          this.syncLikeDataFromChannel(destDid, channelId).catch((error) => {
+            Logger.warn(TAG, 'Get remote like from', destDid, channelId, 'occur error', error);
+          });
         }
 
         resolve(likeList);
@@ -397,6 +503,7 @@ export class HiveVaultController {
           resolve(null);
           return;
         }
+
         const channelList = await this.handleChannelResult(targetDid, result.find_message.items);
         if (!channelList || channelList.length == 0) {
           resolve(null);
@@ -681,7 +788,7 @@ export class HiveVaultController {
         this.backupSubscribedChannel(targetDid, channelId);//async
 
         try {
-          await this.queryRemotePostWithTime(targetDid, channelId, UtilService.getCurrentTimeNum());
+          await this.queryRemotePostWithTime(targetDid, channelId, UtilService.getCurrentTimeNum(), null);
         } catch (error) {
         }
 
@@ -1477,15 +1584,15 @@ export class HiveVaultController {
     }
 
     //TODO sync post by time
-    this.queryRemotePostWithTime(post.destDid, post.channelId, post.updatedAt);
+    this.queryRemotePostWithTime(post.destDid, post.channelId, post.updatedAt, null);
     return post;
   }
 
-  queryRemotePostWithTime(destDid: string, channelId: string, endTime: number): Promise<FeedsData.PostV3[]> {
+  queryRemotePostWithTime(destDid: string, channelId: string, endTime: number, callback: (postNum: number) => void): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId, 0, endTime);
-        const postList = await this.handleSyncPostResult(destDid, channelId, result);
+        const postList = await this.handleSyncPostResult(destDid, channelId, result, callback);
 
         //this.eventBus.publish(FeedsEvent.PublishType.updateTab, false);
         resolve(postList);
@@ -1504,7 +1611,7 @@ export class HiveVaultController {
           resolve([]);
           return;
         }
-        console.log('-----------queryRemoteChannelPostWithTime----------', result);
+
         const postList = HiveVaultResultParse.parsePostResult(destDid, result.find_message.items);
         // const postList = await this.handleSyncPostResult(destDid, channelId, result);
         if (!postList || postList.length == 0) {
@@ -1535,27 +1642,36 @@ export class HiveVaultController {
     });
   }
 
-  handleSyncPostResult(destDid: string, channelId: string, result: any): Promise<FeedsData.PostV3[]> {
+  handleSyncPostResult(destDid: string, channelId: string, result: any, callback: (newPostNum: number) => void): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       if (!result) {
         resolve([]);
         return;
       }
       try {
+        let newPostNum: number = 0;
         let oldestPost: FeedsData.PostV3 = null;
         const postList = HiveVaultResultParse.parsePostResult(destDid, result.find_message.items);
         for (let postIndex = 0; postIndex < postList.length; postIndex++) {
           const newPost = postList[postIndex];
 
-          console.log('oldestPost', oldestPost);
-          console.log('newPost', newPost);
+          // console.log('oldestPost', oldestPost);
+          // console.log('newPost', newPost);
           if (!oldestPost || newPost.updatedAt < oldestPost.updatedAt) {
             //TOBE Improve
             oldestPost = _.cloneDeep<FeedsData.PostV3>(newPost);
             console.log('clone oldestPost', oldestPost);
           }
-          await this.dataHelper.addPost(newPost);
+          const isNewPost = await this.dataHelper.addPost(newPost);
+          if (isNewPost) {
+            newPostNum++;
+          }
         }
+
+        if (callback != null) {
+          callback(newPostNum);
+        }
+
         this.dataHelper.updateOldestPostV3(destDid, channelId, oldestPost);
         resolve(postList);
       } catch (error) {

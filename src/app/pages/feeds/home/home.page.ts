@@ -179,10 +179,11 @@ export class HomePage implements OnInit {
   private channelMap: any = {};
   private ownerDid: string = "";
   private postMap: any = {};
-  private visibleareaItemIndex:number = 0;
+  private visibleareaItemIndex: number = 0;
   private assetSid: any = null;
   private postTime: any = {};
   private refreshImageSid: any = null;
+  public newPostNumber: number = 0;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -516,20 +517,17 @@ export class HomePage implements OnInit {
 
 
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment: FeedsData.CommentV3) => {
-      Logger.log(TAG, "======= Receive getCommentFinish ========");
       let postId = comment.postId;
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
-      Logger.log(TAG, "======= Receive editPostFinish ========")
       this.zone.run(() => {
         this.refreshPostList(false);
       });
     });
 
     this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (deletePostEventData: any) => {
-      Logger.log(TAG, "=======Receive  deletePostFinish========")
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
@@ -733,19 +731,19 @@ export class HomePage implements OnInit {
     return channel.avatar;
   }
 
-  handleDisplayTime(postId: string,createTime: number) {
-  let newPostTime = this.postTime[postId] || null;
-  if(newPostTime != null){
-    return this.postTime[postId];
-  }
-  let obj = UtilService.handleDisplayTime(createTime);
+  handleDisplayTime(postId: string, createTime: number) {
+    let newPostTime = this.postTime[postId] || null;
+    if (newPostTime != null) {
+      return this.postTime[postId];
+    }
+    let obj = UtilService.handleDisplayTime(createTime);
     if (obj.type === 's') {
-      this.postTime[postId] =  this.translate.instant('common.just');
+      this.postTime[postId] = this.translate.instant('common.just');
       return this.postTime[postId];
     }
     if (obj.type === 'm') {
       if (obj.content === 1) {
-        this.postTime[postId] =  obj.content + this.translate.instant('HomePage.oneminuteAgo');
+        this.postTime[postId] = obj.content + this.translate.instant('HomePage.oneminuteAgo');
         return this.postTime[postId];
       }
       this.postTime[postId] = obj.content + this.translate.instant('HomePage.minutesAgo');
@@ -763,7 +761,7 @@ export class HomePage implements OnInit {
     if (obj.type === 'day') {
       if (obj.content === 1) {
         this.postTime[postId] = this.translate.instant('common.yesterday');
-        return  this.postTime[postId];
+        return this.postTime[postId];
       }
       this.postTime[postId] = obj.content + this.translate.instant('HomePage.daysAgo');
 
@@ -863,28 +861,18 @@ export class HomePage implements OnInit {
     this.useRemoteData = true;
     switch (this.tabType) {
       case 'feeds':
-        this.useRemoteData = true;
-        //TODO use loadMoreData
+        this.hiveVaultController.refreshHomeData((newPostNum) => {
+          this.newPostNumber += newPostNum;
+        });
+
         try {
-          this.dataHelper.cleanCachedComment();
-          this.dataHelper.cleanCacheLikeNum();
-          this.dataHelper.cleanCachedLikeStatus();
-
-          await this.hiveVaultController.syncAllChannelInfo();
-          await this.hiveVaultController.syncAllPost();
-          await this.hiveVaultController.syncAllComments();
-          await this.hiveVaultController.syncAllLikeData();
-
-          this.handleDisplayNameMap = {};
-          this.postMap = {};
-          this.channelMap = {};
-          await this.initPostListData(true);
-          if (event != null) event.target.complete();
-          this.refreshEvent = null;
+          await this.refreshPage();
         } catch (error) {
-          if (event != null) event.target.complete();
-          this.refreshEvent = null;
         }
+
+
+        if (event != null) event.target.complete();
+        this.refreshEvent = null;
 
         break;
       case 'pasar':
@@ -896,6 +884,23 @@ export class HomePage implements OnInit {
           this.refreshEvent = null;
         });
         break;
+    }
+  }
+
+  async refreshPage() {
+    this.newPostNumber = 0;
+    this.useRemoteData = true;
+    try {
+      this.dataHelper.cleanCachedComment();
+      this.dataHelper.cleanCacheLikeNum();
+      this.dataHelper.cleanCachedLikeStatus();
+
+      this.handleDisplayNameMap = {};
+      this.postMap = {};
+      this.channelMap = {};
+      await this.initPostListData(true);
+    } catch (error) {
+      throw error
     }
   }
 
@@ -932,7 +937,7 @@ export class HomePage implements OnInit {
 
   scrollToTop(int) {
     let sid = setTimeout(() => {
-      this.content.scrollToTop(1).then(()=>{
+      this.content.scrollToTop(1).then(() => {
         this.visibleareaItemIndex = 0;
       });
       clearTimeout(sid);
@@ -1044,63 +1049,63 @@ export class HomePage implements OnInit {
 
     let postgridList = document.getElementsByClassName('post-grid');
     let postgridNum = document.getElementsByClassName('post-grid').length;
-    this.getVisibleareaItemIndex(postgridList,postgridNum);
+    this.getVisibleareaItemIndex(postgridList, postgridNum);
     let startindex = 0;
-    if(this.visibleareaItemIndex - 4 > 0){
+    if (this.visibleareaItemIndex - 4 > 0) {
       startindex = this.visibleareaItemIndex - 4;
     }
-    if(this.visibleareaItemIndex + 4 < postgridNum){
+    if (this.visibleareaItemIndex + 4 < postgridNum) {
       postgridNum = this.visibleareaItemIndex + 4;
     }
     this.clearAssetSid();
     let postgridindex = startindex;
-    this.assetSid = setInterval(()=>{
-         if(postgridindex < postgridNum){
-            let postgrid = postgridList[postgridindex] || '';
-            if (postgrid === '') {
-                 postgridindex++;
-                return;
-            }
-            let srcId = postgridList[postgridindex].getAttribute('id') || '';
-            if (srcId != '') {
-              let arr = srcId.split('-');
-              let destDid = arr[0];
-              let channelId = arr[1];
-              let postId = arr[2];
-              let mediaType = arr[3];
-              let id = destDid + '-' + channelId + '-' + postId;
-              //post Avatar
-              this.handlePostAvatar(id, srcId, postgridindex);
-              //postImg
-              if (mediaType === '1') {
-                this.handlePostImg(id, srcId, postgridindex);
-              }
-              if (mediaType === '2') {
-                //video
-                this.handleVideo(id, srcId, postgridindex);
-              }
+    this.assetSid = setInterval(() => {
+      if (postgridindex < postgridNum) {
+        let postgrid = postgridList[postgridindex] || '';
+        if (postgrid === '') {
+          postgridindex++;
+          return;
+        }
+        let srcId = postgridList[postgridindex].getAttribute('id') || '';
+        if (srcId != '') {
+          let arr = srcId.split('-');
+          let destDid = arr[0];
+          let channelId = arr[1];
+          let postId = arr[2];
+          let mediaType = arr[3];
+          let id = destDid + '-' + channelId + '-' + postId;
+          //post Avatar
+          this.handlePostAvatar(id, srcId, postgridindex);
+          //postImg
+          if (mediaType === '1') {
+            this.handlePostImg(id, srcId, postgridindex);
+          }
+          if (mediaType === '2') {
+            //video
+            this.handleVideo(id, srcId, postgridindex);
+          }
 
-              //post like status
-              CommonPageService.handlePostLikeStatusData(
-                id, srcId, postgridindex, postgridList[postgridindex],
-                this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
-                this.likeMap, this.isLoadingLikeMap)
-              //处理post like number
-              CommonPageService.handlePostLikeNumData(
-                id, srcId, postgridindex, postgridList[postgridindex],
-                this.clientHeight, this.hiveVaultController,
-                this.likeNumMap, this.isInitLikeNum);
-              //处理post comment
-              CommonPageService.handlePostCommentData(
-                id, srcId, postgridindex, postgridList[postgridindex],
-                this.clientHeight, this.hiveVaultController,
-                this.isInitComment, this.commentNumMap);
-            }
-            postgridindex++;
-         }else{
-           this.clearAssetSid();
-         }
-    },10);
+          //post like status
+          CommonPageService.handlePostLikeStatusData(
+            id, srcId, postgridindex, postgridList[postgridindex],
+            this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+            this.likeMap, this.isLoadingLikeMap)
+          //处理post like number
+          CommonPageService.handlePostLikeNumData(
+            id, srcId, postgridindex, postgridList[postgridindex],
+            this.clientHeight, this.hiveVaultController,
+            this.likeNumMap, this.isInitLikeNum);
+          //处理post comment
+          CommonPageService.handlePostCommentData(
+            id, srcId, postgridindex, postgridList[postgridindex],
+            this.clientHeight, this.hiveVaultController,
+            this.isInitComment, this.commentNumMap);
+        }
+        postgridindex++;
+      } else {
+        this.clearAssetSid();
+      }
+    }, 10);
   }
 
   async handlePostAvatar(id: string, srcId: string, rowindex: number) {
@@ -1558,7 +1563,7 @@ export class HomePage implements OnInit {
   }
 
   clearRefreshImageSid() {
-    if(this.refreshImageSid != null){
+    if (this.refreshImageSid != null) {
       clearTimeout(this.refreshImageSid);
       this.refreshImageSid = null;
     }
@@ -1628,7 +1633,7 @@ export class HomePage implements OnInit {
       }
 
       if (postImg != '' && videoSrc != '')
-         await this.native.setVideoFullScreen(postImg, videoSrc);
+        await this.native.setVideoFullScreen(postImg, videoSrc);
     };
   }
 
@@ -1648,7 +1653,7 @@ export class HomePage implements OnInit {
   setOverPlay(id: string, srcId: string, post: FeedsData.PostV3) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplayhome') || '';
-      vgoverlayplay.style.display = "block";
+    vgoverlayplay.style.display = "block";
     if (vgoverlayplay != '') {
       vgoverlayplay.onclick = () => {
         this.zone.run(() => {
@@ -1716,7 +1721,7 @@ export class HomePage implements OnInit {
                   this.zone.run(() => {
                     this.loadVideo(id, downVideodata);
                   });
-                }else{
+                } else {
                   this.videoDownStatus[this.videoDownStatusKey] = '';
                   this.isVideoLoading[this.videoCurKey] = false;
                   this.isVideoLoading[this.videoDownStatusKey] = false;
@@ -2471,16 +2476,16 @@ export class HomePage implements OnInit {
   }
 
 
-  getVisibleareaItemIndex(postgridList: any, postgridNum: any){
+  getVisibleareaItemIndex(postgridList: any, postgridNum: any) {
 
-    for(let positionIndex = 0;positionIndex < postgridNum;positionIndex++){
-       let postgrid = postgridList[positionIndex] || null;
-       if (
-        postgrid  != null &&
+    for (let positionIndex = 0; positionIndex < postgridNum; positionIndex++) {
+      let postgrid = postgridList[positionIndex] || null;
+      if (
+        postgrid != null &&
         postgrid.getBoundingClientRect().top >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom/2
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom / 2
       ) {
-        if( positionIndex === 0 ){
+        if (positionIndex === 0) {
           this.visibleareaItemIndex = positionIndex;
           return;
         }
@@ -2490,8 +2495,8 @@ export class HomePage implements OnInit {
 
   }
 
-  clearAssetSid(){
-    if(this.assetSid != null){
+  clearAssetSid() {
+    if (this.assetSid != null) {
       clearInterval(this.assetSid);
       this.assetSid = null;
     }

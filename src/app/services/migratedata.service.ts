@@ -35,7 +35,6 @@ export class MigrateDataService {
   //API
   syncChannelData(): Promise<number[]> {
     return new Promise(async (resolve, reject) => {
-      console.log('Do syncChannelData ============ ');
       this.handleChannelData();
       this.getChannelData();
     });
@@ -44,7 +43,6 @@ export class MigrateDataService {
   //API
   syncPostData(channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      console.log('Do syncPostData ============ ');
       await this.handlePostData();
       this.getPostData(channelId);
     });
@@ -53,7 +51,6 @@ export class MigrateDataService {
   //API
   syncCommentData(channelId: string, postId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      console.log('Do syncCommentData ============ ');
       await this.handleCommentData();
       this.getCommentData(channelId, postId);
     });

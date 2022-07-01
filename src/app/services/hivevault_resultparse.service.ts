@@ -116,7 +116,6 @@ export class HiveVaultResultParse {
        */
       const channels = result;
       let parseResult = [];
-      console.log('parseChannelResult result ====== ', channels);
       if (channels) {
         channels.forEach(channel => {
           if (channel) {

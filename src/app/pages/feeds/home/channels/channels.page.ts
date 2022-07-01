@@ -381,8 +381,8 @@ export class ChannelsPage implements OnInit {
   async ionViewWillEnter() {
     this.isRefresh = false;
     let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
-      if( appChannels != null){
-        appChannels.style.backgroundColor = "#010101";
+    if (appChannels != null) {
+      appChannels.style.backgroundColor = "#010101";
     }
     this.theme.setTheme1();
     this.isMine = await this.checkChannelIsMine();
@@ -409,7 +409,6 @@ export class ChannelsPage implements OnInit {
     );
 
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment: FeedsData.CommentV3) => {
-      Logger.log(TAG, "======= Receive getCommentFinish ========");
       let postId = comment.postId;
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
     });
@@ -441,7 +440,7 @@ export class ChannelsPage implements OnInit {
     this.clearAssetSid();
     this.theme.restTheme();
     let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
-    if( appChannels != null){
+    if (appChannels != null) {
       appChannels.removeAttribute("style");
     }
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
@@ -582,19 +581,19 @@ export class ChannelsPage implements OnInit {
     }
     this.followStatus = true;
   }
-  handleDisplayTime(postId: string,createTime: number) {
+  handleDisplayTime(postId: string, createTime: number) {
     let newPostTime = this.postTime[postId] || null;
-    if(newPostTime != null){
+    if (newPostTime != null) {
       return this.postTime[postId];
     }
     let obj = UtilService.handleDisplayTime(createTime);
     if (obj.type === 's') {
-      this.postTime[postId] =  this.translate.instant('common.just');
+      this.postTime[postId] = this.translate.instant('common.just');
       return this.postTime[postId];
     }
     if (obj.type === 'm') {
       if (obj.content === 1) {
-        this.postTime[postId] =  obj.content + this.translate.instant('HomePage.oneminuteAgo');
+        this.postTime[postId] = obj.content + this.translate.instant('HomePage.oneminuteAgo');
         return this.postTime[postId];
       }
       this.postTime[postId] = obj.content + this.translate.instant('HomePage.minutesAgo');
@@ -612,7 +611,7 @@ export class ChannelsPage implements OnInit {
     if (obj.type === 'day') {
       if (obj.content === 1) {
         this.postTime[postId] = this.translate.instant('common.yesterday');
-        return  this.postTime[postId];
+        return this.postTime[postId];
       }
       this.postTime[postId] = obj.content + this.translate.instant('HomePage.daysAgo');
 
@@ -1143,7 +1142,7 @@ export class ChannelsPage implements OnInit {
   pauseVideo(id: string) {
     let videoElement: any = document.getElementById(id + 'videochannel') || '';
     let source: any = document.getElementById(id + 'sourcechannel') || '';
-    if (videoElement !='' && source != '') {
+    if (videoElement != '' && source != '') {
       if (!videoElement.paused) {
         //判断是否处于暂停状态
         videoElement.pause();

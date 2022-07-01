@@ -496,13 +496,11 @@ export class ProfilePage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment: FeedsData.CommentV3) => {
-      Logger.log(TAG, "======= Receive getCommentFinish ========");
       let postId = comment.postId;
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
     });
 
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
-      Logger.log(TAG, "======= Receive editPostFinish ========");
       this.zone.run(() => {
         this.refreshLikeList();
       });
@@ -562,8 +560,8 @@ export class ProfilePage implements OnInit {
   async ionViewWillEnter() {
     this.theme.setTheme1();//改变状态栏
     let appProfile: HTMLBaseElement = document.querySelector("app-profile") || null;
-    if( appProfile != null){
-       appProfile.style.backgroundColor = "#010101";
+    if (appProfile != null) {
+      appProfile.style.backgroundColor = "#010101";
     }
     this.initTitleBar();
     // this.elaPrice = this.dataHelper.getElaUsdPrice();
@@ -593,8 +591,8 @@ export class ProfilePage implements OnInit {
 
   ionViewWillLeave() {
     let appProfile: HTMLBaseElement = document.querySelector("app-profile") || null;
-    if( appProfile != null){
-       appProfile.removeAttribute("style");
+    if (appProfile != null) {
+      appProfile.removeAttribute("style");
     }
     this.events.unsubscribe(FeedsEvent.PublishType.addProflieEvent);
     this.clearData();
@@ -1554,7 +1552,7 @@ export class ProfilePage implements OnInit {
   pauseVideo(id: string) {
     let videoElement: any = document.getElementById(id + 'videolike') || '';
     let source: any = document.getElementById(id + 'sourcelike') || '';
-    if (videoElement !='' && source != '') {
+    if (videoElement != '' && source != '') {
       if (!videoElement.paused) {
         //判断是否处于暂停状态
         videoElement.pause();

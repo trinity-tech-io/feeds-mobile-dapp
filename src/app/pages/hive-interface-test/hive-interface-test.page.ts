@@ -376,7 +376,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   async queryCommentsFromPosts() {
-    const postList = await this.hiveVaultController.queryRemotePostWithTime(this.destDid, "fea825439f895b3d6773eddd9c7af80a9ad29c3de54aa526f186852b94e5aa74", UtilService.getCurrentTimeNum());
+    const postList = await this.hiveVaultController.queryRemotePostWithTime(this.destDid, "fea825439f895b3d6773eddd9c7af80a9ad29c3de54aa526f186852b94e5aa74", UtilService.getCurrentTimeNum(), null);
     let list = [];
     for (let index = 0; index < postList.length; index++) {
       const post = postList[index];

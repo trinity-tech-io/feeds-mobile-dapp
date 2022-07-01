@@ -3351,24 +3351,26 @@ export class DataHelper {
     });
   }
 
-  addPost(newPost: FeedsData.PostV3): Promise<string> {
+  addPost(newPost: FeedsData.PostV3): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
+        let isNewPost: boolean = false;
         let originPost: FeedsData.PostV3 = await this.getPostV3ById(newPost.destDid, newPost.postId) || null;
         if (!originPost) {
           try {
             await this.addPostV3(newPost);
+            isNewPost = true;
           } catch (error) {
           }
         } else {
           const isEqual = _.isEqual(newPost, originPost);
           if (isEqual) {
-            resolve('FINISH');
+            resolve(isNewPost);
             return;
           }
           await this.updatePostV3(newPost);
         }
-        resolve('FINISH');
+        resolve(isNewPost);
       } catch (error) {
         Logger.error(TAG, 'Add post error', error);
         reject(error);
@@ -3376,14 +3378,18 @@ export class DataHelper {
     });
   }
 
-  addPosts(postList: FeedsData.PostV3[]): Promise<string> {
+  addPosts(postList: FeedsData.PostV3[]): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
+        let newPostNum: number = 0;
         for (let index = 0; index < postList.length; index++) {
           const post = postList[index];
-          await this.addPost(post);
+          const isNewPost = await this.addPost(post);
+          if (isNewPost) {
+            newPostNum++;
+          }
         }
-        resolve('FINISH');
+        resolve(newPostNum);
       } catch (error) {
         Logger.error(TAG, 'Add posts error', error);
         reject(error);
