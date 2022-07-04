@@ -64,8 +64,8 @@ Developers should have latest version of **ElastOS Essentials** application inst
 Then **clone** the repository with the commands:
 
 ```
-git clone https://github.com/elastos-trinity/feeds-capsule
-cd feeds-capsule
+git clone https://github.com/elastos-trinity/feeds-mobile-dapp
+cd feeds-mobile-dapp
 ```
 
 Input the command to install the related dependencies.
