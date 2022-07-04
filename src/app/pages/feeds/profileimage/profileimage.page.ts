@@ -177,6 +177,7 @@ export class ProfileimagePage implements OnInit {
       0,
       1,
       (imageUrl: any) => {
+        this.hidePictureMenuComponent = false;
         let imgBase64 = imageUrl || "";
         if(imgBase64 != ""){
           this.native.navigateForward(['editimage'], '');
