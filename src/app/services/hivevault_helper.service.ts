@@ -1738,7 +1738,7 @@ export class HiveVaultHelper {
     }
 
     /** download essential avatar start */
-    private downloadEssAvatarData(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<any> {
+    private downloadEssAvatarData(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
                 let userDid = (await this.dataHelper.getSigninData()).did
@@ -1759,7 +1759,7 @@ export class HiveVaultHelper {
         });
     }
 
-    downloadEssAvatar(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<any> {
+    downloadEssAvatar(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<string> {
         return this.downloadEssAvatarData(avatarParam, avatarScriptName, tarDID, tarAppDID);
     }
     /** download essential avatar end */

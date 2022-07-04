@@ -6744,30 +6744,32 @@ export class FeedService {
     );
   }
 
-  async getUserAvatar(userDid: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      let signinData = this.getSignInData();
-      if (signinData == null || signinData == undefined) {
-        resolve('assets/images/default-contact.svg');
-        return;
-      }
-      let userDid = signinData.did;
-      let avatar = await this.dataHelper.loadUserAvatar(userDid);
-      if (avatar) {
-        resolve(avatar);
-        return;
-      }
-      const loadKey = userDid + "_ess_avatar"
-      let essavatar = await this.dataHelper.loadUserAvatar(loadKey);
+  // async getUserAvatar(userDid: string): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     let signinData = this.getSignInData();
+  //     if (signinData == null || signinData == undefined) {
+  //       resolve('assets/images/default-contact.svg');
+  //       return;
+  //     }
 
-      if (essavatar) {
-        resolve(essavatar)
-        return
-      }
-      resolve('assets/images/default-contact.svg');
-      return;
-    });
-  }
+  //     let userDid = signinData.did;
+  //     let avatar = await this.dataHelper.loadUserAvatar(userDid);
+  //     if (avatar) {
+  //       resolve(avatar);
+  //       return;
+  //     }
+  //     const loadKey = UtilService.getESSAvatarKey(userDid);
+  //     let essavatar = await this.dataHelper.loadUserAvatar(loadKey);
+
+  //     if (essavatar) {
+  //       resolve(essavatar)
+  //       return
+  //     }
+
+  //     resolve('assets/images/default-contact.svg');
+  //     return;
+  //   });
+  // }
 
   setPasarListGrid(pasarListGrid: boolean) {
     this.pasarListGrid = pasarListGrid;

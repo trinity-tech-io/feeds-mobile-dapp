@@ -187,7 +187,7 @@ export class ProfilePage implements OnInit {
   private postMap = {};
   public postTime = {};
   private refreshImageSid: any = null;
-  private visibleareaItemIndex:number = 0;
+  private visibleareaItemIndex: number = 0;
   private assetSid: any = null;
   private refreshMyFeedsSid: any = null;
   private setMyFeedsSid: any = null;
@@ -463,25 +463,8 @@ export class ProfilePage implements OnInit {
 
     this.name = signInData['nickname'] || signInData['name'] || '';
     this.description = signInData['description'] || '';
-    let userDid = signInData['did'] || '';
-    let avatar = await this.feedService.getUserAvatar(userDid);
-
-    let imgUri = "";
-    if (avatar.indexOf('feeds:imgage:') > -1) {
-      imgUri = avatar.replace('feeds:imgage:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    } else if (avatar.indexOf('feeds:image:') > -1) {
-      imgUri = avatar.replace('feeds:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    } else if (avatar.indexOf('pasar:image:') > -1) {
-      imgUri = avatar.replace('pasar:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }
-    else {
-      imgUri = avatar;
-    }
-
-    this.avatar = imgUri;
+    // let userDid = signInData['did'] || '';
+    this.updateUserAvatar();
 
     this.events.subscribe(FeedsEvent.PublishType.updateLikeList, list => {
       this.zone.run(() => {
@@ -710,7 +693,7 @@ export class ProfilePage implements OnInit {
   }
 
   async doRefresh(event: any) {
-    //this.updateWalletAddress(null);
+    this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(() => { });
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         try {
@@ -871,155 +854,155 @@ export class ProfilePage implements OnInit {
 
   ionScroll() {
     if (this.selectType === 'ProfilePage.myLikes') {
-          this.setVisibleareaImageV2();
+      this.setVisibleareaImageV2();
     } else if (this.selectType === 'ProfilePage.collectibles') {
       this.native.throttle(this.setCollectiblesVisibleareaImage(), 200, this, true);
     } else if (this.selectType === 'ProfilePage.myFeeds') {
-        this.setMyFeedsVisibleareaImageV2();
+      this.setMyFeedsVisibleareaImageV2();
     }
   }
 
   clearSetMyFeedsSid() {
-    if(this.setMyFeedsSid != null){
-        clearInterval(this.setMyFeedsSid);
-        this.setMyFeedsSid = null;
+    if (this.setMyFeedsSid != null) {
+      clearInterval(this.setMyFeedsSid);
+      this.setMyFeedsSid = null;
     }
   }
 
   async setMyFeedsVisibleareaImageV2() {
-    if(this.setMyFeedsSid != null ){
+    if (this.setMyFeedsSid != null) {
       return;
     }
     let ionRowMyfeeds = document.getElementsByClassName("ionRowMyfeeds") || null;
     let len = ionRowMyfeeds.length;
     let itemIndex = 0;
-    this.setMyFeedsSid = setInterval(async ()=>{
-       if(itemIndex < len){
-          let item = ionRowMyfeeds[itemIndex] || null;
-          if(item === null){
-            itemIndex++;
-            return;
-          }
-          let id = item.getAttribute("id") || "";
-          if (id === "") {
-            itemIndex++;
-            return;
-          }
-          try {
-            this.handleMyFeedsAvatar(id);
-          } catch (error) {
-          }
+    this.setMyFeedsSid = setInterval(async () => {
+      if (itemIndex < len) {
+        let item = ionRowMyfeeds[itemIndex] || null;
+        if (item === null) {
           itemIndex++;
-       }else{
+          return;
+        }
+        let id = item.getAttribute("id") || "";
+        if (id === "") {
+          itemIndex++;
+          return;
+        }
+        try {
+          this.handleMyFeedsAvatar(id);
+        } catch (error) {
+        }
+        itemIndex++;
+      } else {
         this.clearSetMyFeedsSid();
-       }
-    },10);
+      }
+    }, 10);
 
   }
 
   async handleMyFeedsAvatar(id: string) {
-      let myFeedsAvatarKuang = document.getElementById(id + "-myFeedsAvatarKuang");
-          let isload = this.myFeedsIsLoadimage[id] || '';
-          try {
-            if (
-              id != '' &&
-              myFeedsAvatarKuang.getBoundingClientRect().top >= - Config.rectTop &&
-              myFeedsAvatarKuang.getBoundingClientRect().bottom <= Config.rectBottom
-            ) {
-              if (isload === "") {
-                let arr = id.split("-");
-                this.myFeedsIsLoadimage[id] = '11';
-                let destDid = arr[0];
-                let channelId = arr[1];
-                let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-                let avatarUri = "";
-                if (channel != null) {
-                  avatarUri = channel.avatar;
-                  //关注数
-                  let follower = this.subscriptionV3NumMap[channelId] || '';
-                  if (follower === "") {
-                    try {
-                      this.subscriptionV3NumMap[channelId] = "...";
-                      this.dataHelper.getSubscriptionV3NumByChannelId(
-                        channel.destDid, channel.channelId).
-                        then((result) => {
-                          result = result || 0;
-                          if (result == 0) {
-                            this.hiveVaultController.querySubscriptionChannelById(channel.destDid, channel.channelId).then(() => {
-                              this.zone.run(async () => {
-                                this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
-                              });
-                            })
-                          }
-                          this.subscriptionV3NumMap[channelId] = result;
-                        }).catch(() => {
-                          this.subscriptionV3NumMap[channelId] = 0;
-
+    let myFeedsAvatarKuang = document.getElementById(id + "-myFeedsAvatarKuang");
+    let isload = this.myFeedsIsLoadimage[id] || '';
+    try {
+      if (
+        id != '' &&
+        myFeedsAvatarKuang.getBoundingClientRect().top >= - Config.rectTop &&
+        myFeedsAvatarKuang.getBoundingClientRect().bottom <= Config.rectBottom
+      ) {
+        if (isload === "") {
+          let arr = id.split("-");
+          this.myFeedsIsLoadimage[id] = '11';
+          let destDid = arr[0];
+          let channelId = arr[1];
+          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+          let avatarUri = "";
+          if (channel != null) {
+            avatarUri = channel.avatar;
+            //关注数
+            let follower = this.subscriptionV3NumMap[channelId] || '';
+            if (follower === "") {
+              try {
+                this.subscriptionV3NumMap[channelId] = "...";
+                this.dataHelper.getSubscriptionV3NumByChannelId(
+                  channel.destDid, channel.channelId).
+                  then((result) => {
+                    result = result || 0;
+                    if (result == 0) {
+                      this.hiveVaultController.querySubscriptionChannelById(channel.destDid, channel.channelId).then(() => {
+                        this.zone.run(async () => {
+                          this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
                         });
-                    } catch (error) {
+                      })
                     }
-                  }
-                }
-                let fileName: string = avatarUri.split("@")[0];
+                    this.subscriptionV3NumMap[channelId] = result;
+                  }).catch(() => {
+                    this.subscriptionV3NumMap[channelId] = 0;
 
-                this.myFeedsAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
-                let isDown = this.downMyFeedsAvatarMap[fileName] || "";
-                if (isDown != '') {
-                  //itemIndex++;
-                  return;
-                }
-                this.downMyFeedsAvatarMap[fileName] = fileName;
-                this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
-                  this.zone.run(() => {
-                    this.downMyFeedsAvatarMap[fileName] = '';
-                    let srcData = data || "";
-                    if (srcData != "") {
-                      for (let key in this.myFeedsAvatarImageMap) {
-                        let uri = this.myFeedsAvatarImageMap[key] || "";
-                        if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
-                          this.myFeedsIsLoadimage[key] = '13';
-                          this.myFeedAvatarMap[key] = data;
-                          delete this.myFeedsAvatarImageMap[key];
-                        }
-                      }
-                    } else {
-                      for (let key in this.myFeedsAvatarImageMap) {
-                        let uri = this.myFeedsAvatarImageMap[key] || "";
-                        if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
-                          this.myFeedsIsLoadimage[key] = '13';
-                          delete this.myFeedsAvatarImageMap[key];
-                        }
-                      }
-                    }
                   });
-                }).catch((err) => {
-                  this.downMyFeedsAvatarMap[fileName] = '';
-                  for (let key in this.myFeedsAvatarImageMap) {
-                    let uri = this.myFeedsAvatarImageMap[key] || "";
-                    if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
-                      this.myFeedsIsLoadimage[key] = '13';
-                      delete this.myFeedsAvatarImageMap[key];
-                    }
-                  }
-                });
-              }
-            } else {
-              let srcStr = this.myFeedAvatarMap[id] || './assets/icon/reserve.svg';
-              if (
-                myFeedsAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
-                myFeedsAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
-                this.myFeedsIsLoadimage[id] === '13' &&
-                srcStr != './assets/icon/reserve.svg'
-              ) {
-                this.myFeedAvatarMap[id] = null;
-                this.myFeedsIsLoadimage[id] = '';
-                delete this.myFeedsAvatarImageMap[id];
+              } catch (error) {
               }
             }
-          } catch (error) {
-            this.myFeedsIsLoadimage[id] = '';
-            delete this.myFeedsAvatarImageMap[id];
           }
+          let fileName: string = avatarUri.split("@")[0];
+
+          this.myFeedsAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
+          let isDown = this.downMyFeedsAvatarMap[fileName] || "";
+          if (isDown != '') {
+            //itemIndex++;
+            return;
+          }
+          this.downMyFeedsAvatarMap[fileName] = fileName;
+          this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
+            this.zone.run(() => {
+              this.downMyFeedsAvatarMap[fileName] = '';
+              let srcData = data || "";
+              if (srcData != "") {
+                for (let key in this.myFeedsAvatarImageMap) {
+                  let uri = this.myFeedsAvatarImageMap[key] || "";
+                  if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
+                    this.myFeedsIsLoadimage[key] = '13';
+                    this.myFeedAvatarMap[key] = data;
+                    delete this.myFeedsAvatarImageMap[key];
+                  }
+                }
+              } else {
+                for (let key in this.myFeedsAvatarImageMap) {
+                  let uri = this.myFeedsAvatarImageMap[key] || "";
+                  if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
+                    this.myFeedsIsLoadimage[key] = '13';
+                    delete this.myFeedsAvatarImageMap[key];
+                  }
+                }
+              }
+            });
+          }).catch((err) => {
+            this.downMyFeedsAvatarMap[fileName] = '';
+            for (let key in this.myFeedsAvatarImageMap) {
+              let uri = this.myFeedsAvatarImageMap[key] || "";
+              if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
+                this.myFeedsIsLoadimage[key] = '13';
+                delete this.myFeedsAvatarImageMap[key];
+              }
+            }
+          });
+        }
+      } else {
+        let srcStr = this.myFeedAvatarMap[id] || './assets/icon/reserve.svg';
+        if (
+          myFeedsAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
+          myFeedsAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
+          this.myFeedsIsLoadimage[id] === '13' &&
+          srcStr != './assets/icon/reserve.svg'
+        ) {
+          this.myFeedAvatarMap[id] = null;
+          this.myFeedsIsLoadimage[id] = '';
+          delete this.myFeedsAvatarImageMap[id];
+        }
+      }
+    } catch (error) {
+      this.myFeedsIsLoadimage[id] = '';
+      delete this.myFeedsAvatarImageMap[id];
+    }
   }
 
   setCollectiblesVisibleareaImage() {
@@ -1105,9 +1088,9 @@ export class ProfilePage implements OnInit {
 
   refreshMyFeedsVisibleareaImage() {
     if (this.selectType === "ProfilePage.myFeeds") {
-       if(this.refreshMyFeedsSid != null){
-            return;
-       }
+      if (this.refreshMyFeedsSid != null) {
+        return;
+      }
       this.refreshMyFeedsSid = setTimeout(() => {
         this.myFeedsIsLoadimage = {};
         this.downMyFeedsAvatarMap = {};
@@ -1118,10 +1101,10 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  clearRefreshMyFeedsSid(){
-    if(this.refreshMyFeedsSid != null ){
-        clearTimeout(this.refreshMyFeedsSid);
-        this.refreshMyFeedsSid = null;
+  clearRefreshMyFeedsSid() {
+    if (this.refreshMyFeedsSid != null) {
+      clearTimeout(this.refreshMyFeedsSid);
+      this.refreshMyFeedsSid = null;
     }
   }
 
@@ -1177,22 +1160,22 @@ export class ProfilePage implements OnInit {
     let postgridList = document.getElementsByClassName('postgridlike');
     let postgridNum = document.getElementsByClassName('postgridlike').length;
 
-    this.getVisibleareaItemIndex(postgridList,postgridNum);
+    this.getVisibleareaItemIndex(postgridList, postgridNum);
     let startindex = 0;
-    if(this.visibleareaItemIndex - 4 > 0){
+    if (this.visibleareaItemIndex - 4 > 0) {
       startindex = this.visibleareaItemIndex - 4;
     }
-    if(this.visibleareaItemIndex + 4 < postgridNum){
+    if (this.visibleareaItemIndex + 4 < postgridNum) {
       postgridNum = this.visibleareaItemIndex + 4;
     }
     this.clearAssetSid();
     let postgridindex = startindex;
-    this.assetSid = setInterval(()=>{
-      if(postgridindex < postgridNum){
+    this.assetSid = setInterval(() => {
+      if (postgridindex < postgridNum) {
         let postgrid = postgridList[postgridindex] || '';
         if (postgrid === '') {
-             postgridindex++;
-            return;
+          postgridindex++;
+          return;
         }
 
         let srcId = postgridList[postgridindex].getAttribute('id') || '';
@@ -1230,10 +1213,10 @@ export class ProfilePage implements OnInit {
           }
         }
         postgridindex++;
-      }else{
+      } else {
         this.clearAssetSid();
       }
-    },10);
+    }, 10);
   }
 
   async handlePostImg(id: string, srcId: string, rowindex: number) {
@@ -1543,11 +1526,11 @@ export class ProfilePage implements OnInit {
   }
 
   clearRefreshImageSid() {
-    if(this.refreshImageSid != null){
+    if (this.refreshImageSid != null) {
       clearTimeout(this.refreshImageSid);
       this.refreshImageSid = null;
     }
-   }
+  }
 
   pauseVideo(id: string) {
     let videoElement: any = document.getElementById(id + 'videolike') || '';
@@ -1604,7 +1587,7 @@ export class ProfilePage implements OnInit {
       let videoSrc: string = document
         .getElementById(id + 'sourcelike')
         .getAttribute('src');
-        await this.native.setVideoFullScreen(postImg, videoSrc);
+      await this.native.setVideoFullScreen(postImg, videoSrc);
     };
   }
 
@@ -2608,29 +2591,49 @@ export class ProfilePage implements OnInit {
     this.native.navigateForward(['/menu/profiledetail'], {});
   }
 
-  getVisibleareaItemIndex(postgridList: any, postgridNum: any){
+  getVisibleareaItemIndex(postgridList: any, postgridNum: any) {
 
-    for(let positionIndex = 0;positionIndex < postgridNum;positionIndex++){
-       let postgrid = postgridList[positionIndex] || null;
-       if (
-        postgrid  != null &&
+    for (let positionIndex = 0; positionIndex < postgridNum; positionIndex++) {
+      let postgrid = postgridList[positionIndex] || null;
+      if (
+        postgrid != null &&
         postgrid.getBoundingClientRect().top >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom/2
+        postgrid.getBoundingClientRect().bottom <= Config.rectBottom / 2
       ) {
-        if( positionIndex === 0 ){
+        if (positionIndex === 0) {
           this.visibleareaItemIndex = positionIndex;
           return;
         }
         this.visibleareaItemIndex = positionIndex;
       }
     }
-
   }
 
-  clearAssetSid(){
-    if(this.assetSid != null){
+  clearAssetSid() {
+    if (this.assetSid != null) {
       clearInterval(this.assetSid);
       this.assetSid = null;
     }
+  }
+
+  async updateUserAvatar() {
+    let avatar = await this.hiveVaultController.getUserAvatar();
+
+    let imgUri = "";
+    if (avatar.indexOf('feeds:imgage:') > -1) {
+      imgUri = avatar.replace('feeds:imgage:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    } else if (avatar.indexOf('feeds:image:') > -1) {
+      imgUri = avatar.replace('feeds:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    } else if (avatar.indexOf('pasar:image:') > -1) {
+      imgUri = avatar.replace('pasar:image:', '');
+      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
+    }
+    else {
+      imgUri = avatar;
+    }
+
+    this.avatar = imgUri;
   }
 }

@@ -837,23 +837,95 @@ export class HiveVaultController {
     return this.hiveVaultApi.parseDidDocumentAvatar(userDid);
   }
 
-  downloadEssAvatar(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<any> {
+  checkESSAvatar(): Promise<{ userDid: string, essAvatar: string }> {
+    return new Promise(async (resolve, reject) => {
+      let userDid = '';
+      try {
+        userDid = (await this.dataHelper.getSigninData()).did
+        const loadKey = UtilService.getESSAvatarKey(userDid);
+        let essavatar = await this.dataHelper.loadUserAvatar(loadKey) || null;
+        if (essavatar) {
+          resolve({ userDid: userDid, essAvatar: essavatar });
+          return
+        } else {
+          resolve({ userDid: userDid, essAvatar: null });
+        }
+      } catch (error) {
+        resolve({ userDid: userDid, essAvatar: null });
+      }
+    });
+  }
+
+  checkCustomAvatar(): Promise<{ userDid: string, customAvatar: string }> {
+    return new Promise(async (resolve, reject) => {
+      let userDid = '';
+      try {
+        userDid = (await this.dataHelper.getSigninData()).did
+        let customAvatar = await this.dataHelper.loadUserAvatar(userDid)
+        if (customAvatar) {
+          resolve({ userDid: userDid, customAvatar: customAvatar });
+          return
+        } else {
+          resolve({ userDid: userDid, customAvatar: null });
+        }
+      } catch (error) {
+        resolve({ userDid: userDid, customAvatar: null });
+      }
+    });
+  }
+
+  refreshAvatar(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      this.processDownloadEssAvatar().then(() => {
+        return this.downloadCustomeAvatar("custome");
+      }).then(() => {
+        resolve('FINISH');
+      }).catch((error) => { });
+    });
+  }
+
+  getUserAvatar(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let signinData = await this.dataHelper.getSigninData();
+      if (signinData == null || signinData == undefined) {
+        resolve('assets/images/default-contact.svg');
+        return;
+      }
+
+      let userDid = signinData.did;
+      let avatar = await this.dataHelper.loadUserAvatar(userDid);
+      if (avatar) {
+        resolve(avatar);
+        return;
+      }
+      const loadKey = UtilService.getESSAvatarKey(userDid);
+      let essavatar = await this.dataHelper.loadUserAvatar(loadKey);
+
+      if (essavatar) {
+        resolve(essavatar)
+        return
+      }
+
+      resolve('assets/images/default-contact.svg');
+      return;
+    });
+  }
+
+  downloadEssAvatar(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        // 检测本地是否存在
-        let userDid = (await this.dataHelper.getSigninData()).did
-        const loadKey = userDid + "_ess_avatar"
-        let essavatar = await this.dataHelper.loadUserAvatar(loadKey)
-        if (essavatar) {
-          resolve(essavatar);
-          return
-        }
+        // const essavatarObj = await this.checkESSAvatar();
+
+        // if (essavatarObj.essAvatar) {
+        //   resolve(essavatarObj.essAvatar);
+        //   return
+        // }
         const rawImage = await this.hiveVaultApi.downloadEssAvatar(avatarParam, avatarScriptName, tarDID, tarAppDID);
         if (rawImage === undefined || rawImage === null) {
           resolve(null)
           return
         }
-        const savekey = userDid + "_ess_avatar"
+        const savekey = UtilService.getESSAvatarKey(tarDID);
         this.dataHelper.saveUserAvatar(savekey, rawImage)
         resolve(rawImage);
       }
@@ -861,6 +933,33 @@ export class HiveVaultController {
         reject(error)
         Logger.error(TAG, "Download Ess Avatar error: ", error);
       }
+    });
+  }
+
+  processDownloadEssAvatar(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const userDid = (await this.dataHelper.getSigninData()).did
+      this.parseDidDocumentAvatar(userDid).then((value: {
+        avatarParam: string;
+        avatarScriptName: string;
+        tarDID: string;
+        tarAppDID: string;
+      }) => {
+        if (!value) {
+          const errorMsg = 'User did document null';
+          Logger.log(TAG, errorMsg);
+          reject(errorMsg);
+          return;
+        }
+
+        this.downloadEssAvatar(value.avatarParam, value.avatarScriptName, value.tarDID, value.tarAppDID).then((value) => {
+          resolve(value);
+        }).catch((error) => {
+          reject(error);
+        });
+      }).catch((error) => {
+        reject(error);
+      });
     });
   }
 

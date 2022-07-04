@@ -835,4 +835,8 @@ export class UtilService {
       + "&channelId=" + channelId
       + "&postId=" + postId;
   }
+
+  public static getESSAvatarKey(userDid: string) {
+    return userDid + "_ess_avatar";
+  }
 }

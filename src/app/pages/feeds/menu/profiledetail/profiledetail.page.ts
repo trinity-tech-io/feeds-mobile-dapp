@@ -18,6 +18,7 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { CameraService } from 'src/app/services/CameraService';
 import { HiveService } from 'src/app/services/HiveService';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 let TAG: string = 'Profiledetail';
 type ProfileDetail = {
@@ -81,7 +82,8 @@ export class ProfiledetailPage implements OnInit {
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
     private camera: CameraService,
-    private hiveService: HiveService
+    private hiveService: HiveService,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ngOnInit() { }
@@ -133,7 +135,7 @@ export class ProfiledetailPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    document.body.addEventListener('touchmove',this.preventDefault, {passive: false});
+    document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
 
     this.theme.setTheme1();
     this.walletAddress =
@@ -152,11 +154,11 @@ export class ProfiledetailPage implements OnInit {
     this.collectData();
     try {
       let croppedImage = this.dataHelper.getClipProfileIamge();
-      if (croppedImage != ''){
+      if (croppedImage != '') {
         this.avatar = croppedImage;
         await this.saveAvatar();
-      }else{
-        this.avatar = await this.feedService.getUserAvatar(this.did);
+      } else {
+        this.avatar = await this.hiveVaultController.getUserAvatar();
       }
     } catch (error) {
 
@@ -178,7 +180,7 @@ export class ProfiledetailPage implements OnInit {
   ionViewWillUnload() { }
 
   async ionViewWillLeave() {
-    document.body.removeEventListener("touchmove",this.preventDefault,false);
+    document.body.removeEventListener("touchmove", this.preventDefault, false);
     this.theme.restTheme();
     this.native.handleTabsEvents();
   }
@@ -237,12 +239,12 @@ export class ProfiledetailPage implements OnInit {
   }
 
   openGallery(data: any) {
-      this.hidePictureMenuComponent = false;
-      let fileBase64  = data["fileBase64"] || "";
-      if(fileBase64 != ""){
-        this.native.navigateForward(['editimage'], '');
-        this.dataHelper.setClipProfileIamge(fileBase64);
-      }
+    this.hidePictureMenuComponent = false;
+    let fileBase64 = data["fileBase64"] || "";
+    if (fileBase64 != "") {
+      this.native.navigateForward(['editimage'], '');
+      this.dataHelper.setClipProfileIamge(fileBase64);
+    }
   }
 
   openCamera() {
@@ -253,12 +255,12 @@ export class ProfiledetailPage implements OnInit {
       (imageUrl: any) => {
         this.hidePictureMenuComponent = false;
         let imgBase64 = imageUrl || "";
-        if(imgBase64 != ""){
+        if (imgBase64 != "") {
           this.native.navigateForward(['editimage'], '');
           this.dataHelper.setClipProfileIamge(imgBase64);
         }
       },
-      err => {},
+      err => { },
     );
   }
 
@@ -270,7 +272,7 @@ export class ProfiledetailPage implements OnInit {
       this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
       this.dataHelper.setClipProfileIamge("");
     } catch (error) {
-      this.avatar = await this.feedService.getUserAvatar(this.did);
+      this.avatar = await this.hiveVaultController.getUserAvatar();
       this.dataHelper.setClipProfileIamge("");
       this.native.hideLoading();
       this.native.toast('common.saveFailed');
@@ -279,7 +281,7 @@ export class ProfiledetailPage implements OnInit {
 
   hidePictureMenu(data: any) {
     let buttonType = data['buttonType'];
-    switch(buttonType) {
+    switch (buttonType) {
       case 'photolibary':
         this.hidePictureMenuComponent = false;
         break;
@@ -289,6 +291,6 @@ export class ProfiledetailPage implements OnInit {
     }
   }
 
-  preventDefault(e:any) { e.preventDefault(); };
+  preventDefault(e: any) { e.preventDefault(); };
 
 }

@@ -184,7 +184,7 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.parseDidDocumentAvatar(userDid);
   }
 
-  downloadEssAvatar(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<any> {
+  downloadEssAvatar(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<string> {
     return this.hiveVaultHelper.downloadEssAvatar(avatarParam, avatarScriptName, tarDID, tarAppDID);
   }
 

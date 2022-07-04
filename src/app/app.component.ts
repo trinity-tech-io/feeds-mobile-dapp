@@ -252,7 +252,6 @@ export class MyApp {
           }
         });
 
-
         this.initSetting();
         this.initNftFirstdisclaimer();
         this.initFeedPublicStatus();
@@ -262,6 +261,7 @@ export class MyApp {
         this.initFeedsSortType();
         this.initHideAdult();
         this.initPublishedActivePanelList();
+
         this.native.addNetworkListener(
           () => {
             this.dataHelper.setNetworkStatus(FeedsData.ConnState.disconnected);
@@ -290,7 +290,7 @@ export class MyApp {
         catch (error) {
           console.log("initRegisterScript error === ", error)
         }
-      })
+      });
   }
 
   initConnector() {
@@ -490,7 +490,7 @@ export class MyApp {
   }
 
   async getAvatar() {
-    let avatar = await this.feedService.getUserAvatar(this.userDid);
+    let avatar = await this.hiveVaultController.getUserAvatar();
     let imgUri = "";
     if (avatar.indexOf('feeds:imgage:') > -1) {
       imgUri = avatar.replace('feeds:imgage:', '');
@@ -721,6 +721,7 @@ export class MyApp {
       this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData6)
       this.dataHelper.setSyncHiveData(syncHiveData6);
 
+      this.hiveVaultController.refreshAvatar();
     } catch (error) {
       if (error["code"] === 404) {
         let syncHiveData7 = { status: 7, describe: "GalleriahivePage.synchronizingComplete" }
@@ -732,21 +733,6 @@ export class MyApp {
         this.dataHelper.setSyncHiveData(syncHiveData6);
       }
     }
-
-    //async get avatar 
-    this.hiveVaultController.parseDidDocumentAvatar(userDid).then((value: {
-      avatarParam: string;
-      avatarScriptName: string;
-      tarDID: string;
-      tarAppDID: string;
-    }) => {
-      if (!value) {
-        return;
-      }
-      this.hiveVaultController.downloadEssAvatar(value.avatarParam, value.avatarScriptName, value.tarDID, value.tarAppDID);
-    }).catch((error) => { });
-
-    this.hiveVaultController.downloadCustomeAvatar("custome").catch((error) => { });
   }
 
   async initRegisterScript(isForce: boolean) {

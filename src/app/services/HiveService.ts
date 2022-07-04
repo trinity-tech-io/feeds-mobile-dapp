@@ -8,6 +8,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { isEqual, isNil, reject } from 'lodash';
 let TAG: string = 'Feeds-HiveService';
 import { Events } from 'src/app/services/events.service';
+import { Config } from './config';
 
 @Injectable()
 export class HiveService {
@@ -34,7 +35,6 @@ export class HiveService {
   public async creatAppContext(appInstanceDocumentString: string, userDidString: string): Promise<AppContext> {
     return new Promise(async (resolve, reject) => {
       try {
-        //const currentNet = this.dataHelper.getDevelopNet().toLowerCase();
         const currentNet = "MainNet".toLowerCase();
         HiveLogger.setDefaultLevel(HiveLogger.TRACE)
         DIDBackend.initialize(new DefaultDIDAdapter(currentNet))
@@ -98,7 +98,6 @@ export class HiveService {
       let scriptRunner = await this.creatScriptRunner(userDid)
       this.scriptRunners[userDid] = scriptRunner
       const vault = new Vault(context)
-
       Logger.log(TAG, 'Create vault ', userDid, this.vault)
       return vault
     }
@@ -160,10 +159,9 @@ export class HiveService {
           tarDID: tarDID,
           tarAppDID: tarAppDID
         }
-
-        return res;
+        resolve(res);
       } catch (error) {
-        Logger.warn(TAG, 'Parse avatar error');
+        reject(error);
       }
     });
   }
