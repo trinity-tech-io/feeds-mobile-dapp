@@ -264,7 +264,7 @@ export class EidtchannelPage implements OnInit {
         this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
           return false;
       }
-
+      this.native.hideLoading();
       return true;
 
     } catch (error) {
