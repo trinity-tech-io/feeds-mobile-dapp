@@ -161,7 +161,7 @@ export class EidtchannelPage implements OnInit {
     //   return;
     // }
     this.isClickConfirm = false;
-    if (this.checkparms() && this.isPublic === "") {
+    if (await this.checkparms() && this.isPublic === "") {
      await this.native.showLoading('common.waitMoment', isDismiss => { });
      this.editChannelInfo();
     }
@@ -206,7 +206,7 @@ export class EidtchannelPage implements OnInit {
 
   }
 
-  checkparms() {
+  async checkparms() {
     let nameValue = this.channelName || '';
     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue === '') {
@@ -247,9 +247,30 @@ export class EidtchannelPage implements OnInit {
       return false;
     }
 
+    if(this.oldChannelInfo['name'] === this.channelName ){
+      return true;
+    }
 
+    try {
+      const signinDid = (await this.dataHelper.getSigninData()).did;
+      const channelId = UtilService.generateChannelId(signinDid,this.channelName);
+      await this.native.showLoading('common.waitMoment');
+      const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
+      const list  =  _.filter(selfchannels,(channel: FeedsData.ChannelV3)=>{
+                    return channel.destDid === signinDid && channel.channelId === channelId;
+            });
+      if(list.length > 0 ){
+        this.native.hideLoading();
+        this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
+          return false;
+      }
 
-    return true;
+      return true;
+
+    } catch (error) {
+      this.native.hideLoading();
+    }
+
   }
 
   updatePublicData() {
