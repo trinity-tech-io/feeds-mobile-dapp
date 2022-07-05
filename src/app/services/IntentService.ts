@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UtilService } from 'src/app/services/utilService';
 import { HttpService } from './HttpService';
 import { NFTContractHelperService } from 'src/app/services/nftcontract_helper.service';
+import { TwitterService } from 'src/app/services/TwitterService';
 
 let TAG: string = 'IntentService';
 declare let intentManager: IntentPlugin.IntentManager;
@@ -20,7 +21,10 @@ export class IntentService {
   private static BASEURL_PASAR: string = 'https://feeds.trinity-feeds.app/pasar';
   private static BASEURL_NAV: string = 'https://feeds.trinity-feeds.app/nav';
   private static BASEURL_SHORTEN: string = 'https://s.trinity-feeds.app/api/v2/action/shorten?key=9fa8ef7f86a28829f53375abcb0af5';
+  private static BASEURL_TWITTER: string = "https://feeds.trinity-feeds.app/logininsuccess"
+
   constructor(
+    private twitterService: TwitterService,
     private zone: NgZone,
     private native: NativeService,
     private languageService: LanguageService,
@@ -279,6 +283,9 @@ export class IntentService {
     const params = receivedIntent.params;
 
     switch (action) {
+      case IntentService.BASEURL_TWITTER:
+        this.twitterService.fetchTokenFromTwitterUseCode(params["code"]);
+        break;
       case IntentService.BASEURL_CHANNEL:
         this.handleChannelIntent(params);
         break;
