@@ -254,12 +254,11 @@ export class EidtchannelPage implements OnInit {
     }
 
     const signinDid = (await this.dataHelper.getSigninData()).did;
-    const channelId = UtilService.generateChannelId(signinDid,this.channelName);
     await this.native.showLoading('common.waitMoment');
     try {
       const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
       const list  =  _.filter(selfchannels,(channel: FeedsData.ChannelV3)=>{
-                    return channel.destDid === signinDid && channel.channelId === channelId && channel.channelId != this.channelId;
+                    return channel.destDid === signinDid && channel.channelId != this.channelId && channel.name === nameValue;
             }) || [];
       if(list.length > 0){
         this.native.hideLoading();
