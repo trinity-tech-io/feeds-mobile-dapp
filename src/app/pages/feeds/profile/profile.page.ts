@@ -542,10 +542,6 @@ export class ProfilePage implements OnInit {
 
   async ionViewWillEnter() {
     this.theme.setTheme1();//改变状态栏
-    let appProfile: HTMLBaseElement = document.querySelector("app-profile") || null;
-    if (appProfile != null) {
-      appProfile.style.backgroundColor = "#010101";
-    }
     this.initTitleBar();
     // this.elaPrice = this.dataHelper.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {
@@ -570,6 +566,13 @@ export class ProfilePage implements OnInit {
 
     this.totalLikeList = await this.sortLikeList() || [];
     this.likeSum = this.totalLikeList.length;
+  }
+
+  ionViewDidEnter() {
+    let appProfile: HTMLBaseElement = document.querySelector("app-profile") || null;
+    if (appProfile != null) {
+      appProfile.style.backgroundColor = "#010101";
+    }
   }
 
   ionViewWillLeave() {

@@ -219,6 +219,12 @@ export class EidtchannelPage implements OnInit {
       return;
     }
 
+    let checkRes = this.feedService.checkValueValid(this.channelName);
+    if (checkRes) {
+      this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
+      return;
+    }
+
     let descValue = this.channelDes || '';
     descValue = this.native.iGetInnerText(descValue);
 
@@ -245,30 +251,6 @@ export class EidtchannelPage implements OnInit {
     ) {
       this.native.toastWarn('common.nochanges');
       return false;
-    }
-
-    if(this.oldChannelInfo['name'] === this.channelName ){
-      return true;
-    }
-
-    try {
-      const signinDid = (await this.dataHelper.getSigninData()).did;
-      const channelId = UtilService.generateChannelId(signinDid,this.channelName);
-      await this.native.showLoading('common.waitMoment');
-      const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
-      const list  =  _.filter(selfchannels,(channel: FeedsData.ChannelV3)=>{
-                    return channel.destDid === signinDid && channel.channelId === channelId;
-            });
-      if(list.length > 0 ){
-        this.native.hideLoading();
-        this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
-          return false;
-      }
-      this.native.hideLoading();
-      return true;
-
-    } catch (error) {
-      this.native.hideLoading();
     }
 
   }

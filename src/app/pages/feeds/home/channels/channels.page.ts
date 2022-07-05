@@ -380,10 +380,6 @@ export class ChannelsPage implements OnInit {
 
   async ionViewWillEnter() {
     this.isRefresh = false;
-    let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
-    if (appChannels != null) {
-      appChannels.style.backgroundColor = "#010101";
-    }
     this.theme.setTheme1();
     this.isMine = await this.checkChannelIsMine();
     if (this.platform.is('ios')) {
@@ -478,7 +474,12 @@ export class ChannelsPage implements OnInit {
     this.native.handleTabsEvents();
   }
 
-  ionViewDidEnter() { }
+  ionViewDidEnter() {
+   let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
+    if (appChannels != null) {
+      appChannels.style.backgroundColor = "#010101";
+    }
+  }
 
   initTitle() {
     this.titleBarService.setTitle(
