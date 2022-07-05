@@ -41,6 +41,9 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { CommonPageService } from 'src/app/services/common.page.service';
 import { HiveVaultHelper } from 'src/app/services/hivevault_helper.service';
 import { Config } from 'src/app/services/config';
+import { HTTP } from '@awesome-cordova-plugins/http/ngx';
+import { TwitterService } from 'src/app/services/TwitterService';
+
 let TAG: string = 'Feeds-home';
 @Component({
   selector: 'app-home',
@@ -210,11 +213,19 @@ export class HomePage implements OnInit {
     private keyboard: Keyboard,
     private fileHelperService: FileHelperService,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private http: HTTP,
+    private twitterService: TwitterService,
+
   ) { }
 
   ngOnInit() {
+    console.log("开始加载 twitter url >>>>>>>>>>>>>>>>>>>>>> 1")
+    // const url = "https://twitter.com/i/oauth2/authorize?response_type=code&client_id=MloxZFZUd21FWEJ1VHBnMkd3RHA6MTpjaQ&redirect_uri=https://www.baidu.com&scope=tweet.read%20tweet.write%20users.read%20follows.read+follows.write%20offline.access&state=state&code_challenge=challenge&code_challenge_method=plain";
+    this.twitterService.openTwitterLoginPage();
+    console.log("结束加载 twitter url >>>>>>>>>>>>>>>>>>>>>> 1")
 
+    // this.twitterService.postTweet("hello word: post Tweet")
   }
 
   async initPostListData(scrollToTop: boolean) {
@@ -306,6 +317,25 @@ export class HomePage implements OnInit {
   }
 
   async ionViewWillEnter() {
+
+    // console.log("开始加载 >>>>>>>>>>>>>>>>>>>>>> ")
+    // this.http.get('http://ionic.io', {}, {})
+    //   .then(data => {
+    //     console.log("加载成功 >>>>>>>>>>>>>>>>>>>>>> ")
+    //     console.log(data.status);
+    //     console.log(data.data); // data received by server
+    //     console.log(data.headers);
+
+    //   })
+    //   .catch(error => {
+    //     console.log("加载ERROR >>>>>>>>>>>>>>>>>>>>>> ")
+    //     console.log(error.status);
+    //     console.log(error.error); // error message as string
+    //     console.log(error.headers);
+
+    //   });
+
+    // console.log("加载后 >>>>>>>>>>>>>>>>>>>>>> ")
     this.useRemoteData = false;
     this.initTitleBar();
     let syncHiveData = this.dataHelper.getSyncHiveData();

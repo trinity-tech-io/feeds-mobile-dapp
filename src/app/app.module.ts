@@ -91,6 +91,8 @@ import { FeedsSqliteHelper } from './services/sqlite_helper.service';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
 import { Logger } from './services/logger';
 import { Events } from './services/events.service';
+import { HTTP } from '@awesome-cordova-plugins/http/ngx';
+import { TwitterService } from 'src/app/services/TwitterService';
 
 Sentry.init({
   dsn:
@@ -194,6 +196,8 @@ export function TranslateLoaderFactory() {
   bootstrap: [MyApp],
   entryComponents: [MyApp],
   providers: [
+    HTTP,
+    TwitterService,
     QRScanner,
     Keyboard,
     File,
