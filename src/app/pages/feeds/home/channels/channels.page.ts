@@ -647,20 +647,29 @@ export class ChannelsPage implements OnInit {
 
   async doRefresh(event: any) {
     try {
-      await Promise.all([
-        this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId),
-        this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId),
-      ]);
-
+      const syncChannelInfoPromise = this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
+      const syncSubscriptionPromise = this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId);
       if (this.followStatus) {
         this.dataHelper.cleanCachedComment();
         this.dataHelper.cleanCacheLikeNum();
         this.dataHelper.cleanCachedLikeStatus();
+
+        const syncPostsPromise = this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
+        const syncCommentsPromise = this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
+        const syncLikesPromise = this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
+
         await Promise.all([
-          this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId),
-          this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId),
-          this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId)
+          syncChannelInfoPromise,
+          syncSubscriptionPromise,
+          syncPostsPromise,
+          syncCommentsPromise,
+          syncLikesPromise
         ])
+      } else {
+        await Promise.all([
+          syncChannelInfoPromise,
+          syncSubscriptionPromise
+        ]);
       }
 
       this.images = {};

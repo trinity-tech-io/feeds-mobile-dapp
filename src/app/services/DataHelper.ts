@@ -2899,10 +2899,20 @@ export class DataHelper {
     return this.publishedActivePanelList;
   }
 
-  createSQLTables(): Promise<string> {
+  createSQLTables(userDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        let selfDid = '';
+        if (userDid) {
+          selfDid = userDid
+        } else {
+          selfDid = (await this.getSigninData()).did;
+        }
+
+        if (!selfDid) {
+          return;
+        }
+
         const result = await this.sqliteHelper.createTables(selfDid);
         resolve(result);
       } catch (error) {
@@ -4128,7 +4138,7 @@ export class DataHelper {
     this.lastPostMap = {};
   }
 
-  setSyncHiveData(syncHiveData: any) {
+  setSyncHiveData(syncHiveData: { status: number, describe: string }) {
     this.syncHiveData = syncHiveData;
     this.saveData("feeds.syncHiveData", this.syncHiveData);
   }

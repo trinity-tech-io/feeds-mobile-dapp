@@ -52,9 +52,7 @@ export class AppService {
   initializeApp() {
     this.feedService.initSignInDataAsync(signInData => {
       this.feedService.loadData().then(() => {
-        this.feedService.updateVersionData();
         this.initData(signInData);
-        // this.feedService.syncOpenOrder();
       });
     });
   }
@@ -70,41 +68,47 @@ export class AppService {
       return;
     }
 
-    this.dataHelper.loadData("feeds.initHive").then((result)=>{
-          let isInitHive =  result || null;
-          if(isInitHive === null){
-              //此处切换成galleriahive 页面
-              this.events.publish(FeedsEvent.PublishType.signinSuccess);
-              this.native.setRootRouter('galleriahive');
-              this.splashScreen.hide();
-              return;
-          }else{
-            this.dataHelper.loadData("feeds.syncHiveData").then((syncHiveData: any)=>{
-                  if(syncHiveData === null){
-                     this.events.publish(FeedsEvent.PublishType.initHiveData);
-                     let syncHiveData = {status: 0, describe: "GalleriahivePage.preparingData"}
-                     this.dataHelper.setSyncHiveData(syncHiveData);
-                     this.native.setRootRouter(['/tabs/home']);
-                     this.feedService.updateSignInDataExpTime(signInData);
-                     this.splashScreen.hide();
-                  }else{
-                     if(syncHiveData.status === 6) {
-                      this.dataHelper.setSyncHiveData(syncHiveData);
-                      this.native.setRootRouter(['/tabs/home']);
-                      this.feedService.updateSignInDataExpTime(signInData);
-                      this.splashScreen.hide();
-                     }else {
-                      let syncHiveData = {status: 0, describe: "GalleriahivePage.preparingData"}
-                      this.dataHelper.setSyncHiveData(syncHiveData);
-                      this.events.publish(FeedsEvent.PublishType.initHiveData);
-                      this.native.setRootRouter(['/tabs/home']);
-                      this.feedService.updateSignInDataExpTime(signInData);
-                      this.splashScreen.hide();
-                     }
-                  }
-            })
 
-          }
+    this.dataHelper.loadData("feeds.initHive").then((result) => {
+      let isInitHive = result || null;
+      if (isInitHive === null) {
+        //此处切换成galleriahive 页面
+        this.events.publish(FeedsEvent.PublishType.signinSuccess);
+        this.native.setRootRouter('galleriahive');
+        this.splashScreen.hide();
+        return;
+      } else {
+        const syncHiveData = UtilService.generateHiveSyncCompleteObj();
+        this.dataHelper.setSyncHiveData(syncHiveData);
+        this.native.setRootRouter(['/tabs/home']);
+        this.feedService.updateSignInDataExpTime(signInData);
+        this.splashScreen.hide();
+
+        // this.dataHelper.loadData("feeds.syncHiveData").then((syncHiveData: any) => {
+        //   if (syncHiveData === null) {
+        //     this.events.publish(FeedsEvent.PublishType.initHiveData);
+        //     let syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" }
+        //     this.dataHelper.setSyncHiveData(syncHiveData);
+        //     this.native.setRootRouter(['/tabs/home']);
+        //     this.feedService.updateSignInDataExpTime(signInData);
+        //     this.splashScreen.hide();
+        //   } else {
+        //     if (syncHiveData.status === 6) {
+        //       this.dataHelper.setSyncHiveData(syncHiveData);
+        //       this.native.setRootRouter(['/tabs/home']);
+        //       this.feedService.updateSignInDataExpTime(signInData);
+        //       this.splashScreen.hide();
+        //     } else {
+        //       let syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" }
+        //       this.dataHelper.setSyncHiveData(syncHiveData);
+        //       this.events.publish(FeedsEvent.PublishType.initHiveData);
+        //       this.native.setRootRouter(['/tabs/home']);
+        //       this.feedService.updateSignInDataExpTime(signInData);
+        //       this.splashScreen.hide();
+        //     }
+        //   }
+        // })
+      }
     });
   }
 

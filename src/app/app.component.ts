@@ -98,8 +98,9 @@ export class MyApp {
   ) {
     this.initializeApp();
     this.initProfileData();
-    this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async () => {
+    this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async (did: string) => {
       try {
+        await this.dataHelper.createSQLTables(did);
         await this.hiveVaultController.prepareConnection();
         await this.initRegisterScript(true);
       } catch (error) {
@@ -138,9 +139,9 @@ export class MyApp {
       this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress, amount, memo);
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.initHiveData, async () => {
-      await this.initScript();
-    });
+    // this.events.subscribe(FeedsEvent.PublishType.initHiveData, async () => {
+    //   await this.initScript();
+    // });
   }
 
   initializeApp() {
@@ -283,14 +284,9 @@ export class MyApp {
           },
         );
       }).then(async () => {
-        try {
-          //HIVE
-          this.initRegisterScript(false)
-        }
-        catch (error) {
-          console.log("initRegisterScript error === ", error)
-        }
-      });
+        this.hiveVaultController.refreshAvatar().catch(() => { });
+        this.initRegisterScript(false).catch((error) => { console.log("initRegisterScript error === ", error) })
+      }).catch(() => { });
   }
 
   initConnector() {
@@ -678,62 +674,21 @@ export class MyApp {
     });
   }
 
-  async initScript() {
-    const signinData = await this.dataHelper.getSigninData() || {};
-    let userDid = signinData.did || "";
+  // initSql(userDid: string): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       if (userDid === "") {
+  //         return;
+  //       }
 
-    if (userDid === "") {
-      return;
-    }
-
-    let syncHiveData0 = { status: 0, describe: "GalleriahivePage.preparingData" }
-    this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData0);
-    this.dataHelper.setSyncHiveData(syncHiveData0);
-    this.sqliteHelper.createTables(userDid);
-    try {
-
-      let syncHiveData2 = { status: 1, describe: "GalleriahivePage.synchronizingChannelData" }
-      this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData2);
-      this.dataHelper.setSyncHiveData(syncHiveData2);
-
-      await this.hiveVaultController.syncSubscribedChannelFromBackup();
-
-      let syncHiveData3 = { status: 3, describe: "GalleriahivePage.synchronizingPostData" }
-      this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData3);
-      this.dataHelper.setSyncHiveData(syncHiveData3);
-
-      await this.hiveVaultController.syncAllChannelInfo();
-      await this.hiveVaultController.syncAllPost();
-
-      let syncHiveData4 = { status: 4, describe: "GalleriahivePage.synchronizingCommentData" }
-      this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData4);
-      this.dataHelper.setSyncHiveData(syncHiveData4);
-
-      await this.hiveVaultController.syncAllComments();
-
-      let syncHiveData5 = { status: 5, describe: "GalleriahivePage.synchronizingOtherData" }
-      this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData5);
-      this.dataHelper.setSyncHiveData(syncHiveData5);
-
-      await this.hiveVaultController.syncAllLikeData();
-
-      let syncHiveData6 = { status: 6, describe: "GalleriahivePage.synchronizingComplete" }
-      this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData6)
-      this.dataHelper.setSyncHiveData(syncHiveData6);
-
-      this.hiveVaultController.refreshAvatar();
-    } catch (error) {
-      if (error["code"] === 404) {
-        let syncHiveData7 = { status: 7, describe: "GalleriahivePage.synchronizingComplete" }
-        this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData7)
-        this.dataHelper.setSyncHiveData(syncHiveData7);
-      } else {
-        let syncHiveData6 = { status: 6, describe: "GalleriahivePage.synchronizingComplete" }
-        this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData6)
-        this.dataHelper.setSyncHiveData(syncHiveData6);
-      }
-    }
-  }
+  //       await this.sqliteHelper.createTables(userDid);
+  //       resolve('FINISH');
+  //     } catch (error) {
+  //       Logger.error(TAG, 'Init sql error', error);
+  //       reject(error);
+  //     }
+  //   })
+  // }
 
   async initRegisterScript(isForce: boolean) {
     let regist_scripting = false;
@@ -772,9 +727,9 @@ export class MyApp {
     }
     if (this.scriptVersion !== lasterVersion) {
       try {
-        let syncHiveData1 = { status: 1, describe: "GalleriahivePage.creatingScripting" }
-        this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData1);
-        this.dataHelper.setSyncHiveData(syncHiveData1);
+        // let syncHiveData1 = { status: 1, describe: "GalleriahivePage.creatingScripting" }
+        // this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData1);
+        // this.dataHelper.setSyncHiveData(syncHiveData1);
         await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
         preVersion = lasterVersion === '' ? localVersion : lasterVersion
         lasterVersion = this.scriptVersion

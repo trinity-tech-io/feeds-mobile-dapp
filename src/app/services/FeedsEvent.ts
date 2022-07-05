@@ -67,7 +67,7 @@ declare namespace FeedsEvent {
     //streamError = 'stream:error',
     //streamProgress = 'stream:progress',
     //streamClosed = 'stream:closed',
-   // streamSetBinaryError = 'stream:setBinaryError',
+    // streamSetBinaryError = 'stream:setBinaryError',
     //streamGetBinaryError = 'stream:getBinaryError',
 
     ////////
@@ -181,7 +181,7 @@ declare namespace FeedsEvent {
     // hive
     authEssentialSuccess = 'feeds:authEssentialSuccess',
     initHiveData = 'feeds:initHiveData',
-    updateSyncHiveData = 'feeds:updateSyncHiveData',
+    // updateSyncHiveData = 'feeds:updateSyncHiveData',
     authEssentialFail = 'feeds:authEssentialFail'
   }
 

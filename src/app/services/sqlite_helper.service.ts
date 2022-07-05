@@ -105,12 +105,16 @@ export class FeedsSqliteHelper {
   createTables(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.cretePostTable(dbUserDid);
-        await this.createChannelTable(dbUserDid);
-        await this.createSubscribedChannelTable(dbUserDid);
-        await this.createSubscriptionTable(dbUserDid);
-        await this.createCommentTable(dbUserDid);
-        await this.createLikeTable(dbUserDid);
+        const p1 = this.cretePostTable(dbUserDid);
+        const p2 = this.createChannelTable(dbUserDid);
+        const p3 = this.createSubscribedChannelTable(dbUserDid);
+        const p4 = this.createSubscriptionTable(dbUserDid);
+        const p5 = this.createCommentTable(dbUserDid);
+        const p6 = this.createLikeTable(dbUserDid);
+
+        Promise.all(
+          [p1, p2, p3, p4, p5, p6]
+        );
 
         resolve('SUCCESS');
       } catch (error) {

@@ -354,17 +354,15 @@ export class HomePage implements OnInit {
         break;
     }
 
-
-
-    this.events.subscribe(FeedsEvent.PublishType.updateSyncHiveData, (syncHiveData: any) => {
-      Logger.log(TAG, "FeedsEvent.PublishType.updateSyncHiveData");
-      this.syncHiveDataStatus = syncHiveData.status;
-      this.syncHiveDataDes = syncHiveData.describe;
-      if (this.syncHiveDataStatus === 6) {
-        this.isPostLoading = true;
-        this.refreshPostList();
-      }
-    });
+    // this.events.subscribe(FeedsEvent.PublishType.updateSyncHiveData, (syncHiveData: any) => {
+    //   Logger.log(TAG, "FeedsEvent.PublishType.updateSyncHiveData");
+    //   this.syncHiveDataStatus = syncHiveData.status;
+    //   this.syncHiveDataDes = syncHiveData.describe;
+    //   if (this.syncHiveDataStatus === 6) {
+    //     this.isPostLoading = true;
+    //     this.refreshPostList();
+    //   }
+    // });
 
     this.events.subscribe(FeedsEvent.PublishType.homeCommonEvents, async () => {
       if (this.syncHiveDataStatus === 6) {
@@ -405,7 +403,7 @@ export class HomePage implements OnInit {
       this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
       this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
       this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
-      this.events.unsubscribe(FeedsEvent.PublishType.updateSyncHiveData);
+      // this.events.unsubscribe(FeedsEvent.PublishType.updateSyncHiveData);
       this.clearData();
       this.events.unsubscribe(FeedsEvent.PublishType.clearHomeEvent);
     });
@@ -643,7 +641,7 @@ export class HomePage implements OnInit {
   ionViewDidLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.updateTab);
     this.events.unsubscribe(FeedsEvent.PublishType.homeCommonEvents);
-    this.events.unsubscribe(FeedsEvent.PublishType.updateSyncHiveData);
+    // this.events.unsubscribe(FeedsEvent.PublishType.updateSyncHiveData);
     this.content.scrollToTop(1).then(() => {
       this.homeTittleBar.style.display = "block";
     });
@@ -2460,20 +2458,20 @@ export class HomePage implements OnInit {
     this.native.navigateForward(['bid'], { queryParams: assetItem });
   }
 
-  async tryButton() {
-    this.syncHiveDataStatus = 0;
-    this.syncHiveDataDes = "GalleriahivePage.preparingData";
-    try {
-      await this.hiveVaultController.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
-    } catch (error) {
+  // async tryButton() {
+  //   this.syncHiveDataStatus = 0;
+  //   this.syncHiveDataDes = "GalleriahivePage.preparingData";
+  //   try {
+  //     await this.hiveVaultController.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
+  //   } catch (error) {
 
-    }
-    const signinData = await this.dataHelper.getSigninData();
-    let userDid = signinData.did
-    localStorage.removeItem(userDid + "localScriptVersion");
-    this.dataHelper.setSyncHiveData({ status: this.syncHiveDataStatus, describe: this.syncHiveDataDes });
-    this.events.publish(FeedsEvent.PublishType.initHiveData);
-  }
+  //   }
+  //   const signinData = await this.dataHelper.getSigninData();
+  //   let userDid = signinData.did
+  //   localStorage.removeItem(userDid + "localScriptVersion");
+  //   this.dataHelper.setSyncHiveData({ status: this.syncHiveDataStatus, describe: this.syncHiveDataDes });
+  //   this.events.publish(FeedsEvent.PublishType.initHiveData);
+  // }
 
 
   getVisibleareaItemIndex(postgridList: any, postgridNum: any) {

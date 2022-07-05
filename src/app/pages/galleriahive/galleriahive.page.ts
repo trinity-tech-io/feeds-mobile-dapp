@@ -8,6 +8,9 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { Logger } from 'src/app/services/logger';
 import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { UtilService } from 'src/app/services/utilService';
+
 let TAG: string = 'Galleria-Hive';
 @Component({
   selector: 'app-galleriahive',
@@ -25,14 +28,15 @@ export class GalleriahivePage implements OnInit {
     private dataHelper: DataHelper,
     private zone: NgZone,
     private feedService: FeedService,
-    public theme: ThemeService
+    public theme: ThemeService,
+    private hiveVaultController: HiveVaultController
   ) {
 
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
-        this.authorizationStatus = 2;
-    }else{
-        this.authorizationStatus = 0;
+      this.authorizationStatus = 2;
+    } else {
+      this.authorizationStatus = 0;
     }
   }
 
@@ -44,18 +48,19 @@ export class GalleriahivePage implements OnInit {
       Logger.log(TAG, "revice authEssentialSuccess event");
       this.zone.run(async () => {
         this.authorizationStatus = 1;
+        this.hiveVaultController.refreshHomeData(null);
       });
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.authEssentialFail,(data: any)=>{
-        switch(data.type){
-          case 0:
-            this.authorizationStatus = 3;
-            break;
-          case 1:
-            this.authorizationStatus = 2;
-            break;
-        }
+    this.events.subscribe(FeedsEvent.PublishType.authEssentialFail, (data: any) => {
+      switch (data.type) {
+        case 0:
+          this.authorizationStatus = 3;
+          break;
+        case 1:
+          this.authorizationStatus = 2;
+          break;
+      }
     });
   }
 
@@ -66,34 +71,38 @@ export class GalleriahivePage implements OnInit {
 
   openHomePage() {
 
-    let connect = this.dataHelper.getNetworkStatus();
-    if (connect === FeedsData.ConnState.disconnected) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
+    // let connect = this.dataHelper.getNetworkStatus();
+    // if (connect === FeedsData.ConnState.disconnected) {
+    //   this.native.toastWarn('common.connectionError');
+    //   return;
+    // }
+    const syncHiveData = UtilService.generateHiveSyncCompleteObj();
+    this.dataHelper.setSyncHiveData(syncHiveData);
+    this.dataHelper.saveData("feeds.initHive", "1");
+    this.native.setRootRouter(['/tabs/home']);
 
-    this.dataHelper.loadData("feeds.syncHiveData").
-      then((syncHiveData: any) => {
-        if (syncHiveData === null) {
-          this.dataHelper.saveData("feeds.initHive", "1");
-          this.events.publish(FeedsEvent.PublishType.initHiveData);
-          let syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" }
-          this.dataHelper.setSyncHiveData(syncHiveData);
-          this.native.setRootRouter('/tabs/home');
-        } else {
-          if (syncHiveData.status === 6) {
-            this.dataHelper.setSyncHiveData(syncHiveData);
-            this.dataHelper.saveData("feeds.initHive", "1");
-            this.native.setRootRouter('/tabs/home');
-          } else {
-            let syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" }
-            this.dataHelper.setSyncHiveData(syncHiveData);
-            this.dataHelper.saveData("feeds.initHive", "1");
-            this.events.publish(FeedsEvent.PublishType.initHiveData);
-            this.native.setRootRouter('/tabs/home');
-          }
-        }
-      });
+    // this.dataHelper.loadData("feeds.syncHiveData").
+    //   then((syncHiveData: any) => {
+    //     if (syncHiveData === null) {
+    //       this.dataHelper.saveData("feeds.initHive", "1");
+    //       this.events.publish(FeedsEvent.PublishType.initHiveData);
+    //       let syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" }
+    //       this.dataHelper.setSyncHiveData(syncHiveData);
+    //       this.native.setRootRouter('/tabs/home');
+    //     } else {
+    //       if (syncHiveData.status === 6) {
+    //         this.dataHelper.setSyncHiveData(syncHiveData);
+    //         this.dataHelper.saveData("feeds.initHive", "1");
+    //         this.native.setRootRouter('/tabs/home');
+    //       } else {
+    //         let syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" }
+    //         this.dataHelper.setSyncHiveData(syncHiveData);
+    //         this.dataHelper.saveData("feeds.initHive", "1");
+    //         this.events.publish(FeedsEvent.PublishType.initHiveData);
+    //         this.native.setRootRouter('/tabs/home');
+    //       }
+    //     }
+    //   });
   }
 
   async TryButton() {
@@ -115,9 +124,9 @@ export class GalleriahivePage implements OnInit {
           this.authorizationStatus = 0;
           this.events.publish(FeedsEvent.PublishType.signinSuccess);
           return;
-        }else{
+        } else {
         }
-      }).catch((err)=>{
+      }).catch((err) => {
         this.native.toastWarn(err);
       });
     } catch (error) {

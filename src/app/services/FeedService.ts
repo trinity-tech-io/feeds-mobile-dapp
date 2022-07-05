@@ -4722,18 +4722,6 @@ export class FeedService {
     }
   }
 
-  reSavePostMap() {
-    this.updateAllContentData();
-
-    this.updatePostKey();
-    this.updateSubscribedChannelsKey();
-    this.updateChannelsKey();
-    this.updateMyChannelsKey();
-    this.updateLikeCommentKey();
-    this.updatePostUpdateKey();
-    this.updateLastCommentUpdateKey();
-  }
-
   processGeneralError(nodeId: string, errorCode: number) {
     let errorMessage = this.translate.instant('Common.unknownError');
     switch (errorCode) {
@@ -4828,22 +4816,22 @@ export class FeedService {
     return this.curtab;
   }
 
-  updateVersionData() {
-    let updateCode =
-      localStorage.getItem('org.elastos.dapp.feeds.update') || '0';
-    if (Number(updateCode) < 8) {
-      this.updatePostKey();
-      this.updateSubscribedChannelsKey();
-      this.updateChannelsKey();
-      this.updateMyChannelsKey();
-      this.updateLikeCommentKey();
-      this.updateLikeKey();
-      this.updatePostUpdateKey();
-      this.updateLastCommentUpdateKey();
-      this.updateAllContentData();
-      localStorage.setItem('org.elastos.dapp.feeds.update', '8');
-    }
-  }
+  // updateVersionData() {
+  //   let updateCode =
+  //     localStorage.getItem('org.elastos.dapp.feeds.update') || '0';
+  //   if (Number(updateCode) < 8) {
+  //     this.updatePostKey();
+  //     this.updateSubscribedChannelsKey();
+  //     this.updateChannelsKey();
+  //     this.updateMyChannelsKey();
+  //     this.updateLikeCommentKey();
+  //     this.updateLikeKey();
+  //     this.updatePostUpdateKey();
+  //     this.updateLastCommentUpdateKey();
+  //     this.updateAllContentData();
+  //     localStorage.setItem('org.elastos.dapp.feeds.update', '8');
+  //   }
+  // }
 
   close() {
     //TODO
@@ -5414,81 +5402,6 @@ export class FeedService {
     }
   }
 
-  updateAllContentData() {
-    // let keys: string[] = Object.keys(this.postMap) || [];
-    // for (let index = 0; index < keys.length; index++) {
-    //   let key = keys[index];
-    //   if(this.postMap[key] == undefined)
-    //     continue;
-    //   this.updateContentData(key);
-    // }
-    // this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
-  }
-
-  updateContentData(key: string) {
-    //undefine =>v0
-    // let post = this.postMap[key];
-    // let content = post.content;
-    // if (content == undefined){
-    //   return ;
-    // }
-    // let contentObj = this.native.parseJSON(content);
-    // if (content.version != undefined){
-    //   return;
-    // }
-    // let mText = this.parsePostContentText(content) || "";
-    // let mImgThumbKeys: FeedsData.ImageThumbKey[] = [];
-    // let mMediaType: FeedsData.MediaType = FeedsData.MediaType.noMeida;
-    // let nodeId = post.nodeId;
-    // let channelId = post.channel_id;
-    // let postId = post.id;
-    // let mNCPId = nodeId+channelId+postId;
-    // let imgKey = "postContentImg" + mNCPId ;
-    // this.storeService.get(imgKey).then((image)=>{
-    //   let mImage = image || ""
-    //   let size = mImage.length;
-    //   if (mImage != ""){
-    //     mImgThumbKeys[0] = {
-    //       index       : 0,
-    //       imgThumbKey : imgKey,
-    //       imgSize     : size
-    //     }
-    //     mMediaType = FeedsData.MediaType.containsImg;
-    //   }
-    //   let finalContent:FeedsData.Content = {
-    //     version         :   "0",
-    //     text            :   mText,
-    //     mediaType       :   mMediaType,
-    //     videoThumbKey   :   undefined,
-    //     imgThumbKeys    :   mImgThumbKeys
-    //   }
-    //   post.content = finalContent;
-    //   this.postMap[key] = post;
-    // });
-  }
-
-  updatePostKey() {
-    // let keys: string[] = Object.keys(this.postMap) || [];
-    // for (let index = 0; index < keys.length; index++) {
-    //   let key = keys[index];
-    //   if(this.postMap[key] == undefined){
-    //     delete this.postMap[key];
-    //     continue;
-    //   }
-    //   let post = this.postMap[key];
-    //   let nodeId = post.nodeId;
-    //   let channelId = post.channel_id;
-    //   let postId = post.id;
-    //   let newKey = this.getKey(nodeId,channelId,postId,0);
-    //   if (key == newKey){
-    //     continue ;
-    //   }
-    //   this.postMap[newKey] = post;
-    //   delete this.postMap[key];
-    // }
-    // this.storeService.set(FeedsData.PersistenceKey.postMap, this.postMap);
-  }
-
   setData(key: string, value: any): Promise<any> {
     return this.storeService.set(key, value);
   }
@@ -5566,102 +5479,6 @@ export class FeedService {
       let videoKey = this.getVideoKey(nodeId, channelId, postId, commentId, 0);
       this.storeService.remove(videoKey);
     }
-  }
-
-  updateSubscribedChannelsKey() { }
-
-  updateChannelsKey() { }
-
-  updateMyChannelsKey() { }
-
-  updateLikeCommentKey() {
-    // let keys: string[] = Object.keys(likeCommentMap) || [];
-    // for (let index = 0; index < keys.length; index++) {
-    //   let key = keys[index];
-    //   if(likeCommentMap[key] == undefined){
-    //     delete likeCommentMap[key];
-    //     continue;
-    //   }
-    //   let likedComment = likeCommentMap[key];
-    //   let nodeId = likedComment.nodeId;
-    //   let channelId = likedComment.channel_id;
-    //   let postId = likedComment.post_id;
-    //   let commentId = likedComment.id;
-    //   let newKey = this.getCommentId(nodeId, channelId, postId, commentId);
-    //   if(key == newKey)
-    //     continue;
-    //   likeCommentMap[newKey] = likedComment;
-    //   delete likeCommentMap[key];
-    // }
-    // this.storeService.set(FeedsData.PersistenceKey.likeCommentMap, likeCommentMap);
-  }
-
-  updateLikeKey() {
-    // let keys: string[] = Object.keys(likeMap) || [];
-    // for (let index = 0; index < keys.length; index++) {
-    //   let key = keys[index];
-    //   if(likeMap[key] == undefined){
-    //     delete likeMap[key];
-    //     continue;
-    //   }
-    //   let like:any = likeMap[key];
-    //   let nodeId = like.nodeId;
-    //   let channelId = like.channel_id;
-    //   let postId = like.id;
-    //   let commentId = 0;
-    //   let newKey = this.getCommentId(nodeId, channelId, postId, commentId);
-    //   if(key == newKey)
-    //     continue;
-    //     likeMap[newKey] = {
-    //       nodeId    : nodeId,
-    //       channelId : channelId,
-    //       postId    : postId,
-    //       commentId : 0
-    //     };
-    //   delete likeMap[key];
-    // }
-    // this.storeService.set(FeedsData.PersistenceKey.likeMap, likeMap);
-  }
-
-  updatePostUpdateKey() {
-    // let keys: string[] = Object.keys(lastPostUpdateMap) || [];
-    // for (let index = 0; index < keys.length; index++) {
-    //   let key = keys[index];
-    //   if(lastPostUpdateMap[key] == undefined){
-    //     delete lastPostUpdateMap[key];
-    //     continue;
-    //   }
-    //   let lastPostUpdate = lastPostUpdateMap[key];
-    //   let nodeId = lastPostUpdate.nodeId;
-    //   let channelId = lastPostUpdate.channelId;
-    //   let newKey = this.getChannelId(nodeId, channelId);
-    //   if(key == newKey)
-    //     continue;
-    //   lastPostUpdateMap[newKey] = lastPostUpdate;
-    //   delete lastPostUpdateMap[key];
-    // }
-    // this.storeService.set(FeedsData.PersistenceKey.lastPostUpdateMap, lastPostUpdateMap);
-  }
-
-  updateLastCommentUpdateKey() {
-    // let keys: string[] = Object.keys(this.lastCommentUpdateMap) || [];
-    // for (let index = 0; index < keys.length; index++) {
-    //   let key = keys[index];
-    //   if(this.lastCommentUpdateMap[key] == undefined){
-    //     delete this.lastCommentUpdateMap[key];
-    //     continue;
-    //   }
-    //   let lastCommentUpdate = this.lastCommentUpdateMap[key];
-    //   let nodeId = lastCommentUpdate.nodeId;
-    //   let channelId = lastCommentUpdate.channelId;
-    //   let postId = lastCommentUpdate.postId;
-    //   let newKey = this.getPostId(nodeId, channelId, postId);
-    //   if(key == newKey)
-    //     continue;
-    //   this.lastCommentUpdateMap[newKey] = lastCommentUpdate;
-    //   delete this.lastCommentUpdateMap[key];
-    // }
-    // this.storeService.set(FeedsData.PersistenceKey.lastCommentUpdateMap, this.lastCommentUpdateMap);
   }
 
   updateLastPostUpdate(
@@ -6239,7 +6056,7 @@ export class FeedService {
             description,
           )
             .then(signInData => {
-              this.events.publish(FeedsEvent.PublishType.signinSuccess);
+              this.events.publish(FeedsEvent.PublishType.signinSuccess, signInData.did);
               resolve(signInData.did);
             })
             .catch(err => {

@@ -200,12 +200,18 @@ export class HiveVaultController {
     });
   }
 
-
   refreshHomeData(callback: (postNum: number) => void) {
-    this.asyncGetAllChannelInfo();
-    this.asyncGetAllPost(callback);
-    this.asyncGetAllComments();
-    this.asyncGetAllLikeData();
+    return new Promise(async (resolve, reject) => {
+      console.log('111111111111');
+      try {
+        await this.syncSubscribedChannelFromBackup();
+        this.asyncGetAllChannelInfo().catch(() => { });
+        this.asyncGetAllPost(callback).catch(() => { });
+        this.asyncGetAllComments().catch(() => { });
+        this.asyncGetAllLikeData().catch(() => { });
+      } catch (error) {
+      }
+    });
   }
 
   asyncGetAllChannelInfo(): Promise<string> {
@@ -938,7 +944,11 @@ export class HiveVaultController {
 
   processDownloadEssAvatar(): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const userDid = (await this.dataHelper.getSigninData()).did
+      const signinData = await this.dataHelper.getSigninData() || null;
+      if (!signinData) return;
+      const userDid = signinData.did || '';
+      if (!userDid) return;
+
       this.parseDidDocumentAvatar(userDid).then((value: {
         avatarParam: string;
         avatarScriptName: string;
@@ -1964,5 +1974,8 @@ export class HiveVaultController {
   }
 
   processHiveFunction(method: Function) {
+  }
+
+  checkSubscriptionState() {
   }
 }

@@ -839,4 +839,8 @@ export class UtilService {
   public static getESSAvatarKey(userDid: string) {
     return userDid + "_ess_avatar";
   }
+
+  public static generateHiveSyncCompleteObj() {
+    return { status: 6, describe: "GalleriahivePage.synchronizingComplete" }
+  }
 }

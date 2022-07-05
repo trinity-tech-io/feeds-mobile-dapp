@@ -54,11 +54,11 @@
   </ion-row>
 
   <!-- synchronizingData fail -->
-  <ion-row class="btn-row" *ngIf="syncHiveDataStatus != null && syncHiveDataStatus === 7" style="margin-top:5px;">
+  <!-- <ion-row class="btn-row" *ngIf="syncHiveDataStatus != null && syncHiveDataStatus === 7" style="margin-top:5px;">
     <ion-button  class="nextButton"  (click)="tryButton()">
       <ion-label>{{ 'GalleriahivePage.buttonTitle1' | translate }}</ion-label>
     </ion-button>
-  </ion-row>
+  </ion-row> -->
 
   <!-- first loading -->
   <ion-row *ngIf="isPostLoading && syncHiveDataStatus === 6" style="margin-top:5px;">
