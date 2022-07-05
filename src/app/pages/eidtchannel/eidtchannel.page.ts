@@ -216,13 +216,13 @@ export class EidtchannelPage implements OnInit {
 
     if (this.channelName.length > 32) {
       this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
-      return;
+      return false;
     }
 
     let checkRes = this.feedService.checkValueValid(this.channelName);
     if (checkRes) {
       this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
-      return;
+      return false;
     }
 
     let descValue = this.channelDes || '';
@@ -250,6 +250,26 @@ export class EidtchannelPage implements OnInit {
       this.oldChannelAvatar === this.channelAvatar
     ) {
       this.native.toastWarn('common.nochanges');
+      return false;
+    }
+
+    const signinDid = (await this.dataHelper.getSigninData()).did;
+    const channelId = UtilService.generateChannelId(signinDid,this.channelName);
+    await this.native.showLoading('common.waitMoment');
+    try {
+      const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
+      const list  =  _.filter(selfchannels,(channel: FeedsData.ChannelV3)=>{
+                    return channel.destDid === signinDid && channel.channelId === channelId && channel.channelId != this.channelId;
+            }) || [];
+      if(list.length > 0){
+        this.native.hideLoading();
+        this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
+        return false;
+      }
+      this.native.hideLoading();
+      return true;
+    } catch (error) {
+      this.native.hideLoading();
       return false;
     }
 
