@@ -51,6 +51,7 @@ export class EditPostPage implements OnInit {
 
   public totalProgress: number = 0;
   public isShowVideo: boolean = false;
+  public isBorderGradient: boolean = false;
   private postData: FeedsData.PostV3 = null;
   public mediaType: FeedsData.MediaType;
   private originPostData: FeedsData.PostV3 = null;
@@ -393,5 +394,13 @@ export class EditPostPage implements OnInit {
       this.native.hideLoading();
     }
   }
+
+  ionBlur() {
+    this.isBorderGradient = false;
+   }
+
+   ionFocus() {
+     this.isBorderGradient = true;
+   }
 }
 

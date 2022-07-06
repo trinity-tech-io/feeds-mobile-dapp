@@ -45,6 +45,7 @@ export class SubscriptionsPage implements OnInit {
   public scanServiceStyle = { right: '' };
   public subscriptionV3NumMap: any = {};
   public followAvatarMap: any = {};
+  public isBorderGradient: boolean = false;
   private searchFollowingList: any = [];
   private refreshFollowingImageSid: any = null;
   private setFollowingSid: any = null;
@@ -590,5 +591,13 @@ export class SubscriptionsPage implements OnInit {
       }
     }
   }
+
+  ionBlur() {
+    this.isBorderGradient = false;
+   }
+
+   ionFocus() {
+     this.isBorderGradient = true;
+   }
 
 }

@@ -33,6 +33,9 @@
           rows="6" cols="20"
           [(ngModel)]="newComment"
           placeholder="{{'CommentPage.inputComment'|translate}}"
+          [ngClass]="{'borderGradient':isBorderGradient}"
+          (ionBlur)="ionBlur()"
+          (ionFocus)="ionFocus()"
         >
         </ion-textarea>
       </ion-col>

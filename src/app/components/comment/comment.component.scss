@@ -105,10 +105,6 @@
                     font-weight: 400;
                     line-height: 18px;
                     --placeholder-color:#a1a1a1;
-                    border: 2px solid transparent;
-                    background-clip: padding-box,border-box;
-                    background-origin: padding-box,border-box;
-                    background-image: linear-gradient(90deg,#161c24,#161c24),linear-gradient(90deg,#7624fe,#368bff);
                 }
             }
         }
@@ -356,4 +352,12 @@
     z-index:100;
     -ms-touch-action: none;
     touch-action: none;
+}
+
+.borderGradient{
+  border: 2px solid transparent;
+  background-clip: padding-box,border-box;
+  background-origin: padding-box,border-box;
+  background-image: linear-gradient(90deg,#323b45,#323b45),linear-gradient(90deg,#7624fe,#368bff);
+  border-radius: 20px;
 }

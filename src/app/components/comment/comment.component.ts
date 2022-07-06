@@ -34,6 +34,7 @@ export class CommentComponent implements OnInit {
   public newComment = '';
   public isAndroid = '';
   public isBorder: boolean = false;
+  public isBorderGradient: boolean = false;
   constructor(
     public theme: ThemeService,
     public native: NativeService,
@@ -56,14 +57,17 @@ export class CommentComponent implements OnInit {
       this.isBorder = false;
       this.parseAvatar();
     }
+
+    let timer = setTimeout(() => {
+      this.comment.setFocus();
+      clearTimeout(timer);
+      timer = null;
+    }, 500);
   }
 
   ionViewDidEnter() {
 
-    const timer = setTimeout(() => {
-      this.comment.setFocus();
-      clearTimeout(timer);
-    }, 300);
+
   }
 
   addImg() {
@@ -136,4 +140,12 @@ export class CommentComponent implements OnInit {
   hideComponent() {
     this.hideComment.emit(true);
   }
+
+  ionBlur() {
+    this.isBorderGradient = false;
+   }
+
+   ionFocus() {
+     this.isBorderGradient = true;
+   }
 }

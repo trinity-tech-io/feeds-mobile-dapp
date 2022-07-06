@@ -62,6 +62,7 @@ export class CreatenewpostPage implements OnInit {
   private isUpdateHomePage: boolean = false;
   public hidePictureMenuComponent: boolean = false;
   public isSupportGif: boolean = true;
+  public isBorderGradient: boolean = false;
   constructor(
     private platform: Platform,
     private events: Events,
@@ -531,4 +532,12 @@ export class CreatenewpostPage implements OnInit {
     this.imgUrl = fileBase64;
     this.dataHelper.setSelsectNftImage(fileBase64);
   }
+
+  ionBlur() {
+    this.isBorderGradient = false;
+   }
+
+   ionFocus() {
+     this.isBorderGradient = true;
+   }
 }

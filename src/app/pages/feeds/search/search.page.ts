@@ -71,6 +71,7 @@ export class SearchPage implements OnInit {
   private displayName: string = '';
   private toBeSubscribeddestDid: string = '';
   private toBeSubscribedChannelId: string = '';
+  public isBorderGradient: boolean = false;
   // {
   //   "nodeId": "8Dsp9jkTg8TEfCkwMoXimwjLeaRidMczLZYNWbKGj1SF",
   //   "did": "did:elastos:ibfZa4jQ1QgDRP9rpfbUbZWpXgbd9z7oKF",
@@ -234,58 +235,58 @@ export class SearchPage implements OnInit {
   }
 
   getItems(events: any) {
-    this.isSearch = events.target.value || '';
-    this.scanServiceStyle['z-index'] = -1;
-    if (
-      (events && events.keyCode === 13) ||
-      (events.keyCode === 8 && this.isSearch === '')
-    ) {
-      if (this.checkFeedUrl(this.isSearch)) {
-        this.scanServiceStyle['z-index'] = 3;
-        this.addFeedUrl(this.isSearch);
-        return;
-      }
-      if (this.isSearch == '') {
-        this.scanServiceStyle['z-index'] = 3;
-        this.ionRefresher.disabled = false;
-        this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
-        this.unfollowedFeed = this.getUnfollowedFeed() || [];
-        let discoverfeeds = this.dataHelper.getDiscoverfeeds() || [];
-        if (discoverfeeds.length > 0) {
-          this.discoverSquareList = this.filterdiscoverSquareList(
-            discoverfeeds,
-          );
-        }
-        this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
-        this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-        return;
-      }
-      this.ionRefresher.disabled = true;
-      this.handleSearch();
-    }
+    // this.isSearch = events.target.value || '';
+    // this.scanServiceStyle['z-index'] = -1;
+    // if (
+    //   (events && events.keyCode === 13) ||
+    //   (events.keyCode === 8 && this.isSearch === '')
+    // ) {
+    //   if (this.checkFeedUrl(this.isSearch)) {
+    //     this.scanServiceStyle['z-index'] = 3;
+    //     this.addFeedUrl(this.isSearch);
+    //     return;
+    //   }
+    //   if (this.isSearch == '') {
+    //     this.scanServiceStyle['z-index'] = 3;
+    //     this.ionRefresher.disabled = false;
+    //     this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+    //     this.unfollowedFeed = this.getUnfollowedFeed() || [];
+    //     let discoverfeeds = this.dataHelper.getDiscoverfeeds() || [];
+    //     if (discoverfeeds.length > 0) {
+    //       this.discoverSquareList = this.filterdiscoverSquareList(
+    //         discoverfeeds,
+    //       );
+    //     }
+    //     this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+    //     this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+    //     return;
+    //   }
+    //   this.ionRefresher.disabled = true;
+    //   this.handleSearch();
+    // }
   }
 
   ionClear() {
-    this.scanServiceStyle['z-index'] = 3;
-    this.isSearch = '';
-    if (this.checkFeedUrl(this.isSearch)) {
-      this.addFeedUrl(this.isSearch);
-      return;
-    }
-    if (this.isSearch == '') {
-      this.ionRefresher.disabled = false;
-      this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
-      this.unfollowedFeed = this.getUnfollowedFeed() || [];
-      let discoverfeeds = this.dataHelper.getDiscoverfeeds() || [];
-      if (discoverfeeds.length > 0) {
-        this.discoverSquareList = this.filterdiscoverSquareList(discoverfeeds);
-      }
-      this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
-      this.refreshDiscoverSquareFeedAvatar();
-      return;
-    }
-    this.ionRefresher.disabled = true;
-    this.handleSearch();
+    // this.scanServiceStyle['z-index'] = 3;
+    // this.isSearch = '';
+    // if (this.checkFeedUrl(this.isSearch)) {
+    //   this.addFeedUrl(this.isSearch);
+    //   return;
+    // }
+    // if (this.isSearch == '') {
+    //   this.ionRefresher.disabled = false;
+    //   this.addingChanneList = this.feedService.getToBeAddedFeedsList() || [];
+    //   this.unfollowedFeed = this.getUnfollowedFeed() || [];
+    //   let discoverfeeds = this.dataHelper.getDiscoverfeeds() || [];
+    //   if (discoverfeeds.length > 0) {
+    //     this.discoverSquareList = this.filterdiscoverSquareList(discoverfeeds);
+    //   }
+    //   this.searchAddingChanneList = _.cloneDeep(this.addingChanneList);
+    //   this.refreshDiscoverSquareFeedAvatar();
+    //   return;
+    // }
+    // this.ionRefresher.disabled = true;
+    // this.handleSearch();
   }
   handleSearch() {
     if (this.isSearch === '') {
@@ -320,12 +321,12 @@ export class SearchPage implements OnInit {
 
   doRefresh(event) {
     //let sid = setTimeout(() => {
-    this.feedService.updateSubscribedFeed();
-    this.dataHelper.setDiscoverfeeds([]);
-    this.curtotalNum = 0;
-    this.panelPageNum = 1;
-    this.pageNum = 1;
-    this.initData(event, false);
+    // this.feedService.updateSubscribedFeed();
+    // this.dataHelper.setDiscoverfeeds([]);
+    // this.curtotalNum = 0;
+    // this.panelPageNum = 1;
+    // this.pageNum = 1;
+    // this.initData(event, false);
     //event.target.complete();
     //clearTimeout(sid);
     //}, 2000);
@@ -1109,5 +1110,13 @@ export class SearchPage implements OnInit {
     }
 
     return true;
+  }
+
+  ionBlur() {
+   this.isBorderGradient = false;
+  }
+
+  ionFocus() {
+    this.isBorderGradient = true;
   }
 }

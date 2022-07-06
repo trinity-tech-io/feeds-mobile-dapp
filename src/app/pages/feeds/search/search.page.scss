@@ -15,13 +15,14 @@ ion-searchbar {
     margin-top: 0;
     padding-right:0px;
     --icon-color:#C4C4C4;
+    height: 45px;
 }
 
 .scanService{
   width: 22px;
   height:22px;
   position: absolute;
-  top: 20px;
+  top: 13px;
   z-index: 2;
 }
 
@@ -74,4 +75,12 @@ ion-searchbar {
 .darkChannelList ion-item .channel-row .right-col .requested{
   --background:#313244;
   --background-activated:#313244;
+}
+
+.borderGradient{
+  border: 2px solid transparent;
+  background-clip: padding-box,border-box;
+  background-origin: padding-box,border-box;
+  background-image: linear-gradient(90deg,#161c24,#161c24),linear-gradient(90deg,#7624fe,#368bff);
+  border-radius: 20px;
 }

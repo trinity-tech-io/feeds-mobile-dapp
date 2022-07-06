@@ -14,7 +14,7 @@
     </ion-row>
   </ion-item>
   <div (click)="newPostTextArea()">
-  <ion-textarea #newPostIonTextarea  autoGrow="true"  placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost">
+  <ion-textarea #newPostIonTextarea  autoGrow="true"  placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost" [ngClass]="{'borderGradient':isBorderGradient}"    (ionBlur)="ionBlur()" (ionFocus)="ionFocus()">
   </ion-textarea>
   </div>
   <div *ngIf="imgUrl !== ''" class="img-container">
