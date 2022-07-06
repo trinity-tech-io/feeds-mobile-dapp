@@ -161,9 +161,26 @@ export class EidtchannelPage implements OnInit {
     //   return;
     // }
     this.isClickConfirm = false;
-    if (await this.checkparms() && this.isPublic === "") {
-     await this.native.showLoading('common.waitMoment', isDismiss => { });
-     this.editChannelInfo();
+    if (this.checkparms() && this.isPublic === "") {
+      const signinDid = (await this.dataHelper.getSigninData()).did;
+      await this.native.showLoading('common.waitMoment');
+      try {
+        const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
+        let nameValue = this.native.iGetInnerText(this.channelName);
+        const list  =  _.filter(selfchannels,(channel: FeedsData.ChannelV3)=>{
+                      return channel.destDid === signinDid && channel.channelId != this.channelId && channel.name === nameValue;
+              }) || [];
+        if(list.length > 0){
+          this.native.hideLoading();
+          this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
+          this.isClickConfirm = true;
+          return false;
+        }
+        this.editChannelInfo();
+      } catch (error) {
+        this.native.hideLoading();
+        this.isClickConfirm = true;
+      }
     }
   }
 
@@ -206,7 +223,7 @@ export class EidtchannelPage implements OnInit {
 
   }
 
-  async checkparms() {
+  checkparms() {
     let nameValue = this.channelName || '';
     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue === '') {
@@ -252,26 +269,7 @@ export class EidtchannelPage implements OnInit {
       this.native.toastWarn('common.nochanges');
       return false;
     }
-
-    const signinDid = (await this.dataHelper.getSigninData()).did;
-    await this.native.showLoading('common.waitMoment');
-    try {
-      const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
-      const list  =  _.filter(selfchannels,(channel: FeedsData.ChannelV3)=>{
-                    return channel.destDid === signinDid && channel.channelId != this.channelId && channel.name === nameValue;
-            }) || [];
-      if(list.length > 0){
-        this.native.hideLoading();
-        this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
-        return false;
-      }
-      this.native.hideLoading();
-      return true;
-    } catch (error) {
-      this.native.hideLoading();
-      return false;
-    }
-
+    return true;
   }
 
   updatePublicData() {
