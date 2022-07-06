@@ -1067,4 +1067,12 @@ declare namespace FeedsData {
     channelId: string
   }
 
+  type TwitterToken = {
+    token_type: string, // bearer
+    expires_in: number, // 7200
+    expired_time: string, // 过期时间
+    access_token: string, // dUd4OUthTk0yXzB3a3UtbGJJbW1OcnZJVEY3TDRLYkYtT1hPeVBWeEJfT0E3OjE2NTcwMzMzMzkxODk6MTowOmF0OjE
+    scope: string, // follows.read offline.access tweet.write users.read tweet.read follows.write
+    refresh_token: string
+  }
 }
