@@ -4,6 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { TwitterApi } from './TwitterApi';
 import { Logger } from 'src/app/services/logger';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 const TAG: string = 'TwitterService';
 
@@ -13,7 +14,8 @@ export class TwitterService {
   constructor(
     public modalController: ModalController,
     private inappBrowser: InAppBrowser,
-    private http: HTTP
+    private http: HTTP,
+    private dataHelper: DataHelper,
 
   ) { }
 
@@ -28,7 +30,7 @@ export class TwitterService {
     return result
   }
 
-  public fetchTokenFromTwitterUseCode(code) {
+  public async fetchTokenFromTwitterUseCode(code) {
     let params = {
       code: code,
       grant_type: TwitterApi.GRANT_TYPE,
@@ -36,11 +38,16 @@ export class TwitterService {
       redirect_uri: TwitterApi.REDIRECT_URI,
       code_verifier: TwitterApi.CODE_VERIFIER
     }
+    const userDid = (await this.dataHelper.getSigninData()).did
     let header = {}
     this.http.post(TwitterApi.TOKEN, params, header)
       .then(data => {
         const ddata = JSON.parse(data.data)
         Logger.log(TAG, 'auth twitter success: ', data.data)
+        console.log("ddata ===== ", ddata)
+        this.dataHelper.UpdateTwitterToken(userDid, ddata)
+        const token = this.dataHelper.getTwitterAccessToken(userDid)
+        console.log("token ===== ", token)
         const accessToken1 = ddata.access_token
         console.log("accessToken1 ===== ", accessToken1)
         // TODO: 存储TOKEN DATA
@@ -57,13 +64,16 @@ export class TwitterService {
     this.inappBrowser.create(TwitterApi.AUTH, target, options)
   }
 
-  public postTweet(text: string) {
+  public async postTweet(text: string) {
     console.log("post tweet 开始 >>>>>>>>>>>>>>>>>>>>>>>>>>>> ")
     let params = {
       "text": text
     }
     // TODO: 本地取token
-    const token = "bearer RGxjQjl1TVZhUGxYVlVDY0NCREtlUDlybFg3YmhPMm53S2Y3RlpMR0tYeVppOjE2NTY5MjE0NDYzMzM6MTowOmF0OjE"
+    const userDid = (await this.dataHelper.getSigninData()).did
+    const token = this.dataHelper.getTwitterAccessToken(userDid)
+    console.log("token ======= ", token)
+    // const token = "bearer RGxjQjl1TVZhUGxYVlVDY0NCREtlUDlybFg3YmhPMm53S2Y3RlpMR0tYeVppOjE2NTY5MjE0NDYzMzM6MTowOmF0OjE"
     let header = {
       "Content-Type": "application/json",
       "Authorization": token 

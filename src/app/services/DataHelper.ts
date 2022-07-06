@@ -4137,6 +4137,34 @@ export class DataHelper {
     return this.syncHiveData;
   }
 
+  UpdateTwitterToken(userDid: string, tokenData: any) {
+    console.log("UpdateTwitterToken >>>>>>>>>>>>>>>> ")
+    let time = new Date().getTime()
+    console.log("time >>>>>>>>>>>>>>>> ", time)
+    let expired_time = new Date(7200).getTime()
+    console.log("expired_time >>>>>>>>>>>>>>>> ", expired_time)
+    tokenData['expired_time'] = expired_time
+    console.log("tokenData ===== ", tokenData)
+
+    localStorage.setItem(userDid + "TWITTERTOKEN", JSON.stringify(tokenData))
+  }
+
+  getTwitterAccessToken(userDid: string) {
+    console.log("getTwitterAccessToken >>>>>>>>>>>>>>>> ")
+    const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
+    const tokenData = JSON.parse(data)
+
+    console.log("tokenData ===== ", tokenData)
+    let access_token = tokenData['access_token']
+    console.log("access_token >>>>>>>>>>>>>>>> ", access_token)
+    const currentTime = new Date()
+    const expired_time = tokenData['expired_time']
+    console.log("expired_time >>>>>>>>>>>>>>>> ", expired_time)
+
+    return access_token
+    // return access_token ? (expired_time > currentTime) : ''
+  }
+
 
   //API
   // addPosts(postList: FeedsData.PostV3[], useCache: boolean, usePersistence: boolean) {
