@@ -11,7 +11,7 @@
 </ion-grid>
 </div>
 </ion-content>
-<ion-footer class="ion-no-border" *ngIf="isShowLearnMore">
+<ion-footer class="ion-no-border ionfooter" *ngIf="isShowLearnMore">
   <ion-grid  [class.messageBox]="!theme.darkMode" [class.darkMessageBox]="theme.darkMode">
   <ion-slides #slide pager="true">
 
@@ -56,7 +56,7 @@
 </ion-grid>
 </ion-footer>
 
-<ion-footer class="ion-no-border" *ngIf="!isShowLearnMore">
+<ion-footer class="ion-no-border" *ngIf="!isShowLearnMore" >
    <ion-grid class="slide">
     <ion-row class="btn-row btn-row-bottom">
      <ion-button (click)="signIn()">

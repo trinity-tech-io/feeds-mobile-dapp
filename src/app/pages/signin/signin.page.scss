@@ -132,3 +132,17 @@ ion-slides{
     }
    }
  }
+
+ .ionfooter{
+  animation-duration: 0.5s;
+  animation-name: slidein;
+ }
+
+ @keyframes slidein {
+  from {
+      transform: translateY(70%);
+  }
+  to {
+      transform: translateY(0);
+  }
+}

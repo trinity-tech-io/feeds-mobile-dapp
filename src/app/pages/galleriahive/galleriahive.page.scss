@@ -117,3 +117,17 @@
 .btn-row-top{
    margin-top: 29.17px;
 }
+
+.ionfooter{
+  animation-duration: 0.5s;
+  animation-name: slidein;
+ }
+
+ @keyframes slidein {
+  from {
+      transform: translateY(70%);
+  }
+  to {
+      transform: translateY(0);
+  }
+}
