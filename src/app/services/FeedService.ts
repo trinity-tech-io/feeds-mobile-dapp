@@ -31,6 +31,7 @@ import { HiveService } from 'src/app/services/HiveService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { UtilService } from './utilService';
 import { FeedsUtil } from './feeds_util.service';
+import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -655,13 +656,6 @@ export class FeedService {
       case FeedsData.MethodType.enable_notification:
         this.handleEnableNotificationResult(nodeId, error);
         break;
-
-      case 'declare_owner':
-        this.handleDeclareOwnerResponse(nodeId, result, error);
-        break;
-      case 'import_did':
-        this.handleImportDIDResponse(nodeId, result, error);
-        break;
       case 'issue_credential':
         this.handleIssueCredentialResponse(nodeId, result, error);
         break;
@@ -839,84 +833,6 @@ export class FeedService {
     return feedUrl.substring(start, end);
   }
 
-  resolveDidDocument(
-    feedsUrl: string,
-    defaultServer: FeedsData.Server,
-    onSuccess: (server: FeedsData.Server) => void,
-    onError?: (err: any) => void,
-  ) {
-    let didData = this.parseDid(feedsUrl);
-
-    didManager.resolveDidDocument(
-      didData.did,
-      false,
-      didDocument => {
-        if (didDocument == null) {
-          onError('The carrier node could not be found');
-          return;
-        }
-        let services = didDocument.getServices();
-        if (
-          (services == null || services == undefined || services.length == 0) &&
-          defaultServer != null
-        ) {
-          onSuccess(defaultServer);
-          return;
-        }
-
-        for (let index = 0; index < services.length; index++) {
-          const element = services[index];
-          if (this.parseResult(didData, element)) {
-            let endpoint = element.getEndpoint();
-            let carrierAddress = endpoint.substring(
-              endpoint.lastIndexOf('//') + 2,
-              endpoint.length,
-            );
-            onSuccess({
-              name: element.getId(),
-              owner: didDocument.getSubject().getDIDString(),
-              introduction: 'introduction',
-              did: didDocument.getSubject().getDIDString(),
-              carrierAddress: carrierAddress,
-              nodeId: '',
-              feedsUrl: feedsUrl,
-              elaAddress: '',
-            });
-            return;
-          } else {
-            // onError("The carrier node could not be found");
-          }
-        }
-        if (
-          didData.carrierAddress != null ||
-          didData.carrierAddress != undefined
-        ) {
-          let carrierAddress = didData.carrierAddress.substring(
-            didData.carrierAddress.lastIndexOf('//') + 2,
-            didData.carrierAddress.length,
-          );
-          onSuccess({
-            name: this.translate.instant('DIDdata.NotprovidedfromDIDDocument'),
-            owner: didDocument.getSubject().getDIDString(),
-            introduction: this.translate.instant(
-              'DIDdata.NotprovidedfromDIDDocument',
-            ),
-            did: didDocument.getSubject().getDIDString(),
-            carrierAddress: carrierAddress,
-            nodeId: '',
-            feedsUrl: feedsUrl,
-            elaAddress: '',
-          });
-        } else {
-          onError('The carrier node could not be found');
-        }
-      },
-      err => {
-        onError(err);
-      },
-    );
-  }
-
   async createPresentation(
     nonce,
     realm,
@@ -1026,33 +942,6 @@ export class FeedService {
   checkSignInServerStatus(nodeId: string): boolean {
     let accessToken = this.dataHelper.getAccessToken(nodeId);
     return this.feedsServiceApi.checkExp(accessToken);
-  }
-
-  parseResult(didData: DidData, service: DIDPlugin.Service) {
-    if (didData == null) {
-      return;
-    }
-
-    if (didData.carrierAddress == null && didData.serviceId == null) {
-      if (service.getType() == 'Feeds') return true;
-    }
-
-    if (didData.carrierAddress == null && didData.serviceId != null) {
-      if (didData.serviceId == service.getId()) return true;
-    }
-
-    if (didData.carrierAddress != null && didData.serviceId != null) {
-      if (
-        didData.carrierAddress == service.getEndpoint() &&
-        didData.serviceId == service.getId()
-      )
-        return true;
-    }
-
-    if (didData.carrierAddress != null && didData.serviceId == null) {
-      if (didData.carrierAddress == service.getEndpoint()) return true;
-    }
-    return false;
   }
 
   getFeedNameById(nodeId: string, channelId: string): string {
@@ -3600,76 +3489,6 @@ export class FeedService {
       });
   }
 
-  handleDeclareOwnerResponse(nodeId: string, result: any, error: any) {
-    if (error != null && error != undefined && error.code != undefined) {
-      // this.isDeclareFinish = true;
-      // this.clearDeclareOwnerTimeout();
-      this.handleError(nodeId, error);
-      return;
-    }
-
-    let phase = result.phase;
-    let did = '';
-    let payload = '';
-
-    if (phase == 'did_imported') {
-      did = result.did;
-      payload = result.transaction_payload;
-
-      this.resolveServerDid(
-        did,
-        nodeId,
-        payload,
-        () => { },
-        () => { },
-      );
-    }
-    // this.isDeclareFinish = true;
-    // this.clearDeclareOwnerTimeout();
-    let ownerDeclaredData: FeedsEvent.OwnerDeclareData = {
-      nodeId: nodeId,
-      phase: phase,
-      did: did,
-      payload: payload,
-    };
-    eventBus.publish(FeedsEvent.PublishType.owner_declared, ownerDeclaredData);
-  }
-
-  // {
-  //   "jsonrpc": "2.0",
-  //   "id": 1,
-  //   "result": {
-  //     "did": "did:elastos:imWLKpc7re166G9oASY5tg2dXD4g9PkTV2",
-  //     "transaction_payload": "{\"header\":{\"specification\":\"elastos/did/1.0\",\"operation\":\"create\"},\"payload\":\"eyJpZCI6ImRpZDplbGFzdG9zOmltV0xLcGM3cmUxNjZHOW9BU1k1dGcyZFhENGc5UGtUVjIiLCJwdWJsaWNLZXkiOlt7ImlkIjoiI3ByaW1hcnkiLCJwdWJsaWNLZXlCYXNlNTgiOiJmbVR1WUg5M3FRdkFxMjdreHJpd2h4NERQQjdnelFWWm5SaVIxRHpyb0NaZCJ9XSwiYXV0aGVudGljYXRpb24iOlsiI3ByaW1hcnkiXSwiZXhwaXJlcyI6IjIwMjUtMDYtMDhUMDE6MDI6MDRaIiwicHJvb2YiOnsiY3JlYXRlZCI6IjIwMjAtMDYtMDhUMDk6MDI6MDRaIiwic2lnbmF0dXJlVmFsdWUiOiI2bnNWNW52VThjZGs2RmhjQTZzb09aQ1lLa0dSV0hWWDR2cjRIQkZQU1pJUkNteFQ2SDN6ekF5ZG56VkNIRW5WekZrNERhbEk2d2w5anNVWFlGSjFLdyJ9fQ\",\"proof\":{\"verificationMethod\":\"#primary\",\"signature\":\"cAW_4csdqbKjoavJ8lNeDm9gKVPceDFiUfZW-rXvvqkcIoBkuhkfPkVP-AR07OXJh6ow3_8fEyDfOQJ-2ssOmw\"}}"
-  //   }
-  // }
-  handleImportDIDResponse(nodeId: string, result: any, error: any) {
-    if (error != null && error != undefined && error.code != undefined) {
-      this.handleError(nodeId, error);
-      return;
-    }
-
-    let did = result.did;
-    let transaction_payload = result.transaction_payload;
-
-    this.resolveServerDid(
-      did,
-      nodeId,
-      transaction_payload,
-      () => { },
-      () => { },
-    );
-  }
-
-  handleImportDID(
-    feedUrl: string,
-    defaultServer: FeedsData.Server,
-    onSuccess: (server: FeedsData.Server) => void,
-    onError: (err: any) => void,
-  ) {
-    this.resolveDidDocument(feedUrl, defaultServer, onSuccess, onError);
-  }
-
   handleIssueCredentialResponse(nodeId: string, result: any, error: any) {
     if (error != null && error != undefined && error.code != undefined) {
       this.handleError(nodeId, error);
@@ -3934,204 +3753,6 @@ export class FeedService {
     }
 
     if (isChanged) this.dataHelper.updatePost(key, originPost);
-  }
-
-  doIssueCredential(
-    nodeId: string,
-    did: string,
-    serverName: string,
-    serverDesc: string,
-    elaAddress: string,
-    onSuccess: () => void,
-    onError: () => void,
-  ) {
-    this.issueCredential(
-      nodeId,
-      did,
-      serverName,
-      serverDesc,
-      elaAddress,
-      credential => {
-        this.issueCredentialRequest(nodeId, credential);
-      },
-      () => { },
-    );
-  }
-
-  doUpdateCredential(
-    nodeId: string,
-    did: string,
-    serverName: string,
-    serverDesc: string,
-    elaAddress: string,
-    onSuccess: () => void,
-    onError: () => void,
-  ) {
-    this.issueCredential(
-      nodeId,
-      did,
-      serverName,
-      serverDesc,
-      elaAddress,
-      credential => {
-        let cachedServer = this.dataHelper.getServer(nodeId);
-        cachedServer.did = did;
-        cachedServer.name = serverName;
-        cachedServer.introduction = serverDesc;
-        cachedServer.elaAddress = elaAddress;
-        this.dataHelper.updateCachedUpdateServer(nodeId, cachedServer);
-        this.feedsServiceApi.updateCredential(nodeId, credential);
-      },
-      () => { },
-    );
-  }
-
-  async issueCredential(
-    nodeId: string,
-    did: string,
-    serverName: string,
-    serverDesc: string,
-    elaAddress: string,
-    onSuccess: (credential: string) => void,
-    onError: () => void,
-  ) {
-    if (did == '' || nodeId == '') {
-      onError();
-      return;
-    }
-
-    if (bindingServerCache == null || bindingServerCache == undefined)
-      this.resolveServerDid(
-        did,
-        nodeId,
-        '',
-        () => { },
-        () => { },
-      );
-
-    try {
-      let credential = await this.intentService.credissue(
-        did,
-        serverName,
-        serverDesc,
-        elaAddress,
-      );
-      if (credential) {
-        bindingServerCache.name = serverName;
-        bindingServerCache.introduction = serverDesc;
-        onSuccess(credential);
-        return;
-      }
-
-      let error =
-        'Issue credential error, response is ' + JSON.stringify(credential);
-      Logger.error(TAG, error);
-      onError();
-    } catch (error) {
-      Logger.error(TAG, error);
-      onError();
-    }
-  }
-
-  restoreBindingServerCache(
-    did: string,
-    nodeId: string,
-    onSuccess: () => void,
-    onError: () => void,
-  ) {
-    let feedUrl = 'feeds://' + did + '/' + cacheBindingAddress;
-    let defaultServer = {
-      name: 'No name provided',
-      owner: this.getSignInData().name,
-      introduction: 'No intro provided',
-      did: did,
-      carrierAddress: cacheBindingAddress,
-      nodeId: nodeId,
-      feedsUrl: feedUrl,
-      elaAddress: '',
-      version: '',
-    };
-    this.handleImportDID(
-      feedUrl,
-      defaultServer,
-      server => {
-        bindingServerCache = {
-          name: server.name,
-          owner: server.owner,
-          introduction: server.introduction,
-          did: server.did,
-          carrierAddress: server.carrierAddress,
-          nodeId: server.nodeId,
-          feedsUrl: server.feedsUrl,
-          elaAddress: '',
-        };
-        onSuccess();
-      },
-      err => {
-        bindingServerCache = defaultServer;
-        onError();
-      },
-    );
-  }
-
-  resolveServerDid(
-    did: string,
-    nodeId: string,
-    payload: string,
-    onSuccess: () => void,
-    onError: (error: string) => void,
-  ) {
-    let feedUrl = 'feeds://' + did + '/' + cacheBindingAddress;
-    let defaultServer = {
-      name: 'No name provided',
-      owner: this.getSignInData().name,
-      introduction: 'No intro provided',
-      did: did,
-      carrierAddress: cacheBindingAddress,
-      nodeId: nodeId,
-      feedsUrl: feedUrl,
-      elaAddress: '',
-      version: '',
-    };
-    this.handleImportDID(
-      feedUrl,
-      defaultServer,
-      server => {
-        bindingServerCache = {
-          name: server.name,
-          owner: server.owner,
-          introduction: server.introduction,
-          did: server.did,
-          carrierAddress: server.carrierAddress,
-          nodeId: server.nodeId,
-          feedsUrl: server.feedsUrl,
-          elaAddress: '',
-        };
-        onSuccess();
-
-        let resolveDidSucessData: FeedsEvent.ResolveDidSucessData = {
-          nodeId: nodeId,
-          did: did,
-        };
-        eventBus.publish(
-          FeedsEvent.PublishType.resolveDidSucess,
-          resolveDidSucessData,
-        );
-      },
-      err => {
-        bindingServerCache = defaultServer;
-        onError(err);
-        let resolveDidErrorData: FeedsEvent.ResolveDidErrorData = {
-          nodeId: nodeId,
-          did: did,
-          payload: payload,
-        };
-        eventBus.publish(
-          FeedsEvent.PublishType.resolveDidError,
-          resolveDidErrorData,
-        );
-      },
-    );
   }
 
   finishBinding(nodeId: string) {

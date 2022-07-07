@@ -74,7 +74,7 @@ export class FeedsServiceApi {
 
   declarePost(
     nodeId: string,
-    channelId:string,
+    channelId: string,
     content: any,
     withNotify: boolean,
     tempId: string,
