@@ -4161,6 +4161,19 @@ export class DataHelper {
     const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
     const tokenData = JSON.parse(data)
 
+    let refreshToken = tokenData['refresh_token']
+    // const currentTime = new Date().getTime()
+    // if (currentTime > expired_time) {
+    //   return false
+    // }
+
+    return refreshToken
+  }
+
+  getTwitterRefreshToken(userDid: string) {
+    const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
+    const tokenData = JSON.parse(data)
+
     let access_token = tokenData['access_token']
     const expired_time = tokenData['expired_time']
     const currentTime = new Date().getTime()

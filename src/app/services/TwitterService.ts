@@ -34,6 +34,12 @@ export class TwitterService {
     return this.fetchTokenFromTwitter(code, TwitterApi.GRANT_TYPE)
   }
 
+  public async fetchToken(userDid: string) {
+    const token = this.dataHelper.getTwitterRefreshToken(userDid)
+
+    return this.fetchTokenFromTwitter(token, TwitterApi.GRANT_TYPE_REFRESH)
+  }
+
   public async fetchTokenFromRefreshToken(refreshToken: string) {
     return this.fetchTokenFromTwitter(refreshToken, TwitterApi.GRANT_TYPE_REFRESH)
   }
@@ -54,7 +60,6 @@ export class TwitterService {
         const ddata = JSON.parse(data.data)
         this.dataHelper.UpdateTwitterToken(userDid, ddata)
         const accessToken = ddata.access_token
-        // TODO: 存储 过期时间 DATA
         return accessToken
       })
       .catch(error => {
@@ -70,13 +75,16 @@ export class TwitterService {
     this.inappBrowser.create(TwitterApi.AUTH, target, options)
   }
 
+  public async postMedia() {
+
+  }
+
   public async postTweet(text: string) {
     Logger.log(TAG, 'post tweet star >>>>>>>>>>>>>>>>>>>>>>>>>>>> ')
     let params = {
       "text": text
     }
-    const userDid = (await this.dataHelper.getSigninData()).did
-    const token = this.dataHelper.getTwitterAccessToken(userDid)
+    const token = await this.checkIsExpired()
     Logger.log(TAG, 'post tweet token >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', token)
     let header = {
       "Content-Type": "application/json",
@@ -92,5 +100,19 @@ export class TwitterService {
         Logger.log(TAG, 'post tweet error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
         return error
       })
+  }
+
+  public async checkIsExpired() {
+    try {
+    const userDid = (await this.dataHelper.getSigninData()).did
+    let token = this.dataHelper.getTwitterAccessToken(userDid)
+    if (token === false) {
+      // TODO: refreshTOken 同样过期，需要调起重新授权界面
+      token = await this.fetchToken(userDid)
+      }
+    }
+    catch {
+      // TODO: 处理refresh token 过期
+    }
   }
 }
