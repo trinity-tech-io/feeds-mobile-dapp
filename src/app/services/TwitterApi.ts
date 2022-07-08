@@ -1,5 +1,6 @@
 export class TwitterApi {
   public static GRANT_TYPE: string = "authorization_code"
+  public static GRANT_TYPE_REFRESH: string = "refresh_token"
   public static CLIENT_ID: string = "MloxZFZUd21FWEJ1VHBnMkd3RHA6MTpjaQ"
   public static REDIRECT_URI: string = "https://feeds.trinity-feeds.app/logininsuccess"
   public static CODE_VERIFIER: string = "challenge"
