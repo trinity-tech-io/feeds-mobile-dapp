@@ -84,7 +84,13 @@ export class TwitterService {
     }
     this.http.setDataSerializer('json')
     this.http.post(TwitterApi.TEWWTS, params, header)
-      .then(data => console.log(data))
-      .catch(error => console.log(error))
+      .then(data => {
+        Logger.log(TAG, 'post tweet success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', data)
+        return data
+      })
+      .catch(error => {
+        Logger.log(TAG, 'post tweet error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
+        return error
+      })
   }
 }
