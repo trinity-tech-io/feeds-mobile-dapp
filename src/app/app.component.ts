@@ -217,6 +217,18 @@ export class MyApp {
               return;
             }
 
+
+              //分享菜单了 app-sharemenu
+              let connnectionmenu: HTMLElement = document.querySelector("app-connectionmenu") || null;
+              if (connnectionmenu != null) {
+                let connnectionmenuMask: HTMLElement = document.getElementById("connectionMask") || null;
+                if (connnectionmenuMask != null) {
+                  connnectionmenuMask.click();
+                  connnectionmenu.remove();
+                }
+                return;
+              }
+
             //分享菜单了 app-sharemenu
             let sharemenu: HTMLElement = document.querySelector("app-sharemenu") || null;
             if (sharemenu != null) {

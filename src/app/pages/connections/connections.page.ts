@@ -10,6 +10,8 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 })
 export class ConnectionsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  public hideConnectionMenuComponent: boolean = false;
+  public twitterConnectStatus:number = 0;
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -32,7 +34,20 @@ export class ConnectionsPage implements OnInit {
   }
 
   addConnection() {
+    this.hideConnectionMenuComponent = true;
+  }
 
+  hideConnectionMenu(data: any){
+   let typeButton: string = data.buttonType;
+   switch(typeButton){
+    case "twitter":
+      this.twitterConnectStatus = 1;
+      this.hideConnectionMenuComponent = false;
+      break;
+    case "cancel":
+      this.hideConnectionMenuComponent = false;
+      break;
+   }
   }
 
 }

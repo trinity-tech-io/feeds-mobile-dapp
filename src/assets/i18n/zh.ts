@@ -906,6 +906,8 @@ export const zh = {
   ConnectionsPage: {
    title: '连接',
    addConnection: '添加连接',
-   addConnectionDes: '整合新账户'
+   addConnectionDes: '整合新账户',
+   twitter: '推特',
+   connected: '已连接'
   }
 };

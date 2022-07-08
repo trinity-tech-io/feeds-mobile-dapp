@@ -903,6 +903,8 @@ export const en = {
   ConnectionsPage: {
     title: 'Connections',
     addConnection: 'Add Connection',
-    addConnectionDes: 'Integrate new account'
+    addConnectionDes: 'Integrate new account',
+    twitter: 'Twitter',
+    connected: 'Connected'
    }
 };

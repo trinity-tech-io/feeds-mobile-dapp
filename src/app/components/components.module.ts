@@ -23,6 +23,7 @@ import { CommentComponent } from './comment/comment.component';
 import { SwitchfeedComponent } from './switchfeed/switchfeed.component';
 import { PreviewqrcodeComponent } from './previewqrcode/previewqrcode.component';
 import { SharemenuComponent } from './sharemenu/sharemenu.component';
+import { ConnectionmenuComponent } from './connectionmenu/connectionmenu.component';
 import { PicturemenuComponent } from './picturemenu/picturemenu.component';
 import { RoundloadingComponent } from './roundloading/roundloading.component';
 import { PercentageloadingComponent } from './percentageloading/percentageloading.component';
@@ -43,7 +44,6 @@ import { TitleBarComponent } from './titlebar/titlebar.component';
 import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.component';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { VideostyleComponent } from './videostyle/videostyle.component';
-
 @NgModule({
   imports: [
     CommonModule,
@@ -74,6 +74,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     CommentComponent,
     SwitchfeedComponent,
     SharemenuComponent,
+    ConnectionmenuComponent,
     PicturemenuComponent,
     VideofullscreenComponent,
     RoundloadingComponent,
@@ -104,6 +105,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     CommentComponent,
     SwitchfeedComponent,
     SharemenuComponent,
+    ConnectionmenuComponent,
     PicturemenuComponent,
     VideofullscreenComponent,
     RoundloadingComponent,
