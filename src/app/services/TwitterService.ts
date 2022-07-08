@@ -30,10 +30,18 @@ export class TwitterService {
     return result
   }
 
-  public async fetchTokenFromTwitterUseCode(code) {
+  public getTokenFromCode(code: string) {
+    return this.fetchTokenFromTwitterUseCode(code, TwitterApi.GRANT_TYPE)
+  }
+
+  public async fetchTokenFromRefreshToken(refreshToken: string) {
+    return this.fetchTokenFromTwitterUseCode(refreshToken, TwitterApi.GRANT_TYPE_REFRESH)
+  }
+
+  private async fetchTokenFromTwitterUseCode(code: string, type: string) {
     let params = {
       code: code,
-      grant_type: TwitterApi.GRANT_TYPE,
+      grant_type: type,
       client_id: TwitterApi.CLIENT_ID,
       redirect_uri: TwitterApi.REDIRECT_URI,
       code_verifier: TwitterApi.CODE_VERIFIER
@@ -42,38 +50,34 @@ export class TwitterService {
     let header = {}
     this.http.post(TwitterApi.TOKEN, params, header)
       .then(data => {
-        const ddata = JSON.parse(data.data)
         Logger.log(TAG, 'auth twitter success: ', data.data)
-        console.log("ddata ===== ", ddata)
+        const ddata = JSON.parse(data.data)
         this.dataHelper.UpdateTwitterToken(userDid, ddata)
-        const token = this.dataHelper.getTwitterAccessToken(userDid)
-        console.log("token ===== ", token)
-        const accessToken1 = ddata.access_token
-        console.log("accessToken1 ===== ", accessToken1)
-        // TODO: 存储TOKEN DATA
+        const accessToken = ddata.access_token
+        // TODO: 存储 过期时间 DATA
+        return accessToken
       })
       .catch(error => {
         Logger.error(TAG, "auth twitter Error: ", error)
+        return error
       })
   }
 
-  public openTwitterLoginPage() {
+  public async openTwitterLoginPage() {
     const target = '_system'
     const options = 'location=no'
-    console.log("inappBrowser 开始 >>>>>>>>>>>>>>>>>>>>>>>>>>>> ")
+    Logger.log(TAG, 'inappBrowser star >>>>>>>>>>>>>>>>>>>>>>>>>>>> ')
     this.inappBrowser.create(TwitterApi.AUTH, target, options)
   }
 
   public async postTweet(text: string) {
-    console.log("post tweet 开始 >>>>>>>>>>>>>>>>>>>>>>>>>>>> ")
+    Logger.log(TAG, 'post tweet star >>>>>>>>>>>>>>>>>>>>>>>>>>>> ')
     let params = {
       "text": text
     }
-    // TODO: 本地取token
     const userDid = (await this.dataHelper.getSigninData()).did
     const token = this.dataHelper.getTwitterAccessToken(userDid)
-    console.log("token ======= ", token)
-    // const token = "bearer RGxjQjl1TVZhUGxYVlVDY0NCREtlUDlybFg3YmhPMm53S2Y3RlpMR0tYeVppOjE2NTY5MjE0NDYzMzM6MTowOmF0OjE"
+    Logger.log(TAG, 'post tweet token >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', token)
     let header = {
       "Content-Type": "application/json",
       "Authorization": token 
