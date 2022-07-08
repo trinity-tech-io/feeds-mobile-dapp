@@ -4138,31 +4138,27 @@ export class DataHelper {
   }
 
   UpdateTwitterToken(userDid: string, tokenData: any) {
-    console.log("UpdateTwitterToken >>>>>>>>>>>>>>>> ")
-    let time = new Date().getTime()
-    console.log("time >>>>>>>>>>>>>>>> ", time)
-    let expired_time = new Date(7200).getTime()
-    console.log("expired_time >>>>>>>>>>>>>>>> ", expired_time)
-    tokenData['expired_time'] = expired_time
-    console.log("tokenData ===== ", tokenData)
+    let time = new Date()
+    const tt = time.getTime()
+    const hour = 60 * 60 * 1000 * 2 // 2小时
+    time.setTime(tt + hour)
+    tokenData['expired_time'] = time.getTime()
 
     localStorage.setItem(userDid + "TWITTERTOKEN", JSON.stringify(tokenData))
   }
 
   getTwitterAccessToken(userDid: string) {
-    console.log("getTwitterAccessToken >>>>>>>>>>>>>>>> ")
     const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
     const tokenData = JSON.parse(data)
 
-    console.log("tokenData ===== ", tokenData)
     let access_token = tokenData['access_token']
-    console.log("access_token >>>>>>>>>>>>>>>> ", access_token)
-    const currentTime = new Date()
     const expired_time = tokenData['expired_time']
-    console.log("expired_time >>>>>>>>>>>>>>>> ", expired_time)
+    const currentTime = new Date().getTime()
+    if (currentTime > expired_time) {
+      return false
+    }
 
     return access_token
-    // return access_token ? (expired_time > currentTime) : ''
   }
 
 
