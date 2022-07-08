@@ -146,3 +146,39 @@
     background-image: linear-gradient(90deg,#323b45,#323b45),linear-gradient(90deg,#7624fe,#368bff);
     border-radius: 20px;
   }
+
+.twitter{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 15px;
+    span{
+        font-style: normal;
+        font-weight: 600;
+        font-size: 12px;
+        background: linear-gradient(90deg, #7624FE 0%, #368BFF 100.78%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-right: 4px;
+    }
+}
+.checkbox{
+  --background-checked: #323B45;
+  --background: #323B45;
+  --border-width: 0px;
+  --border-radius: 5px;
+  border: 1.5px solid transparent;
+  background-clip: padding-box,border-box;
+  background-origin: padding-box,border-box;
+  background-image: linear-gradient(90deg,#323b45,#323b45),linear-gradient(90deg,#7624fe,#368bff);
+  border-radius: 5px;
+  width: 20px;
+  height: 20px;
+}
+
+.postTwitter{
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+}

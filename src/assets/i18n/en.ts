@@ -469,6 +469,7 @@ export const en = {
     tipMsg: 'Please enter a message!',
     tipMsg1: 'Your post has been sent successfully.',
     tipMsg2: 'Video processing',
+    twitterDes: 'Post to Twitter'
   },
   DIDdata: {
     Notprovided: '',
@@ -645,7 +646,9 @@ export const en = {
     interfaceDes: 'Interface testing',
     interface: 'Interface',
     databaseCollections: 'Database Collections',
-    databaseCollectionsDes: 'Delete all collections'
+    databaseCollectionsDes: 'Delete all collections',
+    connections: 'Connections',
+    connectionsDes: 'Manage account connections'
   },
   // DiscoverfeedPage: {
   //   title: 'Discovery Square',
@@ -896,5 +899,10 @@ export const en = {
   },
   toast: {
     linkageInvalidParams: 'The linkage is invalid or cannot be opened'
-  }
+  },
+  ConnectionsPage: {
+    title: 'Connections',
+    addConnection: 'Add Connection',
+    addConnectionDes: 'Integrate new account'
+   }
 };

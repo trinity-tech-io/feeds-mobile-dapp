@@ -468,6 +468,7 @@ export const zh = {
     tipMsg: '请输入内容',
     tipMsg1: '您的微说已经发布成功',
     tipMsg2: '视频处理中',
+    twitterDes: '发布到推特'
   },
   DIDdata: {
     Notprovided: '',
@@ -644,7 +645,9 @@ export const zh = {
     interfaceDes: '接口测试',
     interface: '接口',
     databaseCollections: '数据库集合',
-    databaseCollectionsDes: '删除所有 collections'
+    databaseCollectionsDes: '删除所有 collections',
+    connections: '连接',
+    connectionsDes: '管理帐户连接'
   },
   // DiscoverfeedPage: {
   //   title: '探索广场',
@@ -899,5 +902,10 @@ export const zh = {
   },
   toast: {
     linkageInvalidParams: '分享链接无效，无法打开链接'
+  },
+  ConnectionsPage: {
+   title: '连接',
+   addConnection: '添加连接',
+   addConnectionDes: '整合新账户'
   }
 };

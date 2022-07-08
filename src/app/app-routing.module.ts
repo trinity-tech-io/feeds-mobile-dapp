@@ -235,6 +235,10 @@ const routes: Routes = [
     path: 'apppreferences',
     loadChildren: () => import('./pages/apppreferences/apppreferences.module').then(m => m.ApppreferencesPageModule)
   },
+  {
+    path: 'connections',
+    loadChildren: () => import('./pages/connections/connections.module').then( m => m.ConnectionsPageModule)
+  },
 ];
 
 @NgModule({

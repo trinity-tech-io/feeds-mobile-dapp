@@ -168,4 +168,8 @@ export class SettingsPage implements OnInit {
   navAppPreferences() {
     this.native.navigateForward(['/apppreferences'],{});
   }
+
+  navConnections() {
+    this.native.navigateForward(['/connections'],{});
+  }
 }

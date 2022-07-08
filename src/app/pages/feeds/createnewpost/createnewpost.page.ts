@@ -63,6 +63,7 @@ export class CreatenewpostPage implements OnInit {
   public hidePictureMenuComponent: boolean = false;
   public isSupportGif: boolean = true;
   public isBorderGradient: boolean = false;
+  public isPostTwitter: boolean = false;
   constructor(
     private platform: Platform,
     private events: Events,
