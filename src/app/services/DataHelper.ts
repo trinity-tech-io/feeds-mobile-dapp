@@ -1725,14 +1725,14 @@ export class DataHelper {
     });
   }
 
-  updateLocalCredential(credential: string) {
-    this.localCredential = credential;
-    this.saveData(FeedsData.PersistenceKey.credential, this.localCredential);
-  }
+  // updateLocalCredential(credential: string) {
+  //   this.localCredential = credential;
+  //   this.saveData(FeedsData.PersistenceKey.credential, this.localCredential);
+  // }
 
-  getLocalCredential() {
-    return this.localCredential;
-  }
+  // getLocalCredential() {
+  //   return this.localCredential;
+  // }
 
   initLocalCredential() {
     this.localCredential = '';

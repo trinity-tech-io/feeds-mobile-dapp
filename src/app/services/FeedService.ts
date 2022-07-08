@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-// import { CarrierService } from 'src/app/services/CarrierService';
 import { Events } from 'src/app/services/events.service';
 import { JsonRPCService } from 'src/app/services/JsonRPCService';
 import { StorageService } from 'src/app/services/StorageService';
@@ -31,14 +30,16 @@ import { HiveService } from 'src/app/services/HiveService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { UtilService } from './utilService';
 import { FeedsUtil } from './feeds_util.service';
-import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
-
-declare let didManager: DIDPlugin.DIDManager;
+import { DIDHelperService } from 'src/app/services/did_helper.service';
 
 const TAG: string = 'Feeds-service';
 
 let bindingServerCache: FeedsData.Server;
 let cacheBindingAddress: string = '';
+
+
+let expDay = 10;
+let eventBus: Events = null;
 
 export class DidData {
   constructor(
@@ -67,9 +68,6 @@ export class Avatar {
   data: string;
   type?: string;
 }
-
-let expDay = 10;
-let eventBus: Events = null;
 
 @Injectable()
 export class FeedService {
@@ -136,7 +134,8 @@ export class FeedService {
     private hiveService: HiveService,
     private postHelperService: PostHelperService,
     private feedsServiceApi: FeedsServiceApi,
-    private feedsUtil: FeedsUtil
+    private feedsUtil: FeedsUtil,
+    private didHelperService: DIDHelperService
   ) {
     eventBus = events;
     this.init();
@@ -147,7 +146,7 @@ export class FeedService {
   }
 
   initDidManager() {
-    didManager.initDidStore('anything', null);
+    // didManager.initDidStore('anything', null);
     this.setEidURL(Config.EID_RPC);
     Logger.log(TAG, 'Eid RPC is', Config.EID_RPC);
   }
@@ -388,15 +387,6 @@ export class FeedService {
       if (nodeId == channel.nodeId)
         this.feedsServiceApi.getChannelDetail(channel.nodeId, channel.id);
     }
-  }
-
-  sendJWTMessage(nodeId: string, properties: any) {
-    this.jwtMessageService.request(
-      nodeId,
-      properties,
-      () => { },
-      () => { },
-    );
   }
 
   createTopic(nodeId: string, channel: string, desc: string, avatar: any) {
@@ -659,9 +649,6 @@ export class FeedService {
       case 'issue_credential':
         this.handleIssueCredentialResponse(nodeId, result, error);
         break;
-      case 'signin_request_challenge':
-        this.handleSigninChallenge(nodeId, result, error);
-        break;
       case 'signin_confirm_challenge':
         this.handleSigninConfirm(nodeId, result, error);
         break;
@@ -854,91 +841,6 @@ export class FeedService {
     }
   }
 
-  verifyPresentation(
-    presentationstr: string,
-    onSuccess?: (isValid: boolean) => void,
-    onError?: (err: any) => void,
-  ) {
-    didManager.VerifiablePresentationBuilder.fromJson(
-      presentationstr,
-      presentation => {
-        presentation.isValid(
-          isValid => {
-            onSuccess(isValid);
-          },
-          err => { },
-        );
-      },
-    );
-  }
-
-  loginRequest(nodeId: string) {
-    this.nonce = this.generateNonce();
-    // this.realm = this.carrierService.getAddress();
-    let payload = {
-      application: 'feeds',
-      version: '0.1',
-      method: 'negotiate_login',
-      nonce: this.nonce,
-      realm: this.realm,
-    };
-
-    this.sendJWTMessage(nodeId, payload);
-  }
-
-  loginResponse(nodeId: string, payload: any) {
-    let presentation = payload.presentation;
-    //1.verify presentation
-    this.verifyPresentation(payload.presentation, isValid => {
-      if (isValid) {
-        //2.verify noce & realm
-        //TODO verify noce & realm
-
-        this.serviceNonce = payload.nonce;
-        this.serviceRealm = payload.realm;
-
-        //3.send confirm msg
-        this.confirmLoginRequest(nodeId);
-      }
-    });
-  }
-
-  confirmLoginRequest(nodeId: string) {
-    let presentation = this.createPresentation(
-      this.serviceNonce,
-      this.serviceRealm,
-      presentation => {
-        let payload = {
-          application: 'feeds',
-          version: '0.1',
-          method: 'confirm_login',
-          presentation: presentation,
-        };
-
-        this.jwtMessageService.request(
-          nodeId,
-          payload,
-          () => { },
-          () => { },
-        );
-      },
-    );
-  }
-
-  generateNonce(): string {
-    return this.generateUUID();
-  }
-
-  generateUUID(): string {
-    var d = new Date().getTime();
-    var uuid = 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function (c) {
-      var r = (d + Math.random() * 16) % 16 | 0;
-      d = Math.floor(d / 16);
-      return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
-    });
-    return uuid;
-  }
-
   checkSignInServerStatus(nodeId: string): boolean {
     let accessToken = this.dataHelper.getAccessToken(nodeId);
     return this.feedsServiceApi.checkExp(accessToken);
@@ -958,27 +860,11 @@ export class FeedService {
     this.storeService.set(FeedsData.PersistenceKey.signInRawData, jsonStr);
   }
 
-  saveSignInData(
-    did: string,
-    name: string,
-    avatar: Avatar,
-    email: string,
-    telephone: string,
-    location: string,
-    nickname: string,
-    description: string,
-  ): Promise<SignInData> {
+  saveSignInData(did: string, name: string, avatar: Avatar, email: string, telephone: string,
+    location: string, nickname: string, description: string,): Promise<SignInData> {
     return new Promise((resolve, reject) => {
-      const signinData = this.generateSignInData(
-        did,
-        name,
-        avatar,
-        email,
-        telephone,
-        location,
-        nickname,
-        description,
-      );
+      const signinData = this.generateSignInData(did, name, avatar, email, telephone,
+        location, nickname, description);
       this.dataHelper.setLocalSignInData(signinData);
 
       this.checkSignInDataChange(this.dataHelper.getLocalSignInData())
@@ -1415,15 +1301,15 @@ export class FeedService {
 
       eventBus.publish(FeedsEvent.PublishType.commentDataUpdate);
 
-      this.generateNotification(
-        nodeId,
-        channelId,
-        postId,
-        commentId,
-        userName,
-        FeedsData.Behavior.comment,
-        this.translate.instant('NotificationPage.commentPost'),
-      );
+      // this.generateNotification(
+      //   nodeId,
+      //   channelId,
+      //   postId,
+      //   commentId,
+      //   userName,
+      //   FeedsData.Behavior.comment,
+      //   this.translate.instant('NotificationPage.commentPost'),
+      // );
 
       resolve();
     });
@@ -1471,38 +1357,6 @@ export class FeedService {
       commentId,
       comment,
     );
-  }
-
-  generateNotification(
-    nodeId: string,
-    channelId: string,
-    postId: string,
-    commentId: number,
-    userName: string,
-    behavior: FeedsData.Behavior,
-    behaviorText: string,
-  ) {
-    if (!this.checkChannelIsMine(nodeId, channelId)) return;
-
-    if (userName == this.getSignInData().name) return;
-
-    let notification: FeedsData.Notification = {
-      id: this.generateUUID(),
-      userName: userName,
-      behavior: behavior,
-      behaviorText: behaviorText,
-      details: {
-        nodeId: nodeId,
-        channelId: channelId,
-        postId: postId,
-        commentId: commentId,
-      },
-      time: UtilService.getCurrentTimeNum(),
-      readStatus: 1,
-    };
-
-    this.dataHelper.appendNotification(notification);
-    eventBus.publish(FeedsEvent.PublishType.UpdateNotification);
   }
 
   handleNewLikesNotification(nodeId: string, params: any) {
@@ -1560,15 +1414,15 @@ export class FeedService {
       behaviorText = this.translate.instant('NotificationPage.likedComment');
     }
 
-    this.generateNotification(
-      nodeId,
-      channel_id,
-      post_id,
-      comment_id,
-      user_name,
-      behavior,
-      behaviorText,
-    );
+    // this.generateNotification(
+    //   nodeId,
+    //   channel_id,
+    //   post_id,
+    //   comment_id,
+    //   user_name,
+    //   behavior,
+    //   behaviorText,
+    // );
   }
 
   handleNewSubscriptionNotification(nodeId: string, params: any) {
@@ -1576,15 +1430,15 @@ export class FeedService {
     let user_name = params.user_name;
     let user_did = params.user_did;
 
-    this.generateNotification(
-      nodeId,
-      channel_id,
-      "0",
-      0,
-      user_name,
-      FeedsData.Behavior.follow,
-      this.translate.instant('NotificationPage.followedFeed'),
-    );
+    // this.generateNotification(
+    //   nodeId,
+    //   channel_id,
+    //   "0",
+    //   0,
+    //   user_name,
+    //   FeedsData.Behavior.follow,
+    //   this.translate.instant('NotificationPage.followedFeed'),
+    // );
   }
 
   handleNewFeedInfoUpdateNotification(nodeId: string, params: any) {
@@ -3341,35 +3195,6 @@ export class FeedService {
     clearTimeout(this.signinChallengeTimeout);
   }
 
-  signinConfirmRequest(
-    nodeId: string,
-    nonce: string,
-    realm: string,
-    requiredCredential: boolean,
-  ) {
-  }
-
-  handleSigninChallenge(nodeId: string, result: any, error: any) {
-    if (error != null && error != undefined && error.code != undefined) {
-      this.clearSigninTimeout(nodeId);
-      this.handleError(nodeId, error);
-      return;
-    }
-
-    let requiredCredential = result.credential_required;
-    let jws = result.jws;
-
-    let credential = JSON.parse(result.credential);
-    this.doParseJWS(
-      nodeId,
-      jws,
-      credential,
-      requiredCredential,
-      () => { },
-      () => { },
-    );
-  }
-
   handleSigninConfirm(nodeId: string, result: any, error: any) {
     if (error != null && error != undefined && error.code != undefined) {
       this.clearSigninTimeout(nodeId);
@@ -3433,60 +3258,6 @@ export class FeedService {
       nodeId,
       credential,
     );
-  }
-
-  doParseJWS(
-    nodeId: string,
-    jws: string,
-    credential: any,
-    requiredCredential: boolean,
-    onSuccess: () => void,
-    onError: () => void,
-  ) {
-    Logger.error(TAG, 'Parse JWT from didManager, nodeId is ', nodeId, ' JWS is ', jws);
-    this.parseJWS(
-      false,
-      jws,
-      res => {
-        let server = this.dataHelper.getServer(nodeId);
-        server.name = credential.credentialSubject.name;
-        server.introduction = credential.credentialSubject.description;
-        server.elaAddress = credential.credentialSubject.elaAddress;
-        this.dataHelper.updateServer(nodeId, server);
-
-        let payloadStr = JSON.stringify(res.payload);
-        let payload = JSON.parse(payloadStr);
-        let nonce = payload.nonce;
-        let realm = payload.realm;
-        this.signinConfirmRequest(nodeId, nonce, realm, requiredCredential);
-        onSuccess();
-      },
-      err => {
-        Logger.error(TAG, 'Parse JWT error, ', err);
-        onError();
-      },
-    );
-  }
-  //eyJ0eXAiOiJKV1QiLCJjdHkiOiJqc29uIiwibGlicmFyeSI6IkVsYXN0b3MgRElEIiwidmVyc2lvbiI6IjEuMCIsImFsZyI6Im5vbmUifQ.eyJzdWIiOiJKd3RUZXN0IiwianRpIjoiMCIsImF1ZCI6IlRlc3QgY2FzZXMiLCJpYXQiOjE1OTA4NTEwMzQsImV4cCI6MTU5ODc5OTgzNCwibmJmIjoxNTg4MjU5MDM0LCJmb28iOiJiYXIiLCJpc3MiOiJkaWQ6ZWxhc3RvczppV0ZBVVloVGEzNWMxZlBlM2lDSnZpaFpIeDZxdXVtbnltIn0.
-  parseJWS(
-    verifySignature: boolean,
-    jwtToken: string,
-    onSuccess: (result: DIDPlugin.ParseJWTResult) => void,
-    onError: (err: string) => void,
-  ) {
-    didManager
-      .parseJWT(verifySignature, jwtToken)
-      .then(result => {
-        if (result) {
-          onSuccess(result);
-        } else {
-          Logger.error(TAG, 'Parse JWT error, result is ', result);
-        }
-      })
-      .catch(err => {
-        onError(err);
-        Logger.error(TAG, 'Parse JWT error, error is ', err);
-      });
   }
 
   handleIssueCredentialResponse(nodeId: string, result: any, error: any) {
@@ -3903,13 +3674,13 @@ export class FeedService {
     );
   }
 
-  saveCredential(credential: string) {
-    this.dataHelper.updateLocalCredential(credential);
-  }
+  // saveCredential(credential: string) {
+  //   this.dataHelper.updateLocalCredential(credential);
+  // }
 
-  getLocalCredential() {
-    return this.dataHelper.getLocalCredential();
-  }
+  // getLocalCredential() {
+  //   return this.dataHelper.getLocalCredential();
+  // }
 
   removeAllData() {
     this.storeService.remove(FeedsData.PersistenceKey.signInData);
@@ -4494,23 +4265,19 @@ export class FeedService {
     onSuccess: (isOnSideChain: boolean) => void,
     onError?: (err: any) => void,
   ) {
-    Logger.log(TAG, 'DidManager resolve did is', did);
-    didManager.resolveDidDocument(
-      did,
-      true,
-      didDocument => {
-        Logger.log(TAG, 'DidManager resolve finish, didDocument is', didDocument);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const didDocument = this.didHelperService.resolveDidDocument(did);
         if (didDocument == null) {
           onSuccess(false);
         } else {
           onSuccess(true);
         }
-      },
-      err => {
-        Logger.error(TAG, 'DidManager resolve error,', err);
-        onError(err);
-      },
-    );
+      } catch (error) {
+        Logger.error(TAG, 'DidManager resolve error,', error);
+        onError(error);
+      }
+    });
   }
 
   destroyCarrier() {
@@ -5610,114 +5377,11 @@ export class FeedService {
 
   decodeSignInData(result: any): Promise<string> {
     return new Promise((resolve, reject) => {
-      didManager.VerifiablePresentationBuilder.fromJson(
-        JSON.stringify(result),
-        async presentation => {
-          let credentials = presentation.getCredentials();
-          // let did = result.did;
-          let verificationMethod: string = result.proof.verificationMethod;
+      const decodeResult = this.didHelperService.decodeSignInData(JSON.stringify(result));
 
-          let did: string = verificationMethod.split('#')[0];
-
-          this.saveCredentialById(did, credentials, 'name');
-
-          let interests = this.findCredentialValueById(
-            did,
-            credentials,
-            'interests',
-            '',
-          );
-          let desc = this.findCredentialValueById(
-            did,
-            credentials,
-            'description',
-            '',
-          );
-          let description = this.translate.instant('DIDdata.NoDescription');
-
-          if (desc !== '') {
-            description = desc;
-          } else if (interests != '') {
-            description = interests;
-          }
-
-          this.saveSignInData(
-            did,
-            this.findCredentialValueById(
-              did,
-              credentials,
-              'name',
-              this.translate.instant('DIDdata.Notprovided'),
-            ),
-            this.findCredentialValueById(
-              did,
-              credentials,
-              'avatar',
-              this.translate.instant('DIDdata.Notprovided'),
-            ),
-            this.findCredentialValueById(
-              did,
-              credentials,
-              'email',
-              this.translate.instant('DIDdata.Notprovided'),
-            ),
-            this.findCredentialValueById(
-              did,
-              credentials,
-              'telephone',
-              this.translate.instant('DIDdata.Notprovided'),
-            ),
-            this.findCredentialValueById(
-              did,
-              credentials,
-              'nation',
-              this.translate.instant('DIDdata.Notprovided'),
-            ),
-            this.findCredentialValueById(did, credentials, 'nickname', ''),
-            description,
-          )
-            .then(signInData => {
-              this.events.publish(FeedsEvent.PublishType.signinSuccess, signInData.did);
-              resolve(signInData.did);
-            })
-            .catch(err => {
-              Logger.error(TAG, 'Save signin data error, error msg is ', err);
-              reject(err);
-            });
-        },
-        err => {
-          reject(err);
-        },
-      );
+      this.saveSignInData(decodeResult.did, decodeResult.name, null, decodeResult.email,
+        decodeResult.telephone, decodeResult.nation, decodeResult.nickname, decodeResult.description);
     });
-  }
-
-  saveCredentialById(
-    did: string,
-    credentials: DIDPlugin.VerifiableCredential[],
-    fragment: string,
-  ) {
-    let matchingCredential = credentials.find(c => {
-      return c.getFragment() == fragment;
-    });
-
-    if (matchingCredential) {
-      this.saveCredential(JSON.stringify(matchingCredential));
-    }
-  }
-
-  findCredentialValueById(
-    did: string,
-    credentials: DIDPlugin.VerifiableCredential[],
-    fragment: string,
-    defaultValue: string,
-  ) {
-    let matchingCredential = credentials.find(c => {
-      return c.getFragment() == fragment;
-    });
-
-    if (!matchingCredential) return defaultValue;
-    else return matchingCredential.getSubject()[fragment];
   }
 
   credaccess(): Promise<any> {
@@ -6171,15 +5835,15 @@ export class FeedService {
   }
 
   setEidURL(url: string) {
-    didManager.setResolverUrl(
-      url,
-      () => {
-        Logger.log(TAG, 'Set resolve url success, url is', url);
-      },
-      error => {
-        Logger.log(TAG, 'Set resolve url error, error is', error);
-      },
-    );
+    // didManager.setResolverUrl(
+    //   url,
+    //   () => {
+    //     Logger.log(TAG, 'Set resolve url success, url is', url);
+    //   },
+    //   error => {
+    //     Logger.log(TAG, 'Set resolve url error, error is', error);
+    //   },
+    // );
   }
 
   // async getUserAvatar(userDid: string): Promise<string> {
@@ -6267,51 +5931,8 @@ export class FeedService {
     return this.userDIDService.getUserDidObj(signinDid);
   }
 
-  resolveDidObjectForName(did: string) {
-    return new Promise((resolve, reject) => {
-      const emptyName = { "name": null };
-      if (!did) {
-        Logger.warn(TAG, 'Did empty');
-        resolve(emptyName);
-        return;
-      }
-      try {
-        didManager.resolveDidDocument(did, true, didDocument => {
-          if (!didDocument) {
-            Logger.warn(TAG, 'Get DIDDocument from did error');
-            resolve(emptyName);
-            return;
-          }
-
-          const nameCredential = didDocument.getCredential("#name");
-          if (!nameCredential) {
-            Logger.warn(TAG, 'Get name credential from did error');
-            resolve(emptyName);
-            return;
-          }
-
-          const nameSubject = nameCredential.getSubject() || null;
-          if (!nameSubject) {
-            Logger.warn(TAG, 'Get name subject from did error');
-            resolve(emptyName);
-            return;
-          }
-
-          let resultObjcet = { "name": nameSubject.name };
-          resolve(resultObjcet);
-        },
-          err => {
-            const errorMsg = 'DIDManager resolve DidDocument error';
-            Logger.error(TAG, errorMsg, err);
-            reject(err);
-          },
-        );
-      } catch (error) {
-        const errorMsg = 'DIDManager resolve DidDocument error';
-        Logger.error(TAG, errorMsg, error);
-        reject(error);
-      }
-    });
+  resolveDidObjectForName(didString: string): Promise<{ name: string }> {
+    return this.didHelperService.resolveDidObjectForName(didString);
   }
 
   getDidFromWalletAddress(walletAddress: string): Promise<FeedsData.DidObj> {
