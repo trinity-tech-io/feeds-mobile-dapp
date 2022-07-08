@@ -47,7 +47,7 @@ export class TwitterService {
       code_verifier: TwitterApi.CODE_VERIFIER
     }
     const userDid = (await this.dataHelper.getSigninData()).did
-    let header = {}
+    let header = {} 
     this.http.post(TwitterApi.TOKEN, params, header)
       .then(data => {
         Logger.log(TAG, 'auth twitter success: ', data.data)
