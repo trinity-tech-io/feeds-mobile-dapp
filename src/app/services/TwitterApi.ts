@@ -10,5 +10,5 @@ export class TwitterApi {
   public static TOKEN: string = "https://api.twitter.com/2/oauth2/token"
 
   public static TEWWTS: string = "https://api.twitter.com/2/tweets"
-
+  public static MEDIA: string = "https://upload.twitter.com/1.1/media/upload.json"
 }

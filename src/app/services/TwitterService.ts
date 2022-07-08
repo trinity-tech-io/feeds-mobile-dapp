@@ -75,10 +75,32 @@ export class TwitterService {
     this.inappBrowser.create(TwitterApi.AUTH, target, options)
   }
 
-  public async postMedia() {
-
+  public async postMedia(base64Encoded: string) {
+    Logger.log(TAG, 'post media star >>>>>>>>>>>>>>>>>>>>>>>>>>>> ')
+    let params = {
+      "text": base64Encoded
+    }
+    const token = await this.checkIsExpired()
+    Logger.log(TAG, 'post media token >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', token)
+    let header = {
+      "Content-Type": "multipart/form-data",
+      "Authorization": "bearer " + token
+    }
+    this.http.setDataSerializer('multipart')
+    // this.http.sendRequest(TwitterApi.MEDIA, {
+    //   method: "post",
+    //   data: base64Encoded,
+    //   headers: header
+    // })
+    //   .then(data => {
+    //     Logger.log(TAG, 'post tweet success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', data)
+    //     return data
+    //   })
+    //   .catch(error => {
+    //     Logger.log(TAG, 'post tweet error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
+    //     return error
+    //   })
   }
-
   public async postTweet(text: string) {
     Logger.log(TAG, 'post tweet star >>>>>>>>>>>>>>>>>>>>>>>>>>>> ')
     let params = {
@@ -88,7 +110,7 @@ export class TwitterService {
     Logger.log(TAG, 'post tweet token >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', token)
     let header = {
       "Content-Type": "application/json",
-      "Authorization": token 
+      "Authorization": "bearer " + token 
     }
     this.http.setDataSerializer('json')
     this.http.post(TwitterApi.TEWWTS, params, header)
