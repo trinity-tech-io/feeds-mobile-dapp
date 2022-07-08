@@ -31,14 +31,14 @@ export class TwitterService {
   }
 
   public getTokenFromCode(code: string) {
-    return this.fetchTokenFromTwitterUseCode(code, TwitterApi.GRANT_TYPE)
+    return this.fetchTokenFromTwitter(code, TwitterApi.GRANT_TYPE)
   }
 
   public async fetchTokenFromRefreshToken(refreshToken: string) {
-    return this.fetchTokenFromTwitterUseCode(refreshToken, TwitterApi.GRANT_TYPE_REFRESH)
+    return this.fetchTokenFromTwitter(refreshToken, TwitterApi.GRANT_TYPE_REFRESH)
   }
 
-  private async fetchTokenFromTwitterUseCode(code: string, type: string) {
+  private async fetchTokenFromTwitter(code: string, type: string) {
     let params = {
       code: code,
       grant_type: type,
