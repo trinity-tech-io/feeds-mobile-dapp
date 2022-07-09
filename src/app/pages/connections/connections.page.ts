@@ -6,6 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TwitterService } from 'src/app/services/TwitterService';
 import { Events } from 'src/app/services/events.service';
 import { Injectable } from '@angular/core';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-connections',
@@ -17,21 +18,25 @@ import { Injectable } from '@angular/core';
 export class ConnectionsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public hideConnectionMenuComponent: boolean = false;
+  // public testToken: boolean = false;
   public twitterConnectStatus:number = 0;
   constructor(
+    private platform: Platform,
     private titleBarService: TitleBarService,
     private translate: TranslateService,
     public theme: ThemeService,
     private twitterService: TwitterService,
     private events: Events,
+    private dataHelper: DataHelper,
 
   ) {
 
     this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async (obj) => {
     });
 
+    let that = this;
     this.events.subscribe(FeedsEvent.PublishType.twitterLoginSuccess, (obj) => {
-      this.reloadStatus();
+      that.reloadStatus();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.twitterLoginFailed, () => {
@@ -39,8 +44,15 @@ export class ConnectionsPage implements OnInit {
     });
   }
 
-  reloadStatus() {
-    this.twitterConnectStatus = 1;
+  async reloadStatus() {
+    console.log("reloadStatus >>>>>>>>>>>>>>>>>>>>> ")
+    const userDid = (await this.dataHelper.getSigninData()).did
+    let token = this.dataHelper.getTwitterAccessToken(userDid)
+    console.log("reloadStatus token >>>>>>>>>>>>>>>>>>>>> ", token)
+    if (token != false) {
+      this.hideConnectionMenuComponent = false
+      this.twitterConnectStatus = 1
+    }
   }
 
   ngOnInit() {
@@ -48,7 +60,13 @@ export class ConnectionsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    console.log("ionViewWillEnter >>>>>>>>>>>>>>>>>> ");
     this.initTitle();
+    this.reloadStatus()
+    // this.platform.resume.subscribe(async () => {
+    //   console.log("resumeresumeresumeresumeresume", this.testToken);
+    //   this.twitterConnectStatus = 1;
+    // });
   }
 
   initTitle() {
@@ -67,7 +85,8 @@ export class ConnectionsPage implements OnInit {
    let typeButton: string = data.buttonType;
    switch(typeButton){
      case "twitter":
-       // this.hideConnectionMenuComponent = false;
+       this.hideConnectionMenuComponent = false;
+
        this.twitterService.openTwitterLoginPage();
       break;
     case "cancel":

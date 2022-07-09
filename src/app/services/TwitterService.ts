@@ -59,7 +59,6 @@ export class TwitterService {
     this.http.post(TwitterApi.TOKEN, params, header)
       .then(data => {
 
-        this.events.publish(FeedsEvent.PublishType.signinSuccess);
         this.events.publish(FeedsEvent.PublishType.twitterLoginSuccess);
         const ddata = JSON.parse(data.data)
         this.dataHelper.UpdateTwitterToken(userDid, ddata)
