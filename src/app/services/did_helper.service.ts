@@ -92,33 +92,32 @@ export class DIDHelperService {
 
 
   decodeSignInData(presentationJson: string): { did: string, name: string, avatar: string, email: string, telephone: string, nation: string, nickname: string, description: string } {
-    const vp = this.parseVerifiableCredentials(presentationJson);
-    console.log('vp====>', JSON.stringify(vp));
-    console.log('vpgetHolder====>', JSON.stringify(vp.getHolder()));
-    console.log('vp====>', JSON.stringify(vp.getCreated()));
-    console.log('vp====>', JSON.stringify(vp.getType()));
+    try {
+      const vp = this.parseVerifiableCredentials(presentationJson);
+      const did = vp.getHolder().toString();
+      const credentials = this.getCredentials(vp);
+      const interests = this.findCredentialValueById(credentials, 'interests', '');
+      const desc = this.findCredentialValueById(credentials, 'description', '');
+      let description = this.translate.instant('DIDdata.NoDescription');
 
-    const did = vp.getHolder().toString();
-    const credentials = this.getCredentials(vp);
-    const interests = this.findCredentialValueById(credentials, 'interests', '');
-    const desc = this.findCredentialValueById(credentials, 'description', '');
-    let description = this.translate.instant('DIDdata.NoDescription');
+      if (desc !== '') {
+        description = desc;
+      } else if (interests != '') {
+        description = interests;
+      }
 
-    if (desc !== '') {
-      description = desc;
-    } else if (interests != '') {
-      description = interests;
+      const notProvidedValue = this.translate.instant('DIDdata.Notprovided');
+      const name = this.findCredentialValueById(credentials, 'name', notProvidedValue);
+      const avatar = this.findCredentialValueById(credentials, 'avatar', notProvidedValue);
+      const email = this.findCredentialValueById(credentials, 'email', notProvidedValue);
+      const telephone = this.findCredentialValueById(credentials, 'telephone', notProvidedValue);
+      const nation = this.findCredentialValueById(credentials, 'nation', notProvidedValue);
+      const nickname = this.findCredentialValueById(credentials, 'nickname', '');
+      return { did: did, name: name, avatar: avatar, email: email, telephone: telephone, nation: nation, nickname: nickname, description: description };
+    } catch (error) {
+      Logger.error(TAG, 'Decode signin data error', error);
+      return null;
     }
-
-
-    const notProvidedValue = this.translate.instant('DIDdata.Notprovided');
-    const name = this.findCredentialValueById(credentials, 'name', notProvidedValue);
-    const avatar = this.findCredentialValueById(credentials, 'avatar', notProvidedValue);
-    const email = this.findCredentialValueById(credentials, 'email', notProvidedValue);
-    const telephone = this.findCredentialValueById(credentials, 'telephone', notProvidedValue);
-    const nation = this.findCredentialValueById(credentials, 'nation', notProvidedValue);
-    const nickname = this.findCredentialValueById(credentials, 'nickname', '');
-    return { did: did, name: name, avatar: avatar, email: email, telephone: telephone, nation: nation, nickname: nickname, description: description }
   }
 
   findCredentialValueById(credentials: VerifiableCredential[], fragment: string, defaultVault: string): string {

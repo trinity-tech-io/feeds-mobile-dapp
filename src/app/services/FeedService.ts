@@ -872,21 +872,21 @@ export class FeedService {
           if (isChange) {
             Logger.log(TAG, 'Signin data is changed, did is', did);
             await this.cleanAllData();
-            this.storeService.set(
+            await this.storeService.set(
               FeedsData.PersistenceKey.signInData,
               this.dataHelper.getLocalSignInData(),
             );
-            this.storeService.set(
+            await this.storeService.set(
               FeedsData.PersistenceKey.lastSignInData,
               this.dataHelper.getLocalSignInData(),
             );
             resolve(this.dataHelper.getLocalSignInData());
           } else {
-            this.storeService.set(
+            await this.storeService.set(
               FeedsData.PersistenceKey.signInData,
               this.dataHelper.getLocalSignInData(),
             );
-            this.storeService.set(
+            await this.storeService.set(
               FeedsData.PersistenceKey.lastSignInData,
               this.dataHelper.getLocalSignInData(),
             );
@@ -5376,11 +5376,22 @@ export class FeedService {
   }
 
   decodeSignInData(result: any): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const decodeResult = this.didHelperService.decodeSignInData(JSON.stringify(result));
+    return new Promise(async (resolve, reject) => {
+      try {
+        const decodeResult = this.didHelperService.decodeSignInData(JSON.stringify(result));
+        if (decodeResult) {
+          await this.saveSignInData(decodeResult.did, decodeResult.name, null, decodeResult.email,
+            decodeResult.telephone, decodeResult.nation, decodeResult.nickname, decodeResult.description);
 
-      this.saveSignInData(decodeResult.did, decodeResult.name, null, decodeResult.email,
-        decodeResult.telephone, decodeResult.nation, decodeResult.nickname, decodeResult.description);
+          this.events.publish(FeedsEvent.PublishType.signinSuccess, decodeResult.did);
+          resolve(decodeResult.did);
+        } else {
+          resolve(null);
+        }
+      } catch (error) {
+        Logger.error(TAG, 'Decode signin data error');
+        resolve(null);
+      }
     });
   }
 
