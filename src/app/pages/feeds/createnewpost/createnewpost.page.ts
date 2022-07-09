@@ -97,6 +97,12 @@ export class CreatenewpostPage implements OnInit {
       this.newPostIonTextarea.setFocus();
       clearTimeout(sid);
     }, 500);
+
+    this.isPostTwitter = localStorage.getItem("isSyncToTwitter") === "true";
+  }
+
+  checkBoxClick(event) {
+    localStorage.setItem("isSyncToTwitter", event.detail.checked);
   }
 
   newPostTextArea() {

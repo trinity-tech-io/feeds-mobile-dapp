@@ -13,6 +13,10 @@ declare namespace FeedsEvent {
     carrierSessionRequest = 'carrier:sessionRequest',
 
     ////////
+    twitterLoginSuccess = 'twitter:loginSuccess',
+    twitterLoginFailed = 'twitter:loginFailed',
+
+    ////////
     networkStatusChanged = 'feeds:networkStatusChanged',
 
     ////////

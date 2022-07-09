@@ -6,6 +6,7 @@ import { PostHelperService } from 'src/app/services/post_helper.service';
 import { UtilService } from 'src/app/services/utilService';
 import { Logger } from './logger';
 import { HiveVaultResultParse } from './hivevault_resultparse.service';
+import { TwitterService } from 'src/app/services/TwitterService';
 
 import { FileHelperService } from './FileHelperService';
 import _ from 'lodash';
@@ -20,6 +21,7 @@ export class HiveVaultController {
     private postHelperService: PostHelperService,
     private fileHelperService: FileHelperService,
     private eventBus: Events,
+    private twitterService: TwitterService,
   ) {
   }
 
@@ -544,6 +546,11 @@ export class HiveVaultController {
       try {
         const content = await this.progressMediaData(postText, imagesBase64, videoData)
         const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
+
+        if (localStorage.getItem("isSyncToTwitter") === "true") {
+          await this.twitterService.postTweet(postText);
+        }
+
         Logger.log(TAG, "Publish new post , result is", result);
         if (!result) {
           const errorMsg = 'Publish new post error';

@@ -5,6 +5,7 @@ import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { TwitterApi } from './TwitterApi';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { Events } from './events.service';
 
 const TAG: string = 'TwitterService';
 
@@ -16,6 +17,7 @@ export class TwitterService {
     private inappBrowser: InAppBrowser,
     private http: HTTP,
     private dataHelper: DataHelper,
+    private events: Events,
 
   ) { }
 
@@ -56,14 +58,19 @@ export class TwitterService {
     let header = {} 
     this.http.post(TwitterApi.TOKEN, params, header)
       .then(data => {
-        Logger.log(TAG, 'auth twitter success: ', data.data)
+
+        this.events.publish(FeedsEvent.PublishType.signinSuccess);
+        this.events.publish(FeedsEvent.PublishType.twitterLoginSuccess);
         const ddata = JSON.parse(data.data)
         this.dataHelper.UpdateTwitterToken(userDid, ddata)
         const accessToken = ddata.access_token
         return accessToken
       })
       .catch(error => {
-        Logger.error(TAG, "auth twitter Error: ", error)
+
+        this.events.publish(FeedsEvent.PublishType.twitterLoginFailed);
+
+        console.error(TAG, "auth twitter Error: ", error)
         return error
       })
   }
@@ -132,6 +139,7 @@ export class TwitterService {
       // TODO: refreshTOken 同样过期，需要调起重新授权界面
       token = await this.fetchToken(userDid)
       }
+      return token
     }
     catch {
       // TODO: 处理refresh token 过期

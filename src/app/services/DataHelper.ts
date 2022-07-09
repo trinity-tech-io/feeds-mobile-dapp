@@ -4157,7 +4157,7 @@ export class DataHelper {
     localStorage.setItem(userDid + "TWITTERTOKEN", JSON.stringify(tokenData))
   }
 
-  getTwitterAccessToken(userDid: string) {
+  getTwitterRefreshToken(userDid: string) {
     const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
     const tokenData = JSON.parse(data)
 
@@ -4170,12 +4170,12 @@ export class DataHelper {
     return refreshToken
   }
 
-  getTwitterRefreshToken(userDid: string) {
+  getTwitterAccessToken(userDid: string) {
     const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
     const tokenData = JSON.parse(data)
 
-    let access_token = tokenData['access_token']
-    const expired_time = tokenData['expired_time']
+    const access_token = tokenData.access_token
+    const expired_time = tokenData.expired_time
     const currentTime = new Date().getTime()
     if (currentTime > expired_time) {
       return false

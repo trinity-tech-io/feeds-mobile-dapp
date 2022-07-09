@@ -21,7 +21,9 @@
   </ion-textarea>
   </div>
   <div class="twitter">
-   <span>{{ 'CreatenewpostPage.twitterDes' | translate}}</span> <ion-checkbox mode='md' checked="true" class="checkbox" [(ngModel)]="isPostTwitter"></ion-checkbox>
+  <span>{{ 'CreatenewpostPage.twitterDes' | translate}}</span>
+  <ion-checkbox mode='md' checked="true" class="checkbox" [(ngModel)]="isPostTwitter" (ionChange)="checkBoxClick($event)">
+  </ion-checkbox>
   </div>
   <div *ngIf="imgUrl !== ''" class="img-container">
     <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />

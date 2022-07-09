@@ -3,11 +3,17 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { ThemeService } from '../../services/theme.service';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TwitterService } from 'src/app/services/TwitterService';
+import { Events } from 'src/app/services/events.service';
+import { Injectable } from '@angular/core';
+
 @Component({
   selector: 'app-connections',
   templateUrl: './connections.page.html',
   styleUrls: ['./connections.page.scss'],
 })
+
+@Injectable()
 export class ConnectionsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public hideConnectionMenuComponent: boolean = false;
@@ -15,10 +21,30 @@ export class ConnectionsPage implements OnInit {
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
-    public theme: ThemeService
-  ) { }
+    public theme: ThemeService,
+    private twitterService: TwitterService,
+    private events: Events,
+
+  ) {
+
+    this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async (obj) => {
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.twitterLoginSuccess, (obj) => {
+      this.reloadStatus();
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.twitterLoginFailed, () => {
+
+    });
+  }
+
+  reloadStatus() {
+    this.twitterConnectStatus = 1;
+  }
 
   ngOnInit() {
+
   }
 
   ionViewWillEnter() {
@@ -40,9 +66,9 @@ export class ConnectionsPage implements OnInit {
   hideConnectionMenu(data: any){
    let typeButton: string = data.buttonType;
    switch(typeButton){
-    case "twitter":
-      this.twitterConnectStatus = 1;
-      this.hideConnectionMenuComponent = false;
+     case "twitter":
+       // this.hideConnectionMenuComponent = false;
+       this.twitterService.openTwitterLoginPage();
       break;
     case "cancel":
       this.hideConnectionMenuComponent = false;
