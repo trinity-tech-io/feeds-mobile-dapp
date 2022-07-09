@@ -21,7 +21,6 @@ export class ConnectionsPage implements OnInit {
   // public testToken: boolean = false;
   public twitterConnectStatus:number = 0;
   constructor(
-    private platform: Platform,
     private titleBarService: TitleBarService,
     private translate: TranslateService,
     public theme: ThemeService,
