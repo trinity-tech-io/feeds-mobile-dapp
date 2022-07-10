@@ -147,6 +147,9 @@ export class MyApp {
   initializeApp() {
     this.platform.ready()
       .then(async () => {
+        // // 测试twitter 记得删除
+        // const userDid = (await this.dataHelper.getSigninData()).did
+        // this.dataHelper.removeTwitterToken(userDid)
         return await this.dataHelper.loadApiProvider();
       })
       .then(async (api) => {

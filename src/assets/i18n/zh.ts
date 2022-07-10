@@ -204,6 +204,8 @@ export const zh = {
     likeError: '网络异常，点赞失败',
     likeError1: '点赞失败，请稍后重试',
     errorDes: '抱歉，程序出错了，已向开发团队报告。',
+    twitterExpired: 'Twitter 登录过期，请到设置页面重新登陆',
+    twitterAuthFailed: 'Twitter 授权失败',
   },
   app: {
     profileDetails: '档案详情',

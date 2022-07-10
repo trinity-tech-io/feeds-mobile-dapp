@@ -35,6 +35,7 @@ export class ConnectionsPage implements OnInit {
 
     let that = this;
     this.events.subscribe(FeedsEvent.PublishType.twitterLoginSuccess, (obj) => {
+      console.log("twitterLoginSuccess >>>>>>>>>>> ")
       that.reloadStatus();
     });
 
@@ -48,9 +49,15 @@ export class ConnectionsPage implements OnInit {
     const userDid = (await this.dataHelper.getSigninData()).did
     let token = this.dataHelper.getTwitterAccessToken(userDid)
     console.log("reloadStatus token >>>>>>>>>>>>>>>>>>>>> ", token)
-    if (token != false) {
+    if (token != false && token != null) {
+      console.log("reloadStatus  1 >>>>>>>>>>>>>>>>>>>>> ")
       this.hideConnectionMenuComponent = false
       this.twitterConnectStatus = 1
+    }
+    else {
+      console.log("reloadStatus  2 >>>>>>>>>>>>>>>>>>>>> ")
+      this.hideConnectionMenuComponent = false
+      this.twitterConnectStatus = 0
     }
   }
 
@@ -59,13 +66,17 @@ export class ConnectionsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    console.log("ionViewWillEnter >>>>>>>>>>>>>>>>>> ");
-    this.initTitle();
-    this.reloadStatus()
-    // this.platform.resume.subscribe(async () => {
-    //   console.log("resumeresumeresumeresumeresume", this.testToken);
-    //   this.twitterConnectStatus = 1;
-    // });
+    this.initTitle()
+    let that = this;
+    this.twitterService.checkTwitterIsExpired().then(async (data) => {
+      console.log("ionViewWillEnter >>>>>>>>>>>>>>>>>> ")
+      that.reloadStatus()
+    }).catch(() => {
+
+    })
+  }
+  ionViewWillLeave() {
+    console.log("ionViewWillLeave  Leave >>>>>>>>>>>>>>>>>> ")
   }
 
   initTitle() {

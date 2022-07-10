@@ -6,6 +6,7 @@ import { TwitterApi } from './TwitterApi';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Events } from './events.service';
+import { NativeService } from './NativeService';
 
 const TAG: string = 'TwitterService';
 
@@ -18,7 +19,7 @@ export class TwitterService {
     private http: HTTP,
     private dataHelper: DataHelper,
     private events: Events,
-
+    private native: NativeService,
   ) { }
 
   public getJsonFromUrl(url) {
@@ -33,20 +34,18 @@ export class TwitterService {
   }
 
   public getTokenFromCode(code: string) {
+    console.log("getTokenFromCode >>>>>>>>>> ")
     return this.fetchTokenFromTwitter(code, TwitterApi.GRANT_TYPE)
   }
 
   public async fetchToken(userDid: string) {
     const token = this.dataHelper.getTwitterRefreshToken(userDid)
-
+    console.log("fetchToken >>>>>>>>>> ")
     return this.fetchTokenFromTwitter(token, TwitterApi.GRANT_TYPE_REFRESH)
   }
 
-  public async fetchTokenFromRefreshToken(refreshToken: string) {
-    return this.fetchTokenFromTwitter(refreshToken, TwitterApi.GRANT_TYPE_REFRESH)
-  }
-
   private async fetchTokenFromTwitter(code: string, type: string) {
+    console.log("fetchTokenFromTwitter code >>>>>>>>>> ", code, type)
     let params = {
       code: code,
       grant_type: type,
@@ -58,17 +57,16 @@ export class TwitterService {
     let header = {} 
     this.http.post(TwitterApi.TOKEN, params, header)
       .then(data => {
-
+        console.log("this.events.publish(FeedsEvent.PublishType.twitterLoginSuccess) >>>>>>>>>>>>>>>>>> ")
         this.events.publish(FeedsEvent.PublishType.twitterLoginSuccess);
+        console.log("data >>>>>>>>>>>>>>>>>> ", data)
         const ddata = JSON.parse(data.data)
         this.dataHelper.UpdateTwitterToken(userDid, ddata)
         const accessToken = ddata.access_token
         return accessToken
       })
       .catch(error => {
-
         this.events.publish(FeedsEvent.PublishType.twitterLoginFailed);
-
         console.error(TAG, "auth twitter Error: ", error)
         return error
       })
@@ -86,7 +84,7 @@ export class TwitterService {
     let params = {
       "text": base64Encoded
     }
-    const token = await this.checkIsExpired()
+    const token = await this.checkTwitterIsExpired()
     Logger.log(TAG, 'post media token >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', token)
     let header = {
       "Content-Type": "multipart/form-data",
@@ -112,7 +110,7 @@ export class TwitterService {
     let params = {
       "text": text
     }
-    const token = await this.checkIsExpired()
+    const token = await this.checkTwitterIsExpired()
     Logger.log(TAG, 'post tweet token >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', token)
     let header = {
       "Content-Type": "application/json",
@@ -130,18 +128,20 @@ export class TwitterService {
       })
   }
 
-  public async checkIsExpired() {
-    try {
+  public async checkTwitterIsExpired() {
     const userDid = (await this.dataHelper.getSigninData()).did
+    try {
     let token = this.dataHelper.getTwitterAccessToken(userDid)
     if (token === false) {
-      // TODO: refreshTOken 同样过期，需要调起重新授权界面
+      // TODO: refreshTOken 同样过期，提示用户重新登录
       token = await this.fetchToken(userDid)
       }
       return token
     }
     catch {
       // TODO: 处理refresh token 过期
+      this.dataHelper.removeTwitterToken(userDid)
+      this.native.toastWarn("common.twitterExpired");
     }
   }
 }

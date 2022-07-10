@@ -4172,18 +4172,24 @@ export class DataHelper {
 
   getTwitterAccessToken(userDid: string) {
     const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
+    if (data === '' || data === undefined) {
+      return null // 标识 本地没有token
+    }
     const tokenData = JSON.parse(data)
 
     const access_token = tokenData.access_token
     const expired_time = tokenData.expired_time
     const currentTime = new Date().getTime()
     if (currentTime > expired_time) {
-      return false
+      return false // 标识 token 过期
     }
 
     return access_token
   }
 
+  removeTwitterToken(userDid: string) {
+    localStorage.removeItem(userDid + "TWITTERTOKEN")
+  }
 
   //API
   // addPosts(postList: FeedsData.PostV3[], useCache: boolean, usePersistence: boolean) {
