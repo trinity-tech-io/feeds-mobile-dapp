@@ -73,7 +73,6 @@ export class AppService {
       let isInitHive = result || null;
       if (isInitHive === null) {
         //此处切换成galleriahive 页面
-        this.events.publish(FeedsEvent.PublishType.signinSuccess);
         this.native.setRootRouter('galleriahive');
         this.splashScreen.hide();
         return;

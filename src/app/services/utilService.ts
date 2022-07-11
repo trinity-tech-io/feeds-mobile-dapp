@@ -843,4 +843,8 @@ export class UtilService {
   public static generateHiveSyncCompleteObj() {
     return { status: 6, describe: "GalleriahivePage.synchronizingComplete" }
   }
+
+  public static generateDIDLocalVersion(userDid: string) {
+    return userDid + 'localScriptVersion';
+  }
 }

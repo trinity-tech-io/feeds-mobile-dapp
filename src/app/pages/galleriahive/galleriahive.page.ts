@@ -44,6 +44,15 @@ export class GalleriahivePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.dataHelper.getSigninData().then((signinData) => {
+      if (!signinData || !signinData.did) {
+        //retry signin
+        Logger.log(TAG, 'Retry signin');
+        return;
+      }
+      this.hiveVaultController.prepareHive(signinData.did);
+    })
+
     this.events.subscribe(FeedsEvent.PublishType.authEssentialSuccess, async () => {
       Logger.log(TAG, "revice authEssentialSuccess event");
       this.zone.run(async () => {
@@ -106,23 +115,20 @@ export class GalleriahivePage implements OnInit {
   }
 
   async TryButton() {
-
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
-
     await this.doSignin();
-
   }
 
   async doSignin() {
     try {
-      this.feedService.signIn().then(isSuccess => {
-        if (isSuccess) {
+      this.feedService.signIn().then(async (userDID: string) => {
+        if (userDID) {
           this.authorizationStatus = 0;
-          this.events.publish(FeedsEvent.PublishType.signinSuccess);
+          await this.hiveVaultController.prepareHive(userDID);
           return;
         } else {
         }

@@ -44,6 +44,8 @@ export class Config {
     /** TestNet IPFS */
     public static IPFS_TEST_SERVER: string = 'https://ipfs-test.trinity-feeds.app/';
 
+    public static readonly scriptVersion = "1.0.2";
+
     public static changeApi(api: string) {
         if (api == 'elastos.io') {
             Config.BASE_API = Config.ELASTOS_API;
@@ -120,7 +122,7 @@ export class Config {
     public static newCommentVersion: number = 10400;
     public static newMultiPropCountVersion: number = 10500;
 
-    public static rectTop: number = 2*screen.availHeight;
-    public static rectBottom: number = 2*screen.availHeight;
+    public static rectTop: number = 2 * screen.availHeight;
+    public static rectBottom: number = 2 * screen.availHeight;
     public static assetsTimer: number = 200;
 }

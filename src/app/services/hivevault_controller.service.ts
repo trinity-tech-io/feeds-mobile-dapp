@@ -10,6 +10,7 @@ import { TwitterService } from 'src/app/services/TwitterService';
 
 import { FileHelperService } from './FileHelperService';
 import _ from 'lodash';
+import { Config } from './config';
 
 const TAG = 'HiveVaultController';
 
@@ -1984,5 +1985,79 @@ export class HiveVaultController {
   }
 
   checkSubscriptionState() {
+  }
+
+  async initRegisterScript(isForce: boolean) {
+    let regist_scripting = false;
+    let lasterVersion = '';
+    let preVersion = '';
+    const signinData = await this.dataHelper.getSigninData() || {};
+    let userDid = signinData.did || "";
+    if (userDid === '' || userDid === undefined || userDid === null) {
+      return
+    }
+    const key = UtilService.generateDIDLocalVersion(userDid);
+    let localVersion = localStorage.getItem(key) || ''
+    if (localVersion == "" && isForce === false) {
+      return
+    }
+    if (localVersion != Config.scriptVersion) {
+      try {
+        if (localVersion === '') {
+          let result = await this.queryFeedsScripting();
+          regist_scripting = result[0]["regist_scripting"];
+          lasterVersion = result[0]["laster_version"];
+          preVersion = result[0]["pre_version"];
+        }
+        else {
+
+        }
+      }
+      catch (error) {
+        if (error["code"] === 404) {
+          regist_scripting = true
+        }
+      }
+    }
+    else {
+      // 不需要注册 return
+      return
+    }
+    if (Config.scriptVersion !== lasterVersion) {
+      try {
+        // let syncHiveData1 = { status: 1, describe: "GalleriahivePage.creatingScripting" }
+        // this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData1);
+        // this.dataHelper.setSyncHiveData(syncHiveData1);
+        await this.createCollectionAndRregisteScript(userDid)
+        preVersion = lasterVersion === '' ? localVersion : lasterVersion
+        lasterVersion = Config.scriptVersion
+        regist_scripting = false
+        localVersion = lasterVersion
+        //update
+        await this.updateFeedsScripting(lasterVersion, preVersion, regist_scripting)
+        const key = UtilService.generateDIDLocalVersion(userDid);
+        localStorage.setItem(key, localVersion)
+      } catch (error) {
+        console.log(error)
+      }
+    } else if (localVersion === '' && Config.scriptVersion === lasterVersion) {
+      localVersion = Config.scriptVersion
+      const key = UtilService.generateDIDLocalVersion(userDid);
+      localStorage.setItem(key, localVersion)
+    }
+  }
+
+  prepareHive(userDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.dataHelper.createSQLTables(userDid);
+        await this.prepareConnection();
+        await this.initRegisterScript(true);
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+
   }
 }

@@ -23,23 +23,13 @@ import { IntentService } from './services/IntentService';
 import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from './services/ApiUrl';
 import { IPFSService } from 'src/app/services/ipfs.service';
-import { HiveService } from 'src/app/services/HiveService';
 import { ViewHelper } from './services/viewhelper.service';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 import { TwitterService } from 'src/app/services/TwitterService';
 
 let TAG: string = 'app-component';
-
-// enum LogLevel {
-//   NONE,
-//   ERROR,
-//   WARN,
-//   INFO,
-//   DEBUG,
-// }
 @Component({
   selector: 'my-app',
   templateUrl: 'app.html',
@@ -63,8 +53,6 @@ export class MyApp {
   public loadingText: string = null;
   public loadingCurNumber: string = null;
   public loadingMaxNumber: string = null;
-  private scriptVersion = "1.0.2"
-  private LOCAL_VERSION = "localScriptVersion"
   public userDidDisplay: string = '';
 
   constructor(
@@ -89,29 +77,13 @@ export class MyApp {
     private intentService: IntentService,
     private httpService: HttpService,
     private ipfsService: IPFSService,
-    private hiveService: HiveService,
     private viewHelper: ViewHelper,
     private keyboard: Keyboard,
-    private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController,
-    private sqliteHelper: FeedsSqliteHelper,
-    private menu: MenuController,
     private twitterService: TwitterService,
-
   ) {
     this.initializeApp();
     this.initProfileData();
-    this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async (did: string) => {
-      try {
-        await this.dataHelper.createSQLTables(did);
-        await this.hiveVaultController.prepareConnection();
-        await this.initRegisterScript(true);
-      } catch (error) {
-        Logger.error(TAG, "signinFail error", error);
-      }
-
-    });
-
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
       document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
@@ -226,16 +198,16 @@ export class MyApp {
             }
 
 
-              //分享菜单了 app-sharemenu
-              let connnectionmenu: HTMLElement = document.querySelector("app-connectionmenu") || null;
-              if (connnectionmenu != null) {
-                let connnectionmenuMask: HTMLElement = document.getElementById("connectionMask") || null;
-                if (connnectionmenuMask != null) {
-                  connnectionmenuMask.click();
-                  connnectionmenu.remove();
-                }
-                return;
+            //分享菜单了 app-sharemenu
+            let connnectionmenu: HTMLElement = document.querySelector("app-connectionmenu") || null;
+            if (connnectionmenu != null) {
+              let connnectionmenuMask: HTMLElement = document.getElementById("connectionMask") || null;
+              if (connnectionmenuMask != null) {
+                connnectionmenuMask.click();
+                connnectionmenu.remove();
               }
+              return;
+            }
 
             //分享菜单了 app-sharemenu
             let sharemenu: HTMLElement = document.querySelector("app-sharemenu") || null;
@@ -305,11 +277,14 @@ export class MyApp {
         );
       }).then(async () => {
         this.hiveVaultController.refreshAvatar().catch(() => { });
-        this.initRegisterScript(false).catch((error) => { console.log("initRegisterScript error === ", error) })
+        this.hiveVaultController.initRegisterScript(false).catch((error) => { console.log("initRegisterScript error === ", error) })
       }).catch(() => { });
   }
 
   initConnector() {
+    if (this.isIOSPlatform()) {
+      connectivity.registerConnector(this.localIdentityConnector);
+    }
     // connectivity.registerConnector(this.localIdentityConnector);
     // To let users use Essentials for his operations:
     connectivity.registerConnector(this.essentialsConnector);
@@ -542,7 +517,6 @@ export class MyApp {
     this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
     this.events.unsubscribe(FeedsEvent.PublishType.nftLoadingUpdateText);
     this.events.unsubscribe(FeedsEvent.PublishType.openPayPrompt);
-    this.events.unsubscribe(FeedsEvent.PublishType.signinSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.initHiveData);
     this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
   }
@@ -710,62 +684,7 @@ export class MyApp {
   //   })
   // }
 
-  async initRegisterScript(isForce: boolean) {
-    let regist_scripting = false;
-    let lasterVersion = '';
-    let preVersion = '';
-    const signinData = await this.dataHelper.getSigninData() || {};
-    let userDid = signinData.did || "";
-    if (userDid === '' || userDid === undefined || userDid === null) {
-      return
-    }
-    let localVersion = localStorage.getItem(userDid + this.LOCAL_VERSION) || ''
-    if (localVersion == "" && isForce === false) {
-      return
-    }
-    if (localVersion != this.scriptVersion) {
-      try {
-        if (localVersion === '') {
-          let result = await this.hiveVaultController.queryFeedsScripting();
-          regist_scripting = result[0]["regist_scripting"];
-          lasterVersion = result[0]["laster_version"];
-          preVersion = result[0]["pre_version"];
-        }
-        else {
 
-        }
-      }
-      catch (error) {
-        if (error["code"] === 404) {
-          regist_scripting = true
-        }
-      }
-    }
-    else {
-      // 不需要注册 return
-      return
-    }
-    if (this.scriptVersion !== lasterVersion) {
-      try {
-        // let syncHiveData1 = { status: 1, describe: "GalleriahivePage.creatingScripting" }
-        // this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData1);
-        // this.dataHelper.setSyncHiveData(syncHiveData1);
-        await this.hiveVaultController.createCollectionAndRregisteScript(userDid)
-        preVersion = lasterVersion === '' ? localVersion : lasterVersion
-        lasterVersion = this.scriptVersion
-        regist_scripting = false
-        localVersion = lasterVersion
-        //update
-        await this.hiveVaultController.updateFeedsScripting(lasterVersion, preVersion, regist_scripting)
-        localStorage.setItem(userDid + this.LOCAL_VERSION, localVersion)
-      } catch (error) {
-        console.log(error)
-      }
-    } else if (localVersion === '' && this.scriptVersion === lasterVersion) {
-      localVersion = this.scriptVersion
-      localStorage.setItem(userDid + this.LOCAL_VERSION, localVersion)
-    }
-  }
 
   async closeMenu() {
     await this.menuController.close();

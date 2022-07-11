@@ -19,7 +19,7 @@ export class ConnectionsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public hideConnectionMenuComponent: boolean = false;
   // public testToken: boolean = false;
-  public twitterConnectStatus:number = 0;
+  public twitterConnectStatus: number = 0;
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -30,9 +30,6 @@ export class ConnectionsPage implements OnInit {
     private zone: NgZone,
 
   ) {
-
-    this.events.subscribe(FeedsEvent.PublishType.signinSuccess, async (obj) => {
-    });
 
     let that = this;
     this.events.subscribe(FeedsEvent.PublishType.twitterLoginSuccess, (obj) => {
@@ -94,18 +91,18 @@ export class ConnectionsPage implements OnInit {
     this.hideConnectionMenuComponent = true;
   }
 
-  hideConnectionMenu(data: any){
-   let typeButton: string = data.buttonType;
-   switch(typeButton){
-     case "twitter":
-       this.hideConnectionMenuComponent = false;
+  hideConnectionMenu(data: any) {
+    let typeButton: string = data.buttonType;
+    switch (typeButton) {
+      case "twitter":
+        this.hideConnectionMenuComponent = false;
 
-       this.twitterService.openTwitterLoginPage();
-      break;
-    case "cancel":
-      this.hideConnectionMenuComponent = false;
-      break;
-   }
+        this.twitterService.openTwitterLoginPage();
+        break;
+      case "cancel":
+        this.hideConnectionMenuComponent = false;
+        break;
+    }
   }
 
 }

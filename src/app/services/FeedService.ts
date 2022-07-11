@@ -5382,8 +5382,6 @@ export class FeedService {
         if (decodeResult) {
           await this.saveSignInData(decodeResult.did, decodeResult.name, null, decodeResult.email,
             decodeResult.telephone, decodeResult.nation, decodeResult.nickname, decodeResult.description);
-
-          this.events.publish(FeedsEvent.PublishType.signinSuccess, decodeResult.did);
           resolve(decodeResult.did);
         } else {
           resolve(null);
