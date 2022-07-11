@@ -547,8 +547,9 @@ export class HiveVaultController {
       try {
         const content = await this.progressMediaData(postText, imagesBase64, videoData)
         const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
+        const userDid = (await this.dataHelper.getSigninData()).did
 
-        if (localStorage.getItem("isSyncToTwitter") === "true") {
+        if (localStorage.getItem(userDid + "isSyncToTwitter") === "true") {
           await this.twitterService.postTweet(postText);
         }
 

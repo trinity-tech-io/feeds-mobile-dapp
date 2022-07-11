@@ -102,25 +102,27 @@ export class CreatenewpostPage implements OnInit {
     this.twitterService.checkTwitterIsExpired().then(async (result) => {
       if (result != null) {
         this.isPostTwitter = true
-        localStorage.setItem("isSyncToTwitter", "true");
+        const userDid = (await this.dataHelper.getSigninData()).did
+        localStorage.setItem(userDid + "isSyncToTwitter", "true");
       }
     })
   }
 
-  checkBoxClick(event) {
+  async checkBoxClick(event) {
+    const userDid = (await this.dataHelper.getSigninData()).did
     if (event.detail.checked === true) {
       this.twitterService.checkTwitterIsExpiredWithToast().then(async (result) => {
         if (result === null) {
           this.isPostTwitter = false
-          localStorage.setItem("isSyncToTwitter", "false")
+          localStorage.setItem(userDid + "isSyncToTwitter", "false")
         }
         else {
           this.isPostTwitter = event.detail.checked
-          localStorage.setItem("isSyncToTwitter", event.detail.checked)
+          localStorage.setItem(userDid + "isSyncToTwitter", event.detail.checked)
         }
       })
     } else {
-      localStorage.setItem("isSyncToTwitter", event.detail.checked);
+      localStorage.setItem(userDid + "isSyncToTwitter", event.detail.checked);
     }
 
   }
@@ -167,7 +169,8 @@ export class CreatenewpostPage implements OnInit {
     this.twitterService.checkTwitterIsExpired().then(async (result) => {
       if (result != null) {
         this.isPostTwitter = true
-        localStorage.setItem("isSyncToTwitter", "true");
+        const userDid = (await this.dataHelper.getSigninData()).did
+        localStorage.setItem(userDid + "isSyncToTwitter", "true");
       }
     })
   }
