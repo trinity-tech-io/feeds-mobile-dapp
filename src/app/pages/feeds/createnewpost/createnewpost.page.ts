@@ -19,6 +19,7 @@ import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
+import { TwitterService } from 'src/app/services/TwitterService';
 
 let TAG: string = 'Feeds-createpost';
 
@@ -88,7 +89,8 @@ export class CreatenewpostPage implements OnInit {
     private feedsServiceApi: FeedsServiceApi,
     // private hiveService: HiveService,
     // private hiveVaultApi: HiveVaultApi,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private twitterService: TwitterService,
 
   ) { }
 
@@ -97,12 +99,30 @@ export class CreatenewpostPage implements OnInit {
       this.newPostIonTextarea.setFocus();
       clearTimeout(sid);
     }, 500);
-
-    this.isPostTwitter = localStorage.getItem("isSyncToTwitter") === "true";
+    this.twitterService.checkTwitterIsExpired().then(async (result) => {
+      if (result != null) {
+        this.isPostTwitter = true
+        localStorage.setItem("isSyncToTwitter", "true");
+      }
+    })
   }
 
   checkBoxClick(event) {
-    localStorage.setItem("isSyncToTwitter", event.detail.checked);
+    if (event.detail.checked === true) {
+      this.twitterService.checkTwitterIsExpiredWithToast().then(async (result) => {
+        if (result === null) {
+          this.isPostTwitter = false
+          localStorage.setItem("isSyncToTwitter", "false")
+        }
+        else {
+          this.isPostTwitter = event.detail.checked
+          localStorage.setItem("isSyncToTwitter", event.detail.checked)
+        }
+      })
+    } else {
+      localStorage.setItem("isSyncToTwitter", event.detail.checked);
+    }
+
   }
 
   newPostTextArea() {
@@ -144,7 +164,12 @@ export class CreatenewpostPage implements OnInit {
     this.initTitle();
 
     this.initFeed();
-
+    this.twitterService.checkTwitterIsExpired().then(async (result) => {
+      if (result != null) {
+        this.isPostTwitter = true
+        localStorage.setItem("isSyncToTwitter", "true");
+      }
+    })
   }
 
   ionViewWillLeave() {

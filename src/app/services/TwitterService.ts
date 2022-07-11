@@ -7,6 +7,7 @@ import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Events } from './events.service';
 import { NativeService } from './NativeService';
+import { theme } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings';
 
 const TAG: string = 'TwitterService';
 
@@ -68,7 +69,7 @@ export class TwitterService {
       .catch(error => {
         this.events.publish(FeedsEvent.PublishType.twitterLoginFailed);
         console.error(TAG, "auth twitter Error: ", error)
-        return error
+        throw error
       })
   }
 
@@ -124,7 +125,7 @@ export class TwitterService {
       })
       .catch(error => {
         Logger.log(TAG, 'post tweet error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
-        return error
+        throw error
       })
   }
 
@@ -135,13 +136,30 @@ export class TwitterService {
     if (token === false) {
       // TODO: refreshTOken 同样过期，提示用户重新登录
       token = await this.fetchToken(userDid)
+    }
+      return token
+    }
+    catch (error) {
+      // TODO: 处理refresh token 过期
+      this.dataHelper.removeTwitterToken(userDid)
+      // this.native.toastWarn("common.twitterExpired");
+      throw error
+    }
+  }
+
+  public async checkTwitterIsExpiredWithToast() {
+    try {
+      // TODO: refreshTOken 同样过期，提示用户重新登录
+      const token = await this.checkTwitterIsExpired()
+      if (token === null) {
+        this.native.toastWarn("common.twitterNotLogin");
       }
       return token
     }
     catch {
       // TODO: 处理refresh token 过期
-      this.dataHelper.removeTwitterToken(userDid)
       this.native.toastWarn("common.twitterExpired");
+      return null
     }
   }
 }

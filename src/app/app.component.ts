@@ -29,6 +29,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { HiveVaultApi } from 'src/app/services/hivevault_api.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
+import { TwitterService } from 'src/app/services/TwitterService';
 
 let TAG: string = 'app-component';
 
@@ -94,7 +95,9 @@ export class MyApp {
     private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController,
     private sqliteHelper: FeedsSqliteHelper,
-    private menu: MenuController
+    private menu: MenuController,
+    private twitterService: TwitterService,
+
   ) {
     this.initializeApp();
     this.initProfileData();
@@ -142,6 +145,8 @@ export class MyApp {
     // this.events.subscribe(FeedsEvent.PublishType.initHiveData, async () => {
     //   await this.initScript();
     // });
+
+    this.twitterService.checkTwitterIsExpired()
   }
 
   initializeApp() {

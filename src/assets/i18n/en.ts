@@ -204,6 +204,7 @@ export const en = {
     likeError: 'Like failed due to network exception',
     likeError1: 'Like failed, try again later',
     errorDes: 'Sorry, the application encountered an error. This has been reported to the team.',
+    twitterNotLogin: 'Twitter is not logged in, please go to the settings page to log in',
     twitterExpired: 'Twitter login expired，Please go to the settings page to log in again.',
     twitterAuthFailed: 'Twitter auth failed.',
   },
