@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { ThemeService } from '../../services/theme.service';
@@ -27,6 +27,7 @@ export class ConnectionsPage implements OnInit {
     private twitterService: TwitterService,
     private events: Events,
     private dataHelper: DataHelper,
+    private zone: NgZone,
 
   ) {
 
@@ -49,16 +50,18 @@ export class ConnectionsPage implements OnInit {
     const userDid = (await this.dataHelper.getSigninData()).did
     let token = this.dataHelper.getTwitterAccessToken(userDid)
     console.log("reloadStatus token >>>>>>>>>>>>>>>>>>>>> ", token)
-    if (token != false && token != null) {
-      console.log("reloadStatus  1 >>>>>>>>>>>>>>>>>>>>> ")
-      this.hideConnectionMenuComponent = false
-      this.twitterConnectStatus = 1
-    }
-    else {
-      console.log("reloadStatus  2 >>>>>>>>>>>>>>>>>>>>> ")
-      this.hideConnectionMenuComponent = false
-      this.twitterConnectStatus = 0
-    }
+    this.zone.run(() => {
+      if (token != false && token != null) {
+        console.log("reloadStatus  1 >>>>>>>>>>>>>>>>>>>>> ")
+        this.hideConnectionMenuComponent = false
+        this.twitterConnectStatus = 1
+      }
+      else {
+        console.log("reloadStatus  2 >>>>>>>>>>>>>>>>>>>>> ")
+        this.hideConnectionMenuComponent = false
+        this.twitterConnectStatus = 0
+      }
+    });
   }
 
   ngOnInit() {
