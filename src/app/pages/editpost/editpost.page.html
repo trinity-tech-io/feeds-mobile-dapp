@@ -44,8 +44,9 @@
       <ion-col class="left-col">
       </ion-col>
       <ion-col class="right-col" size="6">
-        <ion-button (click)="clickEidtPost()">
-          <ion-label>{{ 'CreatenewpostPage.post' | translate }}</ion-label>
+        <ion-button (click)="clickEidtPost()" [disabled]="clickButton">
+          <ion-label *ngIf="!clickButton">{{ 'CreatenewpostPage.post' | translate }}</ion-label>
+          <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
         </ion-button>
       </ion-col>
     </ion-row>

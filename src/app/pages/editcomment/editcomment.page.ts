@@ -1,6 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { IonTextarea } from '@ionic/angular';
-import { Events } from 'src/app/services/events.service';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
 import { ThemeService } from '../../services/theme.service';
@@ -34,8 +33,8 @@ export class EditCommentPage implements OnInit {
   public commentId: string = "";
   public imgUrl: string = '';
   public titleKey: string = '';
+  public clickButton: boolean = false;
   constructor(
-    private events: Events,
     private native: NativeService,
     private acRoute: ActivatedRoute,
     public theme: ThemeService,
@@ -74,11 +73,6 @@ export class EditCommentPage implements OnInit {
     if (channelAvatarUri != '') {
       this.handleChannelAvatar(channelAvatarUri);
     }
-
-
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
-      this.initTitle();
-    });
   }
 
   ionViewDidEnter() {
@@ -94,7 +88,6 @@ export class EditCommentPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
   newPostTextArea() {
@@ -128,6 +121,7 @@ export class EditCommentPage implements OnInit {
       return false;
     }
 
+    this.clickButton = true;
     await this.native.showLoading('common.waitMoment');
     this.editComment();
   }
@@ -152,12 +146,15 @@ export class EditCommentPage implements OnInit {
             commentList[index].status = FeedsData.PostCommentStatus.edited;
           }
           this.native.hideLoading();
+          this.clickButton = false;
           this.native.pop();
 
         }).catch((err) => {
+          this.clickButton = false;
           this.native.hideLoading();
         })
     } catch (error) {
+      this.clickButton = false;
       this.native.hideLoading();
     }
   }

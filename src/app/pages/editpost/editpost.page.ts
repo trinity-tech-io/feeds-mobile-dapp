@@ -56,6 +56,7 @@ export class EditPostPage implements OnInit {
   public mediaType: FeedsData.MediaType;
   private originPostData: FeedsData.PostV3 = null;
   private isUpdateTab: boolean = false;
+  public clickButton: boolean = false;
   constructor(
     private events: Events,
     private native: NativeService,
@@ -89,16 +90,11 @@ export class EditPostPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.initData();
-
-    this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
-      this.initTitle();
-    });
-
   }
 
   ionViewWillLeave() {
-    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.imgUrl = '';
+    this.clickButton = false;
     this.native.hideLoading();
     this.removeVideo();
     if(this.isUpdateTab) {
@@ -172,6 +168,7 @@ export class EditPostPage implements OnInit {
     }
 
     await this.native.showLoading('common.waitMoment');
+    this.clickButton = true;
     this.updatePost();
 
   }
@@ -382,14 +379,17 @@ export class EditPostPage implements OnInit {
       ).then((result) => {
         this.zone.run(async () => {
           this.isUpdateTab = true;
+          this.clickButton = false;
           this.native.hideLoading();
           this.native.pop();
         });
       }).catch((err) => {
+        this.clickButton = false;
         this.pauseVideo();
         this.native.hideLoading();
       });
     } catch (error) {
+      this.clickButton = false;
       this.pauseVideo();
       this.native.hideLoading();
     }

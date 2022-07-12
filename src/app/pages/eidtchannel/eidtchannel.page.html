@@ -30,8 +30,9 @@
     </ion-list>
 
     <ion-row class="btn-row">
-      <ion-button (click)="confirm()">
-          <ion-label> {{'common.save'|translate}}</ion-label>
+      <ion-button (click)="confirm()" [disabled]="clickButton">
+          <ion-label *ngIf="!clickButton"> {{'common.save'|translate}}</ion-label>
+          <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
       </ion-button>
     </ion-row>
 

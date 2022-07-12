@@ -25,8 +25,9 @@
         <ion-icon id="camera" mode="ios" name="camera" (click)="addImg()"></ion-icon> -->
       </ion-col>
       <ion-col class="right-col" size="6">
-        <ion-button (click)="publishComment()">
-          <ion-label>{{ 'EditCommentPage.saveChanges' | translate }}</ion-label>
+        <ion-button (click)="publishComment()" [disabled]="clickButton">
+          <ion-label *ngIf="!clickButton">{{ 'EditCommentPage.saveChanges' | translate }}</ion-label>
+          <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
         </ion-button>
       </ion-col>
     </ion-row>

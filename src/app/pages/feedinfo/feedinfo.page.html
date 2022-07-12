@@ -27,7 +27,8 @@
             {{ channelSubscribes }} {{ 'common.followers' | translate }} </span>
 
           <div *ngIf="!followStatus" class="btn-row-empty unsubscribed" (click)="subscribe()">
-            {{ "SearchPage.follow" | translate }}
+            <span *ngIf="!clickButton">{{ "SearchPage.follow" | translate }}</span>
+            <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
             <ion-ripple-effect></ion-ripple-effect>
           </div>
 

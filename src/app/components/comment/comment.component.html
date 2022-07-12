@@ -45,8 +45,9 @@
       <ion-col offset="1.5" size="4" class="left-col">
       </ion-col>
       <ion-col class="right-col" size="6.5">
-        <ion-button (click)="sendComment()">
-          <ion-label>{{ 'CommentPage.publishComment' | translate }}</ion-label>
+        <ion-button (click)="sendComment()" [disabled]="clickButton">
+          <ion-label *ngIf="!clickButton">{{ 'CommentPage.publishComment' | translate }}</ion-label>
+          <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
         </ion-button>
       </ion-col>
     </ion-row>

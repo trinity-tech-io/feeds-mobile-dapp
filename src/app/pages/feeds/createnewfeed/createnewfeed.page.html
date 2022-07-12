@@ -52,10 +52,10 @@
     <div  [class.arrow_box]="!theme.darkMode" [class.dark-arrow_box]="theme.darkMode"  *ngIf="isHelp" [ngStyle]="arrowBoxStyle">
       {{'CreatenewfeedPage.des1'|translate}}
      </div>
-
     <ion-row class="btn-row">
-        <ion-button (click)="createChannel(name,desc)">
-            <ion-label> {{'CreatenewfeedPage.createFeed'|translate}}</ion-label>
+        <ion-button (click)="createChannel(name,desc)" [disabled]="clickButton">
+            <ion-label  *ngIf="!clickButton"> {{'CreatenewfeedPage.createFeed'|translate}}</ion-label>
+            <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
         </ion-button>
     </ion-row>
   </ion-grid>

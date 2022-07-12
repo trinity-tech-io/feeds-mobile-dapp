@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { NavController, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -11,12 +11,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { PopupProvider } from 'src/app/services/popup';
 import { LanguageService } from 'src/app/services/language.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
-import { HiveService } from 'src/app/services/HiveService'
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { UtilService } from 'src/app/services/utilService';
 import _ from 'lodash';
-import SparkMD5 from 'spark-md5';
 
 @Component({
   selector: 'app-createnewfeed',
@@ -40,9 +38,8 @@ export class CreatenewfeedPage implements OnInit {
     "type": "ELA",
     "address": ""
   }];
+  public clickButton: boolean = false;
   constructor(
-    private popover: PopoverController,
-    private navCtrl: NavController,
     private feedService: FeedService,
     private popoverController: PopoverController,
     private zone: NgZone,
@@ -81,6 +78,7 @@ export class CreatenewfeedPage implements OnInit {
   ionViewWillLeave() {
     this.theme.restTheme();
     this.native.hideLoading();
+    this.clickButton = false;
     this.native.handleTabsEvents();
   }
 
@@ -130,10 +128,10 @@ export class CreatenewfeedPage implements OnInit {
 
     this.channelAvatar = this.dataHelper.getProfileIamge() || '';
 
-    // if (this.channelAvatar == '') {
-    //   this.native.toast_trans('CreatenewfeedPage.tipMsg');
-    //   return;
-    // }
+    if (this.channelAvatar == '') {
+      this.native.toastWarn('CreatenewfeedPage.tipMsg');
+      return;
+    }
 
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
 
@@ -142,7 +140,7 @@ export class CreatenewfeedPage implements OnInit {
       this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
       return;
     }
-
+    this.clickButton = true;
     const signinDid = (await this.dataHelper.getSigninData()).did;
     const channelId = UtilService.generateChannelId(signinDid,name.value);
     await this.native.showLoading('common.waitMoment');
@@ -152,6 +150,7 @@ export class CreatenewfeedPage implements OnInit {
 
       if (selfchannels.length >= 5) {
       this.native.hideLoading();
+      this.clickButton = false;
       this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
       return;
       }
@@ -161,11 +160,13 @@ export class CreatenewfeedPage implements OnInit {
             });
       if(list.length > 0){
         this.native.hideLoading();
+        this.clickButton = false;
         this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
           return;
       }
       await this.uploadChannel(name.value, desc.value);
     } catch (error) {
+      this.clickButton = false;
       this.native.hideLoading();
     }
 

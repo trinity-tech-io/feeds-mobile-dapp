@@ -136,6 +136,7 @@ export class ChannelsPage implements OnInit {
   private refreshImageSid: any = null;
   private visibleareaItemIndex: number = 0;
   private assetSid: any = null;
+  public clickButton: boolean = false;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -158,12 +159,17 @@ export class ChannelsPage implements OnInit {
   ) { }
 
   async subscribe() {
+
+    if(this.clickButton){
+      return;
+    }
+
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
-
+    this.clickButton = true;
     await this.native.showLoading('common.waitMoment');
     try {
       await this.hiveVaultController.subscribeChannel(this.destDid, this.channelId);
@@ -172,8 +178,10 @@ export class ChannelsPage implements OnInit {
       await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
       this.initRefresh();
       this.followStatus = true;
+      this.clickButton = false;
       this.native.hideLoading();
     } catch (error) {
+      this.clickButton = false;
       this.followStatus = false;
       this.native.hideLoading();
     }
@@ -435,6 +443,7 @@ export class ChannelsPage implements OnInit {
     this.clearRefreshImageSid();
     this.clearAssetSid();
     this.theme.restTheme();
+    this.clickButton = false;
     let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
     if (appChannels != null) {
       appChannels.removeAttribute("style");

@@ -47,6 +47,7 @@ export class EidtchannelPage implements OnInit {
     "type": "ELA",
     "address": ""
   }];
+  public clickButton: boolean = false;
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -117,6 +118,7 @@ export class EidtchannelPage implements OnInit {
   ionViewDidEnter() { }
 
   ionViewWillLeave() {
+    this.clickButton = false;
     this.theme.restTheme();
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
@@ -163,6 +165,7 @@ export class EidtchannelPage implements OnInit {
     this.isClickConfirm = false;
     if (this.checkparms() && this.isPublic === "") {
       const signinDid = (await this.dataHelper.getSigninData()).did;
+      this.clickButton = true;
       await this.native.showLoading('common.waitMoment');
       try {
         const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
@@ -174,11 +177,13 @@ export class EidtchannelPage implements OnInit {
           this.native.hideLoading();
           this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
           this.isClickConfirm = true;
+          this.clickButton = false;
           return false;
         }
         this.editChannelInfo();
       } catch (error) {
         this.native.hideLoading();
+        this.clickButton = false;
         this.isClickConfirm = true;
       }
     }
@@ -210,14 +215,17 @@ export class EidtchannelPage implements OnInit {
         channelInfo["tippingAddress"] = tippingAddress;
         this.dataHelper.setChannelInfo(channelInfo);
         this.isClickConfirm = true;
+        this.clickButton = false;
         this.native.hideLoading();
         this.native.pop();
       }).catch((err)=>{
         this.native.hideLoading();
+        this.clickButton = false;
         this.isClickConfirm = false;
       })
     } catch (error) {
       this.native.hideLoading();
+      this.clickButton = false;
       this.isClickConfirm = false;
     }
 

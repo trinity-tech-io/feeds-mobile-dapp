@@ -55,6 +55,7 @@ export class FeedinfoPage implements OnInit {
   public serverDid: string = '';
   private confirmdialog: any = null;
   public lightThemeType: number = 3;
+  public clickButton: boolean = false;
   constructor(
     private popoverController: PopoverController,
     private feedService: FeedService,
@@ -191,6 +192,7 @@ export class FeedinfoPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.clickButton = false;
     document.body.removeEventListener("touchmove",this.preventDefault,false);
     this.theme.restTheme();
     this.removeEvents();
@@ -213,6 +215,10 @@ export class FeedinfoPage implements OnInit {
 
   async subscribe() {
 
+    if(this.clickButton) {
+      return;
+    }
+
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
@@ -221,6 +227,7 @@ export class FeedinfoPage implements OnInit {
 
     // const signinData = await this.dataHelper.getSigninData();
     // let userDid = signinData.did
+    this.clickButton = true;
     await this.native.showLoading('common.waitMoment');
     try {
       await this.hiveVaultController.subscribeChannel(this.destDid, this.channelId);
@@ -228,9 +235,11 @@ export class FeedinfoPage implements OnInit {
       await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
       await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
       this.followStatus = true;
+      this.clickButton = false;
       this.native.hideLoading();
     } catch (error) {
       this.followStatus = false;
+      this.clickButton = false;
       this.native.hideLoading();
     }
   }

@@ -35,6 +35,7 @@ export class CommentComponent implements OnInit {
   public isAndroid = '';
   public isBorder: boolean = false;
   public isBorderGradient: boolean = false;
+  public clickButton: boolean = false;
   constructor(
     public theme: ThemeService,
     public native: NativeService,
@@ -105,13 +106,14 @@ export class CommentComponent implements OnInit {
       this.native.toastWarn('CommentPage.inputComment');
       return false;
     }
-
+    this.clickButton = true;
     this.native
       .showLoading('common.waitMoment')
       .then(() => {
         this.publishComment();
       })
       .catch(() => {
+        this.clickButton = false;
         this.native.hideLoading();
       });
   }
@@ -126,12 +128,15 @@ export class CommentComponent implements OnInit {
         this.newComment
       ).then((comment: FeedsData.CommentV3)=>{
         this.native.hideLoading();
+        this.clickButton = false;
         this.hideComponent();
         this.events.publish(FeedsEvent.PublishType.getCommentFinish,comment);
       }).catch((err)=>{
+        this.clickButton = false;
         this.native.hideLoading();
       })
     } catch (error) {
+      this.clickButton = false;
       this.native.hideLoading();
     }
 
