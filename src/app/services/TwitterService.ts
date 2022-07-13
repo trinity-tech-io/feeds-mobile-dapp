@@ -34,19 +34,31 @@ export class TwitterService {
     return result
   }
 
-  public getTokenFromCode(code: string) {
-    console.log("getTokenFromCode >>>>>>>>>> ")
-    return this.fetchTokenFromTwitter(code, TwitterApi.GRANT_TYPE)
+  public getTwitterAccessToken(code: string) {
+    return this.fetchTokenFromAuthorizationCode(code, TwitterApi.GRANT_TYPE)
   }
 
-  public async fetchToken(userDid: string) {
+  public fetchTwitterAccessToken(userDid: string) {
     const token = this.dataHelper.getTwitterRefreshToken(userDid)
-    console.log("fetchToken >>>>>>>>>> ")
-    return this.fetchTokenFromTwitter(token, TwitterApi.GRANT_TYPE_REFRESH)
+    if (token === null) {
+      // this.native.toastWarn("common.twitterNotLogin");
+      return
+    }
+    return this.fetchTokenFromRefreshToken(token, TwitterApi.GRANT_TYPE_REFRESH)
   }
 
-  private async fetchTokenFromTwitter(code: string, type: string) {
-    console.log("fetchTokenFromTwitter code >>>>>>>>>> ", code, type)
+  private fetchTokenFromRefreshToken(code: string, type: string) {
+    let params = {
+      refresh_token: code,
+      grant_type: type,
+      client_id: TwitterApi.CLIENT_ID,
+      redirect_uri: TwitterApi.REDIRECT_URI,
+      code_verifier: TwitterApi.CODE_VERIFIER
+    }
+    return this.fetchTokenFromTwitter(params)
+  }
+
+  private async fetchTokenFromAuthorizationCode(code: string, type: string) {
     let params = {
       code: code,
       grant_type: type,
@@ -54,13 +66,21 @@ export class TwitterService {
       redirect_uri: TwitterApi.REDIRECT_URI,
       code_verifier: TwitterApi.CODE_VERIFIER
     }
+    try {
+      await this.fetchTokenFromTwitter(params)
+      this.events.publish(FeedsEvent.PublishType.twitterLoginSuccess);
+    }
+    catch (error) {
+      throw error
+    }
+  }
+
+  private async fetchTokenFromTwitter(params: any) {
     const userDid = (await this.dataHelper.getSigninData()).did
     let header = {}
+    this.http.setDataSerializer('json')
     this.http.post(TwitterApi.TOKEN, params, header)
       .then(data => {
-        console.log("this.events.publish(FeedsEvent.PublishType.twitterLoginSuccess) >>>>>>>>>>>>>>>>>> ")
-        this.events.publish(FeedsEvent.PublishType.twitterLoginSuccess);
-        console.log("data >>>>>>>>>>>>>>>>>> ", data)
         const ddata = JSON.parse(data.data)
         this.dataHelper.UpdateTwitterToken(userDid, ddata)
         const accessToken = ddata.access_token
@@ -68,7 +88,6 @@ export class TwitterService {
       })
       .catch(error => {
         this.events.publish(FeedsEvent.PublishType.twitterLoginFailed);
-        console.error(TAG, "auth twitter Error: ", error)
         throw error
       })
   }
@@ -80,32 +99,6 @@ export class TwitterService {
     this.inappBrowser.create(TwitterApi.AUTH, target, options)
   }
 
-  public async postMedia(base64Encoded: string) {
-    Logger.log(TAG, 'post media star >>>>>>>>>>>>>>>>>>>>>>>>>>>> ')
-    let params = {
-      "text": base64Encoded
-    }
-    const token = await this.checkTwitterIsExpired()
-    Logger.log(TAG, 'post media token >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', token)
-    let header = {
-      "Content-Type": "multipart/form-data",
-      "Authorization": "bearer " + token
-    }
-    this.http.setDataSerializer('multipart')
-    // this.http.sendRequest(TwitterApi.MEDIA, {
-    //   method: "post",
-    //   data: base64Encoded,
-    //   headers: header
-    // })
-    //   .then(data => {
-    //     Logger.log(TAG, 'post tweet success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', data)
-    //     return data
-    //   })
-    //   .catch(error => {
-    //     Logger.log(TAG, 'post tweet error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
-    //     return error
-    //   })
-  }
   public async postTweet(text: string) {
     Logger.log(TAG, 'post tweet star >>>>>>>>>>>>>>>>>>>>>>>>>>>> ')
     let params = {
@@ -140,10 +133,11 @@ export class TwitterService {
       return null;
     }
     try {
-    let token = this.dataHelper.getTwitterAccessToken(userDid)
+      let token = this.dataHelper.getTwitterAccessToken(userDid)
     if (token === false) {
       // TODO: refreshTOken 同样过期，提示用户重新登录
-      token = await this.fetchToken(userDid)
+      token = await this.fetchTwitterAccessToken(userDid)
+      console.log("开始刷新refresh token2 ============== ", token)
     }
       return token
     }

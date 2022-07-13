@@ -4159,18 +4159,20 @@ export class DataHelper {
 
   getTwitterRefreshToken(userDid: string) {
     const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
+    console.log("getTwitterRefreshToken ======= ", data)
+    if (data === '' || data === undefined) {
+      return null // 标识 本地没有token
+    }
     const tokenData = JSON.parse(data)
-
+    console.log("getTwitterRefreshToken tokenData ======= ", tokenData)
     let refreshToken = tokenData['refresh_token']
-    // const currentTime = new Date().getTime()
-    // if (currentTime > expired_time) {
-    //   return false
-    // }
 
     return refreshToken
   }
 
   getTwitterAccessToken(userDid: string) {
+    // return false // 标识 token 过期
+
     const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
     if (data === '' || data === undefined) {
       return null // 标识 本地没有token
@@ -4188,6 +4190,10 @@ export class DataHelper {
   }
 
   removeTwitterToken(userDid: string) {
+    const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
+    if (data === '' || data === undefined || data == null) {
+      return
+    }
     localStorage.removeItem(userDid + "TWITTERTOKEN")
   }
 

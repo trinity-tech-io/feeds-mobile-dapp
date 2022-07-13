@@ -469,7 +469,7 @@ export class IntentService {
 
   async handleTwitterIntent(params: any) {
     try {
-      await this.twitterService.getTokenFromCode(params["code"])
+      await this.twitterService.getTwitterAccessToken(params["code"])
     }
     catch {
       // TODO:

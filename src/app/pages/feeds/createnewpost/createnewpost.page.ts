@@ -99,13 +99,6 @@ export class CreatenewpostPage implements OnInit {
       this.newPostIonTextarea.setFocus();
       clearTimeout(sid);
     }, 500);
-    this.twitterService.checkTwitterIsExpired().then(async (result) => {
-      if (result != null) {
-        this.isPostTwitter = true
-        const userDid = (await this.dataHelper.getSigninData()).did
-        localStorage.setItem(userDid + "isSyncToTwitter", "true");
-      }
-    })
   }
 
   async checkBoxClick(event) {
