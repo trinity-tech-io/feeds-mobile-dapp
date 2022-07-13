@@ -73,7 +73,7 @@ export class HiveService {
               }
             })
           }
-        }, userDidString);
+        }, userDidString, Config.APPLICATION_DID);
         resolve(context)
       } catch (error) {
         // Logger.error(TAG, "creat Error: ", error)
