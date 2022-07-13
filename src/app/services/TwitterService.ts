@@ -55,7 +55,7 @@ export class TwitterService {
       code_verifier: TwitterApi.CODE_VERIFIER
     }
     const userDid = (await this.dataHelper.getSigninData()).did
-    let header = {} 
+    let header = {}
     this.http.post(TwitterApi.TOKEN, params, header)
       .then(data => {
         console.log("this.events.publish(FeedsEvent.PublishType.twitterLoginSuccess) >>>>>>>>>>>>>>>>>> ")
@@ -115,7 +115,7 @@ export class TwitterService {
     Logger.log(TAG, 'post tweet token >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', token)
     let header = {
       "Content-Type": "application/json",
-      "Authorization": "bearer " + token 
+      "Authorization": "bearer " + token
     }
     this.http.setDataSerializer('json')
     this.http.post(TwitterApi.TEWWTS, params, header)
@@ -130,7 +130,15 @@ export class TwitterService {
   }
 
   public async checkTwitterIsExpired() {
-    const userDid = (await this.dataHelper.getSigninData()).did
+
+    let signinData = await this.dataHelper.getSigninData() || null;
+    if (signinData == null || signinData == undefined) {
+      return null;
+    }
+    const userDid = signinData.did || '';
+    if(userDid === ''){
+      return null;
+    }
     try {
     let token = this.dataHelper.getTwitterAccessToken(userDid)
     if (token === false) {
