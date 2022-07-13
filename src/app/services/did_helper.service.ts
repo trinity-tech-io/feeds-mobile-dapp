@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Claims, DIDDocument, JWTParserBuilder, DID, DIDURL, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential, VerifiablePresentation } from '@elastosfoundation/did-js-sdk';
+import { Claims, DIDDocument, JWTParserBuilder, JWT, DID, DIDURL, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential, VerifiablePresentation, JWTHeader } from '@elastosfoundation/did-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from './logger';
 
@@ -132,5 +132,27 @@ export class DIDHelperService {
       return defaultVault;
     else
       return matchingCredential.getSubject().getProperty(fragment);
+  }
+
+  parseJWT(token: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const parserBuilder = new JWTParserBuilder();
+        const parser = parserBuilder.build();
+        const jwtResult: JWT = await parser.parse(token);
+        resolve(jwtResult);
+      } catch (error) {
+        Logger.error(TAG, 'Parse jwt error', error);
+        reject(error);
+      }
+    });
+  }
+
+  getJWTBody(jwt: JWT): Claims {
+    return jwt.getBody();
+  }
+
+  getJWTHeader(jwt: JWT): JWTHeader {
+    return jwt.getHeader();
   }
 }

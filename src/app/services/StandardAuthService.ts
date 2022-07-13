@@ -4,10 +4,9 @@ import { StorageService } from 'src/app/services/StorageService';
 import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Events } from 'src/app/services/events.service';
+import { DIDHelperService } from './did_helper.service';
 
-declare let didManager: DIDPlugin.DIDManager;
 let TAG: string = 'StandardAuthService';
-
 @Injectable()
 export class StandardAuthService {
   private appIdCredential: DIDPlugin.VerifiableCredential = null;
@@ -20,8 +19,9 @@ export class StandardAuthService {
   constructor(
     private storeService: StorageService,
     private dataHelper: DataHelper,
-    private events: Events
-  ) {}
+    private events: Events,
+    private didHelperService: DIDHelperService
+  ) { }
 
   getCredentials(): Promise<any> {
     return new Promise(async (resolve, reject) => {
@@ -82,173 +82,31 @@ export class StandardAuthService {
     });
   }
 
-  getInstanceDID(): Promise<DIDPlugin.DID> {
-    return new Promise(async (resolve, reject) => {
-      let didAccess = new DID.DIDAccess();
-      let instanceDIDInfo = await didAccess.getOrCreateAppInstanceDID();
-      resolve(instanceDIDInfo.did);
-    });
-  }
-
   getInstanceDIDDoc(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let didAccess = new DID.DIDAccess();
       try {
         let instanceDIDInfo = await didAccess.getOrCreateAppInstanceDID() || null;
-        if(instanceDIDInfo != null){
+        if (instanceDIDInfo != null) {
           let didStore = instanceDIDInfo.didStore || null;
-          if(didStore != null){
+          if (didStore != null) {
             instanceDIDInfo.didStore.loadDidDocument(
               instanceDIDInfo.did.getDIDString(),
               didDocument => {
                 resolve(didDocument.toJson());
               },
             );
-          }else{
+          } else {
             this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
           }
-        }else{
-         this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
-         }
+        } else {
+          this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
+        }
       } catch (error) {
         this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
         reject(error);
       }
 
-    });
-  }
-
-  generateAuthPresentationJWT(
-    authChallengeJwttoken: string,
-  ): Promise<FeedsData.StandardAuthResult> {
-    return new Promise(async (resolve, reject) => {
-      Logger.log(TAG, 'Starting process to generate auth presentation JWT, authChallengeJwttoken is ', authChallengeJwttoken);
-      if (
-        authChallengeJwttoken == null ||
-        authChallengeJwttoken == undefined ||
-        authChallengeJwttoken == ''
-      ) {
-        reject('Params error');
-      }
-      // Parse, but verify on chain that this JWT is valid first
-      let parseResult: DIDPlugin.ParseJWTResult = null;
-      try {
-        parseResult = await didManager.parseJWT(true, authChallengeJwttoken);
-      } catch (error) {
-        Logger.error(TAG, 'Parse JWT error,', error);
-        reject(error);
-      }
-      Logger.log(TAG, 'Parse JWT Result is', parseResult);
-      if (!parseResult) {
-        reject('Parse jwt error, parse result null');
-        return;
-      }
-      if (!parseResult.signatureIsValid) {
-        // Could not verify the received JWT as valid - reject the authentication request by returning a null token
-        reject(
-          'The received authentication JWT token signature cannot be verified or failed to verify: ' +
-            parseResult.errorReason +
-            '. Is the back-end DID published? Are you on the right network?',
-        );
-        return;
-      }
-
-      // The request JWT must contain iss and nonce fields
-      if (
-        !('iss' in parseResult.payload) ||
-        !('nonce' in parseResult.payload)
-      ) {
-        reject(
-          'The received authentication JWT token does not contain iss or nonce',
-        );
-        return;
-      }
-
-      // Generate a authentication presentation and put the credential + back-end info such as nonce inside
-      let nonce = parseResult.payload['nonce'] as string;
-      let realm = parseResult.payload['iss'] as string;
-
-      let name = (parseResult.payload['name'] as string) || '';
-      let description = (parseResult.payload['description'] as string) || '';
-      let elaAddress = (parseResult.payload['elaAddress'] as string) || '';
-
-      Logger.log(TAG, 'Getting app instance DID');
-      let didAccess = new DID.DIDAccess();
-      let appInstanceDID = (await didAccess.getOrCreateAppInstanceDID()).did;
-      let appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
-      //work around
-      this.appIdCredential = await this.getAppIdCredentialFromStorage(
-        this.appIdCredential,
-      );
-
-      this.appIdCredential = await this.checkAppIdCredentialStatus(
-        this.appIdCredential,
-      );
-
-      Logger.log(TAG, 'AppIdCredential is ', this.appIdCredential);
-      if (!this.appIdCredential) {
-        Logger.warn(TAG, 'Empty app id credential');
-        resolve(null);
-        return;
-      }
-
-      // Create the presentation that includes back end challenge (nonce) and the app id credential.
-      appInstanceDID.createVerifiablePresentation(
-        [this.appIdCredential],
-        realm,
-        nonce,
-        appInstanceDIDInfo.storePassword,
-        async presentation => {
-          if (presentation) {
-            // Generate the back end authentication JWT
-            Logger.log(TAG,
-              'Opening DID store to create a JWT for presentation:',
-              presentation
-            );
-            let didStore = await DID.DIDHelper.openDidStore(
-              appInstanceDIDInfo.storeId,
-            );
-
-            Logger.log(TAG, 'Loading DID document');
-            didStore.loadDidDocument(
-              appInstanceDIDInfo.didString,
-              async didDocument => {
-                let validityDays = 2;
-                Logger.log(TAG, 'Creating JWT');
-                didDocument.createJWT(
-                  {
-                    presentation: JSON.parse(await presentation.toJson()),
-                  },
-                  validityDays,
-                  appInstanceDIDInfo.storePassword,
-                  jwtToken => {
-                    Logger.log(TAG, 'JWT created for presentation:', jwtToken);
-                    let result: FeedsData.StandardAuthResult = {
-                      jwtToken: jwtToken,
-                      serverName: name,
-                      serverDescription: description,
-                      elaAddress: elaAddress,
-                    };
-                    resolve(result);
-                  },
-                  err => {
-                    reject(err);
-                  },
-                );
-              },
-              err => {
-                reject(err);
-              },
-            );
-          } else {
-            reject('No presentation generated');
-          }
-        },
-        err => {
-          Logger.error(TAG, 'Create Verifiable Presentation error', err);
-          reject(err);
-        },
-      );
     });
   }
 
@@ -281,39 +139,6 @@ export class StandardAuthService {
     } catch (error) {
       Logger.error(TAG, 'Parse local credential error ', error);
     }
-  }
-
-  appendNameToCredential(
-    vc: DIDPlugin.VerifiableCredential,
-    name: string,
-  ): Promise<DIDPlugin.VerifiableCredential> {
-    return new Promise(async (resolve, reject) => {
-      let vcstring = await vc.toString();
-      Logger.log(TAG, 'Start append name, vc is ', vcstring);
-
-      try {
-        let vcJSON = JSON.parse(vcstring);
-        if (vcJSON == null || vcJSON == undefined || vcJSON == '')
-          resolve(null);
-        if (
-          vcJSON.credentialSubject == null ||
-          vcJSON.credentialSubject == undefined ||
-          vcJSON.credentialSubject == ''
-        )
-          resolve(null);
-        vcJSON.credentialSubject['name'] = name;
-
-        Logger.log(TAG, 'Append name to credential ', vcJSON);
-        resolve(
-          didManager.VerifiableCredentialBuilder.fromJson(
-            JSON.stringify(vcJSON),
-          ),
-        );
-      } catch (error) {
-        Logger.error(TAG, 'Append name to credential error ', error);
-        resolve(null);
-      }
-    });
   }
 
   getAppIdCredentialFromStorage(
@@ -366,7 +191,7 @@ export class StandardAuthService {
           resolve(mAppIdCredential);
           return;
         }
-        this.events.publish(FeedsEvent.PublishType.authEssentialFail,{type:0})
+        this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 0 })
         Logger.error(TAG, 'Get app identity credential error, credential is ', mAppIdCredential);
       } catch (error) {
         reject(error);
@@ -395,59 +220,47 @@ export class StandardAuthService {
     let appid = await this.storeService.get(userDid + 'appDid');
     return appid
   }
-  generateHiveAuthPresentationJWT(challeng: String): Promise<string> {
-    let self = this ;
+
+
+  generateHiveAuthPresentationJWT(authChallengeJwttoken: string): Promise<string> {
     return new Promise(async (resolver, reject) => {
 
-      Logger.log(TAG, 'Starting process to generate auth presentation JWT, authChallengeJwttoken is ', challeng)
-      if (
-        challeng == null ||
-        challeng == undefined ||
-        challeng == ''
-      ) {
+      Logger.log(TAG, 'Starting process to generate auth presentation JWT, authChallengeJwttoken is ', authChallengeJwttoken)
+      if (!authChallengeJwttoken) {
         reject('Params error');
+        return;
       }
 
       // Parse, but verify on chain that this JWT is valid first
-      let parseResult: DIDPlugin.ParseJWTResult = null;
+      let jwtResult = null;
       try {
-        parseResult = await didManager.parseJWT(true, challeng)
+        jwtResult = await this.didHelperService.parseJWT(authChallengeJwttoken);
+        Logger.log(TAG, 'JWT json result is', JSON.stringify(jwtResult));
       } catch (error) {
         Logger.error(TAG, 'Parse JWT error,', error)
         reject(error);
 
       }
-      Logger.log(TAG, 'Parse JWT Result is', parseResult)
-      if (!parseResult) {
+      Logger.log(TAG, 'Parse JWT Result is', jwtResult)
+      if (!jwtResult) {
         reject('Parse jwt error, parse result null')
         return;
       }
-      if (!parseResult.signatureIsValid) {
-        // Could not verify the received JWT as valid - reject the authentication request by returning a null token
-        reject(
-          'The received authentication JWT token signature cannot be verified or failed to verify: ' +
-            parseResult.errorReason +
-            '. Is the back-end DID published? Are you on the right network?',
-        );
-        return;
-      }
+
+      const body = this.didHelperService.getJWTBody(jwtResult);
+      const payload = body.getJWTPayload();
 
       // The request JWT must contain iss and nonce fields
-      if (
-        !('iss' in parseResult.payload) ||
-        !('nonce' in parseResult.payload)
-      ) {
-        reject(
-          'The received authentication JWT token does not contain iss or nonce',
-        );
+      if (!('iss' in payload) || !('nonce' in payload)) {
+        reject('The received authentication JWT token does not contain iss or nonce');
         return;
       }
 
       // Generate a authentication presentation and put the credential + back-end info such as nonce inside
-      let nonce = parseResult.payload['nonce'] as string;
-      let realm = parseResult.payload['iss'] as string;
+      let nonce = payload['nonce'] as string;
+      let realm = payload['iss'] as string;
 
-      let name = (parseResult.payload['name'] as string) || '';
+      let name = (payload['name'] as string) || '';
       let didAccess = new DID.DIDAccess();
       this.appInstanceDID = (await didAccess.getOrCreateAppInstanceDID()).did;
       this.appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
@@ -468,7 +281,7 @@ export class StandardAuthService {
       let userDid = (await this.dataHelper.getSigninData()).did
       await this.storeService.set(userDid + 'appDid', this.appIdCredential.getSubject()["appDid"]);
 
-      this.appInstanceDID.createVerifiablePresentation([this.appIdCredential], realm, nonce, this.appInstanceDIDInfo.storePassword,async presentation => {
+      this.appInstanceDID.createVerifiablePresentation([this.appIdCredential], realm, nonce, this.appInstanceDIDInfo.storePassword, async presentation => {
 
         if (presentation) {
           // Generate the back end authentication JWT
@@ -509,10 +322,10 @@ export class StandardAuthService {
           reject('No presentation generated')
         }
       },
-      err => {
-        Logger.error(TAG, 'Create Verifiable Presentation error', err);
-        reject(err);
-      },)
+        err => {
+          Logger.error(TAG, 'Create Verifiable Presentation error', err);
+          reject(err);
+        })
 
     })
   }

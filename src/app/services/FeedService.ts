@@ -695,10 +695,6 @@ export class FeedService {
         this.handleGetBinaryResponse(nodeId, result, requestParams, error);
         break;
 
-      case FeedsData.MethodType.standard_sign_in:
-        this.handleStandardSignInResponse(nodeId, result, requestParams, error);
-        break;
-
       case FeedsData.MethodType.standard_did_auth:
         this.handleStandardDidAuthResponse(
           nodeId,
@@ -3323,31 +3319,6 @@ export class FeedService {
         value: value,
       };
     });
-  }
-
-  handleStandardSignInResponse(nodeId, result, requestParams, error) {
-    if (error != null && error != undefined && error.code != undefined) {
-      this.handleError(nodeId, error);
-      return;
-    }
-
-    let challenge = result.jwt_challenge;
-    this.standardAuth
-      .generateAuthPresentationJWT(challenge)
-      .then(standAuthResult => {
-        Logger.log(TAG, 'Generate auth presentation JWT, presentation is ', standAuthResult.jwtToken);
-        let server = this.dataHelper.getServer(nodeId);
-        if (server != null && server != undefined) {
-          server.name = standAuthResult.serverName;
-          server.introduction = standAuthResult.serverDescription;
-          server.elaAddress = standAuthResult.elaAddress;
-        } else {
-          //TODO
-          // server = this.dataHelper.generateServer();
-        }
-        this.dataHelper.updateServer(nodeId, server);
-        this.feedsServiceApi.standardDidAuth(nodeId, standAuthResult.jwtToken);
-      });
   }
 
   handleStandardDidAuthResponse(nodeId, result, requestParams, error) {

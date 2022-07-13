@@ -562,15 +562,15 @@ export class FeedsServiceApi {
     );
   }
 
-  standardDidAuth(nodeId: string, verifiablePresentation: string) {
-    const localSignInData = this.dataHelper.getLocalSignInData();
-    this.connectionService.standardDidAuth(
-      this.getServerNameByNodeId(nodeId),
-      nodeId,
-      verifiablePresentation,
-      localSignInData.name,
-    );
-  }
+  // standardDidAuth(nodeId: string, verifiablePresentation: string) {
+  //   const localSignInData = this.dataHelper.getLocalSignInData();
+  //   this.connectionService.standardDidAuth(
+  //     this.getServerNameByNodeId(nodeId),
+  //     nodeId,
+  //     verifiablePresentation,
+  //     localSignInData.name,
+  //   );
+  // }
 
   getMultiComments(
     nodeId: string,
