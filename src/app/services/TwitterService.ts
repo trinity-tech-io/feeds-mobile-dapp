@@ -79,17 +79,17 @@ export class TwitterService {
     const userDid = (await this.dataHelper.getSigninData()).did
     let header = {}
     this.http.setDataSerializer('json')
-    this.http.post(TwitterApi.TOKEN, params, header)
-      .then(data => {
-        const ddata = JSON.parse(data.data)
-        this.dataHelper.UpdateTwitterToken(userDid, ddata)
-        const accessToken = ddata.access_token
-        return accessToken
-      })
-      .catch(error => {
+    try {
+      const result = await this.http.post(TwitterApi.TOKEN, params, header)
+      const ddata = JSON.parse(result.data)
+      this.dataHelper.UpdateTwitterToken(userDid, ddata)
+      const accessToken = ddata.access_token
+      return accessToken
+    }
+    catch (error) {
         this.events.publish(FeedsEvent.PublishType.twitterLoginFailed);
-        throw error
-      })
+      throw error
+    }
   }
 
   public async openTwitterLoginPage() {
@@ -100,45 +100,43 @@ export class TwitterService {
   }
 
   public async postTweet(text: string) {
-    Logger.log(TAG, 'post tweet star >>>>>>>>>>>>>>>>>>>>>>>>>>>> ')
+    try {
     let params = {
       "text": text
     }
-    const token = await this.checkTwitterIsExpired()
-    Logger.log(TAG, 'post tweet token >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', token)
+      const token = await this.checkTwitterIsExpired()
     let header = {
       "Content-Type": "application/json",
       "Authorization": "bearer " + token
     }
     this.http.setDataSerializer('json')
-    this.http.post(TwitterApi.TEWWTS, params, header)
-      .then(data => {
-        Logger.log(TAG, 'post tweet success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', data)
-        return data
-      })
-      .catch(error => {
+      const result = await this.http.post(TwitterApi.TEWWTS, params, header)
+      Logger.log(TAG, 'post tweet success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result)
+      return result
+    }
+    catch (error) {
         Logger.log(TAG, 'post tweet error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
         throw error
-      })
+    }
   }
 
   public async checkTwitterIsExpired() {
-
-    let signinData = await this.dataHelper.getSigninData() || null;
-    if (signinData == null || signinData == undefined) {
-      return null;
-    }
-    const userDid = signinData.did || '';
-    if(userDid === ''){
-      return null;
-    }
+   
+    let signinData = await this.dataHelper.getSigninData() || null
+      if (signinData == null || signinData == undefined) {
+        return null
+      }
+    const userDid = signinData.did || ''
+      if(userDid === ''){
+        return null
+      }
     try {
       let token = this.dataHelper.getTwitterAccessToken(userDid)
-    if (token === false) {
-      // TODO: refreshTOken 同样过期，提示用户重新登录
-      token = await this.fetchTwitterAccessToken(userDid)
-      console.log("开始刷新refresh token2 ============== ", token)
-    }
+      if (token === false) {
+        // TODO: refreshTOken 同样过期，提示用户重新登录
+        token = await this.fetchTwitterAccessToken(userDid)
+        console.log("开始刷新refresh token2 ============== ", token)
+      }
       return token
     }
     catch (error) {
