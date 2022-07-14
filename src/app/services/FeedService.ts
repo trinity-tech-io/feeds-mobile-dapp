@@ -5374,13 +5374,11 @@ export class FeedService {
           resolve(response);
           return;
         }
-
-        let error = 'Credaccess error, response is ' + JSON.stringify(response);
-        Logger.error(TAG, error);
-        reject(null);
+        Logger.error(TAG,'Credaccess error, response is', response);
+        resolve(null);
       } catch (error) {
         Logger.error(TAG, error);
-        reject(null);
+        resolve(null);
       }
     });
   }

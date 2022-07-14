@@ -70,13 +70,11 @@ export class StandardAuthService {
           resolve(presentation);
           Logger.log(TAG, 'Got credentials:', presentation);
         } else {
-          // alert(
-          //   'Empty presentation returned, something wrong happened, or operation was cancelled',
-          // );
+          resolve(null);
           Logger.log(TAG, 'Empty ....', presentation);
         }
       } catch (error) {
-        alert('error ' + JSON.stringify(error));
+        resolve(null);
         Logger.log(TAG, 'error', error);
       }
     });
