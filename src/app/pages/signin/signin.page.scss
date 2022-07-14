@@ -16,7 +16,7 @@ ion-slides{
     padding: 0 30px;
 
     .header-row {
-      margin-top: 80px;
+      margin-top: 22px;
       ion-col {
         img {
           display: flex;
@@ -53,7 +53,7 @@ ion-slides{
     padding: 0 30px;
 
     .header-row {
-      margin-top: 100px;
+      margin-top: 22px;
       ion-col {
         img {
           display: flex;
@@ -144,5 +144,56 @@ ion-slides{
   }
   to {
       transform: translateY(0);
+  }
+}
+
+.darkHiveBox{
+  width: 100%;
+  height: 430px;
+  background: #323B45;
+  border-radius: 40px 40px 0px 0px;
+  padding: 0px;
+  ion-col{
+  justify-content: center;
+  display: flex;
+  padding: 0px;
+
+  .title{
+  margin: 0px;
+  margin-top:34px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 25px;
+  color: #FFFFFF;
+  }
+
+  .description{
+  margin-top:34px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 18px;
+  color: #C4C4C4;
+  }
+
+  .hive1{
+    margin-top:40px;
+  }
+
+  .hive2{
+    margin-top:40px;
+    width: 140px;
+    height: 134px;
+  }
+
+  ion-progress-bar{
+      margin-top: 51.7px;
+      width: 240px;
+      height: 22px;
+      --background: #E5E5E5;
+      border-radius: 11.5238px;
+      --progress-background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+  }
+
   }
 }

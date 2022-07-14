@@ -13,6 +13,7 @@ let TAG: string = 'DataHelper';
 
 @Injectable()
 export class DataHelper {
+  private hiveAuthStatus: number = null;
   private syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" };
   // TODO new add
   private selsectIndex = 1;
@@ -4196,6 +4197,16 @@ export class DataHelper {
     }
     localStorage.removeItem(userDid + "TWITTERTOKEN")
   }
+
+  setHiveAuthStatus(hiveAuthStatus: number) {
+    this.hiveAuthStatus = hiveAuthStatus;
+  }
+
+  getHiveAuthStatus() {
+     return this.hiveAuthStatus;
+  }
+
+
 
   //API
   // addPosts(postList: FeedsData.PostV3[], useCache: boolean, usePersistence: boolean) {

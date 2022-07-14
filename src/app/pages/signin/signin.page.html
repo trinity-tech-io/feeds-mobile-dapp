@@ -11,7 +11,7 @@
 </ion-grid>
 </div>
 </ion-content>
-<ion-footer class="ion-no-border ionfooter" *ngIf="isShowLearnMore">
+<ion-footer class="ion-no-border ionfooter" *ngIf="isShowLearnMore && authorizationStatus === null">
   <ion-grid  [class.messageBox]="!theme.darkMode" [class.darkMessageBox]="theme.darkMode">
   <ion-slides #slide pager="true">
 
@@ -56,7 +56,7 @@
 </ion-grid>
 </ion-footer>
 
-<ion-footer class="ion-no-border" *ngIf="!isShowLearnMore" >
+<ion-footer class="ion-no-border" *ngIf="!isShowLearnMore && authorizationStatus === null" >
    <ion-grid class="slide">
     <ion-row class="btn-row btn-row-bottom">
      <ion-button (click)="signIn()">
@@ -76,4 +76,48 @@
    </ion-grid>
 
 
+</ion-footer>
+
+<!-- hive auth -->
+<ion-footer class="ion-no-border ionfooter" *ngIf="authorizationStatus != null">
+  <ion-grid [class.hiveBox]="!theme.darkMode" [class.darkHiveBox]="theme.darkMode">
+         <ion-row>
+           <ion-col size="12">
+             <p class="title" *ngIf="authorizationStatus === 0"> {{ 'GalleriahivePage.authorization' | translate}}</p>
+             <p class="title" *ngIf="authorizationStatus === 1"> {{ 'GalleriahivePage.authorized' | translate}}</p>
+             <p class="title" *ngIf="authorizationStatus === 2"> {{ 'GalleriahivePage.authorization' | translate}}</p>
+             <p class="title" *ngIf="authorizationStatus === 3"> {{ 'GalleriahivePage.authorization' | translate}}</p>
+           </ion-col>
+           <ion-col size="12">
+            <span class="description" *ngIf="authorizationStatus === 0">{{ 'GalleriahivePage.description1' | translate}}</span>
+            <span class="description" *ngIf="authorizationStatus === 1">{{ 'GalleriahivePage.description2' | translate}}</span>
+            <span class="description" *ngIf="authorizationStatus === 2">{{ 'GalleriahivePage.failDes1' | translate}}</span>
+            <span class="description" *ngIf="authorizationStatus === 3">{{ 'GalleriahivePage.failDes0' | translate}}</span>
+           </ion-col>
+           <ion-col size="12">
+             <img class="hive1" src="./assets/images/hive1.png" *ngIf="authorizationStatus === 0 || authorizationStatus === 2 || authorizationStatus === 3">
+             <img class="hive2" src="./assets/images/hive2.gif" *ngIf="authorizationStatus === 1">
+           </ion-col>
+
+           <ion-col size="12">
+            <ion-progress-bar value="0.5" *ngIf="authorizationStatus === 0"></ion-progress-bar>
+           </ion-col>
+
+         </ion-row>
+         <ion-row class="btn-row btn-row-top" *ngIf="authorizationStatus === 1" (click)="openHomePage()">
+          <ion-button>
+            <ion-label>
+               {{ "GalleriahivePage.welcomeHive"| translate }}
+            </ion-label>
+          </ion-button>
+        </ion-row>
+
+        <ion-row class="btn-row btn-row-top" *ngIf="authorizationStatus === 2 || authorizationStatus === 3" (click)="TryButton()">
+          <ion-button>
+            <ion-label>
+               {{ "GalleriahivePage.buttonTitle1"| translate }}
+            </ion-label>
+          </ion-button>
+        </ion-row>
+  </ion-grid>
 </ion-footer>

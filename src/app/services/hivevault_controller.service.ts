@@ -205,7 +205,6 @@ export class HiveVaultController {
 
   refreshHomeData(callback: (postNum: number) => void) {
     return new Promise(async (resolve, reject) => {
-      console.log('111111111111');
       try {
         await this.syncSubscribedChannelFromBackup();
         this.asyncGetAllChannelInfo().catch(() => { });

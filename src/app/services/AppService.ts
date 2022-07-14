@@ -63,6 +63,7 @@ export class AppService {
       signInData == undefined ||
       UtilService.getCurrentTimeNum() > signInData.expiresTS
     ) {
+      this.dataHelper.setHiveAuthStatus(null);
       this.native.setRootRouter(['/signin']);
       this.splashScreen.hide();
       return;
@@ -72,11 +73,14 @@ export class AppService {
     this.dataHelper.loadData("feeds.initHive").then((result) => {
       let isInitHive = result || null;
       if (isInitHive === null) {
+        this.dataHelper.setHiveAuthStatus(0);
         //此处切换成galleriahive 页面
-        this.native.setRootRouter('galleriahive');
+        this.native.setRootRouter(['/signin']);
+
         this.splashScreen.hide();
         return;
       } else {
+        this.dataHelper.setHiveAuthStatus(null);
         const syncHiveData = UtilService.generateHiveSyncCompleteObj();
         this.dataHelper.setSyncHiveData(syncHiveData);
         this.native.setRootRouter(['/tabs/home']);
