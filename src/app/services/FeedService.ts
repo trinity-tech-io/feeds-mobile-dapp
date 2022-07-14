@@ -33,6 +33,7 @@ import { FeedsUtil } from './feeds_util.service';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
 
 const TAG: string = 'Feeds-service';
+declare let didManager: DIDPlugin.DIDManager;
 
 let bindingServerCache: FeedsData.Server;
 let cacheBindingAddress: string = '';
@@ -146,7 +147,7 @@ export class FeedService {
   }
 
   initDidManager() {
-    // didManager.initDidStore('anything', null);
+    didManager.initDidStore('anything', null);
     this.setEidURL(Config.EID_RPC);
     Logger.log(TAG, 'Eid RPC is', Config.EID_RPC);
   }
@@ -5374,7 +5375,7 @@ export class FeedService {
           resolve(response);
           return;
         }
-        Logger.error(TAG,'Credaccess error, response is', response);
+        Logger.error(TAG, 'Credaccess error, response is', response);
         resolve(null);
       } catch (error) {
         Logger.error(TAG, error);
@@ -5813,15 +5814,15 @@ export class FeedService {
   }
 
   setEidURL(url: string) {
-    // didManager.setResolverUrl(
-    //   url,
-    //   () => {
-    //     Logger.log(TAG, 'Set resolve url success, url is', url);
-    //   },
-    //   error => {
-    //     Logger.log(TAG, 'Set resolve url error, error is', error);
-    //   },
-    // );
+    didManager.setResolverUrl(
+      url,
+      () => {
+        Logger.log(TAG, 'Set resolve url success, url is', url);
+      },
+      error => {
+        Logger.log(TAG, 'Set resolve url error, error is', error);
+      },
+    );
   }
 
   // async getUserAvatar(userDid: string): Promise<string> {
