@@ -62,7 +62,7 @@ export class ConnectionsPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle()
-    this.reloadStatus()
+    // this.reloadStatus() 
   }
   ionViewWillLeave() {
   }
@@ -85,7 +85,8 @@ export class ConnectionsPage implements OnInit {
       case "twitter":
         this.hideConnectionMenuComponent = false;
 
-        this.twitterService.openTwitterLoginPage();
+        // this.twitterService.openTwitterLoginPage();
+        this.twitterService.openTwitterLoginPageWithAuth1();
         break;
       case "cancel":
         this.hideConnectionMenuComponent = false;

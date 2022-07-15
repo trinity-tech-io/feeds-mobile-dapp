@@ -544,9 +544,24 @@ export class HiveVaultController {
   publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
+
+        await this.twitterService.postTweetWithAuth1(postText)
+        const str = "data:image/jpeg;base64,"
+        const data = imagesBase64[0]
+        const imageArray = data.split(str)
+        const image = imageArray[1]
+        const mediaId = await this.twitterService.postTweetMediaWithAuth1(image);
+        await this.twitterService.postTweetAndMediaWithAuth1(postText + "添加图片 啦啦啦啦啦", mediaId)
+
         const content = await this.progressMediaData(postText, imagesBase64, videoData)
+
+        return
+
+
         const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
         const userDid = (await this.dataHelper.getSigninData()).did
+
+
 
         if (localStorage.getItem(userDid + "isSyncToTwitter") === "true") {
           await this.twitterService.postTweet(postText);

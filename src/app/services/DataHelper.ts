@@ -4206,7 +4206,19 @@ export class DataHelper {
      return this.hiveAuthStatus;
   }
 
+  updateTwitterTokenWithAuth1(userDid: string, authTokenData: any) {
+    localStorage.setItem(userDid + "TWITTERAUTH1TOKEN", JSON.stringify(authTokenData))
+  }
 
+  getTwitterTokenDataWithAuth1(userDid: string) {
+    const data = localStorage.getItem(userDid + "TWITTERAUTH1TOKEN") || ''
+    if (data === '' || data === undefined) {
+      return null // 标识 本地没有token
+    }
+    const tokenData = JSON.parse(data)
+
+    return tokenData
+  }
 
   //API
   // addPosts(postList: FeedsData.PostV3[], useCache: boolean, usePersistence: boolean) {

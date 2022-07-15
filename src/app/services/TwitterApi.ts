@@ -10,5 +10,19 @@ export class TwitterApi {
   public static TOKEN: string = "https://api.twitter.com/2/oauth2/token"
 
   public static TEWWTS: string = "https://api.twitter.com/2/tweets"
-  public static MEDIA: string = "https://upload.twitter.com/1.1/media/upload.json"
-}
+
+
+  // auth1.0oauth_consumer_key
+  public static OAUTH_CONSUMER_KEY = "oKrTiVZ0fyBL64Aas92XgWhcv"
+  public static OAUTH_SIGNATURE_METHOD = "HMAC-SHA1"
+  public static OAUTH_CONSUMER_SECRET = "1Bz8wwu82C7EGaMM9Wm5L46qspJveYCyMz7ALeEm4ov9hyihd0"
+  public static OAUTH_CALLBACK = "https://feeds.trinity-feeds.app/logininsuccess"
+  public static OAUTH_VERSION = "1.0"
+
+  public static AUTH1_ACCESSTOKEN = "https://api.twitter.com/oauth/access_token"
+  public static AUTH1_REQUESTTOKEN: string = "https://api.twitter.com/oauth/request_token"
+  public static AUTH1_MEDIA: string = "https://upload.twitter.com/1.1/media/upload.json"
+  public static AUTH1_CREATE: string = "https://upload.twitter.com/1.1/media/metadata/create.json"
+
+} 
+

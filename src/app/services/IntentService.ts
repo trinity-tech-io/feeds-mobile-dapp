@@ -284,7 +284,8 @@ export class IntentService {
 
     switch (action) {
       case IntentService.BASEURL_TWITTER:
-        this.handleTwitterIntent(params)
+        // this.handleTwitterIntent(params)
+        this.handleAuth1TwitterIntent(params)
         break;
       case IntentService.BASEURL_CHANNEL:
         this.handleChannelIntent(params);
@@ -467,14 +468,22 @@ export class IntentService {
     });
   }
 
+  async handleAuth1TwitterIntent(params: any) {
+    try {
+      await this.twitterService.obtainAccessTokenWithAuth1(params)
+    }
+    catch (error) {
+      throw error
+    }
+  }
+
   async handleTwitterIntent(params: any) {
     try {
       await this.twitterService.getTwitterAccessToken(params["code"])
     }
-    catch {
-      // TODO:
+    catch (error) {
+      throw error
     }
-    // this.native.setRootRouter('ConnectionsPage');
   }
 
   handleChannelIntent(params: any) {
