@@ -62,6 +62,7 @@ export class ConnectionsPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle()
+    this.reloadStatus()
   }
   ionViewWillLeave() {
   }
