@@ -235,10 +235,10 @@ export class StandardAuthService {
         jwtResult = await this.didHelperService.parseJWT(authChallengeJwttoken);
         Logger.log(TAG, 'JWT json result is', JSON.stringify(jwtResult));
       } catch (error) {
-        Logger.error(TAG, 'Parse JWT error,', error)
+        Logger.warn(TAG, 'Parse JWT error,', error)
         reject(error);
-
       }
+
       Logger.log(TAG, 'Parse JWT Result is', jwtResult)
       if (!jwtResult) {
         reject('Parse jwt error, parse result null')
@@ -260,15 +260,34 @@ export class StandardAuthService {
 
       let name = (payload['name'] as string) || '';
       let didAccess = new DID.DIDAccess();
-      this.appInstanceDID = (await didAccess.getOrCreateAppInstanceDID()).did;
-      this.appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
-      this.appIdCredential = await this.getAppIdCredentialFromStorage(
-        this.appIdCredential,
-      );
 
-      this.appIdCredential = await this.checkAppIdCredentialStatus(
-        this.appIdCredential,
-      );
+      const instanceDid = await didAccess.getOrCreateAppInstanceDID() || null;
+      if (!instanceDid) {
+        const msg = 'Get or create app instance did error';
+        Logger.warn(TAG, msg);
+        reject(msg);
+        return;
+      }
+
+      this.appInstanceDID = instanceDid.did || null;
+      if (!this.appInstanceDID) {
+        const msg = 'Get did from instnceDid obj error';
+        Logger.warn(TAG, msg);
+        reject(msg);
+        return;
+      }
+
+      this.appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
+      if (!this.appInstanceDIDInfo) {
+        const msg = 'Get Existing App Instance DID Info error';
+        Logger.warn(TAG, msg);
+        reject(msg);
+        return;
+      }
+
+      this.appIdCredential = await this.getAppIdCredentialFromStorage(this.appIdCredential);
+      this.appIdCredential = await this.checkAppIdCredentialStatus(this.appIdCredential);
+
       Logger.log(TAG, 'AppIdCredential is ', this.appIdCredential);
       if (!this.appIdCredential) {
         Logger.warn(TAG, 'Empty app id credential')
