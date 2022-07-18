@@ -529,6 +529,7 @@ export const zh = {
     titleFail: '登陆 Hive 失败',
     failDes0: 'Essentials 授权登录 Hive 失败',
     failDes1: '请检查手机网络',
+    failVaultNotFound: '请启用Hive存储',
     authorization: '授权',
     description1: '正在连接 Hive 节点...',
     authorized: '已授权',
@@ -908,10 +909,10 @@ export const zh = {
     linkageInvalidParams: '分享链接无效，无法打开链接'
   },
   ConnectionsPage: {
-   title: '连接',
-   addConnection: '添加连接',
-   addConnectionDes: '整合新账户',
-   twitter: '推特',
-   connected: '已连接'
+    title: '连接',
+    addConnection: '添加连接',
+    addConnectionDes: '整合新账户',
+    twitter: '推特',
+    connected: '已连接'
   }
 };

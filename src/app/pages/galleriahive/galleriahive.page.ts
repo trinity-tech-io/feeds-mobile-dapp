@@ -50,7 +50,9 @@ export class GalleriahivePage implements OnInit {
         Logger.log(TAG, 'Retry signin');
         return;
       }
-      this.hiveVaultController.prepareHive(signinData.did);
+      this.hiveVaultController.prepareHive(signinData.did).catch((err) => {
+        if (err.getInternalCode() == 1) this.authorizationStatus = 11;
+      });
     })
 
     this.events.subscribe(FeedsEvent.PublishType.authEssentialSuccess, async () => {
@@ -128,7 +130,11 @@ export class GalleriahivePage implements OnInit {
       this.feedService.signIn().then(async (userDID: string) => {
         if (userDID) {
           this.authorizationStatus = 0;
-          await this.hiveVaultController.prepareHive(userDID);
+          try {
+            await this.hiveVaultController.prepareHive(userDID);
+          } catch (error) {
+            if (error.getInternalCode() == 1) this.authorizationStatus = 11;
+          }
           return;
         } else {
         }

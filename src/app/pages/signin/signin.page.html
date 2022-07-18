@@ -93,9 +93,10 @@
             <span class="description" *ngIf="authorizationStatus === 1">{{ 'GalleriahivePage.description2' | translate}}</span>
             <span class="description" *ngIf="authorizationStatus === 2">{{ 'GalleriahivePage.failDes1' | translate}}</span>
             <span class="description" *ngIf="authorizationStatus === 3">{{ 'GalleriahivePage.failDes0' | translate}}</span>
+            <span class="description" *ngIf="authorizationStatus === 11">{{ 'GalleriahivePage.failVaultNotFound' | translate}}</span>
            </ion-col>
            <ion-col size="12">
-             <img class="hive1" src="./assets/images/hive1.png" *ngIf="authorizationStatus === 0 || authorizationStatus === 2 || authorizationStatus === 3">
+             <img class="hive1" src="./assets/images/hive1.png" *ngIf="authorizationStatus!=1">
              <img class="hive2" src="./assets/images/hive2.gif" *ngIf="authorizationStatus === 1">
            </ion-col>
 

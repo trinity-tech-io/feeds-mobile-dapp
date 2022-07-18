@@ -530,6 +530,7 @@ export const en = {
     titleFail: 'Failed to log in to hive',
     failDes0: 'Essentials authorization login hive failed',
     failDes1: 'Please check the mobile network',
+    failVaultNotFound: 'Please enable Hive storage',
     authorization: 'Authorization',
     description1: 'Connecting to Hive node...',
     authorized: 'Authorized',
@@ -910,5 +911,5 @@ export const en = {
     addConnectionDes: 'Integrate new account',
     twitter: 'Twitter',
     connected: 'Connected'
-   }
+  }
 };

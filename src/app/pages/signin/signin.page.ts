@@ -32,7 +32,7 @@ export class SigninPage implements OnInit {
   public userName: string = '';
   public emailAddress: string = '';
   public lightThemeType: number = 2;
-  public isShowLearnMore:boolean = false;
+  public isShowLearnMore: boolean = false;
   //hive Auth
   public authorizationStatus: number = null;
   private sid: any = null;
@@ -48,11 +48,11 @@ export class SigninPage implements OnInit {
     private events: Events,
     private zone: NgZone,
     private hiveVaultController: HiveVaultController
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
-  init() {}
+  init() { }
 
   initTile() {
     this.titleBarService.setTitle(
@@ -67,14 +67,14 @@ export class SigninPage implements OnInit {
     localization.setLanguage(this.languageService.getCurLang());
     this.initTile();
     let isLearnMore = localStorage.getItem('org.elastos.dapp.feeds.isLearnMore') || '';
-    if(isLearnMore === ''){
-        this.isShowLearnMore = true;
-    }else{
-        this.isShowLearnMore = false;
+    if (isLearnMore === '') {
+      this.isShowLearnMore = true;
+    } else {
+      this.isShowLearnMore = false;
     }
     this.addEvents();
     this.authorizationStatus = this.dataHelper.getHiveAuthStatus();
-    if(this.authorizationStatus === 0){
+    if (this.authorizationStatus === 0) {
 
       this.dataHelper.getSigninData().then((signinData) => {
         if (!signinData || !signinData.did) {
@@ -114,7 +114,7 @@ export class SigninPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.authEssentialFail);
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   ionViewWillLeave() {
     this.removeEvents();
@@ -128,8 +128,8 @@ export class SigninPage implements OnInit {
     }
 
     connectivity.setActiveConnector(null).then(async () => {
-       await this.doSignin();
-    }).catch((err)=>{
+      await this.doSignin();
+    }).catch((err) => {
     });
   }
 
@@ -141,9 +141,9 @@ export class SigninPage implements OnInit {
           //this.native.setRootRouter('galleriahive');
           this.handleHiveAuth(isSuccess);
           return;
-        }else{
+        } else {
         }
-      }).catch((err)=>{
+      }).catch((err) => {
         this.authorizationStatus = null;
         this.native.toastWarn(err);
       });
@@ -184,12 +184,14 @@ export class SigninPage implements OnInit {
 
   handleHiveAuth(userDid: string) {
     this.authorizationStatus = 0;
-    if(this.sid === null){
-      this.sid = setTimeout(()=>{
-        this.hiveVaultController.prepareHive(userDid);
+    if (this.sid === null) {
+      this.sid = setTimeout(() => {
+        this.hiveVaultController.prepareHive(userDid).catch((error) => {
+          if (error.getInternalCode() == 1) this.authorizationStatus = 11;
+        });
         clearTimeout(this.sid);
         this.sid = null;
-      },600)
+      }, 600)
     }
   }
 }
