@@ -471,7 +471,8 @@ export const zh = {
     tipMsg: '请输入内容',
     tipMsg1: '您的微说已经发布成功',
     tipMsg2: '视频处理中',
-    twitterDes: '发布到推特'
+    twitterDes: '发布到推特',
+    twitterDes1: '目前，只支持文本格式。任何图像或视频都不会发布到Twitter。'
   },
   DIDdata: {
     Notprovided: '',

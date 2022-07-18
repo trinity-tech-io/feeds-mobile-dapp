@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
-import { NavController, ModalController, Platform, IonTextarea, } from '@ionic/angular';
+import { NavController, ModalController, Platform, IonTextarea, PopoverController, } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { FeedService } from '../../../services/FeedService';
 import { NativeService } from '../../../services/NativeService';
@@ -20,7 +20,8 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { TwitterService } from 'src/app/services/TwitterService';
-
+import { MorenameComponent } from 'src/app/components/morename/morename.component';
+//import { MorenameComponent } from 'components/morename/morename.component';
 let TAG: string = 'Feeds-createpost';
 
 @Component({
@@ -65,7 +66,11 @@ export class CreatenewpostPage implements OnInit {
   public isSupportGif: boolean = true;
   public isBorderGradient: boolean = false;
   public isPostTwitter: boolean = false;
+  public curTextNum: number = 0;
+  public extraNumber:number = 0;
+  private infoPopover: any = null;
   constructor(
+    private popoverController: PopoverController,
     private platform: Platform,
     private events: Events,
     private native: NativeService,
@@ -106,8 +111,8 @@ export class CreatenewpostPage implements OnInit {
     if (event.detail.checked === true) {
       this.twitterService.checkTwitterIsExpiredWithToast().then(async (result) => {
         if (result === null) {
-          this.isPostTwitter = false
-          localStorage.setItem(userDid + "isSyncToTwitter", "false")
+          this.isPostTwitter = false;
+          localStorage.setItem(userDid + "isSyncToTwitter", "false");
         }
         else {
           this.isPostTwitter = event.detail.checked
@@ -115,6 +120,7 @@ export class CreatenewpostPage implements OnInit {
         }
       })
     } else {
+      this.isPostTwitter = event.detail.checked
       localStorage.setItem(userDid + "isSyncToTwitter", event.detail.checked);
     }
 
@@ -568,4 +574,40 @@ export class CreatenewpostPage implements OnInit {
    ionFocus() {
      this.isBorderGradient = true;
    }
+
+   inputTextarea() {
+    this.curTextNum = this.getTwitterText();
+    this.extraNumber =  280 - this.curTextNum;
+   }
+
+   getTwitterText() {
+    let size = UtilService.getSize(this.newPost);
+    return size;
+   }
+
+   async twitterInfo(e: Event) {
+      if(this.infoPopover === null){
+        this.infoPopover = "1";
+        await this.presentPopover(e);
+      }
+   }
+
+   async presentPopover(e: Event) {
+
+    let des = this.translate.instant('CreatenewpostPage.twitterDes1');
+    this.infoPopover = await this.popoverController.create({
+      mode: 'ios',
+      component: MorenameComponent,
+      event: e,
+      componentProps: {
+        name: des,
+      },
+    });
+
+    this.infoPopover.onWillDismiss().then(() => {
+      this.infoPopover = null;
+    });
+
+    return await this.infoPopover.present();
+  }
 }

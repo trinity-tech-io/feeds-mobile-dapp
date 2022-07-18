@@ -472,7 +472,8 @@ export const en = {
     tipMsg: 'Please enter a message!',
     tipMsg1: 'Your post has been sent successfully.',
     tipMsg2: 'Video processing',
-    twitterDes: 'Post to Twitter'
+    twitterDes: 'Post to Twitter',
+    twitterDes1: 'Currently, only text format is supported. Any images or videos will not be posted to Twitter.'
   },
   DIDdata: {
     Notprovided: '',

@@ -16,11 +16,20 @@
       </ion-col>
     </ion-row>
   </ion-item>
+
   <div (click)="newPostTextArea()">
-  <ion-textarea #newPostIonTextarea  autoGrow="true"  placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="newPost" [ngClass]="{'borderGradient':isBorderGradient}"    (ionBlur)="ionBlur()" (ionFocus)="ionFocus()">
+  <ion-textarea
+  #newPostIonTextarea
+  autoGrow="true"
+  placeholder="{{'CreatenewpostPage.des'|translate}}"
+  [(ngModel)]="newPost"
+  [ngClass]="{'borderGradient': isBorderGradient,'maxTwitterText': (isPostTwitter && curTextNum > 280), 'twitterText': !isPostTwitter}"
+  (ionBlur)="ionBlur()" (ionFocus)="ionFocus()" (ionInput) = "inputTextarea()">
   </ion-textarea>
   </div>
   <div class="twitter">
+  <p class="extraNumber" *ngIf="isPostTwitter && extraNumber < 0">{{ extraNumber }}</p>
+  <img  src="/assets/images/twitterInfo.svg" (click)="twitterInfo($event)" style="margin-right:5px;"/>
   <span>{{ 'CreatenewpostPage.twitterDes' | translate}}</span>
   <ion-checkbox mode='md' checked="true" class="checkbox" [(ngModel)]="isPostTwitter" (ionChange)="checkBoxClick($event)">
   </ion-checkbox>
@@ -66,7 +75,7 @@ playsinline webkit-playsinline>
       <!-- <span class="nftButton" (click)="createNft()">NFT</span> -->
     </ion-col>
     <ion-col class="right-col" size="4.5">
-      <ion-button (click)="post()">
+      <ion-button (click)="post()" [disabled] = "isPostTwitter && extraNumber < 0">
         <ion-label>{{ 'CreatenewpostPage.post' | translate }}</ion-label>
       </ion-button>
     </ion-col>
