@@ -1,4 +1,5 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { FeedService } from 'src/app/services/FeedService';
 import { IonSlides, LoadingController } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
@@ -6,6 +7,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { AppService } from '../../services/AppService';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+
 import {
   connectivity,
   DID,
@@ -47,7 +49,8 @@ export class SigninPage implements OnInit {
     private dataHelper: DataHelper,
     private events: Events,
     private zone: NgZone,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private platform: Platform
   ) { }
 
   ngOnInit() { }
@@ -193,5 +196,12 @@ export class SigninPage implements OnInit {
         this.sid = null;
       }, 600)
     }
+  }
+
+  public isIOSPlatform(): boolean {
+    if (this.platform.is('ios')) {
+      return true;
+    }
+    return false;
   }
 }
