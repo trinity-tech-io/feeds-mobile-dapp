@@ -34,6 +34,7 @@ export class EditCommentPage implements OnInit {
   public imgUrl: string = '';
   public titleKey: string = '';
   public clickButton: boolean = false;
+  public isBorderGradient: boolean = false;
   constructor(
     private native: NativeService,
     private acRoute: ActivatedRoute,
@@ -60,7 +61,7 @@ export class EditCommentPage implements OnInit {
     let sid = setTimeout(() => {
       this.newPostIonTextarea.setFocus();
       clearTimeout(sid);
-    }, 300);
+    }, 500);
   }
 
   async ionViewWillEnter() {
@@ -172,5 +173,13 @@ export class EditCommentPage implements OnInit {
   addImg() {
     this.native.toast('common.comingSoon');
   }
+
+  ionBlur() {
+    this.isBorderGradient = false;
+   }
+
+   ionFocus() {
+     this.isBorderGradient = true;
+   }
 
 }

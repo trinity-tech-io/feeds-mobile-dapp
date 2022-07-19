@@ -15,7 +15,15 @@
       </ion-row>
     </ion-item>
     <div (click)="newPostTextArea()">
-    <ion-textarea  #newPostIonTextarea autoGrow="true"  [(ngModel)]="newComment"  placeholder="{{'CommentPage.inputComment'|translate}}">
+    <ion-textarea
+    #newPostIonTextarea
+    autoGrow="true"
+    [(ngModel)]="newComment"
+    placeholder="{{'CommentPage.inputComment'|translate}}"
+    (ionBlur)="ionBlur()"
+    (ionFocus)="ionFocus()"
+    [ngClass]="{'borderGradient':isBorderGradient}"
+    >
     </ion-textarea>
     </div>
 
