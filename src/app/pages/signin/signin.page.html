@@ -56,17 +56,24 @@
 </ion-grid>
 </ion-footer>
 
-<ion-footer class="ion-no-border" *ngIf="!isShowLearnMore && authorizationStatus === null" >
-   <ion-grid class="slide">
+<ion-footer class="ion-no-border ionfooter" *ngIf="!isShowLearnMore && authorizationStatus === null" >
+   <ion-grid [class.siginBox]="!theme.darkMode" [class.darkSiginBox]="theme.darkMode">
     <ion-row class="btn-row btn-row-bottom">
-     <ion-button (click)="signIn()">
+      <ion-col size="12">
+        <p class="title">{{ "SigninPage.signIn"| translate }}</p>
+      </ion-col>
+      <ion-col size="12">
+        <span class="des">{{ "SigninPage.des12"| translate }}</span>
+      </ion-col>
+     <ion-button (click)="elastosEssentials()">
        <ion-label>
-          {{ "SigninPage.signIn"| translate }}
+          {{ "SigninPage.elastosEssentials"| translate }}
        </ion-label>
      </ion-button>
-     <div class="btn-row-empty" style="margin-top:10px;height: 45px;
-     width: 100%;
-     line-height: 45px;" (click)="learnMore()">
+     <div class="btn-row-empty learnMore" (click)="guest()">
+      {{ "SigninPage.guest" | translate }}
+    </div>
+     <div class="btn-row-empty learnMore" (click)="learnMore()">
       {{ "SigninPage.learnMore" | translate }}
     </div>
    </ion-row>
@@ -74,8 +81,6 @@
     <div class="des">{{ "SigninPage.des11" | translate }} <span (click)="termsOfService()">{{ "app.termsOfService" | translate}}</span>{{ "SigninPage.and" | translate}}<span (click)="privacyPolicy()">{{ "app.privacyPolicy" | translate}}</span></div>
    </ion-row>
    </ion-grid>
-
-
 </ion-footer>
 
 <!-- hive auth -->

@@ -238,7 +238,10 @@ export const en = {
     learnMore: 'Learn more',
     des10: 'Web3 Social Network',
     and: ' and ',
-    des11: 'By signing in, you agree to the'
+    des11: 'By signing in, you agree to the',
+    des12: 'Please select one of the following options',
+    elastosEssentials: 'Elastos Essentials',
+    guest: 'Sign In as Guest'
   },
   FeedsPage: {
     tabTitle1: 'Home',

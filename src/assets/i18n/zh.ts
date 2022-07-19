@@ -237,7 +237,10 @@ export const zh = {
     learnMore: '了解更多',
     des10: 'Web3 社交网络',
     and: '、',
-    des11: '登录表明你同意我们的'
+    des11: '登录表明你同意我们的',
+    des12: '请选择应用登录方式',
+    elastosEssentials: 'Elastos Essentials',
+    guest: '访客方式登录'
   },
   FeedsPage: {
     tabTitle1: '主页',

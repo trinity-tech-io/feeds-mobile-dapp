@@ -123,7 +123,7 @@ export class SigninPage implements OnInit {
     this.removeEvents();
   }
 
-  async signIn() {
+  async elastosEssentials() {
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
@@ -203,5 +203,9 @@ export class SigninPage implements OnInit {
       return true;
     }
     return false;
+  }
+
+  guest() {
+
   }
 }
