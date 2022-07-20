@@ -92,11 +92,27 @@ export class TwitterService {
     }
   }
 
-  public async openTwitterLoginPage() {
-    const target = '_system'
-    const options = 'location=no'
-    Logger.log(TAG, 'inappBrowser star >>>>>>>>>>>>>>>>>>>>>>>>>>>> ')
-    this.inappBrowser.create(TwitterApi.AUTH, target, options)
+  public openTwitterLoginPage(platform: string) {
+    if (platform === "ios") {
+      const target = '_system' // _system _blank
+      const options = 'location=no'
+      this.inappBrowser.create(TwitterApi.AUTH, target, options)
+    }
+    else {
+      const target = '_blank' // _system _blank
+      const options = 'location=yes'
+      const browser = this.inappBrowser.create(TwitterApi.AUTH, target, options)
+      browser.on('loadstart').subscribe(async event => {
+        if (event.url.includes(TwitterApi.REDIRECT_URI)
+          && event.url.includes("code=")) {
+          browser.hide()
+          const codeValue = this.getJsonFromUrl(event.url)["code"]
+          await this.getTwitterAccessToken(codeValue)
+        }
+      }, err => {
+          alert("InAppBrowser load auth twitter Error: " + err);
+      });
+    }
   }
 
   public async postTweet(text: string) {

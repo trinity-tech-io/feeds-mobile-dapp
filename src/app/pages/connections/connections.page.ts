@@ -7,6 +7,7 @@ import { TwitterService } from 'src/app/services/TwitterService';
 import { Events } from 'src/app/services/events.service';
 import { Injectable } from '@angular/core';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-connections',
@@ -29,6 +30,7 @@ export class ConnectionsPage implements OnInit {
     private dataHelper: DataHelper,
     private zone: NgZone,
 
+    private platform: Platform,
   ) {
 
     let that = this;
@@ -84,8 +86,12 @@ export class ConnectionsPage implements OnInit {
     switch (typeButton) {
       case "twitter":
         this.hideConnectionMenuComponent = false;
-
-        this.twitterService.openTwitterLoginPage();
+        if (this.platform.is("ios")) {
+          this.twitterService.openTwitterLoginPage("ios");
+        }
+        else {
+          this.twitterService.openTwitterLoginPage("android");
+        }
         break;
       case "cancel":
         this.hideConnectionMenuComponent = false;
