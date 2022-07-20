@@ -5350,6 +5350,8 @@ export class FeedService {
   decodeSignInData(result: any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        console.log('Start decode signin data', JSON.stringify(result));
+
         const decodeResult = this.didHelperService.decodeSignInData(JSON.stringify(result));
         if (decodeResult) {
           await this.saveSignInData(decodeResult.did, decodeResult.name, null, decodeResult.email,
@@ -5359,7 +5361,7 @@ export class FeedService {
           resolve(null);
         }
       } catch (error) {
-        Logger.error(TAG, 'Decode signin data error');
+        Logger.error(TAG, 'Decode signin data error', error);
         resolve(null);
       }
     });
