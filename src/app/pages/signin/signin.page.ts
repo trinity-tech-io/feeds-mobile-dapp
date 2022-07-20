@@ -130,7 +130,7 @@ export class SigninPage implements OnInit {
       return;
     }
 
-    connectivity.setActiveConnector(null).then(async () => {
+    connectivity.setActiveConnector('essentials').then(async () => {
       await this.doSignin();
     }).catch((err) => {
     });
@@ -206,6 +206,9 @@ export class SigninPage implements OnInit {
   }
 
   guest() {
-
+    connectivity.setActiveConnector('local-identity').then(async () => {
+      await this.doSignin();
+    }).catch((err) => {
+    });
   }
 }
