@@ -4256,8 +4256,6 @@ export class FeedService {
   }
 
   resetConnectionStatus() {
-    this.connectionService.resetConnectionStatus();
-    this.resetServerConnectionStatus();
     this.dataHelper.setConnectionStatus(FeedsData.ConnState.disconnected);
     this.lastConnectionStatus = FeedsData.ConnState.disconnected;
   }
@@ -5314,7 +5312,7 @@ export class FeedService {
       this.storeService
         .remove('signInData')
         .then(async () => {
-          //this.resetConnectionStatus();
+          this.resetConnectionStatus();
           //this.destroyCarrier();
           await this.dataHelper.removeData("feeds.currentChannel");
           isSuccess = true;

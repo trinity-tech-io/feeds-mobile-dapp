@@ -431,9 +431,9 @@ export class ProfilePage implements OnInit {
         this.zone.run(async () => {
           this.updateWalletAddress(walletAccount);
           //await this.getOwnNftSum();
-          if (walletAccount != '') {
-            await this.getCollectiblesList();
-          }
+          // if (walletAccount != '') {
+          //   await this.getCollectiblesList();
+          // }
         });
       },
     );
@@ -1672,8 +1672,8 @@ export class ProfilePage implements OnInit {
         this.clearData();
         this.native.navigateForward(['feedspreferences'], {
           queryParams: {
-            nodeId: this.shareDestDid,
-            feedId: this.shareChannelId,
+            destDid: this.shareDestDid,
+            channelId: this.shareChannelId,
           },
         });
         this.hideSharMenuComponent = false;
@@ -1794,7 +1794,7 @@ export class ProfilePage implements OnInit {
 
   async connectWallet() {
     await this.walletConnectControllerService.connect();
-    //this.updateWalletAddress(null);
+    this.updateWalletAddress(null);
   }
 
   copyWalletAddr() {
@@ -1841,9 +1841,9 @@ export class ProfilePage implements OnInit {
       this.walletAddress = walletAccount;
     Logger.log(TAG, 'Update WalletAddress', this.walletAddress);
     this.walletAddressStr = UtilService.shortenAddress(this.walletAddress);
-    if (this.walletAddress === "") {
-      this.ownNftSum = 0;
-    }
+    // if (this.walletAddress === "") {
+    //   this.ownNftSum = 0;
+    // }
   }
 
   subsciptions() {
