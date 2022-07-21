@@ -24,7 +24,7 @@
   placeholder="{{'CreatenewpostPage.des'|translate}}"
   [(ngModel)]="newPost"
   [ngClass]="{'borderGradient': isBorderGradient,'maxTwitterText': (isPostTwitter && curTextNum > 280), 'twitterText': !isPostTwitter}"
-  (ionBlur)="ionBlur()" (ionFocus)="ionFocus()" (ionInput) = "inputTextarea()">
+  (ionBlur)="ionBlur()" (ionFocus)="ionFocus()" (ionChange) = "inputTextarea()">
   </ion-textarea>
   </div>
   <div class="twitter">
