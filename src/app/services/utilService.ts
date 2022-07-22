@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
-import { conformsTo } from 'lodash';
 import { Logger } from './logger';
 
 const TAG: string = 'UtilService';
