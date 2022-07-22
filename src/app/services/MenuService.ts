@@ -86,20 +86,13 @@ export class MenuService {
           text: this.translate.instant('common.unsubscribe'),
           role: 'destructive',
           icon: 'ios-unsubscribe',
-          handler: () => {
+          handler: async () => {
             let connect = this.dataHelper.getNetworkStatus();
             if (connect === FeedsData.ConnState.disconnected) {
               this.native.toastWarn('common.connectionError');
               return;
             }
-            this.hiveVaultController.unSubscribeChannel(
-              destDid, channelId
-            ).then(async (result) => {
-              let channel: FeedsData.SubscribedChannelV3 = {
-                destDid: destDid,
-                channelId: channelId
-              };
-              await this.native.showLoading("common.waitMoment");
+            await this.native.showLoading("common.waitMoment");
               try {
                 this.hiveVaultController.unSubscribeChannel(
                   destDid, channelId
@@ -117,9 +110,6 @@ export class MenuService {
               } catch (error) {
                 this.native.hideLoading();
               }
-            }).catch(() => {
-
-            });
           },
         },
         {
