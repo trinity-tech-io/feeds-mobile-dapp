@@ -137,7 +137,7 @@ export class DIDHelperService {
   parseJWT(token: string) {
     return new Promise(async (resolve, reject) => {
       try {
-        const parserBuilder = new JWTParserBuilder();
+        const parserBuilder = new JWTParserBuilder().setAllowedClockSkewSeconds(300);
         const parser = parserBuilder.build();
         const jwtResult: JWT = await parser.parse(token);
         resolve(jwtResult);
