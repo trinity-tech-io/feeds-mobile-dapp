@@ -544,13 +544,14 @@ export class HiveVaultController {
   publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const content = await this.progressMediaData(postText, imagesBase64, videoData)
-        const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
         const userDid = (await this.dataHelper.getSigninData()).did
 
         if (localStorage.getItem(userDid + "isSyncToTwitter") === "true") {
           await this.twitterService.postTweet(postText);
         }
+
+        const content = await this.progressMediaData(postText, imagesBase64, videoData)
+        const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
 
         Logger.log(TAG, "Publish new post , result is", result);
         if (!result) {
