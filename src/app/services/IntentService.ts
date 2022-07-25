@@ -21,7 +21,7 @@ export class IntentService {
   private static BASEURL_PASAR: string = 'https://feeds.trinity-feeds.app/pasar';
   private static BASEURL_NAV: string = 'https://feeds.trinity-feeds.app/nav';
   private static BASEURL_SHORTEN: string = 'https://s.trinity-feeds.app/api/v2/action/shorten?key=9fa8ef7f86a28829f53375abcb0af5';
-  private static BASEURL_TWITTER: string = "https://feeds.trinity-feeds.app/logininsuccess"
+  private static BASEURL_TWITTER: string = "https://feeds.trinity-feeds.app/login-from-twitter"
 
   constructor(
     private twitterService: TwitterService,

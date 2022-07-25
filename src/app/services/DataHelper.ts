@@ -8,6 +8,7 @@ import { SignInData } from './FeedService';
 import { Events } from 'src/app/services/events.service';
 import { Logger } from './logger';
 import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
+import { TwitterApi } from './TwitterApi';
 
 let TAG: string = 'DataHelper';
 
@@ -4154,12 +4155,13 @@ export class DataHelper {
     const hour = 60 * 60 * 1000 * 2 // 2小时
     time.setTime(tt + hour)
     tokenData['expired_time'] = time.getTime()
-
-    localStorage.setItem(userDid + "TWITTERTOKEN", JSON.stringify(tokenData))
+    const key = userDid + TwitterApi.CLIENT_ID + "TWITTERTOKEN"
+    localStorage.setItem(key, JSON.stringify(tokenData))
   }
 
   getTwitterRefreshToken(userDid: string) {
-    const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
+    const key = userDid + TwitterApi.CLIENT_ID + "TWITTERTOKEN"
+    const data = localStorage.getItem(key) || ''
     console.log("getTwitterRefreshToken ======= ", data)
     if (data === '' || data === undefined) {
       return null // 标识 本地没有token
@@ -4173,8 +4175,8 @@ export class DataHelper {
 
   getTwitterAccessToken(userDid: string) {
     // return false // 标识 token 过期
-
-    const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
+    const key = userDid + TwitterApi.CLIENT_ID + "TWITTERTOKEN"
+    const data = localStorage.getItem(key) || ''
     if (data === '' || data === undefined) {
       return null // 标识 本地没有token
     }
@@ -4191,11 +4193,12 @@ export class DataHelper {
   }
 
   removeTwitterToken(userDid: string) {
-    const data = localStorage.getItem(userDid + "TWITTERTOKEN") || ''
+    const key = userDid + TwitterApi.CLIENT_ID + "TWITTERTOKEN"
+    const data = localStorage.getItem(key) || ''
     if (data === '' || data === undefined || data == null) {
       return
     }
-    localStorage.removeItem(userDid + "TWITTERTOKEN")
+    localStorage.removeItem(key)
   }
 
   setHiveAuthStatus(hiveAuthStatus: number) {
