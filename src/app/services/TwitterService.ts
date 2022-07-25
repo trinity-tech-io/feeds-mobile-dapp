@@ -117,6 +117,8 @@ export class TwitterService {
 
   public async postTweet(text: string) {
     try {
+      const suffix = "via #elastos Feeds"
+      text = text + suffix
     let params = {
       "text": text
     }
@@ -131,6 +133,20 @@ export class TwitterService {
       return result
     }
     catch (error) {
+    /*
+TODO:
+
+error: "{\"detail\":\"You are not allowed to create a Tweet with duplicate content.\",\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403}"
+
+headers: {content-type: "application/json; charset=utf-8", x-rate-limit-limit: "200", x-access-level: "read-write", content-disposition: "attachment; filename=json.json", content-encoding: "gzip", …}
+
+status: 403
+
+
+[Log] Convert-To-Logger – "post Tweet Media With Auth1 error >>>>>>>>>>>>>>>>>>>>>>>>>>>> " – {status: -6, error: "The Internet connection appears to be offline."} (vendor-es2015.js, line 59129)
+[Log] Convert-To-Logger – "post Tweet Media With Auth1 error >>>>>>>>>>>>>>>>>>>>>>>>>>>> " – "The Internet connection appears to be offline." (vendor-es2015.js, line 59129)
+*/
+
         Logger.log(TAG, 'post tweet error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
         throw error
     }

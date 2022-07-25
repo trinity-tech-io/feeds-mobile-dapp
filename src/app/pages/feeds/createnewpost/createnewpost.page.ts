@@ -577,7 +577,7 @@ export class CreatenewpostPage implements OnInit {
 
    inputTextarea() {
     this.curTextNum = this.getTwitterText();
-    this.extraNumber =  280 - this.curTextNum;
+     this.extraNumber = 280 - 18 - this.curTextNum; // 
    }
 
    getTwitterText() {
