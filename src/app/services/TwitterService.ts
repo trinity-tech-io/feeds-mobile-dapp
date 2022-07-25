@@ -117,7 +117,7 @@ export class TwitterService {
 
   public async postTweet(text: string) {
     try {
-      const suffix = "via #elastos Feeds"
+      const suffix = " via #elastos Feeds"
       text = text + suffix
     let params = {
       "text": text
