@@ -116,13 +116,14 @@ export class ChannelContractService {
     tokenURI: string,
     channelEntry: string,
     receiptAddr: string,
-    ownerAddr: string
+    quoteToken: string,
+    mintFee: string
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        Logger.log(TAG, 'Mint params ', tokenId, tokenURI, channelEntry, receiptAddr, ownerAddr);
+        Logger.log(TAG, 'Mint params ', tokenId, tokenURI, channelEntry, receiptAddr,  quoteToken, mintFee);
         const mintdata = this.channelContract.methods
-          .mint(tokenId, tokenURI, channelEntry, receiptAddr, ownerAddr)
+          .mint(tokenId, tokenURI, channelEntry, receiptAddr, quoteToken, mintFee)
           .encodeABI();
         let transactionParams = await this.createTxParams(mintdata);
 
@@ -132,7 +133,7 @@ export class ChannelContractService {
           transactionParams,
         );
         this.channelContract.methods
-          .mint(tokenId, tokenURI, channelEntry, receiptAddr, ownerAddr)
+          .mint(tokenId, tokenURI, channelEntry, receiptAddr, quoteToken, mintFee)
           .send(transactionParams)
           .on('transactionHash', hash => {
             Logger.log(TAG, 'Mint process, transactionHash is', hash);
