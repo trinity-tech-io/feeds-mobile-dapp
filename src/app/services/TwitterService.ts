@@ -134,7 +134,6 @@ export class TwitterService {
     }
     catch (error) {
       const emsg = "{\"detail\":\"You are not allowed to create a Tweet with duplicate content.\",\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403}"
-      console.log("emsg ==== ", emsg)
       if (emsg === error.error) {
         this.native.toastWarn("common.duplicate")
         return
