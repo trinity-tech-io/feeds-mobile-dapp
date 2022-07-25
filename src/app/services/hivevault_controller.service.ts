@@ -1689,7 +1689,13 @@ export class HiveVaultController {
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Prepare Connection error', error);
-        this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
+        //console.log("===="+error["__zone_symbol__value"].internalCode)
+        let internalCode = error["__zone_symbol__value"].internalCode || "";
+        if(internalCode === 1){
+          this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 11 });
+        }else{
+          this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
+        }
         reject(error);
       }
     });

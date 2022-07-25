@@ -92,6 +92,7 @@
              <p class="title" *ngIf="authorizationStatus === 1"> {{ 'GalleriahivePage.authorized' | translate}}</p>
              <p class="title" *ngIf="authorizationStatus === 2"> {{ 'GalleriahivePage.authorization' | translate}}</p>
              <p class="title" *ngIf="authorizationStatus === 3"> {{ 'GalleriahivePage.authorization' | translate}}</p>
+             <p class="title" *ngIf="authorizationStatus === 11"> {{ 'GalleriahivePage.authorization' | translate}}</p>
            </ion-col>
            <ion-col size="12">
             <span class="description" *ngIf="authorizationStatus === 0">{{ 'GalleriahivePage.description1' | translate}}</span>
@@ -118,7 +119,7 @@
           </ion-button>
         </ion-row>
 
-        <ion-row class="btn-row btn-row-top" *ngIf="authorizationStatus === 2 || authorizationStatus === 3" (click)="TryButton()">
+        <ion-row class="btn-row btn-row-top" *ngIf="authorizationStatus === 2 || authorizationStatus === 3 || authorizationStatus === 11" (click)="TryButton()">
           <ion-button>
             <ion-label>
                {{ "GalleriahivePage.buttonTitle1"| translate }}

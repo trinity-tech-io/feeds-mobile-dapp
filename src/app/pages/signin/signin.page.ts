@@ -108,6 +108,9 @@ export class SigninPage implements OnInit {
         case 1:
           this.authorizationStatus = 2;
           break;
+        case 11:
+          this.authorizationStatus = 11;
+          break;
       }
     });
   }
@@ -190,7 +193,7 @@ export class SigninPage implements OnInit {
     if (this.sid === null) {
       this.sid = setTimeout(() => {
         this.hiveVaultController.prepareHive(userDid).catch((error) => {
-          if (error.getInternalCode() == 1) this.authorizationStatus = 11;
+          //if (error.getInternalCode() == 1) this.authorizationStatus = 11;
         });
         clearTimeout(this.sid);
         this.sid = null;
