@@ -133,11 +133,11 @@ export class TwitterService {
       return result
     }
     catch (error) {
-      const emsg = "{\"detail\":\"You are not allowed to create a Tweet with duplicate content.\",\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403}"
-      if (emsg === error.error) {
-        this.native.toastWarn("common.duplicate")
-        return
-      }
+      // const emsg = "{\"detail\":\"You are not allowed to create a Tweet with duplicate content.\",\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403}"
+      // if (emsg === error.error) {
+      //   this.native.toastWarn("common.duplicate")
+      //   return
+      // }
         Logger.log(TAG, 'post tweet error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
         throw error
     }

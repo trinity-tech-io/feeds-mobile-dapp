@@ -230,9 +230,21 @@ export class CreatenewpostPage implements OnInit {
           //dismiss dialog
           this.backHome();
         } catch (error) {
-          if(error["code"] != 507){
+          const emsg = "{\"detail\":\"You are not allowed to create a Tweet with duplicate content.\",\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403}"
+          console.log(error)
+          const errorCode = error["code"]
+          const errorMsg = error["detail"]
+
+          console.log("error code ======= ", errorCode)
+          console.log("error Msg ======= ", errorMsg)
+
+          if (emsg === error.error) {
+            this.native.toastWarn("common.duplicate")
+          }
+          else if (error["code"] != 507) {
             this.native.toastWarn('common.sendFail'); // 需要更改错误提示
           }
+
           this.isLoading = false;
           this.isPublishing = false;
         }
