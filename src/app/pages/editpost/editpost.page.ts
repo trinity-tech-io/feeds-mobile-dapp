@@ -19,6 +19,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import _ from 'lodash';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { UtilService } from 'src/app/services/utilService';
 
 let TAG: string = 'Feeds-editpost';
 @Component({
@@ -373,11 +374,13 @@ export class EditPostPage implements OnInit {
   updatePost() {
       let content = _.cloneDeep(this.postData.content);
       content.content = this.editContent;
+      const updateAt = UtilService.getCurrentTimeNum();
       const pinStatus = FeedsData.PinStatus.NOTPINNED;//TODO
       this.hiveVaultController.updatePost(
         this.originPostData,
         content,
         pinStatus,
+        updateAt,
         "public",
         '',
       ).then((result) => {

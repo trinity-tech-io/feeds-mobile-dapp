@@ -34,18 +34,24 @@ export class MenuService {
     private hiveVaultController: HiveVaultController
   ) { }
 
-  async showChannelItemMenu(destDid: string, channelId: string, channelName: string, postId: string, isMineAndCanEdit: boolean) {
-    if (this.actionSheetMenuStatus != null) {
+  async showChannelItemMenu(post: FeedsData.PostV3, channelName: string, isMineAndCanEdit: boolean) {
+    if (this.actionSheetMenu != null) {
       return;
     }
-    this.actionSheetMenuStatus = "opening";
-    const sharePostButton = this.createSharePostButton(destDid, postId);
+    const sharePostButton = this.createSharePostButton(post.destDid, post.postId);
     const cancelButton = this.createCancelButton();
     let buttons: ActionSheetButton[] = [sharePostButton, cancelButton];
     if (isMineAndCanEdit) {
-      const editPostButton = this.createEditPostButton(destDid, channelId, channelName, postId);
-      const removePostButton = this.createRemovePostButton(destDid, channelId, channelName, postId);
-      buttons = [sharePostButton, editPostButton, removePostButton, cancelButton];
+      const editPostButton = this.createEditPostButton(post.destDid, post.channelId, channelName, post.postId);
+      const removePostButton = this.createRemovePostButton(post.destDid, post.channelId, channelName, post.postId);
+
+      if (post.pinStatus == FeedsData.PinStatus.NOTPINNED) {
+        const pinpostButton = this.createPinPostButton(post);
+        buttons = [pinpostButton, sharePostButton, editPostButton, removePostButton, cancelButton];
+      } else {
+        const unpinPostButton = this.createUnpinPostButton(post);
+        buttons = [unpinPostButton, sharePostButton, editPostButton, removePostButton, cancelButton];
+      }
     }
 
     await this.createActionSheetMenu({
@@ -595,6 +601,26 @@ export class MenuService {
       icon: 'swap-horizontal',
       handler: () => {
         this.viewHelper.showTransferPrompt(assetItem, 'common.transferCollectible');
+      }
+    }
+  }
+
+  private createPinPostButton(originPost: FeedsData.PostV3) {
+    return {
+      text: 'pinPost',
+      icon: 'create',
+      handler: () => {
+        this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.PINNED);
+      }
+    }
+  }
+
+  private createUnpinPostButton(originPost: FeedsData.PostV3) {
+    return {
+      text: 'unpinPost',
+      icon: 'create',
+      handler: () => {
+        this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.NOTPINNED);
       }
     }
   }

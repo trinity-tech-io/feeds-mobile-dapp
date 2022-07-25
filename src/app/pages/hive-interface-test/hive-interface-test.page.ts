@@ -119,7 +119,10 @@ export class HiveInterfaceTestPage implements OnInit {
 
   //subscription
   querySubscrptionInfoByChannelId() {
-    this.hiveVaultApi.querySubscrptionInfoByChannelId('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01');
+    // feeds://v3/did:elastos:ioUyXVxTkZmJYGa5sWUzAfb8khDQc5zKT3/ececdbad55c0c8411e16eb3827183e8da0c41c69eea0bb3ff7e11e3234f382e3
+
+
+    this.hiveVaultApi.querySubscrptionInfoByChannelId('did:elastos:ioUyXVxTkZmJYGa5sWUzAfb8khDQc5zKT3', 'ececdbad55c0c8411e16eb3827183e8da0c41c69eea0bb3ff7e11e3234f382e3');
     // alert('getSubscriptionInfo');
   }
 

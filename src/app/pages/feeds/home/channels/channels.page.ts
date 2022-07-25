@@ -665,10 +665,8 @@ export class ChannelsPage implements OnInit {
     this.curPostId = post.postId;
 
     this.menuService.showChannelItemMenu(
-      post.destDid,
-      post.channelId,
+      post,
       this.channelName,
-      post.postId,
       isMine === 1 && post.status != FeedsData.PostCommentStatus.deleted
     );
   }

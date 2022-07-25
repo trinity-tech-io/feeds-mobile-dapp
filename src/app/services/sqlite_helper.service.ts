@@ -119,7 +119,7 @@ export class FeedsSqliteHelper {
         const p7 = this.createPinPostTable(dbUserDid);
 
         Promise.all(
-          [p1, p2, p3, p4, p5, p6]
+          [p1, p2, p3, p4, p5, p6, p7]
         );
 
         resolve('SUCCESS');

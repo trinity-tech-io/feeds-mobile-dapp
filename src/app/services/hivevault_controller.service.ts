@@ -609,11 +609,11 @@ export class HiveVaultController {
     });
   }
 
-  public updatePost(originPost: FeedsData.PostV3, newContent: FeedsData.postContentV3, pinStatus: FeedsData.PinStatus, newType: string = 'public', newTag: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string = '', newProof: string = ''): Promise<FeedsData.PostV3> {
+  public updatePost(originPost: FeedsData.PostV3, newContent: FeedsData.postContentV3, pinStatus: FeedsData.PinStatus, updateAt: number, newType: string = 'public', newTag: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string = '', newProof: string = ''): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const newUpdateAt = UtilService.getCurrentTimeNum();
-        const result = await this.hiveVaultApi.updatePost(originPost.postId, originPost.channelId, newType, newTag, JSON.stringify(newContent), newStatus, newUpdateAt, newMemo, newProof, pinStatus);
+
+        const result = await this.hiveVaultApi.updatePost(originPost.postId, originPost.channelId, newType, newTag, JSON.stringify(newContent), newStatus, updateAt, newMemo, newProof, pinStatus);
         if (!result) {
           const errorMsg = 'Update post error';
           Logger.error(TAG, errorMsg);
@@ -624,7 +624,7 @@ export class HiveVaultController {
           postId: originPost.postId,
           channelId: originPost.channelId,
           createdAt: originPost.createdAt,
-          updatedAt: newUpdateAt,
+          updatedAt: updateAt,
           content: newContent,
           status: newStatus,
           type: newType,
@@ -640,6 +640,12 @@ export class HiveVaultController {
         reject(error);
       }
     })
+  }
+
+  public pinPost(originPost: FeedsData.PostV3, pinStatus: FeedsData.PinStatus): Promise<FeedsData.PostV3> {
+    console.log('===========>originPost', originPost, '===========>pinStatus', pinStatus);
+    // return this.updatePost(originPost, originPost.content, pinStatus, originPost.updatedAt, originPost.type, originPost.tag, originPost.status, originPost.memo, originPost.proof);
+    return null;
   }
 
   private async progressMediaData(newPostText: string, newImagesBase64: string[], newVideoData: FeedsData.videoData) {
@@ -815,10 +821,17 @@ export class HiveVaultController {
         if (userDisplayName == '') {
           const signinData = await this.dataHelper.getSigninData();
           userName = signinData.name;
+          console.log('signinData====>', signinData);
         } else {
           userName = userDisplayName;
         }
+
         const updatedAt = UtilService.getCurrentTimeNum();
+        console.log('start====>');
+        console.log('subscribeChannel====>', targetDid);
+        console.log('channelId====>', channelId);
+        console.log('userName====>', userName);
+        console.log('updatedAt====>', updatedAt);
         const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userName, updatedAt);
         if (!result) {
           const errorMsg = 'Subscribe channel error, destDid is' + targetDid + 'channelId is' + channelId;

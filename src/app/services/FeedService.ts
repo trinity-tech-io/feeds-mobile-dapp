@@ -921,6 +921,7 @@ export class FeedService {
 
   saveSignInData2(signInData: SignInData) {
     this.dataHelper.setLocalSignInData(signInData);
+    console.log('savesignindata ====> ' + signInData);
     this.storeService.set(FeedsData.PersistenceKey.signInData, signInData);
   }
 
