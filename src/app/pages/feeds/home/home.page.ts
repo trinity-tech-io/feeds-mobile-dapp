@@ -43,6 +43,7 @@ import { HiveVaultHelper } from 'src/app/services/hivevault_helper.service';
 import { Config } from 'src/app/services/config';
 import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { TwitterService } from 'src/app/services/TwitterService';
+import { RedditService } from 'src/app/services/RedditService';
 
 let TAG: string = 'Feeds-home';
 @Component({
@@ -216,13 +217,14 @@ export class HomePage implements OnInit {
     private hiveVaultController: HiveVaultController,
     private http: HTTP,
     private twitterService: TwitterService,
-
+    private redditService: RedditService,
+    
   ) { }
 
   ngOnInit() {
-    // console.log("开始加载 twitter url >>>>>>>>>>>>>>>>>>>>>> 1")
-    // this.twitterService.openTwitterLoginPage();
-    // console.log("结束加载 twitter url >>>>>>>>>>>>>>>>>>>>>> 1")
+    console.log("开始加载 reddit url >>>>>>>>>>>>>>>>>>>>>> 1")
+    this.redditService.openRedditLoginPage("ios");
+    console.log("结束加载 reddit url >>>>>>>>>>>>>>>>>>>>>> 1")
   }
 
   async initPostListData(scrollToTop: boolean) {
