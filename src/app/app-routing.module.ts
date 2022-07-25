@@ -228,10 +228,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/hive-interface-test/hive-interface-test.module').then(m => m.HiveInterfaceTestPageModule)
   },
   {
-    path: 'galleriahive',
-    loadChildren: () => import('./pages/galleriahive/galleriahive.module').then(m => m.GalleriahivePageModule)
-  },
-  {
     path: 'apppreferences',
     loadChildren: () => import('./pages/apppreferences/apppreferences.module').then(m => m.ApppreferencesPageModule)
   },
