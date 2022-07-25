@@ -144,7 +144,12 @@ export class ProfiledetailPage implements OnInit {
     this.initTitle();
 
     let signInData = await this.dataHelper.getSigninData();
-    this.name = signInData['nickname'] || signInData['name'] || '';
+    let nickname = signInData['nickname'] || '';
+    if(nickname !='' && nickname != 'Information not provided'){
+      this.name = nickname;
+    }else{
+      this.name = signInData['name'] || '';
+    }
     this.description = signInData['description'] || '';
     this.userDid = signInData['did'];
     this.did = this.feedService.rmDIDPrefix(signInData['did'] || '');

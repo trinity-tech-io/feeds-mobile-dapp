@@ -471,7 +471,12 @@ export class MyApp {
     this.feedService.initSignInDataAsync(
       signInData => {
         if (signInData == null || signInData == undefined) return;
-        this.wName = signInData.nickname || signInData.name || '';
+        let nickname = signInData['nickname'] || '';
+        if(nickname !='' && nickname != 'Information not provided'){
+          this.wName = nickname;
+        }else{
+          this.wName = signInData['name'] || '';
+        }
         this.userDid = signInData.did || "";
         this.userDidDisplay = UtilService.userDidDisplay(this.userDid);
         this.name = UtilService.moreNanme(this.wName, 15);

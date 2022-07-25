@@ -460,8 +460,12 @@ export class ProfilePage implements OnInit {
 
 
     let signInData = await this.dataHelper.getSigninData();
-
-    this.name = signInData['nickname'] || signInData['name'] || '';
+    let nickname = signInData['nickname'] || '';
+    if(nickname !='' && nickname != 'Information not provided'){
+      this.name = nickname;
+    }else{
+      this.name = signInData['name'] || '';
+    }
     this.description = signInData['description'] || '';
     // let userDid = signInData['did'] || '';
     this.updateUserAvatar();
