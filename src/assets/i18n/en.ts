@@ -35,6 +35,7 @@ export const en = {
     channel: 'Channel',
     image: 'Image',
     nochanges: 'No changes made',
+    duplicate: 'You are not allowed to create a Tweet with duplicate content.',
     editpost: 'Edit Post',
     removepost: 'Delete Post',
     editcomment: 'Edit Comment',

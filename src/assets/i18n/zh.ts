@@ -35,6 +35,7 @@ export const zh = {
     channel: '频道',
     image: '图片',
     nochanges: '未做任何更改',
+    duplicate: '您不得创建包含重复内容的推文。',
     editpost: '编辑微说',
     removepost: '删除微说',
     editcomment: '编辑微评',
