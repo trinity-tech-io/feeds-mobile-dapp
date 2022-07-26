@@ -16,6 +16,7 @@ import { HiveVaultController } from './hivevault_controller.service';
 export class MenuService {
   private actionSheetMenu: HTMLIonActionSheetElement = null;
   private popover: HTMLIonPopoverElement = null;
+  private actionSheetMenuStatus: string = null;
   constructor(
     private actionSheetController: ActionSheetController,
     private translate: TranslateService,
@@ -30,10 +31,10 @@ export class MenuService {
   ) { }
 
   async showChannelItemMenu(destDid: string, channelId: string, channelName: string, postId: string, isMineAndCanEdit: boolean) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const sharePostButton = this.createSharePostButton(destDid, postId);
     const cancelButton = this.createCancelButton();
     let buttons: ActionSheetButton[] = [sharePostButton, cancelButton];
@@ -50,10 +51,10 @@ export class MenuService {
   }
 
   async showChannelMenu(destDid: string, channelId: string) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
     const cancelButton = this.createCancelButton();
 
@@ -64,10 +65,10 @@ export class MenuService {
   }
 
   async showOtherChannelMenu(destDid: string, channelId: string, channelName: string, postId: string) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const sharePostButton: ActionSheetButton = this.createSharePostButton(destDid, postId);
     const unsubscribeButton: ActionSheetButton = this.createUnsubscribeButton(destDid, channelId);
     const cancelButton = this.createCancelButton();
@@ -79,10 +80,10 @@ export class MenuService {
   }
 
   async showShareMenu(destDid?: string, channelId?: string, channelName?: string, postId?: string) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const sharePostButton = this.createSharePostButton(destDid, postId);
     const cancelButton = this.createCancelButton();
 
@@ -92,24 +93,11 @@ export class MenuService {
     });
   }
 
-  async showQRShareMenu(title: string, qrCodeString: string) {
-    if (this.actionSheetMenu != null) {
-      return;
-    }
-
-    const cancelButton = this.createCancelButton();
-
-    await this.createActionSheetMenu({
-      cssClass: 'editPost',
-      buttons: [cancelButton],
-    });
-  }
-
   async showUnsubscribeMenu(destDid: string, channelId: string, channelName: string) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const cancelButton = this.createCancelButton();
     const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, channelName);
 
@@ -120,10 +108,10 @@ export class MenuService {
   }
 
   async showUnsubscribeMenuWithoutName(destDid: string, channelId: string): Promise<string> {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
     const cancelButton = this.createCancelButton();
 
@@ -134,9 +122,11 @@ export class MenuService {
   }
 
   async showPostDetailMenu(destDid: string, channelId: string, channelName: string, postId: string) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
+
+    this.actionSheetMenuStatus = "opening";
 
     const sharePostButton = this.createSharePostButton(destDid, postId);
     const editPostButton = this.createEditPostButton(destDid, channelId, channelName, postId);
@@ -150,10 +140,10 @@ export class MenuService {
   }
 
   async showHomeMenu(destDid: string, channelId: string, channelName: string, postId: string) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const sharePostButton = this.createSharePostButton(destDid, postId);
     const editPostButton = this.createEditPostButton(destDid, channelId, channelName, postId);
     const removePostButton = this.createRemovePostButton(destDid, channelId, channelName, postId);
@@ -166,26 +156,12 @@ export class MenuService {
     })
   }
 
-  async showPictureMenu(that: any, openCamera: any, openGallery: any, openNft: any) {
-    if (this.actionSheetMenu != null) {
-      return;
-    }
-
-    const takePictureButton = this.createTakePictureButton(that, openCamera);
-    const photoGalleryButton = this.createPhotoGalleryButton(that, openGallery);
-    const openNFTButton = this.createOpenNFTButton(that, openNft);
-    const cancelButton = this.createCancelButton();
-
-    await this.createActionSheetMenu({
-      cssClass: 'editPost',
-      buttons: [takePictureButton, photoGalleryButton, cancelButton]
-    });
-  }
-
   async showCommentDetailMenu(comment: FeedsData.CommentV3) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
+
+    this.actionSheetMenuStatus = "opening";
 
     const editCommentButton = this.createEditCommentButton(comment.destDid, comment.channelId, comment.postId, comment.refcommentId, comment.commentId, comment.content);
     const removeCommentButton = this.createRemoveCommentButton();
@@ -198,9 +174,11 @@ export class MenuService {
   }
 
   async showReplyDetailMenu(reply: FeedsData.CommentV3) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
+
+    this.actionSheetMenuStatus = "opening";
 
     const editReplyButton = this.createEditReplyButton(reply.destDid, reply.channelId, reply.postId, reply.refcommentId, reply.commentId, reply.content);
     const removeReplyButton = this.createRemoveReplyButton();
@@ -213,10 +191,10 @@ export class MenuService {
   }
 
   async showOnSaleMenu(assItem: any) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const changePriceButton = this.createNFTChangePriceButton(assItem);
     const cancelOrderButton = this.createNFTCancelOrderButton();
     const assetDetailsButton = this.createAssetDetailsButton(assItem);
@@ -229,10 +207,10 @@ export class MenuService {
   }
 
   async showChannelCollectionsMenu(channelItem: FeedsData.ChannelCollections) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const openCollectionButton = this.createOpenCollectionButton(channelItem);
     const burnNFTButton = this.createBurnNFTButton(channelItem);
     const cancelButton = this.createCancelButton();
@@ -244,10 +222,10 @@ export class MenuService {
   }
 
   async showChannelCollectionsPublishedMenu(channelItem: FeedsData.ChannelCollections) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const cancelPublicCollectionsButton = this.createCancelPublicCollectionsButton();
     const cancelButton = this.createCancelButton();
 
@@ -258,10 +236,10 @@ export class MenuService {
   }
 
   async showCreatedMenu(assItem: any) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const onSaleButton = this.createOnSaleButton(assItem);
     const transCollectibleButton = this.createTransCollectibleButton(assItem);
     const assetDetailsButton = this.createAssetDetailsButton(assItem);
@@ -275,10 +253,10 @@ export class MenuService {
   }
 
   async showShareOnSaleMenu(assItem: any) {
-    if (this.actionSheetMenu != null) {
+    if (this.actionSheetMenuStatus != null) {
       return;
     }
-
+    this.actionSheetMenuStatus = "opening";
     const collectionDetailsButton = this.createCollectionDetailsButton(assItem);
     const cancelButton = this.createCancelButton();
 
@@ -300,6 +278,7 @@ export class MenuService {
 
     this.actionSheetMenu.onWillDismiss().then(() => {
       if (this.actionSheetMenu != null) {
+        this.actionSheetMenuStatus = null;
         this.actionSheetMenu = null;
       }
     });
