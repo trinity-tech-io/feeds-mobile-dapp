@@ -78,14 +78,12 @@ export class RedditService {
   private async fetchTokenFromReddit(params: any) {
     const userDid = (await this.dataHelper.getSigninData()).did
     let header = {
-      "client_id": RedditApi.CLIENT_ID,
-      // "password": ""
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': 'Basic ' + btoa("HeRDPm57bP09VIhD-FbfMA" + ':' + "s1Bw_UhxiYvxGbVOUKx76YxiAS5CXQ")
     }
-    this.http.setDataSerializer('json')
+
     try {
       console.log("param ===== ", params)
-      console.log("param ===== ", params)
-      console.log("url ===== ", RedditApi.TOKEN)
 
       const result = await this.http.post(RedditApi.TOKEN, params, header)
       console.log("result ====== ", result)
