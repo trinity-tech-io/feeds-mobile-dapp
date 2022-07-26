@@ -388,7 +388,6 @@ export class HiveInterfaceTestPage implements OnInit {
 
   async loadMoreLocalData() {
     this.tmpPostList = await this.hiveVaultController.loadPostMoreData(false, this.tmpPostList) || [];
-    console.log('this.tmpPostList===', this.tmpPostList)
     // let postList: FeedsData.PostV3[] = [];
     // if (list && list.length > 0) {
     //   postList = _.unionWith(this.tmpPostList, list, _.isEqual);

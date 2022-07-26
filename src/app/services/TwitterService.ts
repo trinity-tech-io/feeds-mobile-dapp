@@ -144,7 +144,7 @@ export class TwitterService {
   }
 
   public async checkTwitterIsExpired() {
-   
+
     let signinData = await this.dataHelper.getSigninData() || null
       if (signinData == null || signinData == undefined) {
         return null
@@ -158,7 +158,6 @@ export class TwitterService {
       if (token === false) {
         // TODO: refreshTOken 同样过期，提示用户重新登录
         token = await this.fetchTwitterAccessToken(userDid)
-        console.log("开始刷新refresh token2 ============== ", token)
       }
       return token
     }
