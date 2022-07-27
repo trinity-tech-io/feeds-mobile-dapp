@@ -305,7 +305,13 @@ export class NativeService {
   }
 
   public clickUrl(url: string, event: any) {
-    this.openUrl(url);
+    let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+    var urlExp = new RegExp(reg);
+    if(urlExp.test(url) === true){
+      this.openUrl(url);
+    }else{//处理#搜索
+
+    }
     event.stopPropagation();
   }
 
