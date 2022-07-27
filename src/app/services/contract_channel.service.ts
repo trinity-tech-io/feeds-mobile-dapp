@@ -111,6 +111,9 @@ export class ChannelContractService {
     });
   }
 
+  // QuoteToken 为0x000 表示使用 ELA
+  // mintFee为0 表示不需要注册费用，使用最基础的交易费就可以了。
+
   async mint(
     tokenId: string,
     tokenURI: string,
