@@ -17,6 +17,10 @@ export class MenuService {
   private actionSheetMenu: HTMLIonActionSheetElement = null;
   private popover: HTMLIonPopoverElement = null;
   private actionSheetMenuStatus: string = null;
+  private destDid: string = "";
+  private channelId: string = "";
+  private postId: string = "";
+  private comment: FeedsData.CommentV3 = null;
   constructor(
     private actionSheetController: ActionSheetController,
     private translate: TranslateService,
@@ -164,7 +168,7 @@ export class MenuService {
     this.actionSheetMenuStatus = "opening";
 
     const editCommentButton = this.createEditCommentButton(comment.destDid, comment.channelId, comment.postId, comment.refcommentId, comment.commentId, comment.content);
-    const removeCommentButton = this.createRemoveCommentButton();
+    const removeCommentButton = this.createRemoveCommentButton(comment);
     const cancelButton = this.createCancelButton();
 
     await this.createActionSheetMenu({
@@ -181,7 +185,7 @@ export class MenuService {
     this.actionSheetMenuStatus = "opening";
 
     const editReplyButton = this.createEditReplyButton(reply.destDid, reply.channelId, reply.postId, reply.refcommentId, reply.commentId, reply.content);
-    const removeReplyButton = this.createRemoveReplyButton();
+    const removeReplyButton = this.createRemoveReplyButton(reply);
     const cancelButton = this.createCancelButton();
 
     await this.createActionSheetMenu({
@@ -452,12 +456,13 @@ export class MenuService {
     }
   }
 
-  private createRemoveCommentButton(): ActionSheetButton {
+  private createRemoveCommentButton(comment: FeedsData.CommentV3): ActionSheetButton {
     return {
       text: this.translate.instant('common.removecomment'),
       role: 'destructive',
       icon: 'ios-delete',
       handler: async () => {
+        this.comment = comment;
         this.popover = await this.popupProvider.ionicConfirm(
           this,
           'common.deleteComment',
@@ -488,12 +493,13 @@ export class MenuService {
     }
   }
 
-  private createRemoveReplyButton(): ActionSheetButton {
+  private createRemoveReplyButton(reply: FeedsData.CommentV3): ActionSheetButton {
     return {
       text: this.translate.instant('CommentlistPage.deletereply'),
       role: 'destructive',
       icon: 'ios-delete',
       handler: async () => {
+        this.comment = reply;
         this.popover = await this.popupProvider.ionicConfirm(
           this,
           'common.deleteReply',
@@ -616,6 +622,9 @@ export class MenuService {
 
         break;
       case 'removePost':
+        this.destDid = destDid;
+        this.channelId = channelId;
+        this.postId = postId;
         this.popover = await this.popupProvider.ionicConfirm(
           this,
           'common.deletePost',
@@ -629,19 +638,19 @@ export class MenuService {
   }
 
   private cancelPopupOver(that: any) {
-    if (this.popover != null) {
-      this.popover.dismiss();
+    if (that.popover != null) {
+      that.popover.dismiss();
     }
   }
 
   private confirmRemovePost(that: any) {
-    this.cancelPopupOver(that);
+    that.cancelPopupOver(that);
     that.events.publish(FeedsEvent.PublishType.deletePostFinish, { 'destDid': that.destDid, 'channelId': that.channelId, 'postId': that.postId });
   }
 
 
   private confirmRemoveComment(that: any) {
-    this.cancelPopupOver(that);
+    that.cancelPopupOver(that);
     that.events.publish(FeedsEvent.PublishType.deleteCommentFinish, that.comment);
   }
 

@@ -137,6 +137,7 @@ export class FeedinfoPage implements OnInit {
       FeedsEvent.PublishType.unsubscribeFinish,
       () => {
         this.zone.run(() => {
+          this.followStatus = false;
           this.native.setRootRouter(['/tabs/home']);
         });
       },
@@ -247,7 +248,7 @@ export class FeedinfoPage implements OnInit {
   async unsubscribe() {
     try {
       this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId,);
-      this.followStatus = true;
+      //this.followStatus = true;
     } catch (error) {
       //TODO show unsubscribe error ui
     }
