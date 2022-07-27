@@ -217,8 +217,8 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.querySubscriptionInfoByChannelId(targetDid, channelId);
   }
 
-  prepareConnection() {
-    return this.hiveVaultHelper.prepareConnection();
+  prepareConnection(forceCreate: boolean) {
+    return this.hiveVaultHelper.prepareConnection(forceCreate);
   }
 
   backupSubscribedChannel(targetDid: string, channelId: string) {

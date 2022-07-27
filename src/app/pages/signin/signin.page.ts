@@ -86,7 +86,7 @@ export class SigninPage implements OnInit {
           Logger.log(TAG, 'Retry signin');
           return;
         }
-        this.handleHiveAuth(signinData.did);
+        this.handleHiveAuth(signinData.did, false);
       });
     }
   }
@@ -134,18 +134,18 @@ export class SigninPage implements OnInit {
     }
 
     connectivity.setActiveConnector('essentials').then(async () => {
-      await this.doSignin();
+      await this.doSignin(false);
     }).catch((err) => {
     });
   }
 
-  async doSignin() {
+  async doSignin(forceCreate: boolean) {
     try {
-      this.feedService.signIn().then(isSuccess => {
-        if (isSuccess) {
+      this.feedService.signIn().then(did => {
+        if (did) {
           //此处切换成galleriahive 页面
           //this.native.setRootRouter('galleriahive');
-          this.handleHiveAuth(isSuccess);
+          this.handleHiveAuth(did, forceCreate);
           return;
         } else {
         }
@@ -185,14 +185,14 @@ export class SigninPage implements OnInit {
   }
 
   async TryButton() {
-    await this.doSignin();
+    await this.doSignin(true);
   }
 
-  handleHiveAuth(userDid: string) {
+  handleHiveAuth(userDid: string, forceCreate: boolean) {
     this.authorizationStatus = 0;
     if (this.sid === null) {
       this.sid = setTimeout(() => {
-        this.hiveVaultController.prepareHive(userDid).catch((error) => {
+        this.hiveVaultController.prepareHive(userDid, forceCreate).catch((error) => {
           //if (error.getInternalCode() == 1) this.authorizationStatus = 11;
         });
         clearTimeout(this.sid);
@@ -210,7 +210,7 @@ export class SigninPage implements OnInit {
 
   guest() {
     connectivity.setActiveConnector('local-identity').then(async () => {
-      await this.doSignin();
+      await this.doSignin(false);
     }).catch((err) => {
     });
   }

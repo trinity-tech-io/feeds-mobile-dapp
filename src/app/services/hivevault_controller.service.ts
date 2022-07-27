@@ -1681,19 +1681,19 @@ export class HiveVaultController {
     return this.hiveVaultApi.queryFeedsScripting();
   }
 
-  prepareConnection(): Promise<string> {
+  prepareConnection(forceCreate: boolean): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.hiveVaultApi.prepareConnection();
+        await this.hiveVaultApi.prepareConnection(forceCreate);
         this.eventBus.publish(FeedsEvent.PublishType.authEssentialSuccess);
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Prepare Connection error', error);
         //console.log("===="+error["__zone_symbol__value"].internalCode)
         let internalCode = error["__zone_symbol__value"].internalCode || "";
-        if(internalCode === 1){
+        if (internalCode === 1) {
           this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 11 });
-        }else{
+        } else {
           this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
         }
         reject(error);
@@ -2054,17 +2054,16 @@ export class HiveVaultController {
     }
   }
 
-  prepareHive(userDid: string): Promise<string> {
+  prepareHive(userDid: string, forceCreate: boolean): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         await this.dataHelper.createSQLTables(userDid);
-        await this.prepareConnection();
+        await this.prepareConnection(forceCreate);
         await this.initRegisterScript(true);
         resolve('FINISH');
       } catch (error) {
         reject(error);
       }
     });
-
   }
 }

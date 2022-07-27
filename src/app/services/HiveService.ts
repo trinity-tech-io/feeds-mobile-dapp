@@ -5,7 +5,6 @@ import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { FileService } from 'src/app/services/FileService';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
-import { isEqual, isNil, reject } from 'lodash';
 let TAG: string = 'Feeds-HiveService';
 import { Events } from 'src/app/services/events.service';
 import { Config } from './config';
@@ -177,11 +176,10 @@ export class HiveService {
     } catch (error) {
       throw error
     }
-
   }
 
-  async getVault(): Promise<Vault> {
-    if (this.vault === undefined || this.vault === null) {
+  async getVault(forceCreate: boolean = false): Promise<Vault> {
+    if (this.vault === undefined || this.vault === null || forceCreate) {
       this.vault = await this.creatVault()
     }
     Logger.log(TAG, 'Get vault from', 'vault is', this.vault)
@@ -196,8 +194,8 @@ export class HiveService {
     return (await this.getVault()).getFilesService()
   }
 
-  async getScriptingService() {
-    return (await this.getVault()).getScriptingService()
+  async getScriptingService(forceCreate: boolean) {
+    return (await this.getVault(forceCreate)).getScriptingService()
   }
 
   async createCollection(channelName: string): Promise<void> {
@@ -226,10 +224,10 @@ export class HiveService {
     })
   }
 
-  registerScript(scriptName: string, executable: Executable, condition?: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
+  registerScript(forceCreate: boolean, scriptName: string, executable: Executable, condition?: Condition, allowAnonymousUser?: boolean, allowAnonymousApp?: boolean): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        let scriptingService = await this.getScriptingService()
+        let scriptingService = await this.getScriptingService(forceCreate);
         await scriptingService.registerScript(scriptName, executable,
           condition, allowAnonymousUser, allowAnonymousApp)
         resolve()

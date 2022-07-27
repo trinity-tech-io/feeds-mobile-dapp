@@ -391,13 +391,13 @@ export class HiveVaultHelper {
     /** update channel end */
 
     /** query channel info start*/
-    private registerQueryChannelInfoScripting(): Promise<string> {
+    private registerQueryChannelInfoScripting(forceCreate: boolean = false): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
                 let executablefilter = { "channel_id": "$params.channel_id", "type": "public" }
                 let options = { "projection": { "_id": false }, "limit": 100 }
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_CHANNELS, executablefilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, null, false)
+                await this.hiveService.registerScript(forceCreate, HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, null, false)
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryChannelInfo error", error)
@@ -583,7 +583,7 @@ export class HiveVaultHelper {
                 let queryCondition2 = new QueryHasResultCondition("post_permission", HiveVaultHelper.TABLE_POSTS, conditionfilter2, null)
                 let andCondition = new AndCondition("verify_user_permission", [queryCondition1, queryCondition2])
                 let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SPECIFIED_POST, findExe, andCondition, false, false)
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_SPECIFIED_POST, findExe, andCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryPostById error", error)
@@ -619,7 +619,7 @@ export class HiveVaultHelper {
                 let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
                 let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
                 let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, findExe, queryCondition, false, false)
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_POST_BY_CHANNEL, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryPostByChannelId error", error)
@@ -655,7 +655,7 @@ export class HiveVaultHelper {
                 let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
                 let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
                 let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_SOMETIME_POST, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryPostRangeOfTime error", error)
@@ -703,7 +703,7 @@ export class HiveVaultHelper {
                 let options = { "projectxsion": { "_id": false } };
 
                 const executable = new InsertExecutable("database_insert", HiveVaultHelper.TABLE_SUBSCRIPTIONS, document, options);
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SUBSCRIBE_CHANNEL, executable, condition);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_SUBSCRIBE_CHANNEL, executable, condition);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerSubscribe error", error)
@@ -754,7 +754,7 @@ export class HiveVaultHelper {
                 let update = { "$set": set };
                 let options = { "bypass_document_validation": false, "upsert": true };
                 const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_SUBSCRIPTIONS, filter, update, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_SUBSCRIPTION, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_UPDATE_SUBSCRIPTION, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerUpdateSubscription error", error)
@@ -798,7 +798,7 @@ export class HiveVaultHelper {
                 }
 
                 const executable = new DeleteExecutable("database_delete", HiveVaultHelper.TABLE_SUBSCRIPTIONS, filter);
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UNSUBSCRIBE_CHANNEL, executable, null);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_UNSUBSCRIBE_CHANNEL, executable, null);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerUnsubscribe error", error)
@@ -839,7 +839,7 @@ export class HiveVaultHelper {
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, executable, null, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, executable, null, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQuerySubscriptionInfoByChannelId error", error)
@@ -880,7 +880,7 @@ export class HiveVaultHelper {
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, executable, null, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, executable, null, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQuerySubscriptionInfoByUserDID error", error)
@@ -921,7 +921,7 @@ export class HiveVaultHelper {
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID_CHANNELID, executable, null, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID_CHANNELID, executable, null, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQuerySubscriptionInfoByUserDID error", error)
@@ -970,7 +970,7 @@ export class HiveVaultHelper {
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
 
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryCommentByPostId error", error)
@@ -1020,7 +1020,7 @@ export class HiveVaultHelper {
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
 
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerFindCommentById error", error)
@@ -1061,7 +1061,7 @@ export class HiveVaultHelper {
                 let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
                 let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
                 let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executablefilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_COMMENT, findExe, queryCondition, false, false)
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_SOMETIME_COMMENT, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryCommentRangeOfTime error", error)
@@ -1103,7 +1103,7 @@ export class HiveVaultHelper {
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true)
 
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_CHANNELID, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_CHANNELID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryCommentByChannel error", error)
@@ -1163,7 +1163,7 @@ export class HiveVaultHelper {
                 };
                 const executable = new InsertExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, executablefilter, options).setOutput(true)
 
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_COMMENT, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_CREATE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerCreateComment error", error)
@@ -1237,7 +1237,7 @@ export class HiveVaultHelper {
                 let options = { "bypass_document_validation": false, "upsert": true };
 
                 const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, filter, update, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_COMMENT, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_UPDATE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerUpdateComment error", error)
@@ -1297,7 +1297,7 @@ export class HiveVaultHelper {
                 let options = { "bypass_document_validation": false, "upsert": true };
 
                 const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_COMMENTS, filter, update, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_DELETE_COMMENT, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_DELETE_COMMENT, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerDeleteComment error", error)
@@ -1348,7 +1348,7 @@ export class HiveVaultHelper {
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_ID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryLikeById error", error)
@@ -1400,7 +1400,7 @@ export class HiveVaultHelper {
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_SELF_LIKE_BY_ID, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_SELF_LIKE_BY_ID, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQuerySelfLikeById error", error)
@@ -1449,7 +1449,7 @@ export class HiveVaultHelper {
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryLikeByChannel error", error)
@@ -1498,7 +1498,7 @@ export class HiveVaultHelper {
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executableFilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryLikeByPost error", error)
@@ -1539,7 +1539,7 @@ export class HiveVaultHelper {
                 let conditionfilter = { "channel_id": "$params.channel_id", "user_did": "$caller_did" }
                 let queryCondition = new QueryHasResultCondition("verify_user_permission", HiveVaultHelper.TABLE_SUBSCRIPTIONS, conditionfilter, null)
                 let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_LIKES, executablefilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_SOMETIME_LIKE, findExe, queryCondition, false, false)
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_SOMETIME_LIKE, findExe, queryCondition, false, false)
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerLikeRangeOfTime error", error)
@@ -1592,7 +1592,7 @@ export class HiveVaultHelper {
                     }
                 };
                 const executable = new InsertExecutable("database_insert", HiveVaultHelper.TABLE_LIKES, executablefilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_CREATE_LIKE, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_CREATE_LIKE, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerCreateLike error", error)
@@ -1647,7 +1647,7 @@ export class HiveVaultHelper {
                     "comment_id": "$params.comment_id"
                 };
                 const executable = new DeleteExecutable("database_delete", HiveVaultHelper.TABLE_LIKES, filter).setOutput(true);
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_REMOVE_LIKE, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_REMOVE_LIKE, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerRemoveLike error", error)
@@ -1699,7 +1699,7 @@ export class HiveVaultHelper {
                 let update = { "$set": set };
                 let options = { "bypass_document_validation": false, "upsert": true };
                 const executable = new UpdateExecutable("database_update", HiveVaultHelper.TABLE_LIKES, filter, update, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_UPDATE_LIKE, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_UPDATE_LIKE, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerUpdateLike error", error)
@@ -1816,7 +1816,7 @@ export class HiveVaultHelper {
     /** helper */
     private registerFileDownloadScripting(scriptName: string): Promise<void> {
         const executable = new FileDownloadExecutable(scriptName).setOutput(true);
-        return this.hiveService.registerScript(scriptName, executable, null, false);
+        return this.hiveService.registerScript(false, scriptName, executable, null, false);
     }
 
     downloadScripting(targetDid: string, avatarHiveURL: string): Promise<any> {
@@ -1978,7 +1978,7 @@ export class HiveVaultHelper {
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIPTIONS, executableFilter, options).setOutput(true)
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, executable, null, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_USER_DISPLAYNAME, executable, null, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryDisplayName error", error)
@@ -2009,10 +2009,10 @@ export class HiveVaultHelper {
     }
     /** query displayName end */
 
-    prepareConnection(): Promise<string> {
+    prepareConnection(forceCreate: boolean): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.registerQueryChannelInfoScripting()
+                await this.registerQueryChannelInfoScripting(forceCreate)
                 resolve('FINISH')
             } catch (error) {
                 Logger.error(TAG, 'Prepare Connection error', error);
@@ -2105,7 +2105,7 @@ export class HiveVaultHelper {
 
                 let options = { "projection": { "_id": false }, "limit": 100 };
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_COMMENTS, executableFilter, options).setOutput(true);
-                await this.hiveService.registerScript(HiveVaultHelper.SCRIPT_QUERY_COMMENT_FROM_POSTS, executable, condition, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_COMMENT_FROM_POSTS, executable, condition, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryCommentsFromPosts error", error)
@@ -2146,7 +2146,7 @@ export class HiveVaultHelper {
                 let options = { "projection": { "_id": false }, "limit": 100 };
 
                 let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true);
-                await this.hiveService.registerScript(HiveVaultHelper.QUERY_PUBLIC_SPECIFIED_POST, findExe, queryCondition, false, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.QUERY_PUBLIC_SPECIFIED_POST, findExe, queryCondition, false, false);
                 resolve("SUCCESS");
             } catch (error) {
                 Logger.error(TAG, 'Register query public post by id error', error);
@@ -2186,7 +2186,7 @@ export class HiveVaultHelper {
                 let options = { "projection": { "_id": false }, "limit": 100 };
 
                 let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true);
-                await this.hiveService.registerScript(HiveVaultHelper.QUERY_PUBLIC_POST_BY_CHANNEL, findExe, queryCondition, false, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.QUERY_PUBLIC_POST_BY_CHANNEL, findExe, queryCondition, false, false);
                 resolve("SUCCESS");
             } catch (error) {
                 Logger.error(TAG, 'Register query public post by channel error', error);
@@ -2225,7 +2225,7 @@ export class HiveVaultHelper {
                 let options = { "projection": { "_id": false }, "limit": 30, "sort": { "updated_at": -1 } };
 
                 let findExe = new FindExecutable("find_message", HiveVaultHelper.TABLE_POSTS, executablefilter, options).setOutput(true);
-                await this.hiveService.registerScript(HiveVaultHelper.QUERY_PUBLIC_SOMETIME_POST, findExe, queryCondition, false, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.QUERY_PUBLIC_SOMETIME_POST, findExe, queryCondition, false, false);
                 resolve("SUCCESS");
             } catch (error) {
                 Logger.error(TAG, "registerQueryPublicPostRangeOfTime error", error);
