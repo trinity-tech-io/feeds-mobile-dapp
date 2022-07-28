@@ -122,22 +122,30 @@ export class RedditService {
     }
   }
 
-  public async postTweet(text: string) {
+  public async postReddit(tittle: string, text: string) {
     try {
       let params = {
-        "text": text
+        "api_type": "Json",
+        "kind": "self",
+        "title": tittle,
+        "text": text,       
+        "sr": "Elastos"
       }
       const token = await this.checkRedditIsExpired()
       let header = {
-        "Content-Type": "application/json",
-        "Authorization": "bearer " + token
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "bearer " + token,
+        "scope": "submit"
       }
-      this.http.setDataSerializer('json')
-      const result = await this.http.post(RedditApi.TEWWTS, params, header)
+      // this.http.setDataSerializer('json')
+      const result = await this.http.post(RedditApi.REDDIT_SUBMIT, params, header)
+      console.log('post Reddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result)
+      console.log('post Reddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result.data)
       Logger.log(TAG, 'post Reddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result)
       return result
     }
     catch (error) {
+      console.log('post Reddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
       Logger.log(TAG, 'post Reddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
       throw error
     }
