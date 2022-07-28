@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { Logger } from './logger';
+import { StorageService } from 'src/app/services/StorageService';
+import { Config } from './config';
 
 const TAG: string = 'sqlite-helper';
 
@@ -12,14 +14,16 @@ export class FeedsSqliteHelper {
   private readonly TABLE_LIKE: string = 'like';
   private readonly TABLE_SUBSCRIPTION_CHANNEL: string = 'subscriptionchannel';
   private readonly TABLE_SUBSCRIPTION: string = 'subscription';
+  private readonly TABLE_CHANNEL_NEW: string = 'channelnew';
 
   public isOpen: boolean = false;
   private limitNum: number = 30;
 
   // private sqliteObject: SQLiteObject = null;
   private sqliteMap: { [did: string]: SQLiteObject } = {};
-  constructor(private sqlite: SQLite) {
-  }
+  constructor(
+    private sqlite: SQLite,
+    private storageService: StorageService) { }
 
   private createSqlite(dbUserDid: string): Promise<SQLiteObject> {
     return new Promise(async (resolve, reject) => {
@@ -293,10 +297,10 @@ export class FeedsSqliteHelper {
   private createChannelTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'create table if not exists ' + this.TABLE_CHANNEL
+        const statement = 'create table if not exists ' + this.TABLE_CHANNEL_NEW
           + '('
           + 'dest_did VARCHAR(64), channel_id VARCHAR(64) UNIQUE, channel_name VARCHAR(64), intro TEXT, created_at REAL(64), updated_at REAL(64),'
-          + 'avatar_address TEXT, tipping_address TEXT, type VARCHAR(64), proof VARCHAR(64), nft TEXT, memo TEXT, category TEXT'
+          + 'avatar_address TEXT, tipping_address TEXT, type VARCHAR(64), proof VARCHAR(64), nft TEXT, memo TEXT, category TEXT, display_name VARCHAR(64)'
           + ')';
         const result = await this.executeSql(dbUserDid, statement);
 
@@ -312,12 +316,13 @@ export class FeedsSqliteHelper {
   insertChannelData(dbUserDid: string, channelV3: FeedsData.ChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'INSERT INTO ' + this.TABLE_CHANNEL
-          + '(dest_did, channel_id, channel_name, intro, created_at, updated_at, avatar_address, tipping_address, type, proof, nft, memo, category) VALUES'
-          + '(?,?,?,?,?,?,?,?,?,?,?,?,?)';
-
+        const statement = 'INSERT INTO ' + this.TABLE_CHANNEL_NEW
+          + '(dest_did, channel_id, channel_name, intro, created_at, updated_at, avatar_address, tipping_address, type, proof, nft, memo, category, display_name) VALUES'
+          + '(?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+        let displayName = channelV3.displayName;
+        if (!displayName) displayName = channelV3.name;
         const params = [channelV3.destDid, channelV3.channelId, channelV3.name, channelV3.intro, channelV3.createdAt, channelV3.updatedAt
-          , channelV3.avatar, channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category];
+          , channelV3.avatar, channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category, displayName];
 
         const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Insert channel Data result is', result);
@@ -332,6 +337,20 @@ export class FeedsSqliteHelper {
   queryChannelData(dbUserDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
+        const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL_NEW;
+        const result = await this.executeSql(dbUserDid, statement);
+        const channelList = this.parseChannelData(result);
+        resolve(channelList);
+      } catch (error) {
+        Logger.error(TAG, 'query Channel Data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryOriginChannelData(dbUserDid: string): Promise<FeedsData.ChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
         const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL;
         const result = await this.executeSql(dbUserDid, statement);
         const channelList = this.parseChannelData(result);
@@ -343,12 +362,10 @@ export class FeedsSqliteHelper {
     });
   }
 
-
-
   queryChannelDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL + ' WHERE channel_id=?';
+        const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL_NEW + ' WHERE channel_id=?';
         const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
         const channelList = this.parseChannelData(result);
@@ -365,7 +382,7 @@ export class FeedsSqliteHelper {
   queryChannelWithDid(dbUserDid: string, userDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL + ' WHERE dest_did=?'
+        const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL_NEW + ' WHERE dest_did=?'
         const result = await this.executeSql(dbUserDid, statement, [userDid]);
         const channelList = this.parseChannelData(result)
         Logger.log(TAG, 'query self channel with userDid result is', channelList);
@@ -380,7 +397,7 @@ export class FeedsSqliteHelper {
   updateChannelData(dbUserDid: string, channelV3: FeedsData.ChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'UPDATE ' + this.TABLE_CHANNEL
+        const statement = 'UPDATE ' + this.TABLE_CHANNEL_NEW
           + ' SET channel_name=?, intro=?, created_at=?, updated_at=?, avatar_address=?, tipping_address=?, type=?, proof=?, nft=?, memo=?, category=? WHERE channel_id=?';
         const params = [channelV3.name, channelV3.intro, channelV3.createdAt, channelV3.updatedAt, channelV3.avatar, channelV3.tipping_address, channelV3.type, channelV3.proof, channelV3.nft, channelV3.memo, channelV3.category, channelV3.channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
@@ -397,6 +414,23 @@ export class FeedsSqliteHelper {
   deleteChannelData(dbUserDid: string, channelId: string) {
     return new Promise(async (resolve, reject) => {
       try {
+        const statement = 'DELETE FROM ' + this.TABLE_CHANNEL_NEW + ' WHERE channel_id=?'
+        const params = [channelId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'delete channel data result is', result);
+        resolve('SUCCESS');
+      }
+      catch (error) {
+        Logger.error(TAG, 'delete channel data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  deleteOriginChannelData(dbUserDid: string, channelId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
         const statement = 'DELETE FROM ' + this.TABLE_CHANNEL + ' WHERE channel_id=?'
         const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
@@ -406,6 +440,23 @@ export class FeedsSqliteHelper {
       }
       catch (error) {
         Logger.error(TAG, 'delete channel data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  dropOriginChannel(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DROP TABLE ' + this.TABLE_CHANNEL;
+        const params = [];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'drop channel data result is', result);
+        resolve('SUCCESS');
+      }
+      catch (error) {
+        Logger.error(TAG, 'drop channel data error', error);
         reject(error);
       }
     });
@@ -1020,6 +1071,8 @@ export class FeedsSqliteHelper {
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
+      let displayName = element['display_name'];
+      if (!displayName) displayName = element['channel_name'];
       let channelV3: FeedsData.ChannelV3 = {
         destDid: element['dest_did'],
         channelId: element['channel_id'],
@@ -1033,7 +1086,8 @@ export class FeedsSqliteHelper {
         nft: element['nft'],
         category: element['category'],
         proof: element['proof'],
-        memo: element['memo']
+        memo: element['memo'],
+        displayName: displayName
       }
 
       list.push(channelV3);
@@ -1154,4 +1208,30 @@ export class FeedsSqliteHelper {
     Logger.log(TAG, 'Parse subscription list from sql, list is', list);
     return list;
   }
+
+  restoreChannelV311(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const sqlversion = await this.storageService.get(FeedsData.PersistenceKey.sqlversion) || 0;
+        if (sqlversion < Config.SQL_VERSION) {
+
+          await this.createChannelTable(dbUserDid);
+          const channelData = await this.queryOriginChannelData(dbUserDid);
+          for (let index = 0; index < channelData.length; index++) {
+            const channel = channelData[index];
+            await this.insertChannelData(dbUserDid, channel);
+            await this.deleteOriginChannelData(dbUserDid, channel.channelId);
+          }
+          await this.dropOriginChannel(dbUserDid);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        console.log("xxxxxxx", error);
+      } finally {
+        this.storageService.set(FeedsData.PersistenceKey.sqlversion, Config.SQL_VERSION);
+      }
+    });
+  }
+
+
 }

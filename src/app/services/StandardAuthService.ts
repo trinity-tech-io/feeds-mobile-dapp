@@ -164,6 +164,7 @@ export class StandardAuthService {
         }
         this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 0 })
         Logger.error(TAG, 'Get app identity credential error, credential is ', didCredential);
+        reject('Credential error');
       } catch (error) {
         reject(error);
         Logger.error(TAG, error);

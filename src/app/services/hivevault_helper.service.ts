@@ -365,7 +365,7 @@ export class HiveVaultHelper {
             try {
                 const doc =
                 {
-                    "name": newName,
+                    "display_name": newName,
                     "intro": newIntro,
                     "avatar": newAvatar,
                     "updated_at": updatedAt,

@@ -113,12 +113,15 @@ export class HiveVaultResultParse {
        * type: "public"
        * updated_at: 1647859737317
        * proof: ""
+       * display_name: "xxx"
        */
       const channels = result;
       let parseResult = [];
       if (channels) {
         channels.forEach(channel => {
           if (channel) {
+            let displayName = channel.display_name
+            if (!displayName) displayName = channel.name;
             const channelResult: FeedsData.ChannelV3 = {
               destDid: targetDid,
               channelId: channel.channel_id,
@@ -134,6 +137,7 @@ export class HiveVaultResultParse {
               category: channel.category,
               proof: channel.proof,
               memo: channel.memo,
+              displayName: displayName
             }
             parseResult.push(channelResult);
           }

@@ -445,7 +445,8 @@ declare namespace FeedsData {
     pasarItemList = 'pasarItemList',
     RefreshLastBlockNumber = 'RefreshLastBlockNumber',
 
-    didCredential = 'didcredential'
+    didCredential = 'didcredential',
+    sqlversion = 'sqliteVersion'
   }
 
   type ServerVersion = {
@@ -974,6 +975,8 @@ declare namespace FeedsData {
     category: string,
     proof: string,
     memo: string,
+
+    displayName: string
   }
 
   type PostV3 = {

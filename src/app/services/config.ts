@@ -45,6 +45,7 @@ export class Config {
     public static IPFS_TEST_SERVER: string = 'https://ipfs-test.trinity-feeds.app/';
 
     public static readonly scriptVersion = "1.0.2";
+    public static readonly SQL_VERSION: number = 30101;
 
     public static changeApi(api: string) {
         if (api == 'elastos.io') {

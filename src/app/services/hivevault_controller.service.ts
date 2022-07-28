@@ -669,6 +669,7 @@ export class HiveVaultController {
           category: category,
           proof: proof,
           memo: memo,
+          displayName: channelName
         }
 
         await this.dataHelper.addChannel(channelV3);
@@ -758,7 +759,7 @@ export class HiveVaultController {
           channelId: channelId,
           createdAt: originChannel.createdAt,
           updatedAt: updatedAt,
-          name: finalName,
+          name: originChannel.name,
           intro: finalIntro,
           avatar: avatarHiveURL, // 存储图片
           type: finalType,
@@ -767,6 +768,7 @@ export class HiveVaultController {
           category: finalCategory,
           proof: finalProof,
           memo: finalMemo,
+          displayName: finalName
         }
 
         await this.dataHelper.addChannel(channelV3);
@@ -2056,7 +2058,7 @@ export class HiveVaultController {
   prepareHive(userDid: string, forceCreate: boolean): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.dataHelper.createSQLTables(userDid);
+        await this.createSQLTables(userDid);
         await this.prepareConnection(forceCreate);
         await this.initRegisterScript(true);
         resolve('FINISH');
@@ -2064,5 +2066,9 @@ export class HiveVaultController {
         reject(error);
       }
     });
+  }
+
+  createSQLTables(userDid: string): Promise<string> {
+    return this.dataHelper.createSQLTables(userDid);
   }
 }

@@ -26,7 +26,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { ViewHelper } from './services/viewhelper.service';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
-import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
+// import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 import { TwitterService } from 'src/app/services/TwitterService';
 
 let TAG: string = 'app-component';
@@ -276,6 +276,11 @@ export class MyApp {
           },
         );
       }).then(async () => {
+        const signinData = await this.dataHelper.getSigninData()
+        if (signinData) {
+          this.dataHelper.restoreSqlData(signinData.did);
+        }
+
         this.hiveVaultController.refreshAvatar().catch(() => { });
         this.hiveVaultController.initRegisterScript(false).catch((error) => { console.log("initRegisterScript error === ", error) })
       }).catch(() => { });
@@ -472,9 +477,9 @@ export class MyApp {
       signInData => {
         if (signInData == null || signInData == undefined) return;
         let nickname = signInData['nickname'] || '';
-        if(nickname !='' && nickname != 'Information not provided'){
+        if (nickname != '' && nickname != 'Information not provided') {
           this.wName = nickname;
-        }else{
+        } else {
           this.wName = signInData['name'] || '';
         }
         this.userDid = signInData.did || "";

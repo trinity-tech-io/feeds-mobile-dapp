@@ -2923,6 +2923,10 @@ export class DataHelper {
       }
     });
   }
+
+  restoreSqlData(userDid: string) {
+    return this.sqliteHelper.restoreChannelV311(userDid);
+  }
   //// New data type
 
   addSubscribedChannels(newSubscribedChannels: FeedsData.SubscribedChannelV3[]): Promise<string> {
