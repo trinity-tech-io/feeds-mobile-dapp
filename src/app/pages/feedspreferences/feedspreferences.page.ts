@@ -52,6 +52,8 @@ export class FeedspreferencesPage implements OnInit {
   public loadingCurNumber: string = "";
   public loadingMaxNumber: string = "";
   public isShowMint: boolean = false;
+  private channelInfo: any = null;
+  private unPublicDialog: any = null
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -89,21 +91,16 @@ export class FeedspreferencesPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
 
-  ionViewWillEnter() {
-    // this.collectibleStatus = this.dataHelper.getCollectibleStatus();
-    // let key = this.nodeId + '_' + this.feedId;
-    // this.curCollectibleStatus = this.collectibleStatus[key] || false;
-    // this.feedPublicStatus = this.feedService.getFeedPublicStatus() || {};
-    // this.getPublicStatus();
-    // let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
-    // if (server != null) {
-    //   this.feedService.checkDIDOnSideChain(server.did, isOnSideChain => {
-    //     this.isShowQrcode = isOnSideChain;
-    //   });
-    // }
+  async ionViewWillEnter() {
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
     this.addEvent();
+    this.channelInfo = await this.getChannelInfo();
+    if(this.channelInfo != null){
+       this.zone.run(()=>{
+         this.curFeedPublicStatus = true;
+       });
+    }
   }
 
   ionViewWillLeave() {
@@ -280,92 +277,6 @@ export class FeedspreferencesPage implements OnInit {
     that.publicFeeds('confirm');
   }
 
-  async getPublicStatus() {
-
-    this.channelCollections = await this.getChannelCollectionsStatus() || null;
-    if (this.channelCollections != null) {
-      this.zone.run(() => {
-        this.curFeedPublicStatus = true;
-      });
-      return;
-    }
-    let server = this.feedsServiceApi.getServerbyNodeId(this.destDid) || null;
-    if (server === null) {
-      return;
-    }
-    let feedsUrl = server.feedsUrl + '/' + this.channelId;
-    let feedsUrlHash = UtilService.SHA256(feedsUrl);
-    let curFeedPublicStatus = this.feedPublicStatus[feedsUrlHash] || '';
-    if (curFeedPublicStatus === '') {
-      this.httpService
-        .ajaxGet(ApiUrl.get + '?feedsUrlHash=' + feedsUrlHash, false)
-        .then(result => {
-          if (result['code'] === 200) {
-            let resultData = result['data'] || '';
-            if (resultData != '') {
-              this.zone.run(() => {
-                this.curFeedPublicStatus = true;
-                this.isFirst = true;
-                this.isShowMint = true;
-              });
-              this.feedPublicStatus[feedsUrlHash] = '1';
-              this.feedService.setFeedPublicStatus(this.feedPublicStatus);
-              this.storageService.set(
-                'feeds.feedPublicStatus',
-                JSON.stringify(this.feedPublicStatus)
-              );
-            } else {
-              this.zone.run(() => {
-                this.curFeedPublicStatus = false;
-              });
-            }
-          }
-        });
-    } else {
-      this.zone.run(() => {
-        this.curFeedPublicStatus = true;
-        this.isShowMint = true;
-        this.isFirst = true;
-      });
-    }
-  }
-
-  toggle() {
-    if (!this.curFeedPublicStatus) {
-      let connectStatus = this.dataHelper.getNetworkStatus();
-      if (connectStatus === FeedsData.ConnState.disconnected) {
-      this.native.toastWarn('common.connectionError');
-      return;
-      }
-
-      if (!this.isShowQrcode) {
-        this.native.toastWarn('common.waitOnChain');
-        this.native.hideLoading();
-        return;
-      }
-      this.native.hideLoading();
-      this.mintChannel();
-
-      // if (this.developerMode) {
-      //   this.developerModeConfirm();
-      //   return;
-      // }
-      // this.publicFeeds('cancel');
-
-      return;
-    }
-
-    if (this.curFeedPublicStatus) {
-      let connectStatus = this.dataHelper.getNetworkStatus();
-      if (connectStatus === FeedsData.ConnState.disconnected) {
-      this.native.toastWarn('common.connectionError');
-      return;
-      }
-      this.unPublicFeeds();
-      return;
-    }
-  }
-
   async newToggle() {
      await this.native.showLoading("common.waitMoment");
      let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
@@ -375,73 +286,14 @@ export class FeedspreferencesPage implements OnInit {
         return;
      }
 
-    let channelInfo = await this.getChannelInfo();
-
-    if( channelInfo === null ){
+    if( this.channelInfo === null ){
       this.native.hideLoading();
       this.mintChannel();
        return;
     }
+    this.native.hideLoading();
+    this.showUnPublicDialog();
 
-
-    // let channelCollections: FeedsData.ChannelCollections = this.channelCollections || null;
-    // if (channelCollections != null && this.curFeedPublicStatus) {
-    //   let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
-    //   if (accountAddress === '') {
-    //     this.native.hideLoading();
-    //     this.native.toastWarn('common.connectWallet');
-    //     return;
-    //   }
-    //   this.native.hideLoading();
-    //   this.menuService.showChannelCollectionsPublishedMenu(channelCollections);
-    //   return;
-    // } else {
-    //   let server = this.feedsServiceApi.getServerbyNodeId(this.nodeId) || null;
-    //   if (server === null) {
-    //     this.native.hideLoading();
-    //     return;
-    //   }
-    //   let feedsUrl = server.feedsUrl + '/' + this.feedId;
-    //   let tokenInfo = await this.isExitStrick(feedsUrl);
-    //   if (tokenInfo != null) {
-    //     let accountAddress = this.nftContractControllerService.getAccountAddress() || "";
-    //     if (accountAddress === '') {
-    //       this.native.toastWarn('common.connectWallet');
-    //       this.native.hideLoading();
-    //       return;
-    //     }
-    //     let channelItem: FeedsData.ChannelCollections = await this.getChannelCollections(tokenInfo, accountAddress);
-    //     this.native.hideLoading();
-    //     this.menuService.showChannelCollectionsMenu(channelItem);
-    //   } else {
-    //     this.toggle();
-    //   }
-    // }
-  }
-
-  async getChannelCollections(tokenInfo: any, accountAddress: string) {
-    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections()
-    channelCollections.status = "0";
-    channelCollections.userAddr = accountAddress;
-    channelCollections.panelId = "";
-    channelCollections.tokenId = tokenInfo[0];
-    channelCollections.type = "feeds-channel";
-    channelCollections.ownerDid = (await this.dataHelper.getSigninData()).did;
-
-    let tokenUri = tokenInfo[3]; //tokenUri
-    tokenUri = this.nftContractHelperService.parseTokenUri(tokenUri);
-    const tokenJson = await this.ipfsService
-      .nftGet(this.ipfsService.getNFTGetUrl() + tokenUri);
-    channelCollections.name = tokenJson["name"];
-    channelCollections.description = tokenJson["description"];
-    let avatar: FeedsData.GalleriaAvatar = tokenJson["avatar"];
-    channelCollections.avatar = avatar;
-    channelCollections.entry = tokenJson["entry"];
-    channelCollections.ownerName = "";
-    let url: string = tokenJson["entry"]["url"];
-    let urlArr = url.replace("feeds://", "").split("/");
-    channelCollections.did = urlArr[0];
-    return channelCollections;
   }
 
   setCollectible() {
@@ -461,65 +313,10 @@ export class FeedspreferencesPage implements OnInit {
     this.native.navigateForward(['/galleriachannel'], { queryParams: { "destDid": this.destDid, "channelId": this.channelId } });
   }
 
-  async getChannelCollectionsStatus() {
-    try {
-      let server = this.feedsServiceApi.getServerbyNodeId(this.destDid) || null;
-      if (server === null) {
-        return;
-      }
-      let feedsUrl = server.feedsUrl + '/' + this.channelId;
-      let feedsUrlHash = UtilService.SHA256(feedsUrl);
-      let tokenId: string = "0x" + feedsUrlHash;
-      tokenId = UtilService.hex2dec(tokenId);
-      let list = this.dataHelper.getPublishedActivePanelList() || [];
-      let fitleItem = _.find(list, (item) => {
-        return item.tokenId === tokenId;
-      }) || null;
-      if (fitleItem != null) {
-        return fitleItem;
-      }
-      let result = await this.pasarAssistService.getPanel(tokenId);
-      if (result != null) {
-        let tokenInfo = result["data"] || "";
-        if (tokenInfo === "") {
-          return null;
-        }
-        tokenInfo = await this.handlePanels(result["data"]);
-        let panelList = this.dataHelper.getPublishedActivePanelList() || [];
-        panelList.push(tokenInfo);
-        this.dataHelper.setPublishedActivePanelList(panelList);
-        return tokenInfo;
-      }
-      return null;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async handlePanels(item: any) {
-    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
-    channelCollections.version = item.version;
-    channelCollections.panelId = item.panelId;
-    channelCollections.userAddr = item.user;
-    //channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
-    channelCollections.diaBalance = "0";
-    channelCollections.type = item.type;
-    channelCollections.tokenId = item.tokenId;
-    channelCollections.name = item.name;
-    channelCollections.description = item.description;
-    channelCollections.avatar = item.avatar;
-    channelCollections.entry = item.entry;
-    channelCollections.ownerDid = item.tokenDid.did;
-    channelCollections.ownerName = (await this.dataHelper.getSigninData()).name;
-    let url: string = channelCollections.entry.url;
-    let urlArr = url.replace("feeds://", "").split("/");
-    channelCollections.did = urlArr[0];
-    return channelCollections;
-  }
-
   async getChannelInfo() {
 
     try {
+      await this.native.showLoading("common.waitMoment");
       let tokenId: string = "0x" + this.channelId;
       Logger.log(TAG,"tokenId:",tokenId);
       tokenId = UtilService.hex2dec(tokenId);
@@ -527,13 +324,43 @@ export class FeedspreferencesPage implements OnInit {
       let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
       Logger.log(TAG,"tokenInfo:",tokenInfo);
       if (tokenInfo[0] != '0') {
+        this.native.hideLoading();
         return tokenInfo;
       }
+      this.native.hideLoading();
       return null;
     } catch (error) {
+      this.native.hideLoading();
       return null;
     }
 
+  }
+
+  async showUnPublicDialog() {
+    this.unPublicDialog = await this.popupProvider.ionicConfirm(
+      this,
+      'FeedspreferencesPage.des3',
+      'FeedspreferencesPage.des4',
+      this.cancelUnPublicDialog,
+      this.confirmUnPublicDialog,
+      './assets/images/tskth.svg',
+      'FeedspreferencesPage.des2',
+      'FeedspreferencesPage.des6',
+    );
+  }
+
+  cancelUnPublicDialog(that: any) {
+    if (that.unPublicDialog != null) {
+        that.unPublicDialog.dismiss();
+        that.unPublicDialog = null;
+    }
+  }
+
+  confirmUnPublicDialog(that: any) {
+    if (that.unPublicDialog != null) {
+      that.unPublicDialog.dismiss();
+      that.unPublicDialog = null;
+    }
   }
 
 

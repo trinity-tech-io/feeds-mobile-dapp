@@ -715,10 +715,10 @@ export const zh = {
     title: '频道设置',
     des: '在探索Feeds中显示',
     des1: '发布收藏品到频道',
-    des2: '创建频道收藏品',
-    des3: '取消公开频道收藏品',
-    des4: '是否把频道收藏品从探索Feeds广场下架',
-    des5: '确认',
+    des2: '创建频道',
+    des3: '取消公开频道',
+    des4: '是否把频道从探索Feeds广场下架',
+    des5: '公开频道',
     des6: '取消'
   }, /***NFT*/
   MintnftPage: {

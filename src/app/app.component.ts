@@ -511,7 +511,11 @@ export class MyApp {
   }
 
   async disconnectWallet() {
-    await this.walletConnectControllerService.disconnect();
+    try {
+      await this.walletConnectControllerService.disconnect();
+    } catch (error) {
+
+    }
     await this.walletConnectControllerService.destroyWalletConnect();
     this.nftContractControllerService.init();
   }
@@ -667,7 +671,11 @@ export class MyApp {
   async disconnect(that: any) {
     if (this.popover != null) {
       this.popover.dismiss();
-      await that.walletConnectControllerService.disconnect();
+      try {
+        await that.walletConnectControllerService.disconnect();
+      } catch (error) {
+
+      }
       await that.walletConnectControllerService.destroyWalletConnect();
       await that.nftContractControllerService.init();
       that.walletAddress = '';

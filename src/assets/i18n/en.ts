@@ -717,7 +717,11 @@ export const en = {
     title: 'Channel Preferences',
     des: 'Show in Explore Feeds',
     des1: 'Publish Collectible to Channel',
-    des2: 'Create channel collection'
+    des2: 'Create channel',
+    des3: 'Cancel the public channel ',
+    des4: 'Whether to remove the channel from the discovery feeds square',
+    des5: 'Public channel',
+    des6: 'Cancel'
   } /***NFT*/,
   MintnftPage: {
     title: 'Create Collectible',

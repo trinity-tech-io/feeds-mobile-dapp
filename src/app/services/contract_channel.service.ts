@@ -171,7 +171,7 @@ export class ChannelContractService {
     this.checkTokenInterval = setInterval(async () => {
       if (!this.checkTokenInterval) return;
       let info = await this.channelInfo(tokenId);
-      if (info[0] != '0' && info[2] != '0') {
+      if (info[0] != '0') {
         Logger.log(TAG, 'Check token state finish', info);
         clearInterval(this.checkTokenInterval);
         callback(info);

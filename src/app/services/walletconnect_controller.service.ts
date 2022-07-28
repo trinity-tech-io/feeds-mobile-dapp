@@ -153,10 +153,12 @@ export class WalletConnectControllerService {
           })
         } catch (error) {
           Logger.log(TAG, 'Disconnect wallet error', error);
+          window.localStorage.removeItem('walletconnect');
           reject(error);
         }
       } else {
         const error: string = 'Not connected to wallet connect';
+        this.walletConnectProvider.connector.session.handshakeTopic = ''
         reject(error);
         Logger.log(TAG, error);
       }
