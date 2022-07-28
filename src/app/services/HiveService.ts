@@ -265,7 +265,7 @@ export class HiveService {
       return await scriptRunner.callScript<any>(avatarScriptName, avatarParam, tarDID, tarAppDID)
     } catch (error) {
       Logger.error(TAG, "Download Ess Avatar transactionId error: ", error)
-      reject(error)
+      throw error
     }
   }
 
