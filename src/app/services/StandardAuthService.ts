@@ -4,18 +4,18 @@ import { StorageService } from 'src/app/services/StorageService';
 import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Events } from 'src/app/services/events.service';
-import { DIDHelperService } from './did_helper.service';
+import { DIDHelperService } from 'src/app/services/did_helper.service';
 
 let TAG: string = 'StandardAuthService';
 @Injectable()
 export class StandardAuthService {
-  private appIdCredential: DIDPlugin.VerifiableCredential = null;
-  private appInstanceDID: DIDPlugin.DID
-  private appInstanceDIDInfo: {
-    storeId: string;
-    didString: string;
-    storePassword: string;
-  }
+  // private appIdCredential: DIDPlugin.VerifiableCredential = null;
+  // private appInstanceDID: DIDPlugin.DID
+  // private appInstanceDIDInfo: {
+  //   storeId: string;
+  //   didString: string;
+  //   storePassword: string;
+  // }
   constructor(
     private storeService: StorageService,
     private dataHelper: DataHelper,
@@ -139,58 +139,31 @@ export class StandardAuthService {
     }
   }
 
-  getAppIdCredentialFromStorage(
-    appIdCredential: DIDPlugin.VerifiableCredential,
-  ): Promise<DIDPlugin.VerifiableCredential> {
+  getUserDIDCredential(userdid: string): Promise<DIDPlugin.VerifiableCredential> {
     return new Promise(async (resolve, reject) => {
-      if (appIdCredential != null && appIdCredential != undefined) {
-        Logger.log(TAG, 'Get credential from memory , credential is ', appIdCredential);
-
-        resolve(appIdCredential);
-        return;
-      }
-
-      let mAppIdCredential = await this.storeService.get('appIdCredential');
-      Logger.log(TAG, 'Get credential from storage , credential is ', mAppIdCredential);
-
-      resolve(mAppIdCredential);
-    });
-  }
-
-  checkAppIdCredentialStatus(
-    appIdCredential: DIDPlugin.VerifiableCredential,
-  ): Promise<DIDPlugin.VerifiableCredential> {
-    return new Promise(async (resolve, reject) => {
-
-      if (this.checkCredentialValid(appIdCredential)) {
-
-        Logger.log(TAG, 'Credential valid , credential is ', appIdCredential);
-        resolve(appIdCredential);
-        return;
-      }
-
-      Logger.warn(TAG, 'Credential invalid, Getting app identity credential');
-      let didAccess = new DID.DIDAccess();
-
       try {
-        let mAppIdCredential = await didAccess.getExistingAppIdentityCredential();
-        if (mAppIdCredential) {
+        // wrong , diffrent did return same did credential evey time
+        // let mAppIdCredential = await didAccess.getExistingAppIdentityCredential();
 
-          Logger.log(TAG, 'Get app identity credential', mAppIdCredential);
-          resolve(mAppIdCredential);
+        let didCredential = await this.dataHelper.getDIDCredential(userdid);
+        if (this.checkCredentialValid(didCredential)) {
+          Logger.log(TAG, 'Credential valid , credential is ', didCredential);
+          resolve(didCredential);
           return;
         }
 
-        mAppIdCredential = await didAccess.generateAppIdCredential();
+        Logger.warn(TAG, 'Credential invalid, Getting app identity credential');
+        let didAccess = new DID.DIDAccess();
+        didCredential = await didAccess.generateAppIdCredential();
 
-        if (mAppIdCredential) {
-
-          Logger.log(TAG, 'Generate app identity credential, credential is ', mAppIdCredential);
-          resolve(mAppIdCredential);
+        if (didCredential) {
+          Logger.log(TAG, 'Generate app identity credential, credential is ', didCredential);
+          this.dataHelper.setDIDCredential(userdid, didCredential);
+          resolve(didCredential);
           return;
         }
         this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 0 })
-        Logger.error(TAG, 'Get app identity credential error, credential is ', mAppIdCredential);
+        Logger.error(TAG, 'Get app identity credential error, credential is ', didCredential);
       } catch (error) {
         reject(error);
         Logger.error(TAG, error);
@@ -259,8 +232,8 @@ export class StandardAuthService {
       let realm = payload['iss'] as string;
 
       let name = (payload['name'] as string) || '';
-      let didAccess = new DID.DIDAccess();
 
+      let didAccess = new DID.DIDAccess();
       const instanceDid = await didAccess.getOrCreateAppInstanceDID() || null;
       if (!instanceDid) {
         const msg = 'Get or create app instance did error';
@@ -269,36 +242,34 @@ export class StandardAuthService {
         return;
       }
 
-      this.appInstanceDID = instanceDid.did || null;
-      if (!this.appInstanceDID) {
+      const appInstanceDID = instanceDid.did || null;
+      if (!appInstanceDID) {
         const msg = 'Get did from instnceDid obj error';
         Logger.warn(TAG, msg);
         reject(msg);
         return;
       }
 
-      this.appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
-      if (!this.appInstanceDIDInfo) {
+
+      const appInstanceDIDInfo = await didAccess.getExistingAppInstanceDIDInfo();
+      if (!appInstanceDIDInfo) {
         const msg = 'Get Existing App Instance DID Info error';
         Logger.warn(TAG, msg);
         reject(msg);
         return;
       }
 
-      this.appIdCredential = await this.getAppIdCredentialFromStorage(this.appIdCredential);
-      this.appIdCredential = await this.checkAppIdCredentialStatus(this.appIdCredential);
+      let userDid = (await this.dataHelper.getSigninData()).did
+      const userDIDCredential = await this.getUserDIDCredential(userDid);
 
-      Logger.log(TAG, 'AppIdCredential is ', this.appIdCredential);
-      if (!this.appIdCredential) {
-        Logger.warn(TAG, 'Empty app id credential')
+      if (!userDIDCredential) {
+        Logger.warn(TAG, 'Empty user did credential')
         resolver(null)
         return
       }
 
-      let userDid = (await this.dataHelper.getSigninData()).did
-      await this.storeService.set(userDid + 'appDid', this.appIdCredential.getSubject()["appDid"]);
-
-      this.appInstanceDID.createVerifiablePresentation([this.appIdCredential], realm, nonce, this.appInstanceDIDInfo.storePassword, async presentation => {
+      await this.storeService.set(userDid + 'appDid', userDIDCredential.getSubject()["appDid"]);
+      appInstanceDID.createVerifiablePresentation([userDIDCredential], realm, nonce, appInstanceDIDInfo.storePassword, async presentation => {
 
         if (presentation) {
           // Generate the back end authentication JWT
@@ -307,12 +278,12 @@ export class StandardAuthService {
             presentation
           );
           let didStore = await DID.DIDHelper.openDidStore(
-            this.appInstanceDIDInfo.storeId,
+            appInstanceDIDInfo.storeId,
           );
 
           Logger.log(TAG, 'Loading DID document');
           didStore.loadDidDocument(
-            this.appInstanceDIDInfo.didString,
+            appInstanceDIDInfo.didString,
             async didDocument => {
               let validityDays = 2;
               Logger.log(TAG, 'Creating JWT')
@@ -321,7 +292,7 @@ export class StandardAuthService {
                   presentation: JSON.parse(await presentation.toJson()),
                 },
                 validityDays,
-                this.appInstanceDIDInfo.storePassword,
+                appInstanceDIDInfo.storePassword,
                 jwtToken => {
                   Logger.log(TAG, 'JWT created for presentation:', jwtToken)
                   resolver(jwtToken)
@@ -343,7 +314,6 @@ export class StandardAuthService {
           Logger.error(TAG, 'Create Verifiable Presentation error', err);
           reject(err);
         })
-
     })
   }
 }

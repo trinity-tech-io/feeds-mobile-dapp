@@ -4206,9 +4206,16 @@ export class DataHelper {
   }
 
   getHiveAuthStatus() {
-     return this.hiveAuthStatus;
+    return this.hiveAuthStatus;
   }
 
+  setDIDCredential(userdid: string, credential: any) {
+    this.saveData(userdid + FeedsData.PersistenceKey.didCredential, credential);
+  }
+
+  getDIDCredential(userdid: string): Promise<DIDPlugin.VerifiableCredential> {
+    return this.loadData(userdid + FeedsData.PersistenceKey.didCredential);
+  }
 
 
   //API

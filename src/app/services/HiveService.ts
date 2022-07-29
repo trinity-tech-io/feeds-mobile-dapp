@@ -8,6 +8,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 let TAG: string = 'Feeds-HiveService';
 import { Events } from 'src/app/services/events.service';
 import { Config } from './config';
+import { reject } from 'lodash';
 
 @Injectable()
 export class HiveService {
@@ -34,6 +35,7 @@ export class HiveService {
   public async creatAppContext(appInstanceDocumentString: string, userDidString: string): Promise<AppContext> {
     return new Promise(async (resolve, reject) => {
       try {
+
         const currentNet = "MainNet".toLowerCase();
         HiveLogger.setDefaultLevel(HiveLogger.TRACE)
         DIDBackend.initialize(new DefaultDIDAdapter(currentNet))
@@ -46,6 +48,7 @@ export class HiveService {
         // auth
         let self = this
         let cachedAuthToken = '';
+
         const context = await AppContext.build({
           getLocalDataDir(): string {
             return path
@@ -64,7 +67,9 @@ export class HiveService {
           getAuthorization(jwtToken: string): Promise<string> {
             return new Promise(async (resolve, reject) => {
               try {
+                console.log('Get authorization jwtToken is', jwtToken);
                 const authToken = await self.standardAuthService.generateHiveAuthPresentationJWT(jwtToken)
+                console.log('Get authorization authToken is', authToken);
                 resolve(authToken)
               } catch (error) {
                 Logger.error(TAG, "get Authorization Error: ", error)

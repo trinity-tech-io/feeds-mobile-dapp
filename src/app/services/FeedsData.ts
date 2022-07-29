@@ -443,7 +443,9 @@ declare namespace FeedsData {
 
     userDidUriMap = 'feeds:userDidUriMap',
     pasarItemList = 'pasarItemList',
-    RefreshLastBlockNumber = 'RefreshLastBlockNumber'
+    RefreshLastBlockNumber = 'RefreshLastBlockNumber',
+
+    didCredential = 'didcredential'
   }
 
   type ServerVersion = {
