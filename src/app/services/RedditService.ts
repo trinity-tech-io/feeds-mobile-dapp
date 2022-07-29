@@ -51,10 +51,9 @@ export class RedditService {
     let params = {
       refresh_token: code,
       grant_type: type,
-      client_id: RedditApi.CLIENT_ID,
       redirect_uri: RedditApi.REDIRECT_URI,
-      code_verifier: RedditApi.CODE_VERIFIER
     }
+
     return this.fetchTokenFromReddit(params)
   }
 
@@ -62,9 +61,7 @@ export class RedditService {
     let params = {
       code: code,
       grant_type: type,
-      // client_id: RedditApi.CLIENT_ID,
       redirect_uri: RedditApi.REDIRECT_URI,
-      // code_verifier: RedditApi.CODE_VERIFIER
     }
     try {
       await this.fetchTokenFromReddit(params)
@@ -129,7 +126,7 @@ export class RedditService {
         "kind": "self",
         "title": tittle,
         "text": text,       
-        "sr": "Elastos"
+        "sr": "668899" //Elastos
       }
       const token = await this.checkRedditIsExpired()
       let header = {

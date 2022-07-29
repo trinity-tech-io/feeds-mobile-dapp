@@ -4210,7 +4210,7 @@ export class DataHelper {
   UpdateRedditToken(userDid: string, tokenData: any) {
     let time = new Date()
     const tt = time.getTime()
-    const hour = 60 * 60 * 1000 * 2 // 2小时
+    const hour = 60 * 60 * 1000 * 24 // 2小时
     time.setTime(tt + hour)
     tokenData['expired_time'] = time.getTime()
 
@@ -4234,6 +4234,7 @@ export class DataHelper {
     // return false // 标识 token 过期
 
     const data = localStorage.getItem(userDid + "REDDITTOKEN") || ''
+    console.log("getRedditAccessToken ===== ", data)
     if (data === '' || data === undefined) {
       return null // 标识 本地没有token
     }
@@ -4242,7 +4243,12 @@ export class DataHelper {
     const access_token = tokenData.access_token
     const expired_time = tokenData.expired_time
     const currentTime = new Date().getTime()
+
+    console.log("currentTime ==== ", currentTime)
+    console.log("expired_time ==== ", expired_time)
+
     if (currentTime > expired_time) {
+      console.log("getRedditAccessToken ===== 过期")
       return false // 标识 token 过期
     }
 
