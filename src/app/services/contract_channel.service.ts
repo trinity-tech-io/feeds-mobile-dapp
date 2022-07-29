@@ -19,7 +19,9 @@ export class ChannelContractService {
   private web3: Web3;
   private channelContract: any;
   private checkTokenInterval: NodeJS.Timer;
+  private checkBurnInterval: NodeJS.Timer;
   private checkTokenNum: number = 0;
+  private checkBurnNum: number = 0;
 
   constructor(
     private walletConnectControllerService: WalletConnectControllerService,
@@ -176,6 +178,7 @@ export class ChannelContractService {
         clearInterval(this.checkTokenInterval);
         callback(info);
         this.checkTokenInterval = null;
+        return;
       }
 
       this.checkTokenNum++;
@@ -196,5 +199,87 @@ export class ChannelContractService {
     if (!this.checkTokenInterval) return;
     clearInterval(this.checkTokenInterval);
   }
+
+  async burnChannel(
+    tokenId: string,
+  ): Promise<any>{
+    return new Promise(async (resolve, reject) => {
+          try {
+            Logger.log(TAG, 'burn params ', tokenId);
+            const burndata = this.channelContract.methods
+              .burn(tokenId)
+              .encodeABI();
+            let transactionParams = await this.createTxParams(burndata);
+            Logger.log(TAG,
+              'Calling smart contract through wallet connect',
+              burndata,
+              transactionParams,
+            );
+            this.channelContract.methods
+              .burn(tokenId)
+              .send(transactionParams)
+              .on('transactionHash', hash => {
+              Logger.log(TAG, 'Burn process, transactionHash is', hash);
+              })
+              .on('receipt', receipt => {
+                Logger.log(TAG, 'Burn process, receipt is', receipt);
+              })
+              .on('confirmation', (confirmationNumber, receipt) => {
+                Logger.log(TAG,
+                  'Burn process, confirmation is',
+                  confirmationNumber,
+                  receipt,
+                );
+              })
+              .on('error', (error, receipt) => {
+                Logger.error(TAG, 'Burn process, error is', error, receipt);
+              });
+              this.checkBurnState(tokenId,()=>{
+                 resolve(null);
+              });
+          } catch (error) {
+            Logger.error(TAG, 'burn error', error);
+            reject(error);
+          }
+    });
+  }
+
+  cancelBurnProcess(){
+    if (!this.checkBurnInterval) return;
+    clearInterval(this.checkBurnInterval);
+  }
+
+  checkBurnState(tokenId:string,callback: (tokenInfo: any) => void){
+     this.checkBurnInterval = setInterval(async () => {
+      if (!this.checkBurnInterval) return;
+      let info = await this.channelInfo(tokenId);
+      if (info[0] === '0') {
+        clearInterval(this.checkBurnInterval);
+        callback("success");
+        this.checkBurnInterval = null;
+        return;
+      }
+
+      this.checkBurnNum++;
+      if (this.checkBurnNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
+        clearInterval(this.checkBurnInterval);
+        this.checkBurnInterval = null;
+      }
+     },Config.CHECK_STATUS_INTERVAL_TIME);
+  }
+
+ async totalSupply() {
+    return await this.channelContract.methods
+    .totalSupply()
+    .call();
+  }
+
+  async channelByIndex(index: number) {
+    return await this.channelContract.methods
+    .channelByIndex(index)
+    .call();
+  }
+
+
 
 }

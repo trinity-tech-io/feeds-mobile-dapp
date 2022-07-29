@@ -718,8 +718,8 @@ export const zh = {
     des2: '创建频道',
     des3: '取消公开频道',
     des4: '是否把频道从探索Feeds广场下架',
-    des5: '公开频道',
-    des6: '取消'
+    des5: '是',
+    des6: '否'
   }, /***NFT*/
   MintnftPage: {
     title: '创建收藏品',

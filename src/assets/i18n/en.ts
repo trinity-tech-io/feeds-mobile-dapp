@@ -720,8 +720,8 @@ export const en = {
     des2: 'Create channel',
     des3: 'Cancel the public channel ',
     des4: 'Whether to remove the channel from the discovery feeds square',
-    des5: 'Public channel',
-    des6: 'Cancel'
+    des5: 'Yes',
+    des6: 'No'
   } /***NFT*/,
   MintnftPage: {
     title: 'Create Collectible',

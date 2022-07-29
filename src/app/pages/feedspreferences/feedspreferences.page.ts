@@ -22,6 +22,7 @@ import { MenuService } from 'src/app/services/MenuService';
 import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { Logger } from 'src/app/services/logger';
+import { Config } from 'src/app/services/config';
 let TAG: string = 'Feeds-feedspreferences';
 @Component({
   selector: 'app-feedspreferences',
@@ -49,8 +50,8 @@ export class FeedspreferencesPage implements OnInit {
   public isLoading: boolean = false;
   public loadingTitle: string = "";
   public loadingText: string = "";
-  public loadingCurNumber: string = "";
-  public loadingMaxNumber: string = "";
+  public loadingCurNumber: string = null;
+  public loadingMaxNumber: string = null;
   public isShowMint: boolean = false;
   private channelInfo: any = null;
   private unPublicDialog: any = null
@@ -114,29 +115,13 @@ export class FeedspreferencesPage implements OnInit {
   }
 
   clearEvent() {
-    this.events.unsubscribe(FeedsEvent.PublishType.startLoading);
-    this.events.unsubscribe(FeedsEvent.PublishType.endLoading);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelChannelOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdateList);
   }
 
   addEvent() {
-    this.events.subscribe(FeedsEvent.PublishType.startLoading, (obj) => {
-      let title = obj["title"];
-      let des = obj["des"];
-      let curNum = obj["curNum"];
-      let maxNum = obj["maxNum"];
-      this.loadingTitle = title;
-      this.loadingText = des;
-      this.loadingCurNumber = curNum;
-      this.loadingMaxNumber = maxNum;
-      this.isLoading = true;
-    });
 
-    this.events.subscribe(FeedsEvent.PublishType.endLoading, (obj) => {
-      this.isLoading = false;
-    });
 
     this.events.subscribe(FeedsEvent.PublishType.nftCancelChannelOrder, (channelCollections: FeedsData.ChannelCollections) => {
       this.zone.run(() => {
@@ -182,100 +167,6 @@ export class FeedspreferencesPage implements OnInit {
     });
   }
 
-  unPublicFeeds() {
-    let server = this.feedsServiceApi.getServerbyNodeId(this.destDid) || null;
-    if (server === null) {
-      return;
-    }
-    let feed = this.feedService.getChannelFromId(this.destDid, this.channelId);
-    let feedsUrl = server.feedsUrl + '/' + feed['id'];
-    let feedsUrlHash = UtilService.SHA256(feedsUrl);
-    this.httpService
-      .ajaxGet(ApiUrl.remove + '?feedsUrlHash=' + feedsUrlHash)
-      .then(result => {
-        if (result['code'] === 200) {
-          this.zone.run(() => {
-            this.curFeedPublicStatus = false;
-            this.isFirst = true;
-          });
-          this.feedPublicStatus = _.omit(this.feedPublicStatus, [feedsUrlHash]);
-          this.feedService.setFeedPublicStatus(this.feedPublicStatus);
-          this.storageService.set(
-            'feeds.feedPublicStatus',
-            JSON.stringify(this.feedPublicStatus),
-          );
-        }
-      });
-  }
-
-  publicFeeds(buttonType: string) {
-    let server = this.feedsServiceApi.getServerbyNodeId(this.destDid) || null;
-    if (server === null) {
-      return;
-    }
-    let feed = this.feedService.getChannelFromId(this.destDid, this.channelId);
-    let feedsUrl = server.feedsUrl + '/' + feed['id'];
-    let channelAvatar = this.feedService.parseChannelAvatar(feed['avatar']);
-    let feedsUrlHash = UtilService.SHA256(feedsUrl);
-    let obj = {
-      did: server['did'],
-      name: feed['name'],
-      description: feed['introduction'],
-      url: feedsUrl,
-      feedsUrlHash: feedsUrlHash,
-      feedsAvatar: channelAvatar,
-      followers: feed['subscribers'],
-      ownerName: feed['owner_name'],
-      nodeId: this.destDid,
-      ownerDid: feed['owner_did'],
-    };
-
-    if (this.developerMode && buttonType === 'confirm') {
-      obj['purpose'] = '1';
-    }
-
-    this.httpService.ajaxPost(ApiUrl.register, obj).then(result => {
-      if (result['code'] === 200) {
-        this.zone.run(() => {
-          this.isFirst = true;
-          this.curFeedPublicStatus = true;
-        });
-        this.feedPublicStatus[feedsUrlHash] = '1';
-        this.feedService.setFeedPublicStatus(this.feedPublicStatus);
-        this.storageService.set(
-          'feeds.feedPublicStatus',
-          JSON.stringify(this.feedPublicStatus)
-        );
-      }
-    });
-  }
-
-  developerModeConfirm() {
-    this.popover = this.popupProvider.ionicConfirm(
-      this,
-      'SearchPage.confirmTitle',
-      'ServerInfoPage.des1',
-      this.cancel,
-      this.confirm,
-      './assets/images/tskth.svg',
-      'ServerInfoPage.des2',
-      'ServerInfoPage.des3',
-    );
-  }
-
-  cancel(that: any) {
-    if (this.popover != null) {
-      this.popover.dismiss();
-    }
-    that.publicFeeds('cancel');
-  }
-
-  confirm(that: any) {
-    if (this.popover != null) {
-      this.popover.dismiss();
-    }
-    that.publicFeeds('confirm');
-  }
 
   async newToggle() {
      await this.native.showLoading("common.waitMoment");
@@ -345,7 +236,7 @@ export class FeedspreferencesPage implements OnInit {
       this.confirmUnPublicDialog,
       './assets/images/tskth.svg',
       'FeedspreferencesPage.des2',
-      'FeedspreferencesPage.des6',
+      'FeedspreferencesPage.des5',
     );
   }
 
@@ -361,6 +252,38 @@ export class FeedspreferencesPage implements OnInit {
       that.unPublicDialog.dismiss();
       that.unPublicDialog = null;
     }
+    that.handleBurnChannel(that);
+  }
+
+  async handleBurnChannel(that: any) {
+    that.isLoading = true;
+    that.loadingTitle = 'common.waitMoment';
+    that.loadingText = 'common.burningNFTSDesc';
+    let sId = setTimeout(() => {
+      that.nftContractControllerService.getSticker().cancelBurnProcess();
+      that.isLoading = false;
+      clearTimeout(sId);
+      that.popupProvider.showSelfCheckDialog('common.burningNFTSTimeoutDesc');
+    }, Config.WAIT_TIME_BURN_NFTS);
+
+    let tokenId = '0x'+this.channelId;
+
+    that.nftContractControllerService.getChannel()
+      .burnChannel(tokenId)
+      .then(() => {
+        that.nftContractControllerService.getChannel().cancelBurnProcess();
+        this.zone.run(()=>{
+          this.curFeedPublicStatus = false;
+        })
+        that.isLoading = false;
+        clearTimeout(sId);
+        that.native.toast("common.burnNFTSSuccess");
+      }).catch(() => {
+        that.nftContractControllerService.getChannel().cancelBurnProcess();
+        that.isLoading = false;
+        clearTimeout(sId);
+        that.native.toastWarn("common.burnNFTSFailed");
+      });
   }
 
 
