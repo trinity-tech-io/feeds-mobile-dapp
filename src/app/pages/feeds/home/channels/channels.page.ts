@@ -563,7 +563,18 @@ export class ChannelsPage implements OnInit {
       let target = e.target || e.srcElement; //判断目标事件
       if (target.tagName.toLowerCase() == 'span') {
         let url = target.textContent || target.innerText;
-        this.native.clickUrl(url, event);
+        let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+        var urlExp = new RegExp(reg);
+        if(urlExp.test(url) === true){
+          this.native.clickUrl(url, event);
+        }else{//handle#
+          this.pauseVideo(destDid + '-' + channelId + '-' + postId);
+          this.curPostId = postId;
+          this.native
+            .getNavCtrl()
+            .navigateForward(['/postdetail', destDid, channelId, postId]);
+           this.handlePostText(url, event);
+        }
         return;
       }
     }
@@ -1528,6 +1539,10 @@ export class ChannelsPage implements OnInit {
       clearInterval(this.assetSid);
       this.assetSid = null;
     }
+  }
+
+  handlePostText(url: string, event: any) {
+      event.stopPropagation();
   }
 
 }

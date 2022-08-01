@@ -151,7 +151,20 @@ export class LikesComponent implements OnInit {
       let target = e.target || e.srcElement; //判断目标事件
       if (target.tagName.toLowerCase() == 'span') {
         let url = target.textContent || target.innerText;
-        this.native.clickUrl(url, event);
+        let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+        var urlExp = new RegExp(reg);
+        if(urlExp.test(url) === true){
+          this.native.clickUrl(url, event);
+        }else{//handle #
+          this.pauseVideo(destDid + '-' + channelId + '-' + postId);
+          this.toPage.emit({
+            destDid: destDid,
+            channelId: channelId,
+            postId: postId,
+            page: '/postdetail',
+          });
+          this.handlePostText(url, event);
+        }
         return;
       }
     }
@@ -343,5 +356,9 @@ export class LikesComponent implements OnInit {
   exploreFeeds() {
     this.native.setRootRouter(['/tabs/search']);
     this.feedspage.search();
+  }
+
+  handlePostText(url: string, event: any) {
+      event.stopPropagation();
   }
 }

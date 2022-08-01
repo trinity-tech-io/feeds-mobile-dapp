@@ -115,8 +115,9 @@ export class SentryErrorHandler implements ErrorHandler {
     if (document.URL.includes('localhost/galleriahive')) {
       this.events.publish(FeedsEvent.PublishType.authEssentialFail, { type: 0 })
     }
+
     // Only send reports to sentry if we are not debugging.
-    if (document.URL.includes('localhost')) {
+    if (document.URL.includes('localhost') && error.toString().indexOf("(reading 'bufferDetected')") === -1) {
       // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
       /*const eventId = */ Sentry.captureException(
       error.originalError || error,
@@ -127,16 +128,22 @@ export class SentryErrorHandler implements ErrorHandler {
       // Do not popop error dialog, but still send to sentry for debug.
       Logger.error("Sentry", 'This exception has been handled:', error);
     } else {
-      let message = this.translate.instant("common.errorDes");
-      this.toastCtrl
-        .create({
-          mode: 'ios',
-          color: 'warning',
-          message,
-          duration: 3000,
-          position: 'top',
-        })
-        .then(toast => toast.present());
+      console.log("===22",error.toString().indexOf("(reading 'bufferDetected')"))
+      if(error.toString().indexOf("(reading 'bufferDetected')") > -1){
+
+      }else{
+        let message = this.translate.instant("common.errorDes");
+        this.toastCtrl
+          .create({
+            mode: 'ios',
+            color: 'warning',
+            message,
+            duration: 3000,
+            position: 'top',
+          })
+          .then(toast => toast.present());
+      }
+
     }
     throw error;
   }
