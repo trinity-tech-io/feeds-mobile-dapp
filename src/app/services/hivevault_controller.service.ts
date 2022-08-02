@@ -1689,8 +1689,7 @@ export class HiveVaultController {
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Prepare Connection error', error);
-        //console.log("===="+error["__zone_symbol__value"].internalCode)
-        let internalCode = error["__zone_symbol__value"].internalCode || "";
+        let internalCode = error.internalCode || "";
         if (internalCode === 1) {
           this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 11 });
         } else {

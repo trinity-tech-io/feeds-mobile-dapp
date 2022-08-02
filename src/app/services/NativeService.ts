@@ -63,6 +63,26 @@ export class NativeService {
       .then(toast => toast.present());
   }
 
+   public HiveErrorWarn(
+    message: string = 'Operation completed',
+    errorCode : number = null,
+  ): void {
+    if(errorCode === null){
+      message = this.translate.instant(message);
+    }else{
+      message = this.translate.instant(message)+"-"+errorCode;
+    }
+    this.toastCtrl
+      .create({
+        mode: 'ios',
+        color: 'warning',
+        message,
+        duration: 3000,
+        position: 'top',
+      })
+      .then(toast => toast.present());
+  }
+
   public toastdanger(
     message: string = 'Operation completed',
     duration: number = 3000,

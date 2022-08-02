@@ -202,7 +202,7 @@ export class CreatenewpostPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
 
-  post() {
+ async post() {
     this.zone.run(async () => {
       let newPost = this.native.iGetInnerText(this.newPost);
 
@@ -235,14 +235,25 @@ export class CreatenewpostPage implements OnInit {
             this.native.toastWarn("common.duplicate")
           }
           else if (error["code"] != 507) {
-            this.native.toastWarn('common.sendFail'); // 需要更改错误提示
+            let message = error.message || null;
+            if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
+              this.native.HiveErrorWarn('ErrorInfo.HIVE_ERROR_URL');
+              this.isLoading = false;
+              this.isPublishing = false;
+              return;
+            }
+            let errorCode = error["code"] || null;
+            if(errorCode === null){
+              this.native.HiveErrorWarn('common.sendFail');
+            }else{
+              this.native.HiveErrorWarn('common.sendFail',errorCode);
+            }
           }
-
           this.isLoading = false;
           this.isPublishing = false;
         }
       }
-    });
+     });
   }
 
   async sendPost() {
@@ -582,7 +593,7 @@ export class CreatenewpostPage implements OnInit {
 
    inputTextarea() {
     this.curTextNum = this.getTwitterText();
-     this.extraNumber = 280 - 19 - this.curTextNum; // 
+     this.extraNumber = 280 - 19 - this.curTextNum; //
    }
 
    getTwitterText() {

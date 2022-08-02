@@ -133,7 +133,7 @@ export class HiveVaultHelper {
                 })
             } catch (error) {
                 Logger.error(TAG, "registeScripting error", error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -153,7 +153,7 @@ export class HiveVaultHelper {
                 resolve(doc)
             } catch (error) {
                 Logger.error(TAG, 'Insert feeds scripting db error', error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -209,7 +209,7 @@ export class HiveVaultHelper {
                 resolve(updateResult)
             } catch (error) {
                 Logger.error(TAG, 'updateDataToFeedsScriptingDB error', error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -226,7 +226,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query Feeds scripting from DB', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -254,9 +254,9 @@ export class HiveVaultHelper {
             const array = [p1, p2, p3, p4, p5, p6, p7] as const
             Promise.all(array).then(values => {
                 resolve('true');
-            }, reason => {
+            }, async reason => {
                 Logger.error(TAG, 'create Collections error', reason);
-                reject(this.handleError(reason))
+                reject(await this.handleError(reason))
             })
         });
     }
@@ -282,7 +282,7 @@ export class HiveVaultHelper {
                 if (error["code"] === 404) {
                     resolve("true")
                 } else {
-                    reject(this.handleError(error))
+                    reject(await this.handleError(error))
                 }
             }
         });
@@ -312,7 +312,7 @@ export class HiveVaultHelper {
                 resolve(doc)
             } catch (error) {
                 Logger.error(TAG, 'Insert channel db error', error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -373,7 +373,7 @@ export class HiveVaultHelper {
                 resolve(updateResult)
             } catch (error) {
                 Logger.error(TAG, 'updateDataToChannelDB error', error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -401,7 +401,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryChannelInfo error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -454,7 +454,7 @@ export class HiveVaultHelper {
                 resolve(insertResult)
             } catch (error) {
                 Logger.error(TAG, 'insertDataToPostDB error', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -478,8 +478,8 @@ export class HiveVaultHelper {
         });
     }
 
-    publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
-        return this.insertPostData(channelId, tag, content, type, status, memo, proof);
+    async publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
+        return await this.insertPostData(channelId, tag, content, type, status, memo, proof);
     }
     /** publish post end */
 
@@ -505,7 +505,7 @@ export class HiveVaultHelper {
                 resolve(updateResult);
             } catch (error) {
                 Logger.error(TAG, 'updateDataToPostDB error', error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -545,7 +545,7 @@ export class HiveVaultHelper {
                 resolve({ updatedAt: updatedAt, status: FeedsData.PostCommentStatus.deleted });
             } catch (error) {
                 Logger.error(TAG, 'Delete data from postDB error', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -587,7 +587,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryPostById error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -623,7 +623,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryPostByChannelId error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -659,7 +659,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryPostRangeOfTime error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -707,7 +707,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerSubscribe error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -758,7 +758,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerUpdateSubscription error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -802,7 +802,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerUnsubscribe error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -843,7 +843,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQuerySubscriptionInfoByChannelId error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -884,7 +884,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQuerySubscriptionInfoByUserDID error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -925,7 +925,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQuerySubscriptionInfoByUserDID error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -974,7 +974,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryCommentByPostId error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1024,7 +1024,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerFindCommentById error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1065,7 +1065,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryCommentRangeOfTime error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1107,7 +1107,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryCommentByChannel error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1167,7 +1167,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerCreateComment error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1241,7 +1241,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerUpdateComment error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1301,7 +1301,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerDeleteComment error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1319,7 +1319,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Delete comment from scripting , error:', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -1352,7 +1352,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryLikeById error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1404,7 +1404,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQuerySelfLikeById error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1453,7 +1453,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryLikeByChannel error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1502,7 +1502,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryLikeByPost error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1543,7 +1543,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerLikeRangeOfTime error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1596,7 +1596,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerCreateLike error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1651,7 +1651,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerRemoveLike error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1703,7 +1703,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerUpdateLike error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -1753,7 +1753,7 @@ export class HiveVaultHelper {
             }
             catch (error) {
                 Logger.error(TAG, "Download Ess Avatar error: ", error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -1777,7 +1777,7 @@ export class HiveVaultHelper {
                 resolve(avatarHiveURL);
             } catch (error) {
                 console.log("uploadMediaData error:", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -1796,7 +1796,7 @@ export class HiveVaultHelper {
                 resolve(avatarHiveURL)
             } catch (error) {
                 console.log("uploadMediaData error:", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -1808,7 +1808,7 @@ export class HiveVaultHelper {
                 resolve(result)
             } catch (error) {
                 console.log("downloadFile error:", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -1841,7 +1841,7 @@ export class HiveVaultHelper {
                 resolve(data);
             } catch (error) {
                 Logger.error(TAG, 'download file from scripting error', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -1912,7 +1912,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query channels from DB', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -1931,7 +1931,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query post from DB', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -1950,7 +1950,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query post by channel from DB', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -1982,7 +1982,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryDisplayName error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -2035,7 +2035,7 @@ export class HiveVaultHelper {
                 resolve('FINISH');
             } catch (error) {
                 Logger.error(TAG, 'Insert bsc db error', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -2059,7 +2059,7 @@ export class HiveVaultHelper {
                 resolve('FINISH');
             } catch (error) {
                 Logger.error(TAG, 'Remove bsc db error', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -2079,7 +2079,7 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query bsc db error', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -2109,7 +2109,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerQueryCommentsFromPosts error", error)
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         });
     }
@@ -2150,7 +2150,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS");
             } catch (error) {
                 Logger.error(TAG, 'Register query public post by id error', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -2190,7 +2190,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS");
             } catch (error) {
                 Logger.error(TAG, 'Register query public post by channel error', error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }
@@ -2229,7 +2229,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS");
             } catch (error) {
                 Logger.error(TAG, "registerQueryPublicPostRangeOfTime error", error);
-                reject(this.handleError(error))
+                reject(await this.handleError(error))
             }
         })
     }

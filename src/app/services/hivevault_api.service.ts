@@ -60,8 +60,8 @@ export class HiveVaultApi {
   }
 
   /** Post */
-  publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
-    return this.hiveVaultHelper.publishPost(channelId, tag, content, type, status, memo, proof);
+  async publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
+    return  await this.hiveVaultHelper.publishPost(channelId, tag, content, type, status, memo, proof);
   }
 
   updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string) {
