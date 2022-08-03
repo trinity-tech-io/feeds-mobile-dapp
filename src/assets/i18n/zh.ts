@@ -208,6 +208,7 @@ export const zh = {
     twitterNotLogin: '您没有登录 Twitter，请返回设置页面登录。',
     twitterExpired: 'Twitter 登录已过期，请返回设置页面登录。',
     twitterAuthFailed: 'Twitter 授权失败',
+    editPostFail: '编辑微说失败'
   },
   app: {
     profileDetails: '档案详情',

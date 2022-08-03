@@ -159,14 +159,19 @@ export class HiveVaultHelper {
     }
 
     async handleError(error: any) {
+
+        let message = error.message || null;
+        if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
+            this.native.toastWarn('ErrorInfo.HIVE_ERROR_URL');
+            return error;
+        }
+
         let errorCode = error["code"];
         let errorDes = "ErrorInfo.HIVE_ERROR_" + errorCode;
         if (errorCode === 507) {
             if (this.buyStorageSpaceDialog === null) {
                 await this.showBuyStorageSpaceDialog(errorDes);
             }
-        } else if (errorCode === undefined) {
-            this.native.toastWarn(errorDes)
         }
         return error
     }
@@ -500,7 +505,7 @@ export class HiveVaultHelper {
             let filter = { "channel_id": channelId, "post_id": postId };
             let update = { "$set": doc };
             try {
-                const updateResult = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_POSTS, filter, update, option);
+                const updateResult = await this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_POSTS, filter, update, option);
                 Logger.log(TAG, 'update post result', updateResult);
                 resolve(updateResult);
             } catch (error) {
@@ -513,7 +518,7 @@ export class HiveVaultHelper {
     private updatePostData(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = this.updateDataToPostDB(postId, channelId, newUpdateAt, newType, newTag, newContent, newStatus, newMemo, newProof)
+                const result = await this.updateDataToPostDB(postId, channelId, newUpdateAt, newType, newTag, newContent, newStatus, newMemo, newProof)
                 Logger.log(TAG, 'update post result', result)
                 resolve(result)
             } catch (error) {
@@ -523,8 +528,8 @@ export class HiveVaultHelper {
         })
     }
 
-    updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string): Promise<any> {
-        return this.updatePostData(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof);
+    async updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string): Promise<any> {
+        return await this.updatePostData(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof);
     }
     /** update post end */
 

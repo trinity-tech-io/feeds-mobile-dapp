@@ -233,20 +233,24 @@ export class CreatenewpostPage implements OnInit {
           const emsg = "{\"detail\":\"You are not allowed to create a Tweet with duplicate content.\",\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403}"
           if (emsg === error.error) {
             this.native.toastWarn("common.duplicate")
+            this.isLoading = false;
+            this.isPublishing = false;
+            return;
           }
-          else if (error["code"] != 507) {
-            let message = error.message || null;
-            if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
-              this.native.HiveErrorWarn('ErrorInfo.HIVE_ERROR_URL');
-              this.isLoading = false;
-              this.isPublishing = false;
-              return;
-            }
+
+          let message = error.message || null;
+          if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
+            this.isLoading = false;
+            this.isPublishing = false;
+            return;
+          }
+
+          if (error["code"] != 507) {
             let errorCode = error["code"] || null;
-            if(errorCode === null){
-              this.native.HiveErrorWarn('common.sendFail');
-            }else{
+            if(errorCode != null){
               this.native.HiveErrorWarn('common.sendFail',errorCode);
+            }else{
+              this.native.HiveErrorWarn('common.sendFail');
             }
           }
           this.isLoading = false;

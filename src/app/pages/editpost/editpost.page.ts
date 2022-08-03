@@ -168,6 +168,12 @@ export class EditPostPage implements OnInit {
       return false;
     }
 
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return false;
+    }
+
     await this.native.showLoading('common.waitMoment');
     this.clickButton = true;
     this.updatePost();
@@ -369,7 +375,6 @@ export class EditPostPage implements OnInit {
   }
 
   updatePost() {
-    try {
       let content = _.cloneDeep(this.postData.content);
       content.content = this.editContent;
       this.hiveVaultController.updatePost(
@@ -384,16 +389,27 @@ export class EditPostPage implements OnInit {
           this.native.hideLoading();
           this.native.pop();
         });
-      }).catch((err) => {
+      }).catch((error) => {
+        let message = error.message || null;
+        if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
+          this.clickButton = false;
+          this.pauseVideo();
+          this.native.hideLoading();
+          return;
+        }
+
+        if (error["code"] != 507) {
+          let errorCode = error["code"] || null;
+          if(errorCode != null){
+            this.native.HiveErrorWarn('common.editPostFail',errorCode);
+          }else{
+            this.native.HiveErrorWarn('common.editPostFail');
+          }
+        }
         this.clickButton = false;
         this.pauseVideo();
         this.native.hideLoading();
       });
-    } catch (error) {
-      this.clickButton = false;
-      this.pauseVideo();
-      this.native.hideLoading();
-    }
   }
 
   ionBlur() {

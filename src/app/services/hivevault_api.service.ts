@@ -64,8 +64,8 @@ export class HiveVaultApi {
     return  await this.hiveVaultHelper.publishPost(channelId, tag, content, type, status, memo, proof);
   }
 
-  updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string) {
-    return this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof);
+ async updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string) {
+    return await this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof);
   }
 
   deletePost(postId: string, channelId: string): Promise<{ updatedAt: number, status: number }> {
