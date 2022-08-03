@@ -1650,11 +1650,11 @@ export class HiveVaultController {
           console.log('parseResult', parseResult);
           resolve(parseResult);
         } else {
-          reject([]);
+          resolve([]);
         }
       } catch (error) {
         Logger.error(TAG, 'Sync self channel', error);
-        reject([]);
+        reject(error);
       }
     });
   }

@@ -34,10 +34,6 @@ export class CreatenewfeedPage implements OnInit {
   public curLang: string = '';
   public tippingAddress: string = '';
   public lightThemeType: number = 3;
-  public tippingObj = [{
-    "type": "ELA",
-    "address": ""
-  }];
   public clickButton: boolean = false;
   constructor(
     private feedService: FeedService,
@@ -148,7 +144,7 @@ export class CreatenewfeedPage implements OnInit {
 
       const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
 
-      if (selfchannels.length >= 5) {
+      if (selfchannels.length >= 6) {
       this.native.hideLoading();
       this.clickButton = false;
       this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
@@ -166,6 +162,8 @@ export class CreatenewfeedPage implements OnInit {
       }
       await this.uploadChannel(name.value, desc.value);
     } catch (error) {
+
+      this.native.handleHiveError(error,'common.createChannelFail');
       this.clickButton = false;
       this.native.hideLoading();
     }
@@ -179,19 +177,18 @@ export class CreatenewfeedPage implements OnInit {
       let userDid = signinData.did
       let userDisplayName = signinData.name;
       let tippingAddress = this.tippingAddress || '';
-      if(tippingAddress != ''){
-        this.tippingObj[0].address = this.tippingAddress;
-      }else{
-        this.tippingObj[0].address = '';
-      }
-      const channelId = await this.hiveVaultController.createChannel(name, desc, this.avatar, JSON.stringify(this.tippingObj))
+      const channelId = await this.hiveVaultController.createChannel(name, desc, this.avatar, tippingAddress)
       await this.hiveVaultController.subscribeChannel(userDid, channelId, userDisplayName);
 
-      this.native.hideLoading()
+      this.native.hideLoading();
       this.native.pop()
     } catch (error) {
+
+      this.native.handleHiveError(error,'common.createChannelFail');
+      this.clickButton = false;
       this.native.hideLoading();
-      }
+
+    }
   }
 
   profileimage() {

@@ -166,6 +166,11 @@ export class HiveVaultHelper {
             return error;
         }
 
+        if(message != null && message.indexOf("Network Error") > -1){
+            this.native.toastWarn('ErrorInfo.HIVE_ERROR_undefined');
+            return error;
+        }
+
         let errorCode = error["code"];
         let errorDes = "ErrorInfo.HIVE_ERROR_" + errorCode;
         if (errorCode === 507) {
@@ -312,7 +317,7 @@ export class HiveVaultHelper {
             }
 
             try {
-                const insertResult = this.hiveService.insertDBData(HiveVaultHelper.TABLE_CHANNELS, doc);
+                const insertResult = await this.hiveService.insertDBData(HiveVaultHelper.TABLE_CHANNELS, doc);
                 Logger.log(TAG, 'Insert channel db result', insertResult)
                 resolve(doc)
             } catch (error) {
@@ -348,8 +353,8 @@ export class HiveVaultHelper {
         });
     }
 
-    createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string = '', category: string = '', proof: string = '') {
-        return this.insertChannelData(channelName, intro, avatarAddress, tippingAddress, type, nft, memo, category, proof);
+    async createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string = '', category: string = '', proof: string = '') {
+        return await this.insertChannelData(channelName, intro, avatarAddress, tippingAddress, type, nft, memo, category, proof);
     }
     /** create channel end */
 
@@ -373,7 +378,7 @@ export class HiveVaultHelper {
                 let filter = { "channel_id": channelId };
                 let update = { "$set": doc };
 
-                const updateResult = this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_CHANNELS, filter, update, option);
+                const updateResult = await this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_CHANNELS, filter, update, option);
                 Logger.log(TAG, 'update channel result', updateResult)
                 resolve(updateResult)
             } catch (error) {
@@ -383,15 +388,15 @@ export class HiveVaultHelper {
         })
     }
 
-    private updateChannelData(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
+    private async updateChannelData(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
         newTippingAddress: string, newNft: string) {
         const updatedAt = UtilService.getCurrentTimeNum();
-        return this.updateDataToChannelDB(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft, updatedAt);
+        return await this.updateDataToChannelDB(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft, updatedAt);
     }
 
-    updateChannel(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
+    async updateChannel(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
         newTippingAddress: string, newNft: string) {
-        return this.updateChannelData(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft);
+        return await this.updateChannelData(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft);
     }
     /** update channel end */
 
@@ -736,8 +741,8 @@ export class HiveVaultHelper {
         })
     }
 
-    subscribeChannel(targetDid: string, channelId: string, displayName: string, updatedAt: number, status: number): Promise<any> {
-        return this.callSubscribeScripting(targetDid, channelId, displayName, updatedAt, status);
+    async subscribeChannel(targetDid: string, channelId: string, displayName: string, updatedAt: number, status: number): Promise<any> {
+        return await this.callSubscribeScripting(targetDid, channelId, displayName, updatedAt, status);
     }
 
     registerUpdateSubscription(): Promise<string> {

@@ -238,21 +238,7 @@ export class CreatenewpostPage implements OnInit {
             return;
           }
 
-          let message = error.message || null;
-          if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
-            this.isLoading = false;
-            this.isPublishing = false;
-            return;
-          }
-
-          if (error["code"] != 507) {
-            let errorCode = error["code"] || null;
-            if(errorCode != null){
-              this.native.HiveErrorWarn('common.sendFail',errorCode);
-            }else{
-              this.native.HiveErrorWarn('common.sendFail');
-            }
-          }
+          this.native.handleHiveError(error,'common.sendFail');
           this.isLoading = false;
           this.isPublishing = false;
         }

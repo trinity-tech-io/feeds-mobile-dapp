@@ -208,7 +208,9 @@ export const en = {
     twitterNotLogin: 'You are not logged into Twitter. Please return to the Settings page to log in.',
     twitterExpired: 'Twitter login has expired. Please return to the Settings page to log in.',
     twitterAuthFailed: 'Twitter auth failed.',
-    editPostFail: 'Edit Post failed'
+    editPostFail: 'Edit Post failed',
+    createChannelFail: 'Create Channel failed',
+    editChannelFail: 'Edit Channel failed'
   },
   app: {
     profileDetails: 'Profile Details',

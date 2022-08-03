@@ -36,6 +36,7 @@ export class EidtchannelPage implements OnInit {
   public oldChannelAvatar: string = '';
   public isPublic: string = '';
   public tippingAddress: string = '';
+  private oldTippingAddress: string = '';
   private channelOwner: string = "";
   private channelSubscribes: number = null;
   private followStatus: boolean = false;
@@ -43,10 +44,6 @@ export class EidtchannelPage implements OnInit {
   private channelCollections: FeedsData.ChannelCollections = null;
   private popover: any = null;
   public lightThemeType:number = 3;
-  public tippingObj = [{
-    "type": "ELA",
-    "address": ""
-  }];
   public clickButton: boolean = false;
   constructor(
     private feedService: FeedService,
@@ -78,6 +75,7 @@ export class EidtchannelPage implements OnInit {
     this.channelOwner = channelInfo['channelOwner'] || '';
     this.channelSubscribes = channelInfo['channelSubscribes'] || '';
     this.tippingAddress = await this.getChannelTipAddress();
+    this.oldTippingAddress =  this.tippingAddress;
     this.followStatus = channelInfo['followStatus'] || false;
     this.oldChannelAvatar = this.dataHelper.getProfileIamge();
   }
@@ -90,10 +88,8 @@ export class EidtchannelPage implements OnInit {
       tippingAddress = channel.tipping_address || '';
       if(tippingAddress != ''){
         if(tippingAddress.indexOf("type") > -1){
-           this.tippingObj = JSON.parse(tippingAddress);
-           tippingAddress =  this.tippingObj[0].address;
-        }else{
-            this.tippingObj[0].address =  tippingAddress;
+           let tippingObj = JSON.parse(tippingAddress);
+           tippingAddress =  tippingObj[0].address;
         }
       }
     }
@@ -182,6 +178,7 @@ export class EidtchannelPage implements OnInit {
         }
         this.editChannelInfo();
       } catch (error) {
+        this.native.handleHiveError(error,'common.editChannelFail');
         this.native.hideLoading();
         this.clickButton = false;
         this.isClickConfirm = true;
@@ -193,17 +190,12 @@ export class EidtchannelPage implements OnInit {
     try {
       this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
       let tippingAddress = this.tippingAddress || '';
-      if(tippingAddress != ''){
-        this.tippingObj[0].address = this.tippingAddress;
-      }else{
-        this.tippingObj[0].address = '';
-      }
       this.hiveVaultController.updateChannel(
         this.channelId,
         this.channelName,
         this.channelDes,
         this.avatar,
-        JSON.stringify(this.tippingObj),
+        tippingAddress,
         "public",
         '',
         '',
@@ -218,12 +210,14 @@ export class EidtchannelPage implements OnInit {
         this.clickButton = false;
         this.native.hideLoading();
         this.native.pop();
-      }).catch((err)=>{
+      }).catch((error)=>{
+        this.native.handleHiveError(error,'common.editChannelFail');
         this.native.hideLoading();
         this.clickButton = false;
         this.isClickConfirm = false;
       })
     } catch (error) {
+      this.native.handleHiveError(error,'common.editChannelFail');
       this.native.hideLoading();
       this.clickButton = false;
       this.isClickConfirm = false;
@@ -232,6 +226,13 @@ export class EidtchannelPage implements OnInit {
   }
 
   checkparms() {
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return false;
+    }
+
     let nameValue = this.channelName || '';
     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue === '') {
@@ -271,12 +272,14 @@ export class EidtchannelPage implements OnInit {
     if (
       this.oldChannelInfo['name'] === this.channelName &&
       this.oldChannelInfo['des'] === this.channelDes &&
-      this.tippingAddress === this.tippingObj[0].address &&
+      this.tippingAddress === this.oldTippingAddress &&
       this.oldChannelAvatar === this.channelAvatar
     ) {
       this.native.toastWarn('common.nochanges');
       return false;
     }
+
+
     return true;
   }
 

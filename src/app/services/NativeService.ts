@@ -368,4 +368,20 @@ export class NativeService {
           break;
     }
   }
+
+  handleHiveError(error: any, errorDes: string){
+    let message = error.message || null;
+    if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
+
+    }else if(message != null && message.indexOf("Network Error")>-1){
+
+    }else if (error["code"] != 507) {
+      let errorCode = error["code"] || null;
+      if(errorCode != null){
+        this.HiveErrorWarn(errorDes,errorCode);
+      }else{
+        this.HiveErrorWarn(errorDes);
+      }
+    }
+  }
 }

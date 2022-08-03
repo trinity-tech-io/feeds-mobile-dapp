@@ -46,13 +46,13 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.deleteAllCollections()
   }
   /** Channel */
-  createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string, category: string = '', proof: string = ''): Promise<any> {
-    return this.hiveVaultHelper.createChannel(channelName, intro, avatarAddress, tippingAddress, type, nft, memo, category, proof);
+  async createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string, category: string = '', proof: string = ''): Promise<any> {
+    return await this.hiveVaultHelper.createChannel(channelName, intro, avatarAddress, tippingAddress, type, nft, memo, category, proof);
   }
 
-  updateChannel(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
+  async updateChannel(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
     newTippingAddress: string, newNft: string) {
-    return this.hiveVaultHelper.updateChannel(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft);
+    return await this.hiveVaultHelper.updateChannel(channelId, newName, newIntro, newAvatar, newType, newMemo, newTippingAddress, newNft);
   }
 
   queryChannelInfo(targetDid: string, channelId: string): Promise<any> {
@@ -84,8 +84,8 @@ export class HiveVaultApi {
   }
 
   /** Suscription */
-  subscribeChannel(targetDid: string, channelId: string, displayName: string, updatedAt: number, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
-    return this.hiveVaultHelper.subscribeChannel(targetDid, channelId, displayName, updatedAt, status);
+  async subscribeChannel(targetDid: string, channelId: string, displayName: string, updatedAt: number, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
+    return await this.hiveVaultHelper.subscribeChannel(targetDid, channelId, displayName, updatedAt, status);
   }
 
   updateSubscription(targetDid: string, channelId: string, status: number): Promise<{ updatedAt: number }> {

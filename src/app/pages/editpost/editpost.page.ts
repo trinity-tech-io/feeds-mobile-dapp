@@ -390,22 +390,7 @@ export class EditPostPage implements OnInit {
           this.native.pop();
         });
       }).catch((error) => {
-        let message = error.message || null;
-        if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
-          this.clickButton = false;
-          this.pauseVideo();
-          this.native.hideLoading();
-          return;
-        }
-
-        if (error["code"] != 507) {
-          let errorCode = error["code"] || null;
-          if(errorCode != null){
-            this.native.HiveErrorWarn('common.editPostFail',errorCode);
-          }else{
-            this.native.HiveErrorWarn('common.editPostFail');
-          }
-        }
+        this.native.handleHiveError(error,'common.editPostFail');
         this.clickButton = false;
         this.pauseVideo();
         this.native.hideLoading();
