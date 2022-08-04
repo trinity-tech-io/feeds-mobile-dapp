@@ -11,6 +11,7 @@ import { TwitterService } from 'src/app/services/TwitterService';
 import { FileHelperService } from './FileHelperService';
 import _ from 'lodash';
 import { Config } from './config';
+import { VaultNotFoundException } from '@elastosfoundation/hive-js-sdk';
 
 const TAG = 'HiveVaultController';
 
@@ -1691,10 +1692,9 @@ export class HiveVaultController {
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Prepare Connection error', error);
-        let internalCode = error.internalCode || "";
-        if (internalCode === 1) {
+        if (error instanceof VaultNotFoundException) {
           this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 11 });
-        } else {
+        }else{
           this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
         }
         reject(error);
