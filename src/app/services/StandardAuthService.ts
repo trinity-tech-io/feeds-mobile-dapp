@@ -175,16 +175,21 @@ export class StandardAuthService {
   checkCredentialValid(
     appIdCredential: DIDPlugin.VerifiableCredential,
   ): boolean {
-    if (appIdCredential == null || appIdCredential == undefined) {
-      return false;
-    }
+    try {
+      if (appIdCredential == null || appIdCredential == undefined) {
+        return false;
+      }
 
-    let currentData = new Date();
-    if (appIdCredential.getExpirationDate().valueOf() < currentData.valueOf()) {
-      return false;
-    }
+      let currentData = new Date();
+      if (appIdCredential.getExpirationDate().valueOf() < currentData.valueOf()) {
+        return false;
+      }
 
-    return true;
+      return true;
+    } catch (error) {
+      //error ignore
+      return true;
+    }
   }
 
   async getAppId(): Promise<string> {
