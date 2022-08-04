@@ -223,6 +223,7 @@ export const en = {
     des: 'Signed out',
     settings: 'Settings',
     privacyPolicy: 'Privacy Policy',
+    deleteAccount: 'Delete Account',
     termsOfService: 'Terms of Service'
   },
   SigninPage: {

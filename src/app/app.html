@@ -54,6 +54,14 @@
             </ion-menu-toggle>
 
             <ion-menu-toggle>
+                <div (click)="deleteAccount()">
+                    <img src="./assets/images/menu/delete.svg" *ngIf="!theme.darkMode">
+                    <img src="./assets/images/darkmode/menu/delete.svg" *ngIf="theme.darkMode">
+                    <h1>{{ 'app.deleteAccount' | translate }}</h1>
+                </div>
+            </ion-menu-toggle>
+
+            <ion-menu-toggle>
                 <div (click)="showSignoutDialog()">
                     <img src="./assets/images/menu/signout.svg" *ngIf="!theme.darkMode">
                     <img src="./assets/images/darkmode/menu/signout.svg" *ngIf="theme.darkMode">

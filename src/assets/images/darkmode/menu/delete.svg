@@ -1,0 +1,14 @@
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <g id="svg_5">
+   <circle id="svg_6" cx="18" cy="18" r="18" fill="#323B45"/>
+  </g>
+  <g stroke="null" id="svg_1">
+   <title stroke="#C4C4C4" fill="none">Trash</title>
+   <path stroke="#C4C4C4" id="svg_2" d="m10.63635,11.00006l1.02277,16.36362c0.04855,0.94553 0.73633,1.63638 1.63632,1.63638l9.40912,0c0.90353,0 1.57858,-0.69086 1.63632,-1.63638l1.02277,-16.36362" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+   <path stroke="#C4C4C4" fill="none" id="svg_3" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1" d="m9,11.00006l18,0"/>
+   <path stroke="#C4C4C4" id="svg_4" d="m14.72726,11.00006l0,-2.04544l0,0a1.2237,1.2237 0 0 1 1.22729,-1.22729l4.09088,0a1.2237,1.2237 0 0 1 1.22726,1.22729l0,0l0,2.04544m-3.27271,3.27274l0,11.45453m-3.68182,-11.45453l0.40909,11.45453m6.95453,-11.45453l-0.40909,11.45453" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+  </g>
+ </g>
+
+</svg>

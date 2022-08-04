@@ -223,6 +223,7 @@ export const zh = {
     des: '登出成功',
     settings: '设置',
     privacyPolicy: '隐私政策',
+    deleteAccount: '删除账号',
     termsOfService: '条款'
   },
   SigninPage: {

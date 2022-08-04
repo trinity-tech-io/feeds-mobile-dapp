@@ -89,7 +89,7 @@ export class MyApp {
       document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
       this.getAvatar();
       let avatar = this.avatar || null;
-      if(avatar === null){
+      if (avatar === null) {
         this.hiveVaultController.refreshAvatar().then(async () => { await this.getAvatar(); }).catch(async () => { await this.getAvatar(); });
       }
       this.initProfileData();
@@ -712,6 +712,19 @@ export class MyApp {
     this.native.openUrl('https://trinity-feeds.app/disclaimer');
   }
 
+  deleteAccount() {
+    connectivity.unregisterConnector('local-identity');
+
+    console.log('1111111111111');
+    const localIdentityConnector = new LocalIdentityConnector();
+    console.log('222222222');
+    connectivity.registerConnector(localIdentityConnector);
+    console.log('33333333333');
+    connectivity.setActiveConnector('local-identity').then(() => {
+      console.log('4444444444444');
+    })
+
+  }
   menuClose() {
     this.theme.restTheme();
     document.body.removeEventListener("touchmove", this.preventDefault, false);
