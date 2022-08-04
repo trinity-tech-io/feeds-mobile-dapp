@@ -43,10 +43,12 @@ export class ChannelsPage implements OnInit {
   public channelAvatar: string = '';
   public channelAvatarUri: string = '';
   public channelName: string = '';
+  public channelOriginName: string = '';
   public updatedTime: number = 0;
   public channelOwner: string = '';
   public channelDesc: string = '';
   public channelSubscribes: number = 0;
+  public displayName: string = '';
   public postList: FeedsData.PostV3[] = [];
 
   public channelId: string = "0";
@@ -339,7 +341,8 @@ export class ChannelsPage implements OnInit {
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
     await this.checkFollowStatus(this.destDid, this.channelId);
     if (channel == null || channel == undefined) return;
-    this.channelName = channel.name;
+    this.channelName = channel.displayName || channel.name;
+    this.channelOriginName = channel.name;
     this.updatedTime = channel.updatedAt || 0;
     this.channelOwner = "";
 
@@ -373,6 +376,7 @@ export class ChannelsPage implements OnInit {
     this.tippingAddress = channel.tipping_address || '';
     let channelAvatarUri = channel.avatar || '';
     this.channelAvatarUri = channelAvatarUri;
+    this.displayName = channel.displayName;
     this.handleChannelAvatar(channelAvatarUri);
   }
 
@@ -1470,14 +1474,15 @@ export class ChannelsPage implements OnInit {
     this.dataHelper.setChannelInfo({
       destDid: this.destDid,
       channelId: this.channelId,
-      name: this.channelName,
+      name: this.channelOriginName,
       des: this.channelDesc,
       followStatus: this.followStatus,
       channelSubscribes: this.channelSubscribes,
       updatedTime: this.updatedTime,
       channelOwner: this.channelOwner,
       ownerDid: ownerDid,
-      tippingAddress: this.tippingAddress
+      tippingAddress: this.tippingAddress,
+      displayName: this.displayName
     });
     this.curPostId = '';
     this.native.navigateForward(['/feedinfo'], '');

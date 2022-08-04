@@ -28,7 +28,7 @@
         class="middle-col"
         (click)="navTo(channel.destDid, channel.channelId)"
       >
-        <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0px;">{{ channel.name }}</ion-label>
+        <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0px;">{{ channel.displayName || channel.name }}</ion-label>
         <ion-row>
           <br>
           <p>

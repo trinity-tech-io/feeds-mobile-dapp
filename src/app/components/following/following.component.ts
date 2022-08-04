@@ -13,16 +13,16 @@ export class FollowingComponent implements OnInit {
   @Output() fromChild = new EventEmitter();
   @Input() followingList: any = [];
   @Input() subscriptionV3NumMap: any = {};
-  @Input() channelAvatarMap:any = {};
+  @Input() channelAvatarMap: any = {};
   @Output() toFollowPage = new EventEmitter();
   @Output() exploreFeeds = new EventEmitter();
   constructor(
     public theme: ThemeService,
     private viewHelper: ViewHelper,
     private native: NativeService,
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   moreName(name: string) {
     return UtilService.moreNanme(name);
@@ -30,7 +30,7 @@ export class FollowingComponent implements OnInit {
 
   navTo(destDid: string, channelId: string) {
     this.toFollowPage.emit({
-      destDid:destDid,
+      destDid: destDid,
       channelId: channelId,
       page: '/channels',
     });
@@ -49,11 +49,11 @@ export class FollowingComponent implements OnInit {
   }
 
   menuMore(channel: FeedsData.ChannelV3) {
-    //let channelName = "";
+    let channelName = channel.displayName || channel.name || '';
     this.fromChild.emit({
       destDid: channel.destDid,
       channelId: channel.channelId,
-      channelName: channel.name,
+      channelName: channelName,
       postId: 0,
       tabType: 'myfollow',
     });

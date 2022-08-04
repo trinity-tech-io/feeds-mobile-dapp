@@ -819,7 +819,9 @@ export class HomePage implements OnInit {
     if (channel === null) {
       return '';
     }
-    return channel.name;
+
+    const channelName = channel.displayName || channel.name;
+    return channelName;
   }
 
   moreName(name: string) {
@@ -1160,7 +1162,7 @@ export class HomePage implements OnInit {
 
           let avatarUri = "";
           if (channel != null) {
-            this.hannelNameMap[postId] = channel.name;
+            this.hannelNameMap[postId] = channel.displayName || channel.name;
             avatarUri = channel.avatar;
             let userDid = channel.destDid;
             let displayNameMap = this.handleDisplayNameMap[userDid] || '';

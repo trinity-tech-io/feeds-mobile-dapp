@@ -29,6 +29,7 @@ export class EidtchannelPage implements OnInit {
   public destDid: string = '';
   public channelId: string = '';
   public channelName: string = '';
+  public displayName: string = '';
   public channelDes: string = '';
   public channelAvatar = '';
   public avatar = '';
@@ -43,7 +44,7 @@ export class EidtchannelPage implements OnInit {
   private isClickConfirm: boolean = false;
   private channelCollections: FeedsData.ChannelCollections = null;
   private popover: any = null;
-  public lightThemeType:number = 3;
+  public lightThemeType: number = 3;
   public clickButton: boolean = false;
   constructor(
     private feedService: FeedService,
@@ -64,32 +65,33 @@ export class EidtchannelPage implements OnInit {
     private hiveVaultController: HiveVaultController
   ) { }
 
- async ngOnInit() {
+  async ngOnInit() {
     let item = this.dataHelper.getChannelInfo();
     this.oldChannelInfo = item;
     let channelInfo = _.cloneDeep(item);
     this.destDid = channelInfo['destDid'] || '';
     this.channelId = channelInfo['channelId'] || '';
     this.channelName = channelInfo['name'] || '';
+    this.displayName = channelInfo['displayName'] || this.channelName;
     this.channelDes = channelInfo['des'] || '';
     this.channelOwner = channelInfo['channelOwner'] || '';
     this.channelSubscribes = channelInfo['channelSubscribes'] || '';
     this.tippingAddress = await this.getChannelTipAddress();
-    this.oldTippingAddress =  this.tippingAddress;
+    this.oldTippingAddress = this.tippingAddress;
     this.followStatus = channelInfo['followStatus'] || false;
     this.oldChannelAvatar = this.dataHelper.getProfileIamge();
   }
 
- async getChannelTipAddress() {
+  async getChannelTipAddress() {
 
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
     let tippingAddress = '';
-    if(channel != null){
+    if (channel != null) {
       tippingAddress = channel.tipping_address || '';
-      if(tippingAddress != ''){
-        if(tippingAddress.indexOf("type") > -1){
-           let tippingObj = JSON.parse(tippingAddress);
-           tippingAddress =  tippingObj[0].address;
+      if (tippingAddress != '') {
+        if (tippingAddress.indexOf("type") > -1) {
+          let tippingObj = JSON.parse(tippingAddress);
+          tippingAddress = tippingObj[0].address;
         }
       }
     }
@@ -164,12 +166,13 @@ export class EidtchannelPage implements OnInit {
       this.clickButton = true;
       await this.native.showLoading('common.waitMoment');
       try {
-        const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
-        let nameValue = this.native.iGetInnerText(this.channelName);
-        const list  =  _.filter(selfchannels,(channel: FeedsData.ChannelV3)=>{
-                      return channel.destDid === signinDid && channel.channelId != this.channelId && channel.name === nameValue;
-              }) || [];
-        if(list.length > 0){
+
+        const selfchannels = await this.hiveVaultController.getSelfChannel() || [];
+        let nameValue = this.native.iGetInnerText(this.displayName);
+        const list = _.filter(selfchannels, (channel: FeedsData.ChannelV3) => {
+          return channel.destDid === signinDid && channel.channelId != this.channelId && channel.displayName === nameValue;
+        }) || [];
+        if (list.length > 0) {
           this.native.hideLoading();
           this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
           this.isClickConfirm = true;
@@ -178,7 +181,7 @@ export class EidtchannelPage implements OnInit {
         }
         this.editChannelInfo();
       } catch (error) {
-        this.native.handleHiveError(error,'common.editChannelFail');
+        this.native.handleHiveError(error, 'common.editChannelFail');
         this.native.hideLoading();
         this.clickButton = false;
         this.isClickConfirm = true;
@@ -192,17 +195,18 @@ export class EidtchannelPage implements OnInit {
       let tippingAddress = this.tippingAddress || '';
       this.hiveVaultController.updateChannel(
         this.channelId,
-        this.channelName,
+        this.displayName,
         this.channelDes,
         this.avatar,
         tippingAddress,
         "public",
         '',
         '',
-      ).then((result)=>{
+      ).then((result) => {
         let channelInfo = this.dataHelper.getChannelInfo();
         let tippingAddress = this.tippingAddress || '';
         channelInfo["name"] = this.channelName;
+        channelInfo['displayName'] = this.displayName;
         channelInfo["des"] = this.channelDes;
         channelInfo["tippingAddress"] = tippingAddress;
         this.dataHelper.setChannelInfo(channelInfo);
@@ -210,14 +214,14 @@ export class EidtchannelPage implements OnInit {
         this.clickButton = false;
         this.native.hideLoading();
         this.native.pop();
-      }).catch((error)=>{
-        this.native.handleHiveError(error,'common.editChannelFail');
+      }).catch((error) => {
+        this.native.handleHiveError(error, 'common.editChannelFail');
         this.native.hideLoading();
         this.clickButton = false;
         this.isClickConfirm = false;
       })
     } catch (error) {
-      this.native.handleHiveError(error,'common.editChannelFail');
+      this.native.handleHiveError(error, 'common.editChannelFail');
       this.native.hideLoading();
       this.clickButton = false;
       this.isClickConfirm = false;
@@ -233,19 +237,19 @@ export class EidtchannelPage implements OnInit {
       return false;
     }
 
-    let nameValue = this.channelName || '';
+    let nameValue = this.displayName || '';
     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue === '') {
       this.native.toastWarn('CreatenewfeedPage.inputName');
       return false;
     }
 
-    if (this.channelName.length > 32) {
+    if (this.displayName.length > 32) {
       this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
       return false;
     }
 
-    let checkRes = this.feedService.checkValueValid(this.channelName);
+    let checkRes = this.feedService.checkValueValid(this.displayName);
     if (checkRes) {
       this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
       return false;
@@ -270,7 +274,7 @@ export class EidtchannelPage implements OnInit {
     }
 
     if (
-      this.oldChannelInfo['name'] === this.channelName &&
+      this.oldChannelInfo['displayName'] === this.displayName &&
       this.oldChannelInfo['des'] === this.channelDes &&
       this.tippingAddress === this.oldTippingAddress &&
       this.oldChannelAvatar === this.channelAvatar
@@ -292,7 +296,7 @@ export class EidtchannelPage implements OnInit {
     let feedsUrlHash = UtilService.SHA256(feedsUrl);
     let obj = {
       feedsUrlHash: feedsUrlHash,
-      name: this.channelName,
+      name: this.displayName,
       description: this.channelDes,
       feedsAvatar: this.avatar,
       followers: this.oldChannelInfo['subscribers'],
@@ -428,21 +432,21 @@ export class EidtchannelPage implements OnInit {
     }
   }
 
-  async scanWalletAddress(){
-    let scanObj =  await this.popupProvider.scan() || {};
+  async scanWalletAddress() {
+    let scanObj = await this.popupProvider.scan() || {};
     let scanData = scanObj["data"] || {};
-     let scannedContent = scanData["scannedText"] || "";
-     if(scannedContent === ''){
-       this.tippingAddress = "";
-       return;
-     }
-     if (scannedContent.indexOf('ethereum:') > -1) {
-       this.tippingAddress  = scannedContent.replace('ethereum:', '');
-     }else if (scannedContent.indexOf('elastos:') > -1) {
-       this.tippingAddress  = scannedContent.replace('elastos:', '');
-     }else{
-       this.tippingAddress  = scannedContent;
-     }
+    let scannedContent = scanData["scannedText"] || "";
+    if (scannedContent === '') {
+      this.tippingAddress = "";
+      return;
+    }
+    if (scannedContent.indexOf('ethereum:') > -1) {
+      this.tippingAddress = scannedContent.replace('ethereum:', '');
+    } else if (scannedContent.indexOf('elastos:') > -1) {
+      this.tippingAddress = scannedContent.replace('elastos:', '');
+    } else {
+      this.tippingAddress = scannedContent;
+    }
   }
 
 }

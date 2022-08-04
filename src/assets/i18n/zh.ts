@@ -368,6 +368,7 @@ export const zh = {
     des: '为您的频道选择头像',
     channelSource: '出版号DID',
     name: '频道名称',
+    displayName: '频道显示名称',
     description: '频道描述',
     createFeed: '创建',
     tipMsg: '请选择一个头像',

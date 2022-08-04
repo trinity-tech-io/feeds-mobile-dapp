@@ -272,7 +272,7 @@ export class SubscriptionsPage implements OnInit {
   async clickAvatar(destDid: string, channelId: string) {
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId);
     let followStatus = this.checkFollowStatus(destDid, channelId);
-    let channelName = channel.name;
+    let channelName = channel.displayName || channel.name;
     let channelDesc = channel.intro;
     let channelSubscribes = 0;
     let feedAvatar = this.feedService.parseChannelAvatar(channel.avatar);
@@ -299,7 +299,8 @@ export class SubscriptionsPage implements OnInit {
       updatedTime: channel.updatedAt,
       channelOwner: channel.destDid,
       ownerDid: ownerDid,
-      tippingAddress: channel.tipping_address
+      tippingAddress: channel.tipping_address,
+      displayName: channel.displayName
     });
     this.native.navigateForward(['/feedinfo'], '');
   }
@@ -594,10 +595,10 @@ export class SubscriptionsPage implements OnInit {
 
   ionBlur() {
     this.isBorderGradient = false;
-   }
+  }
 
-   ionFocus() {
-     this.isBorderGradient = true;
-   }
+  ionFocus() {
+    this.isBorderGradient = true;
+  }
 
 }

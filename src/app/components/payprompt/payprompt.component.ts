@@ -33,7 +33,7 @@ export class PaypromptComponent implements OnInit {
     private events: Events,
     public theme: ThemeService,
     public zone: NgZone,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.nodeId = this.navParams.get('nodeId') || '';
@@ -44,6 +44,7 @@ export class PaypromptComponent implements OnInit {
         this.channelId,
       );
       this.channelName = channel.name || '';
+      // this.channelName = channel.displayName || channel.name || '';
       this.channelAvatar =
         this.feedService.parseChannelAvatar(channel.avatar) || '';
     }
@@ -57,31 +58,31 @@ export class PaypromptComponent implements OnInit {
     }
   }
 
-ionViewDidEnter() {
+  ionViewDidEnter() {
 
-  document.querySelector("ion-backdrop").onclick = async ()=>{
+    document.querySelector("ion-backdrop").onclick = async () => {
 
-    let amount = this.amount || "";
-      if(amount != ""){
-          return;
+      let amount = this.amount || "";
+      if (amount != "") {
+        return;
       }
-    let memo = this.memo || "";
-      if( memo != ""){
+      let memo = this.memo || "";
+      if (memo != "") {
         return;
       }
       if (this.popover != null) {
         await this.popover.dismiss();
       }
+    }
+
   }
 
-}
+  async cancel() {
 
- async cancel() {
+    let amount = this.amount || "";
+    let memo = this.memo || "";
 
-   let amount = this.amount || "";
-   let memo = this.memo || "";
-
-    if(amount != "" || memo != ""){
+    if (amount != "" || memo != "") {
       //关闭当前对话框
       if (this.popover != null) {
         await this.popover.dismiss();
@@ -151,26 +152,26 @@ ionViewDidEnter() {
       './assets/images/finish.svg',
       'common.editedContentDes1',
       "common.editedContentDes2"
-     );
+    );
   }
 
- async cancelButton(that: any){
+  async cancelButton(that: any) {
     if (that.confirmdialog != null) {
-     await that.confirmdialog.dismiss();
-     that.confirmdialog = null;
-     that.events.publish(FeedsEvent.PublishType.openPayPrompt,{
-       nodeId:that.nodeId,
-       channelId:that.channelId,
-       elaAddress:that.elaAddress,
-       amount :that.amount,
-       memo:that.memo
+      await that.confirmdialog.dismiss();
+      that.confirmdialog = null;
+      that.events.publish(FeedsEvent.PublishType.openPayPrompt, {
+        nodeId: that.nodeId,
+        channelId: that.channelId,
+        elaAddress: that.elaAddress,
+        amount: that.amount,
+        memo: that.memo
       });
     }
   }
 
- async okButton(that: any) {
+  async okButton(that: any) {
     if (that.confirmdialog != null) {
-       await that.confirmdialog.dismiss();
+      await that.confirmdialog.dismiss();
       that.confirmdialog = null;
     }
   }

@@ -88,7 +88,7 @@ export class FeedinfoPage implements OnInit {
     this.destDid = channelInfo['destDid'] || '';
     this.channelId = channelInfo['channelId'] || '';
     this.tippingAddress = channelInfo['tippingAddress'] || '';
-    this.name = channelInfo['name'] || '';
+    this.name = channelInfo['displayName'] || channelInfo['name'] || '';
     this.des = channelInfo['des'] || '';
     this.ownerDid = channelInfo["ownerDid"] || "";
     this.qrcodeString = UtilService.generateFeedsQrCodeString(this.destDid, this.channelId);

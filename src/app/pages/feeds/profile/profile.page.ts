@@ -461,9 +461,9 @@ export class ProfilePage implements OnInit {
 
     let signInData = await this.dataHelper.getSigninData();
     let nickname = signInData['nickname'] || '';
-    if(nickname !='' && nickname != 'Information not provided'){
+    if (nickname != '' && nickname != 'Information not provided') {
       this.name = nickname;
-    }else{
+    } else {
       this.name = signInData['name'] || '';
     }
     this.description = signInData['description'] || '';
@@ -1345,7 +1345,7 @@ export class ProfilePage implements OnInit {
           let avatarUri = "";
           if (channel != null) {
             avatarUri = channel.avatar;
-            this.channelNameMap[postId] = channel.name || '';
+            this.channelNameMap[postId] = channel.displayName || channel.name || '';
             //dispalyName
             let userDid = channel.destDid;
             let displayNameMap = this.handleDisplayNameMap[userDid] || '';
@@ -2049,7 +2049,7 @@ export class ProfilePage implements OnInit {
   async clickAvatar(destDid: string, channelId: string) {
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId);
     let followStatus = await this.checkFollowStatus(destDid, channelId);
-    let channelName = channel.name;
+    const displayName = channel.displayName || channel.name;
     let channelDesc = channel.intro;
     let channelSubscribes = 0;
     let feedAvatar = this.feedService.parseChannelAvatar(channel.avatar);
@@ -2075,14 +2075,15 @@ export class ProfilePage implements OnInit {
     this.dataHelper.setChannelInfo({
       destDid: destDid,
       channelId: channelId,
-      name: channelName,
+      name: channel.name,
       des: channelDesc,
       followStatus: followStatus,
       channelSubscribes: channelSubscribes,
       updatedTime: channel.updatedAt,
       channelOwner: channel.destDid,
       ownerDid: ownerDid,
-      tippingAddress: channel.tipping_address
+      tippingAddress: channel.tipping_address,
+      displayName: displayName
     });
     this.clearData(false);
     this.native.navigateForward(['/eidtchannel'], '').then((result) => {

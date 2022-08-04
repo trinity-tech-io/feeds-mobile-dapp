@@ -370,6 +370,7 @@ export const en = {
     des: 'Select an image for your channel',
     channelSource: 'Publisher Account DID',
     name: 'Name',
+    displayName: 'DisplayName',
     description: 'Description',
     createFeed: 'Create',
     tipMsg: 'Select an avatar',

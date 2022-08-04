@@ -43,8 +43,8 @@ export class LikesComponent implements OnInit {
   @Input() channelNameMap: any = {};
   @Input() isLoadingLikeMap: any = {};
   @Input() handleDisplayNameMap: any = {};
-  @Input() channelAvatarMap:any = {};
-  @Input() postImgMap:any = {};
+  @Input() channelAvatarMap: any = {};
+  @Input() postImgMap: any = {};
   @Input() postTime: any = {};
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
@@ -80,10 +80,11 @@ export class LikesComponent implements OnInit {
 
   async getChannelName(destDid: string, channelId: string) {
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-    if(channel === null){
+    if (channel === null) {
       return "";
     }
-    return channel.name;
+    const channelName = channel.displayName || channel.name;
+    return channelName;
   }
 
   checkServerStatus(destDid: string) {
@@ -105,7 +106,7 @@ export class LikesComponent implements OnInit {
       this.likeMap,
       this.likeNumMap,
       this.hiveVaultController,
-      this.dataHelper).then(()=>{
+      this.dataHelper).then(() => {
         this.events.publish(FeedsEvent.PublishType.updateLikeList);
       });
   }
@@ -185,47 +186,47 @@ export class LikesComponent implements OnInit {
     return channel.avatar;
   }
 
-  handleDisplayTime(postId: string,createTime: number) {
+  handleDisplayTime(postId: string, createTime: number) {
     let newPostTime = this.postTime[postId] || null;
-    if(newPostTime != null){
+    if (newPostTime != null) {
       return this.postTime[postId];
     }
     let obj = UtilService.handleDisplayTime(createTime);
-      if (obj.type === 's') {
-        this.postTime[postId] =  this.translate.instant('common.just');
+    if (obj.type === 's') {
+      this.postTime[postId] = this.translate.instant('common.just');
+      return this.postTime[postId];
+    }
+    if (obj.type === 'm') {
+      if (obj.content === 1) {
+        this.postTime[postId] = obj.content + this.translate.instant('HomePage.oneminuteAgo');
         return this.postTime[postId];
       }
-      if (obj.type === 'm') {
-        if (obj.content === 1) {
-          this.postTime[postId] =  obj.content + this.translate.instant('HomePage.oneminuteAgo');
-          return this.postTime[postId];
-        }
-        this.postTime[postId] = obj.content + this.translate.instant('HomePage.minutesAgo');
+      this.postTime[postId] = obj.content + this.translate.instant('HomePage.minutesAgo');
+      return this.postTime[postId];
+    }
+    if (obj.type === 'h') {
+      if (obj.content === 1) {
+        this.postTime[postId] = obj.content + this.translate.instant('HomePage.onehourAgo');
         return this.postTime[postId];
       }
-      if (obj.type === 'h') {
-        if (obj.content === 1) {
-          this.postTime[postId] = obj.content + this.translate.instant('HomePage.onehourAgo');
-          return this.postTime[postId];
-        }
-        this.postTime[postId] = obj.content + this.translate.instant('HomePage.hoursAgo');
-        return this.postTime[postId];
-      }
-
-      if (obj.type === 'day') {
-        if (obj.content === 1) {
-          this.postTime[postId] = this.translate.instant('common.yesterday');
-          return  this.postTime[postId];
-        }
-        this.postTime[postId] = obj.content + this.translate.instant('HomePage.daysAgo');
-
-        return this.postTime[postId];
-      }
-      this.postTime[postId] = obj.content;
+      this.postTime[postId] = obj.content + this.translate.instant('HomePage.hoursAgo');
       return this.postTime[postId];
     }
 
- async menuMore(destDid: string, channelId: string, postId: string) {
+    if (obj.type === 'day') {
+      if (obj.content === 1) {
+        this.postTime[postId] = this.translate.instant('common.yesterday');
+        return this.postTime[postId];
+      }
+      this.postTime[postId] = obj.content + this.translate.instant('HomePage.daysAgo');
+
+      return this.postTime[postId];
+    }
+    this.postTime[postId] = obj.content;
+    return this.postTime[postId];
+  }
+
+  async menuMore(destDid: string, channelId: string, postId: string) {
     let channelName = await this.getChannelName(destDid, channelId) || '';
     this.fromChild.emit({
       destDid: destDid,
@@ -236,8 +237,8 @@ export class LikesComponent implements OnInit {
     });
   }
 
- async pressName(destDid: string, channelId: string) {
-    let name  = await this.getChannelName(destDid,channelId);
+  async pressName(destDid: string, channelId: string) {
+    let name = await this.getChannelName(destDid, channelId);
     if (name != '') {
       if (name != '' && name.length > 15) {
         this.viewHelper.createTip(name);
@@ -261,7 +262,7 @@ export class LikesComponent implements OnInit {
     //   this.native.toastWarn('common.connectionError1');
     //   return;
     // }
-   let channelName = await this.getChannelName(destDid,channelId);
+    let channelName = await this.getChannelName(destDid, channelId);
     this.commentParams.emit({
       destDid: destDid,
       channelId: channelId,
@@ -327,9 +328,9 @@ export class LikesComponent implements OnInit {
       return;
     }
 
-    let channel :FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid,channelId) || null;
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
     let tippingAddress = '';
-    if(tippingAddress != null){
+    if (tippingAddress != null) {
       tippingAddress = channel.tipping_address || '';
     }
     if (tippingAddress == '') {
@@ -340,12 +341,12 @@ export class LikesComponent implements OnInit {
     this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress);
   }
 
-  handleName(post: FeedsData.PostV3){
-     let postId: string = post.postId;
-     let name = this.channelNameMap[postId] || '';
-     if(name != ''){
-       return name;
-     }
+  handleName(post: FeedsData.PostV3) {
+    let postId: string = post.postId;
+    let name = this.channelNameMap[postId] || '';
+    if (name != '') {
+      return name;
+    }
   }
 
   timeline() {

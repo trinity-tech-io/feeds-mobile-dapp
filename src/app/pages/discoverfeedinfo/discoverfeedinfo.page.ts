@@ -164,7 +164,7 @@ export class DiscoverfeedinfoPage implements OnInit {
     let feedUrl = this.feedInfo['url'];
     let avatar = this.feedInfo['feedsAvatar'];
     let followers = this.feedInfo['followers'];
-    let feedName = this.feedInfo['name'];
+    let feedName = this.feedInfo['displayName'];
     let desc = this.feedInfo['description'];
     let ownerName = this.feedInfo['ownerName'];
     let channelId = feedUrl.split('/')[4];
@@ -294,7 +294,8 @@ export class DiscoverfeedinfoPage implements OnInit {
       updatedTime: 0,
       channelOwner: this.feedInfo["ownerName"],
       feedUrl: this.feedInfo["url"],
-      type: "discover"
+      type: "discover",
+      displayName: this.feedInfo['displayName']
     });
     this.native.navigateForward(['/feedinfo'], "");
   }

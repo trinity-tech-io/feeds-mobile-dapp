@@ -164,7 +164,8 @@ export class NotificationPage {
         return this.getContentText(post.content);
       case 3:
         if (channel == undefined) return '';
-        return channel.name;
+        const channelName = channel.displayName || channel.name
+        return channelName;
 
       default:
         return '';
