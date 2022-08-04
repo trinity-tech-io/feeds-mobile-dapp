@@ -140,7 +140,7 @@ export class CreatenewpostPage implements OnInit {
     }
 
     this.channelIdV3 = currentFeed.channelId;
-    this.channelName = currentFeed['name'] || '';
+    this.channelName = currentFeed['displayName'] || currentFeed['name'] || '';
     this.subscribers = currentFeed['subscribers'] || '';
     let channelAvatarUri = currentFeed['avatar'] || '';
     if (channelAvatarUri != '') {

@@ -190,10 +190,6 @@ export class EditPostPage implements OnInit {
     );
   }
 
-  pressName(channelName: string) {
-    this.viewHelper.createTip(channelName);
-  }
-
   getImage(post: FeedsData.PostV3) {
     this.imgUrl = './assets/icon/reserve.svg';//set Reserve Image
     let mediaDatas = post.content.mediaData;
@@ -215,7 +211,7 @@ export class EditPostPage implements OnInit {
 
   async initData() {
     let channel: any = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId);
-    this.channelName = channel['name'] || '';
+    this.channelName = channel['displayName'] ||  channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
     let channelAvatarUri = channel['avatar'] || '';
     if (channelAvatarUri != '') {
