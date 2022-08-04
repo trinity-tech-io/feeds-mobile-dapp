@@ -145,7 +145,7 @@ export class StandardAuthService {
         // wrong , diffrent did return same did credential evey time
         // let mAppIdCredential = await didAccess.getExistingAppIdentityCredential();
 
-        let didCredential = await this.dataHelper.getDIDCredential(userdid);
+        let didCredential = await this.dataHelper.getDIDCredential(userdid) || null;
         if (this.checkCredentialValid(didCredential)) {
           Logger.log(TAG, 'Credential valid , credential is ', didCredential);
           resolve(didCredential);
@@ -188,7 +188,7 @@ export class StandardAuthService {
       return true;
     } catch (error) {
       //error ignore
-      return true;
+      return false;
     }
   }
 
