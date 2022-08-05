@@ -347,8 +347,6 @@ export class IntentService {
 
         const destDid: string = channel.destDid || '';
         const channelId: string = channel.channelId || '';
-        const channelName: string = channel.name || '';
-        const channelDesc: string = channel.intro || '';
 
         const url = UtilService.generateChannelShareLink(IntentService.BASEURL_CHANNEL, destDid, channelId);
         Logger.log(TAG, "Shared channel link url is " + url);
@@ -433,7 +431,7 @@ export class IntentService {
     // const key = this.dataHelper.getKey(destDid, channelId, "0", 0);
     // const channel = this.dataHelper.getChannel(key);
 
-    const channelName = channel.name || '';
+    const channelName = channel.displayName || channel.name || '';
 
     if (channelName != '') {
       let code = this.languageService.getCurLang() || "en";
