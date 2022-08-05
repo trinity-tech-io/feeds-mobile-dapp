@@ -18,6 +18,7 @@ import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { MorenameComponent } from 'src/app/components/morename/morename.component';
 
 @Component({
   selector: 'app-eidtchannel',
@@ -46,6 +47,7 @@ export class EidtchannelPage implements OnInit {
   private popover: any = null;
   public lightThemeType: number = 3;
   public clickButton: boolean = false;
+  private infoPopover: any = null;
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -240,7 +242,7 @@ export class EidtchannelPage implements OnInit {
     let nameValue = this.displayName || '';
     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue === '') {
-      this.native.toastWarn('CreatenewfeedPage.inputName');
+      this.native.toastWarn('CreatenewfeedPage.inputDisplayName');
       return false;
     }
 
@@ -448,5 +450,32 @@ export class EidtchannelPage implements OnInit {
       this.tippingAddress = scannedContent;
     }
   }
+
+  async twitterInfo(e: Event,desI18n: string) {
+
+    if(this.infoPopover === null){
+      this.infoPopover = "1";
+      await this.presentPopover(e,desI18n);
+    }
+ }
+
+ async presentPopover(e: Event, desI18n: string) {
+
+  let des = this.translate.instant(desI18n);
+  this.infoPopover = await this.popoverController.create({
+    mode: 'ios',
+    component: MorenameComponent,
+    event: e,
+    componentProps: {
+      name: des,
+    },
+  });
+
+  this.infoPopover.onWillDismiss().then(() => {
+    this.infoPopover = null;
+  });
+
+  return await this.infoPopover.present();
+}
 
 }

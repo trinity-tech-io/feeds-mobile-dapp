@@ -390,6 +390,9 @@ export const zh = {
     des1: '在探索 Feeds 中显示频道，以供用户发现和订阅。',
     tippingAddress: '打赏地址',
     tippingAddressDes: '输入打赏地址',
+    inputDisplayName:'请输入频道显示名称',
+    channelnamedes :"频道名字创建后不允许修改告知",
+    displaynamedes :"频道显示名称创建后允许修改"
 
   },
   ProfileimagePage: {

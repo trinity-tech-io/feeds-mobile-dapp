@@ -12,10 +12,22 @@
   </ion-row>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <ion-list>
+
         <ion-item lines="none">
-            <ion-label position="stacked">{{ 'CreatenewfeedPage.name' | translate }}</ion-label>
+            <ion-label position="stacked">
+              <span style="margin-right: 5px;">{{ 'CreatenewfeedPage.name' | translate }}</span>
+            </ion-label>
+            <img  src="/assets/images/twitterInfo.svg"  class="twitterInfo"  (click)="twitterInfo($event, 'CreatenewfeedPage.channelnamedes')"/>
             <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name ></ion-input>
         </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked"><span style="margin-right: 5px;">{{ 'CreatenewfeedPage.displayName' | translate }}</span>
+          </ion-label>
+          <img  src="/assets/images/twitterInfo.svg"  class="twitterInfo"  (click)="twitterInfo($event, 'CreatenewfeedPage.displaynamedes')"/>
+          <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputDisplayName'|translate}}" #displayName ></ion-input>
+        </ion-item>
+
         <ion-item lines="none">
             <ion-label position="stacked">{{ 'CreatenewfeedPage.description' | translate }}</ion-label>
             <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc ></ion-input>
@@ -53,7 +65,7 @@
       {{'CreatenewfeedPage.des1'|translate}}
      </div>
     <ion-row class="btn-row">
-        <ion-button (click)="createChannel(name,desc)" [disabled]="clickButton">
+        <ion-button (click)="createChannel(name, displayName ,desc)" [disabled]="clickButton">
             <ion-label  *ngIf="!clickButton"> {{'CreatenewfeedPage.createFeed'|translate}}</ion-label>
             <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
         </ion-button>

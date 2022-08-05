@@ -15,6 +15,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { UtilService } from 'src/app/services/utilService';
 import _ from 'lodash';
+import { MorenameComponent } from 'src/app/components/morename/morename.component';
 
 @Component({
   selector: 'app-createnewfeed',
@@ -35,6 +36,8 @@ export class CreatenewfeedPage implements OnInit {
   public tippingAddress: string = '';
   public lightThemeType: number = 3;
   public clickButton: boolean = false;
+  private infoPopover: any = null;
+  private displayName: string = "";
   constructor(
     private feedService: FeedService,
     private popoverController: PopoverController,
@@ -86,7 +89,7 @@ export class CreatenewfeedPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
   // 创建频道
-  async createChannel(name: HTMLInputElement, desc: HTMLInputElement) {
+  async createChannel(name: HTMLInputElement, displayName: HTMLInputElement, desc: HTMLInputElement) {
 
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
@@ -94,10 +97,10 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    await this.processCreateChannel(name, desc);
+    await this.processCreateChannel(name,displayName, desc);
   }
 
-  async processCreateChannel(name: HTMLInputElement, desc: HTMLInputElement) {
+  async processCreateChannel(name: HTMLInputElement, displayName: HTMLInputElement, desc: HTMLInputElement) {
     let nameValue = name.value || '';
     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue == '') {
@@ -107,6 +110,31 @@ export class CreatenewfeedPage implements OnInit {
 
     if (name.value.length > 32) {
       this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
+      return;
+    }
+
+    let checkNameRes = this.feedService.checkValueValid(name.value);
+    if (checkNameRes) {
+      this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
+      return;
+    }
+
+    let dispalyNameValue = displayName.value || '';
+    dispalyNameValue= this.native.iGetInnerText(dispalyNameValue);
+
+    if(dispalyNameValue == ''){
+      this.native.toastWarn('CreatenewfeedPage.inputDisplayName');
+      return;
+    }
+
+    if (displayName.value.length > 32) {
+      this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
+      return;
+    }
+
+    let checkDisplayNameRes = this.feedService.checkValueValid(displayName.value);
+    if (checkDisplayNameRes) {
+      this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
       return;
     }
 
@@ -122,6 +150,7 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
+
     this.channelAvatar = this.dataHelper.getProfileIamge() || '';
 
     if (this.channelAvatar == '') {
@@ -131,11 +160,6 @@ export class CreatenewfeedPage implements OnInit {
 
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
 
-    let checkRes = this.feedService.checkValueValid(name.value);
-    if (checkRes) {
-      this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
-      return;
-    }
     this.clickButton = true;
     const signinDid = (await this.dataHelper.getSigninData()).did;
     const channelId = UtilService.generateChannelId(signinDid,name.value);
@@ -160,7 +184,7 @@ export class CreatenewfeedPage implements OnInit {
         this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
           return;
       }
-      await this.uploadChannel(name.value, desc.value);
+      await this.uploadChannel(name.value,displayName.value ,desc.value);
     } catch (error) {
 
       this.native.handleHiveError(error,'common.createChannelFail');
@@ -170,7 +194,7 @@ export class CreatenewfeedPage implements OnInit {
 
   }
 
-  async uploadChannel(name: string, desc: string) {
+  async uploadChannel(name: string, displayName:string, desc: string) {
     try {
       // 创建channles（用来存储userid下的所有创建的频道info）
       const signinData = await this.dataHelper.getSigninData();
@@ -271,4 +295,31 @@ export class CreatenewfeedPage implements OnInit {
        this.tippingAddress  = scannedContent;
      }
   }
+
+  async twitterInfo(e: Event,desI18n: string) {
+
+    if(this.infoPopover === null){
+      this.infoPopover = "1";
+      await this.presentPopover(e,desI18n);
+    }
+ }
+
+ async presentPopover(e: Event, desI18n: string) {
+
+  let des = this.translate.instant(desI18n);
+  this.infoPopover = await this.popoverController.create({
+    mode: 'ios',
+    component: MorenameComponent,
+    event: e,
+    componentProps: {
+      name: des,
+    },
+  });
+
+  this.infoPopover.onWillDismiss().then(() => {
+    this.infoPopover = null;
+  });
+
+  return await this.infoPopover.present();
+}
 }

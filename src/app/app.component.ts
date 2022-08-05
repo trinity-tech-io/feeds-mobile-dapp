@@ -88,6 +88,10 @@ export class MyApp {
     this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
       document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
       this.getAvatar();
+      let avatar = this.avatar || null;
+      if(avatar === null){
+        this.hiveVaultController.refreshAvatar().then(async () => { await this.getAvatar(); }).catch(async () => { await this.getAvatar(); });
+      }
       this.initProfileData();
     })
 

@@ -469,6 +469,10 @@ export class ProfilePage implements OnInit {
     this.description = signInData['description'] || '';
     // let userDid = signInData['did'] || '';
     this.updateUserAvatar();
+    let avatar = this.avatar || null;
+    if(avatar === null){
+      this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
+    }
 
     this.events.subscribe(FeedsEvent.PublishType.updateLikeList, list => {
       this.zone.run(() => {

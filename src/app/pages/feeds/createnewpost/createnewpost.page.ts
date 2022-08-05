@@ -21,7 +21,6 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { TwitterService } from 'src/app/services/TwitterService';
 import { MorenameComponent } from 'src/app/components/morename/morename.component';
-//import { MorenameComponent } from 'components/morename/morename.component';
 let TAG: string = 'Feeds-createpost';
 
 @Component({
@@ -591,11 +590,16 @@ export class CreatenewpostPage implements OnInit {
     return size;
    }
 
-   async twitterInfo(e: Event) {
+   async twitterInfo(event: any) {
+    let e = event || window.event; //兼容IE8
+    let target = e.target || e.srcElement; //判断目标事件
+    if (target.tagName.toLowerCase() == 'span' || target.tagName.toLowerCase() == 'img') {
+      event.stopPropagation();
       if(this.infoPopover === null){
         this.infoPopover = "1";
         await this.presentPopover(e);
       }
+    }
    }
 
    async presentPopover(e: Event) {
