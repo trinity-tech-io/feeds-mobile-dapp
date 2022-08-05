@@ -109,12 +109,12 @@ export class HiveVaultApi {
   }
 
   /** Comment */
-  createComment(targetDid: string, channelId: string, postId: string, refcommentId: string, content: string): Promise<{ commentId: string, createrDid: string, createdAt: number }> {
-    return this.hiveVaultHelper.createComment(targetDid, channelId, postId, refcommentId, content);
+  async createComment(targetDid: string, channelId: string, postId: string, refcommentId: string, content: string): Promise<{ commentId: string, createrDid: string, createdAt: number }> {
+    return await this.hiveVaultHelper.createComment(targetDid, channelId, postId, refcommentId, content);
   }
 
-  updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<{ updatedAt: number }> {
-    return this.hiveVaultHelper.updateComment(targetDid, channelId, postId, commentId, content);
+  async updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<{ updatedAt: number }> {
+    return await this.hiveVaultHelper.updateComment(targetDid, channelId, postId, commentId, content);
   }
 
   deleteComment(targetDid: string, channelId: string, postId: string, commentId: string): Promise<any> {

@@ -166,7 +166,7 @@ export class HiveVaultHelper {
             return error;
         }
 
-        if(message != null && message.indexOf("Network Error") > -1){
+        if(message != null &&  (message.indexOf("Network Error") > -1 || message.indexOf("Network error") > -1 )){
             this.native.toastWarn('ErrorInfo.HIVE_ERROR_undefined');
             return error;
         }
@@ -182,16 +182,30 @@ export class HiveVaultHelper {
     }
 
     async handleLikeError(error: any) {
-        let errorCode = error["code"];
+
+        let message = error.message || null;
+        if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
+            this.native.toastWarn('ErrorInfo.HIVE_ERROR_URL');
+            return error;
+        }
+
+        if(message != null && (message.indexOf("Network Error") > -1 || message.indexOf("Network error") > -1 )){
+            this.native.toastWarn('common.likeError');
+            return error;
+        }
+
+        let errorCode = error["code"] || null;
         let errorDes = "ErrorInfo.HIVE_ERROR_" + errorCode;
         if (errorCode === 507) {
             if (this.buyStorageSpaceDialog === null) {
                 await this.showBuyStorageSpaceDialog(errorDes);
             }
-        } else if (errorCode === undefined) {
-            this.native.toastWarn("common.likeError");
         } else {
-            this.native.toastWarn("common.likeError1");
+            if(errorCode != null){
+                this.native.HiveErrorWarn("common.likeError1",errorCode);
+            }else{
+                this.native.toastWarn("common.likeError1");
+            }
         }
 
         return error;
@@ -1213,7 +1227,7 @@ export class HiveVaultHelper {
 
                 resolve({ commentId: commentId, createrDid: signinDid, createdAt: createdAt });
             } catch (error) {
-                reject(error);
+                reject(await this.handleError(error));
             }
         });
     }
@@ -1272,13 +1286,13 @@ export class HiveVaultHelper {
                 resolve({ updatedAt: updatedAt });
             } catch (error) {
                 Logger.error(TAG, 'Get comment from scripting by comment id error:', error);
-                reject(error)
+                reject(await this.handleError(error));
             }
         });
     }
 
-    updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<{ updatedAt: number }> {
-        return this.callUpdateComment(targetDid, channelId, postId, commentId, content);
+    async updateComment(targetDid: string, channelId: string, postId: string, commentId: string, content: string): Promise<{ updatedAt: number }> {
+        return await this.callUpdateComment(targetDid, channelId, postId, commentId, content);
     }
     /** update comment end */
 

@@ -150,11 +150,13 @@ export class EditCommentPage implements OnInit {
           this.clickButton = false;
           this.native.pop();
 
-        }).catch((err) => {
+        }).catch((error) => {
+          this.native.handleHiveError(error,'common.editCommentFail');
           this.clickButton = false;
           this.native.hideLoading();
         })
     } catch (error) {
+      this.native.handleHiveError(error,'common.editCommentFail');
       this.clickButton = false;
       this.native.hideLoading();
     }

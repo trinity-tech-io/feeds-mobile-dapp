@@ -11,6 +11,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { IonTextarea, Platform } from '@ionic/angular';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { Events } from 'src/app/services/events.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class CommentComponent implements OnInit {
     private platform: Platform,
     private hiveVaultController: HiveVaultController,
     private events: Events,
+    private dataHelper: DataHelper
   ) { }
 
   ngOnInit() {
@@ -101,6 +103,13 @@ export class CommentComponent implements OnInit {
   }
 
   sendComment() {
+
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
     let newComment = this.native.iGetInnerText(this.newComment) || '';
     if (newComment === '') {
       this.native.toastWarn('CommentPage.inputComment');
@@ -131,11 +140,13 @@ export class CommentComponent implements OnInit {
         this.clickButton = false;
         this.hideComponent();
         this.events.publish(FeedsEvent.PublishType.getCommentFinish,comment);
-      }).catch((err)=>{
+      }).catch((error)=>{
+        this.native.handleHiveError(error,'common.createCommentFail');
         this.clickButton = false;
         this.native.hideLoading();
       })
     } catch (error) {
+      this.native.handleHiveError(error,'common.createCommentFail');
       this.clickButton = false;
       this.native.hideLoading();
     }

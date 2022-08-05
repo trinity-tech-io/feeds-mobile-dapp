@@ -210,7 +210,9 @@ export const en = {
     twitterAuthFailed: 'Twitter auth failed.',
     editPostFail: 'Edit Post failed',
     createChannelFail: 'Create Channel failed',
-    editChannelFail: 'Edit Channel failed'
+    editChannelFail: 'Edit Channel failed',
+    createCommentFail: 'Create Comment failed',
+    editCommentFail: 'Edit Comment failed'
   },
   app: {
     profileDetails: 'Profile Details',

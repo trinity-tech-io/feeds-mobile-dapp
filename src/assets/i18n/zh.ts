@@ -210,7 +210,9 @@ export const zh = {
     twitterAuthFailed: 'Twitter 授权失败',
     editPostFail: '编辑微说失败',
     createChannelFail: '创建频道失败',
-    editChannelFail: '编辑频道失败'
+    editChannelFail: '编辑频道失败',
+    createCommentFail: '创建微评失败',
+    editCommentFail: '编辑微评失败'
   },
   app: {
     profileDetails: '档案详情',

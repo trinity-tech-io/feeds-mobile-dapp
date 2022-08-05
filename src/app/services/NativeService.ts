@@ -70,7 +70,7 @@ export class NativeService {
     if(errorCode === null){
       message = this.translate.instant(message);
     }else{
-      message = this.translate.instant(message)+"-"+errorCode;
+      message = this.translate.instant(message)+" - "+errorCode;
     }
     this.toastCtrl
       .create({
