@@ -1748,17 +1748,17 @@ export class HiveVaultHelper {
 
     /** download essential avatar start */
     private downloadEssAvatarData(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<string> {
+
         return new Promise(async (resolve, reject) => {
             try {
-                let userDid = (await this.dataHelper.getSigninData()).did
-                const result = await this.hiveService.downloadEssAvatarTransactionId(avatarParam, avatarScriptName, tarDID, tarAppDID)
+                let hiveUrl = "hive://"+avatarParam;
+                const result = await this.hiveService.downloadFileByHiveUrl(hiveUrl);
                 if (!result) {
-                    resolve(null)
-                    return
+                    resolve(null);
+                    return;
                 }
-                const transaction_id = result["download"]["transaction_id"]
-                let dataBuffer = await this.hiveService.downloadScripting(userDid, transaction_id)
-                const rawImage = await rawImageToBase64DataUrl(dataBuffer)
+
+                const rawImage = await rawImageToBase64DataUrl(result);
                 resolve(rawImage);
             }
             catch (error) {

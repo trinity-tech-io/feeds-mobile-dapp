@@ -898,7 +898,9 @@ export class HiveVaultController {
         return this.downloadCustomeAvatar("custome");
       }).then(() => {
         resolve('FINISH');
-      }).catch((error) => { });
+      }).catch((error) => {
+        reject(error)
+      });
     });
   }
 

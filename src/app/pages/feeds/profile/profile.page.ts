@@ -703,7 +703,7 @@ export class ProfilePage implements OnInit {
   }
 
   async doRefresh(event: any) {
-    this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(() => { });
+    this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         try {

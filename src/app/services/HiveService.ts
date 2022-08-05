@@ -274,6 +274,20 @@ export class HiveService {
     }
   }
 
+  async downloadFileByHiveUrl(hiveUrl: string){
+     try {
+      if (hiveUrl === null || hiveUrl === undefined) {
+        return
+      }
+      let userDid = (await this.dataHelper.getSigninData()).did;
+      const scriptRunner = await this.getScriptRunner(userDid);
+      return await scriptRunner.downloadFileByHiveUrl(hiveUrl);
+     } catch (error) {
+      Logger.error(TAG, "Download Ess Avatar error: ", error)
+      throw error
+     }
+  }
+
   async downloadScripting(targetDid: string, transaction_id: string) {
     try {
       const scriptRunner = await this.getScriptRunner(targetDid)
