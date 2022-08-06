@@ -161,12 +161,12 @@ export class HiveVaultHelper {
     async handleError(error: any) {
 
         let message = error.message || null;
-        if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
+        if (message != null && message.indexOf("Failed to construct 'URL': Invalid URL") > -1) {
             this.native.toastWarn('ErrorInfo.HIVE_ERROR_URL');
             return error;
         }
 
-        if(message != null &&  (message.indexOf("Network Error") > -1 || message.indexOf("Network error") > -1 )){
+        if (message != null && (message.indexOf("Network Error") > -1 || message.indexOf("Network error") > -1)) {
             this.native.toastWarn('ErrorInfo.HIVE_ERROR_undefined');
             return error;
         }
@@ -184,12 +184,12 @@ export class HiveVaultHelper {
     async handleLikeError(error: any) {
 
         let message = error.message || null;
-        if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
+        if (message != null && message.indexOf("Failed to construct 'URL': Invalid URL") > -1) {
             this.native.toastWarn('ErrorInfo.HIVE_ERROR_URL');
             return error;
         }
 
-        if(message != null && (message.indexOf("Network Error") > -1 || message.indexOf("Network error") > -1 )){
+        if (message != null && (message.indexOf("Network Error") > -1 || message.indexOf("Network error") > -1)) {
             this.native.toastWarn('common.likeError');
             return error;
         }
@@ -201,9 +201,9 @@ export class HiveVaultHelper {
                 await this.showBuyStorageSpaceDialog(errorDes);
             }
         } else {
-            if(errorCode != null){
-                this.native.HiveErrorWarn("common.likeError1",errorCode);
-            }else{
+            if (errorCode != null) {
+                this.native.HiveErrorWarn("common.likeError1", errorCode);
+            } else {
                 this.native.toastWarn("common.likeError1");
             }
         }
@@ -1765,7 +1765,7 @@ export class HiveVaultHelper {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let hiveUrl = "hive://"+avatarParam;
+                let hiveUrl = "hive://" + avatarParam;
                 const result = await this.hiveService.downloadFileByHiveUrl(hiveUrl);
                 if (!result) {
                     resolve(null);
@@ -1915,8 +1915,8 @@ export class HiveVaultHelper {
             try {
                 const appid = Config.APPLICATION_DID;
                 Logger.log(TAG, 'Call script params is targetDid:', targetDid, 'scriptName:', scriptName, 'params:', params);
-                // let callerDid = (await this.dataHelper.getSigninData()).did;
-                let result = await this.hiveService.callScript(scriptName, params, targetDid, appid)
+                let userDid = (await this.dataHelper.getSigninData()).did;
+                let result = await this.hiveService.callScript(scriptName, params, targetDid, appid, userDid);
                 Logger.log('Call script result is', result);
                 resolve(result);
             } catch (error) {

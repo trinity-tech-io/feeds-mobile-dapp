@@ -5,7 +5,6 @@ import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Events } from 'src/app/services/events.service';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
-
 let TAG: string = 'StandardAuthService';
 @Injectable()
 export class StandardAuthService {
@@ -144,8 +143,7 @@ export class StandardAuthService {
       try {
         // wrong , diffrent did return same did credential evey time
         // let mAppIdCredential = await didAccess.getExistingAppIdentityCredential();
-
-        let didCredential = await this.dataHelper.getDIDCredential(userdid) || null;
+        let didCredential = await this.dataHelper.getDIDCredentialJSON(userdid) || null;
         if (this.checkCredentialValid(didCredential)) {
           Logger.log(TAG, 'Credential valid , credential is ', didCredential);
           resolve(didCredential);
@@ -158,7 +156,9 @@ export class StandardAuthService {
 
         if (didCredential) {
           Logger.log(TAG, 'Generate app identity credential, credential is ', didCredential);
-          this.dataHelper.setDIDCredential(userdid, didCredential);
+          const didCredentialJson = JSON.stringify(didCredential);
+
+          this.dataHelper.setDIDCredentialJSON(userdid, didCredentialJson);
           resolve(didCredential);
           return;
         }
@@ -172,22 +172,17 @@ export class StandardAuthService {
     });
   }
 
-  checkCredentialValid(
-    appIdCredential: DIDPlugin.VerifiableCredential,
-  ): boolean {
+  checkCredentialValid(appIdCredential: DIDPlugin.VerifiableCredential): boolean {
     try {
       if (appIdCredential == null || appIdCredential == undefined) {
         return false;
       }
-
       let currentData = new Date();
       if (appIdCredential.getExpirationDate().valueOf() < currentData.valueOf()) {
         return false;
       }
-
       return true;
     } catch (error) {
-      //error ignore
       return false;
     }
   }
@@ -200,7 +195,7 @@ export class StandardAuthService {
 
 
   generateHiveAuthPresentationJWT(authChallengeJwttoken: string): Promise<string> {
-    return new Promise(async (resolver, reject) => {
+    return new Promise(async (resolve, reject) => {
 
       Logger.log(TAG, 'Starting process to generate auth presentation JWT, authChallengeJwttoken is ', authChallengeJwttoken)
       if (!authChallengeJwttoken) {
@@ -268,9 +263,10 @@ export class StandardAuthService {
       let userDid = (await this.dataHelper.getSigninData()).did
       const userDIDCredential = await this.getUserDIDCredential(userDid);
 
+
       if (!userDIDCredential) {
         Logger.warn(TAG, 'Empty user did credential')
-        resolver(null)
+        resolve(null)
         return
       }
 
@@ -301,7 +297,7 @@ export class StandardAuthService {
                 appInstanceDIDInfo.storePassword,
                 jwtToken => {
                   Logger.log(TAG, 'JWT created for presentation:', jwtToken)
-                  resolver(jwtToken)
+                  resolve(jwtToken)
                 },
                 err => {
                   reject(err)

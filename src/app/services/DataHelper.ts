@@ -11,6 +11,7 @@ import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 import { TwitterApi } from './TwitterApi';
 
 let TAG: string = 'DataHelper';
+declare let didManager: DIDPlugin.DIDManager;
 
 @Injectable()
 export class DataHelper {
@@ -4213,12 +4214,23 @@ export class DataHelper {
     return this.hiveAuthStatus;
   }
 
-  setDIDCredential(userdid: string, credential: any) {
-    this.saveData(userdid + FeedsData.PersistenceKey.didCredential, credential);
+  setDIDCredentialJSON(userdid: string, credentialJSON: string) {
+    this.saveData(userdid + FeedsData.PersistenceKey.didCredential, credentialJSON);
   }
 
-  getDIDCredential(userdid: string): Promise<DIDPlugin.VerifiableCredential> {
-    return this.loadData(userdid + FeedsData.PersistenceKey.didCredential);
+  getDIDCredentialJSON(userdid: string): Promise<DIDPlugin.VerifiableCredential> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const credentialJSON = await this.loadData(userdid + FeedsData.PersistenceKey.didCredential) || null;
+        if (!credentialJSON) {
+          resolve(null);
+        }
+        const credential = didManager.VerifiableCredentialBuilder.fromJson(credentialJSON);
+        resolve(credential);
+      } catch (error) {
+        resolve(null);
+      }
+    });
   }
 
 

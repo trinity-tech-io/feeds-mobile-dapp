@@ -21,7 +21,7 @@ export class HiveService {
   public image = null
   public appinstanceDid: string
   private vault: Vault
-  private scriptRunner: ScriptRunner
+  // private scriptRunner: ScriptRunner
   private scriptRunners: { [key: string]: ScriptRunner } = {}
 
   constructor(
@@ -85,12 +85,12 @@ export class HiveService {
       }
     })
   }
-  async creatScriptRunner(userDid: string) {
-    let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
+  async creatScriptRunner(userDid: string, targetDid: string) {
+    const appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
     const context = await this.creatAppContext(appinstanceDocument, userDid)
-    let scriptRunner = new ScriptRunner(context)
-    this.scriptRunners[userDid] = scriptRunner
-
+    const providerAddress = await AppContext.getProviderAddressByUserDid(targetDid);
+    const scriptRunner = new ScriptRunner(context, providerAddress)
+    this.scriptRunners[targetDid] = scriptRunner
     return scriptRunner
   }
 
@@ -99,8 +99,9 @@ export class HiveService {
       const userDid = (await this.dataHelper.getSigninData()).did
       let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
       const context = await this.creatAppContext(appinstanceDocument, userDid)
-      let scriptRunner = await this.creatScriptRunner(userDid)
-      this.scriptRunners[userDid] = scriptRunner
+
+      // let scriptRunner = await this.creatScriptRunner(userDid)
+      // this.scriptRunners[userDid] = scriptRunner
       const vault = new Vault(context)
       Logger.log(TAG, 'Create vault ', userDid, this.vault)
       return vault
@@ -170,14 +171,13 @@ export class HiveService {
     });
   }
 
-  async getScriptRunner(userDid: string): Promise<ScriptRunner> {
+  async getScriptRunner(userDid: string, targetDid: string): Promise<ScriptRunner> {
     try {
-      this.scriptRunner = this.scriptRunners[userDid]
-
-      if (this.scriptRunner === undefined || this.scriptRunner === null) {
-        this.scriptRunner = await this.creatScriptRunner(userDid)
+      let scriptRunner = this.scriptRunners[userDid]
+      if (!scriptRunner) {
+        scriptRunner = await this.creatScriptRunner(userDid, targetDid)
       }
-      return this.scriptRunner
+      return scriptRunner
     } catch (error) {
       throw error
     }
@@ -244,8 +244,8 @@ export class HiveService {
     })
   }
 
-  async callScript(scriptName: string, document: any, targetDid: string, appid: string): Promise<any> {
-    let scriptRunner = await this.getScriptRunner(targetDid)
+  async callScript(scriptName: string, document: any, targetDid: string, appid: string, userDid: string): Promise<any> {
+    let scriptRunner = await this.getScriptRunner(userDid, targetDid);
     let result = await scriptRunner.callScript<any>(scriptName, document, targetDid, appid)
     return result
   }
@@ -255,19 +255,19 @@ export class HiveService {
   }
 
   async uploadScriting(transactionId: string, data: string) {
-    let userDid = (await this.dataHelper.getSigninData()).did
-    const scriptRunner = await this.getScriptRunner(userDid)
+    const userDid = (await this.dataHelper.getSigninData()).did
+    const scriptRunner = await this.getScriptRunner(userDid, userDid)
     return scriptRunner.uploadFile(transactionId, data)
   }
 
-  async downloadEssAvatarTransactionId(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string) {
+  async downloadEssAvatarTransactionId(avatarParam: string, avatarScriptName: string, targetDid: string, tarAppDID: string) {
     try {
       if (avatarParam === null || avatarParam === undefined) {
         return
       }
-      let userDid = (await this.dataHelper.getSigninData()).did
-      const scriptRunner = await this.getScriptRunner(userDid)
-      return await scriptRunner.callScript<any>(avatarScriptName, avatarParam, tarDID, tarAppDID)
+      const userDid = (await this.dataHelper.getSigninData()).did
+      const scriptRunner = await this.getScriptRunner(userDid, targetDid)
+      return await scriptRunner.callScript<any>(avatarScriptName, avatarParam, targetDid, tarAppDID)
     } catch (error) {
       Logger.error(TAG, "Download Ess Avatar transactionId error: ", error)
       throw error
@@ -290,7 +290,8 @@ export class HiveService {
 
   async downloadScripting(targetDid: string, transaction_id: string) {
     try {
-      const scriptRunner = await this.getScriptRunner(targetDid)
+      const userDid = (await this.dataHelper.getSigninData()).did
+      const scriptRunner = await this.getScriptRunner(userDid, targetDid)
       return await scriptRunner.downloadFile(transaction_id)
     } catch (error) {
       Logger.error(TAG, "scriptingService.downloadFile error: ", error)
@@ -305,7 +306,8 @@ export class HiveService {
 
   async getUploadDataFromScript(targetDid: string, transactionId: string, img: any) {
     try {
-      const scriptRunner = await this.getScriptRunner(targetDid)
+      const userDid = (await this.dataHelper.getSigninData()).did
+      const scriptRunner = await this.getScriptRunner(userDid, targetDid)
       return scriptRunner.uploadFile(transactionId, img)
     }
     catch (error) {
@@ -316,7 +318,8 @@ export class HiveService {
 
   async uploadDataFromScript(targetDid: string, transactionId: string, img: any) {
     try {
-      const scriptRunner = await this.getScriptRunner(targetDid)
+      const userDid = (await this.dataHelper.getSigninData()).did
+      const scriptRunner = await this.getScriptRunner(userDid, targetDid)
       return scriptRunner.uploadFile(transactionId, img)
     }
     catch (error) {
