@@ -15,7 +15,6 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { UtilService } from 'src/app/services/utilService';
 import _ from 'lodash';
-import { MorenameComponent } from 'src/app/components/morename/morename.component';
 
 @Component({
   selector: 'app-createnewfeed',
@@ -294,32 +293,5 @@ export class CreatenewfeedPage implements OnInit {
     } else {
       this.tippingAddress = scannedContent;
     }
-  }
-
-  async twitterInfo(e: Event, desI18n: string) {
-
-    if (this.infoPopover === null) {
-      this.infoPopover = "1";
-      await this.presentPopover(e, desI18n);
-    }
-  }
-
-  async presentPopover(e: Event, desI18n: string) {
-
-    let des = this.translate.instant(desI18n);
-    this.infoPopover = await this.popoverController.create({
-      mode: 'ios',
-      component: MorenameComponent,
-      event: e,
-      componentProps: {
-        name: des,
-      },
-    });
-
-    this.infoPopover.onWillDismiss().then(() => {
-      this.infoPopover = null;
-    });
-
-    return await this.infoPopover.present();
   }
 }

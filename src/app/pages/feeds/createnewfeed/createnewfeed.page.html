@@ -15,18 +15,22 @@
 
         <ion-item lines="none">
             <ion-label position="stacked">
-              <span style="margin-right: 5px;">{{ 'CreatenewfeedPage.name' | translate }}</span>
+              <span>{{ 'CreatenewfeedPage.name' | translate }}</span>
             </ion-label>
-            <img  src="/assets/images/twitterInfo.svg"  class="twitterInfo"  (click)="twitterInfo($event, 'CreatenewfeedPage.channelnamedes')"/>
             <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name ></ion-input>
         </ion-item>
+        <div style="margin-left: 10px;">
+          <span class="twitterInfo">{{ 'CreatenewfeedPage.channelnamedes' | translate }}</span>
+        </div>
 
         <ion-item lines="none">
           <ion-label position="stacked"><span style="margin-right: 5px;">{{ 'CreatenewfeedPage.displayName' | translate }}</span>
           </ion-label>
-          <img  src="/assets/images/twitterInfo.svg"  class="twitterInfo"  (click)="twitterInfo($event, 'CreatenewfeedPage.displaynamedes')"/>
           <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputDisplayName'|translate}}" #displayName ></ion-input>
         </ion-item>
+        <div style="margin-left: 10px;">
+          <span class="twitterInfo">{{ 'CreatenewfeedPage.displaynamedes' | translate }}</span>
+        </div>
 
         <ion-item lines="none">
             <ion-label position="stacked">{{ 'CreatenewfeedPage.description' | translate }}</ion-label>
