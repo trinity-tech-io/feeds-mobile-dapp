@@ -637,7 +637,7 @@ export class HiveVaultController {
     await this.hiveVaultApi.registeScripting()
   }
 
-  createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string = '', category: string = '', proof: string = ''): Promise<string> {
+  createChannel(channelName: string, displayName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string = '', category: string = '', proof: string = ''): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         //check local store
@@ -651,7 +651,7 @@ export class HiveVaultController {
 
         // 处理avatar
         const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatarAddress);
-        const insertResult = await this.hiveVaultApi.createChannel(channelName, intro, avatarHiveURL, tippingAddress, type, nft, memo, category, proof)
+        const insertResult = await this.hiveVaultApi.createChannel(channelName, displayName, intro, avatarHiveURL, tippingAddress, type, nft, memo, category, proof)
         //add cache
         let fileName = avatarHiveURL.split('@')[0];
         await this.fileHelperService.saveV3Data(fileName, avatarAddress);
@@ -670,7 +670,7 @@ export class HiveVaultController {
           category: category,
           proof: proof,
           memo: memo,
-          displayName: channelName
+          displayName: displayName
         }
 
         await this.dataHelper.addChannel(channelV3);
@@ -1696,7 +1696,7 @@ export class HiveVaultController {
         Logger.error(TAG, 'Prepare Connection error', error);
         if (error instanceof VaultNotFoundException) {
           this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 11 });
-        }else{
+        } else {
           this.eventBus.publish(FeedsEvent.PublishType.authEssentialFail, { type: 1 });
         }
         reject(error);

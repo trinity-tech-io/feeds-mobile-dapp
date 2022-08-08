@@ -70,7 +70,7 @@ export class HiveInterfaceTestPage implements OnInit {
   // channel
   createChannel() {
     // this.hiveVaultApi.createChannel('channelId01', 'channel01 desc', 'address');
-    this.hiveVaultController.createChannel('channelTestName', 'channelTest desc', 'avatar address');
+    this.hiveVaultController.createChannel('channelTestName', 'displayName', 'channelTest desc', 'avatar address');
   }
 
   updateChannel() {

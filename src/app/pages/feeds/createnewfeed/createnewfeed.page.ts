@@ -97,7 +97,7 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    await this.processCreateChannel(name,displayName, desc);
+    await this.processCreateChannel(name, displayName, desc);
   }
 
   async processCreateChannel(name: HTMLInputElement, displayName: HTMLInputElement, desc: HTMLInputElement) {
@@ -120,9 +120,9 @@ export class CreatenewfeedPage implements OnInit {
     }
 
     let dispalyNameValue = displayName.value || '';
-    dispalyNameValue= this.native.iGetInnerText(dispalyNameValue);
+    dispalyNameValue = this.native.iGetInnerText(dispalyNameValue);
 
-    if(dispalyNameValue == ''){
+    if (dispalyNameValue == '') {
       this.native.toastWarn('CreatenewfeedPage.inputDisplayName');
       return;
     }
@@ -162,53 +162,53 @@ export class CreatenewfeedPage implements OnInit {
 
     this.clickButton = true;
     const signinDid = (await this.dataHelper.getSigninData()).did;
-    const channelId = UtilService.generateChannelId(signinDid,name.value);
+    const channelId = UtilService.generateChannelId(signinDid, name.value);
     await this.native.showLoading('common.waitMoment');
     try {
 
-      const selfchannels =  await this.hiveVaultController.getSelfChannel() || [];
+      const selfchannels = await this.hiveVaultController.getSelfChannel() || [];
 
       if (selfchannels.length >= 6) {
-      this.native.hideLoading();
-      this.clickButton = false;
-      this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
-      return;
+        this.native.hideLoading();
+        this.clickButton = false;
+        this.native.toastWarn('CreatenewfeedPage.feedMaxNumber');
+        return;
       }
 
-      const list  =  _.filter(selfchannels,(channel: FeedsData.ChannelV3)=>{
-                    return channel.destDid === signinDid && channel.channelId === channelId;
-            });
-      if(list.length > 0){
+      const list = _.filter(selfchannels, (channel: FeedsData.ChannelV3) => {
+        return channel.destDid === signinDid && channel.channelId === channelId;
+      });
+      if (list.length > 0) {
         this.native.hideLoading();
         this.clickButton = false;
         this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
-          return;
+        return;
       }
-      await this.uploadChannel(name.value,displayName.value ,desc.value);
+      await this.uploadChannel(name.value, displayName.value, desc.value);
     } catch (error) {
 
-      this.native.handleHiveError(error,'common.createChannelFail');
+      this.native.handleHiveError(error, 'common.createChannelFail');
       this.clickButton = false;
       this.native.hideLoading();
     }
 
   }
 
-  async uploadChannel(name: string, displayName:string, desc: string) {
+  async uploadChannel(name: string, displayName: string, desc: string) {
     try {
       // 创建channles（用来存储userid下的所有创建的频道info）
       const signinData = await this.dataHelper.getSigninData();
       let userDid = signinData.did
       let userDisplayName = signinData.name;
       let tippingAddress = this.tippingAddress || '';
-      const channelId = await this.hiveVaultController.createChannel(name, desc, this.avatar, tippingAddress)
+      const channelId = await this.hiveVaultController.createChannel(name, displayName, desc, this.avatar, tippingAddress)
       await this.hiveVaultController.subscribeChannel(userDid, channelId, userDisplayName);
 
       this.native.hideLoading();
       this.native.pop()
     } catch (error) {
 
-      this.native.handleHiveError(error,'common.createChannelFail');
+      this.native.handleHiveError(error, 'common.createChannelFail');
       this.clickButton = false;
       this.native.hideLoading();
 
@@ -279,47 +279,47 @@ export class CreatenewfeedPage implements OnInit {
     return imgUri;
   }
 
- async scanWalletAddress(){
-    let scanObj =  await this.popupProvider.scan() || {};
+  async scanWalletAddress() {
+    let scanObj = await this.popupProvider.scan() || {};
     let scanData = scanObj["data"] || {};
-     let scannedContent = scanData["scannedText"] || "";
-     if(scannedContent === ''){
-       this.tippingAddress = "";
-       return;
-     }
-     if (scannedContent.indexOf('ethereum:') > -1) {
-       this.tippingAddress  = scannedContent.replace('ethereum:', '');
-     }else if (scannedContent.indexOf('elastos:') > -1) {
-       this.tippingAddress  = scannedContent.replace('elastos:', '');
-     }else{
-       this.tippingAddress  = scannedContent;
-     }
+    let scannedContent = scanData["scannedText"] || "";
+    if (scannedContent === '') {
+      this.tippingAddress = "";
+      return;
+    }
+    if (scannedContent.indexOf('ethereum:') > -1) {
+      this.tippingAddress = scannedContent.replace('ethereum:', '');
+    } else if (scannedContent.indexOf('elastos:') > -1) {
+      this.tippingAddress = scannedContent.replace('elastos:', '');
+    } else {
+      this.tippingAddress = scannedContent;
+    }
   }
 
-  async twitterInfo(e: Event,desI18n: string) {
+  async twitterInfo(e: Event, desI18n: string) {
 
-    if(this.infoPopover === null){
+    if (this.infoPopover === null) {
       this.infoPopover = "1";
-      await this.presentPopover(e,desI18n);
+      await this.presentPopover(e, desI18n);
     }
- }
+  }
 
- async presentPopover(e: Event, desI18n: string) {
+  async presentPopover(e: Event, desI18n: string) {
 
-  let des = this.translate.instant(desI18n);
-  this.infoPopover = await this.popoverController.create({
-    mode: 'ios',
-    component: MorenameComponent,
-    event: e,
-    componentProps: {
-      name: des,
-    },
-  });
+    let des = this.translate.instant(desI18n);
+    this.infoPopover = await this.popoverController.create({
+      mode: 'ios',
+      component: MorenameComponent,
+      event: e,
+      componentProps: {
+        name: des,
+      },
+    });
 
-  this.infoPopover.onWillDismiss().then(() => {
-    this.infoPopover = null;
-  });
+    this.infoPopover.onWillDismiss().then(() => {
+      this.infoPopover = null;
+    });
 
-  return await this.infoPopover.present();
-}
+    return await this.infoPopover.present();
+  }
 }

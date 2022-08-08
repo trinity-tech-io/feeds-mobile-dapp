@@ -46,8 +46,8 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.deleteAllCollections()
   }
   /** Channel */
-  async createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string, category: string = '', proof: string = ''): Promise<any> {
-    return await this.hiveVaultHelper.createChannel(channelName, intro, avatarAddress, tippingAddress, type, nft, memo, category, proof);
+  async createChannel(channelName: string, displayName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string, category: string = '', proof: string = ''): Promise<any> {
+    return await this.hiveVaultHelper.createChannel(channelName, displayName, intro, avatarAddress, tippingAddress, type, nft, memo, category, proof);
   }
 
   async updateChannel(channelId: string, newName: string, newIntro: string, newAvatar: string, newType: string, newMemo: string,
@@ -61,10 +61,10 @@ export class HiveVaultApi {
 
   /** Post */
   async publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
-    return  await this.hiveVaultHelper.publishPost(channelId, tag, content, type, status, memo, proof);
+    return await this.hiveVaultHelper.publishPost(channelId, tag, content, type, status, memo, proof);
   }
 
- async updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string) {
+  async updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string) {
     return await this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof);
   }
 

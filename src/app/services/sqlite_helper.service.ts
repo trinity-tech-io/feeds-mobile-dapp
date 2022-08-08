@@ -1222,7 +1222,7 @@ export class FeedsSqliteHelper {
             await this.insertChannelData(dbUserDid, channel);
             await this.deleteOriginChannelData(dbUserDid, channel.channelId);
           }
-          await this.dropOriginChannel(dbUserDid);
+          // await this.dropOriginChannel(dbUserDid);
         }
         resolve('FINISH');
       } catch (error) {

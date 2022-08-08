@@ -312,12 +312,13 @@ export class HiveVaultHelper {
         });
     }
     /** create channel start */
-    private insertDataToChannelDB(channelId: string, name: string, intro: string, avatar: string, memo: string,
+    private insertDataToChannelDB(channelId: string, name: string, displayName: string, intro: string, avatar: string, memo: string,
         createdAt: number, updatedAt: number, type: string, tippingAddress: string, nft: string, category: string, proof: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const doc = {
                 "channel_id": channelId,
                 "name": name,
+                "display_name": displayName,
                 "intro": intro,
                 "avatar": avatar,
                 "created_at": createdAt,
@@ -341,14 +342,14 @@ export class HiveVaultHelper {
         })
     }
 
-    private insertChannelData(channelName: string, intro: string, avatarAddress: string, tippingAddress: string, type: string, nft: string, memo: string, category: string, proof: string): Promise<{ [x: string]: string | number | boolean }> {
+    private insertChannelData(channelName: string, displayName: string, intro: string, avatarAddress: string, tippingAddress: string, type: string, nft: string, memo: string, category: string, proof: string): Promise<{ [x: string]: string | number | boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const signinDid = (await this.dataHelper.getSigninData()).did;
                 const createdAt = UtilService.getCurrentTimeNum();
                 const updatedAt = UtilService.getCurrentTimeNum();
                 const channelId = UtilService.generateChannelId(signinDid, channelName);
-                let result = await this.insertDataToChannelDB(channelId.toString(), channelName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft, category, proof);
+                let result = await this.insertDataToChannelDB(channelId.toString(), channelName, displayName, intro, avatarAddress, memo, createdAt, updatedAt, type, tippingAddress, nft, category, proof);
                 if (result) {
                     const insertResult = {
                         destDid: signinDid,
@@ -367,8 +368,8 @@ export class HiveVaultHelper {
         });
     }
 
-    async createChannel(channelName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string = '', category: string = '', proof: string = '') {
-        return await this.insertChannelData(channelName, intro, avatarAddress, tippingAddress, type, nft, memo, category, proof);
+    async createChannel(channelName: string, displayName: string, intro: string, avatarAddress: string, tippingAddress: string = '', type: string = 'public', nft: string = '', memo: string = '', category: string = '', proof: string = '') {
+        return await this.insertChannelData(channelName, displayName, intro, avatarAddress, tippingAddress, type, nft, memo, category, proof);
     }
     /** create channel end */
 
