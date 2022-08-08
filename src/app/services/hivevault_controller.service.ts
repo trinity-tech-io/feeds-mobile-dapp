@@ -208,6 +208,8 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         await this.syncSubscribedChannelFromBackup();
+        const did = (await this.dataHelper.getSigninData()).did;
+        this.syncSelfChannel(did).catch(() => { });
         this.asyncGetAllChannelInfo().catch(() => { });
         this.asyncGetAllPost(callback).catch(() => { });
         this.asyncGetAllComments().catch(() => { });
