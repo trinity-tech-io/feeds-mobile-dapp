@@ -98,7 +98,7 @@ import { DIDHelperService } from 'src/app/services/did_helper.service';
 Sentry.init({
   dsn:
     'https://4196003a1c864f5798dd2be18be5cb48@o339076.ingest.sentry.io/5524842',
-  release: '3.1.0',
+  release: '3.1.1',
   integrations: [new RewriteFrames()],
 });
 
@@ -128,10 +128,10 @@ export class SentryErrorHandler implements ErrorHandler {
       // Do not popop error dialog, but still send to sentry for debug.
       Logger.error("Sentry", 'This exception has been handled:', error);
     } else {
-      console.log("===22",error.toString().indexOf("(reading 'bufferDetected')"))
-      if(error.toString().indexOf("(reading 'bufferDetected')") > -1){
+      console.log("===22", error.toString().indexOf("(reading 'bufferDetected')"))
+      if (error.toString().indexOf("(reading 'bufferDetected')") > -1) {
 
-      }else{
+      } else {
         let message = this.translate.instant("common.errorDes");
         this.toastCtrl
           .create({
