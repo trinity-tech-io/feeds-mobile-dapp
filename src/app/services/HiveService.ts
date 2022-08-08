@@ -173,7 +173,7 @@ export class HiveService {
 
   async getScriptRunner(userDid: string, targetDid: string): Promise<ScriptRunner> {
     try {
-      let scriptRunner = this.scriptRunners[userDid]
+      let scriptRunner = this.scriptRunners[targetDid]
       if (!scriptRunner) {
         scriptRunner = await this.creatScriptRunner(userDid, targetDid)
       }
