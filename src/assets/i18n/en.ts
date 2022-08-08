@@ -207,12 +207,12 @@ export const en = {
     errorDes: 'Sorry, the application encountered an error. This has been reported to the team.',
     twitterNotLogin: 'You are not logged into Twitter. Please return to the Settings page to log in.',
     twitterExpired: 'Twitter login has expired. Please return to the Settings page to log in.',
-    twitterAuthFailed: 'Twitter auth failed.',
-    editPostFail: 'Edit Post failed',
-    createChannelFail: 'Create Channel failed',
-    editChannelFail: 'Edit Channel failed',
-    createCommentFail: 'Create Comment failed',
-    editCommentFail: 'Edit Comment failed'
+    twitterAuthFailed: 'Twitter auth Failed',
+    editPostFail: 'Update Post Failed',
+    createChannelFail: 'Create Channel Failed',
+    editChannelFail: 'Update Channel Failed',
+    createCommentFail: 'Comment Failed',
+    editCommentFail: 'Update Comment Failed'
   },
   app: {
     profileDetails: 'Profile Details',
