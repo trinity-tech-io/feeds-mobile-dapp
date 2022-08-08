@@ -394,7 +394,11 @@ export const en = {
     tippingAddressDes: 'Enter tipping address',
     inputDisplayName: 'Add channel DisplayName',
     channelnamedes : 'Modification is not allowed after creation',
-    displaynamedes : 'Allow modification after creation'
+    displaynamedes : 'Allow modification after creation',
+    displaynameContainInvalidChars:
+    'Channel DisplayName cannot include characters except alphabet letters A-Z, a-z, digits 0-9, hyphen “-”, and underscore “_”.',
+    tipMsgLength2: 'Maximum DisplayName length is 32 characters',
+
   },
   ProfileimagePage: {
     title: 'Choose Avatar',

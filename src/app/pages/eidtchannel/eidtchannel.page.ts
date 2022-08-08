@@ -246,13 +246,13 @@ export class EidtchannelPage implements OnInit {
     }
 
     if (this.displayName.length > 32) {
-      this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
+      this.native.toastWarn('CreatenewfeedPage.tipMsgLength2');
       return false;
     }
 
     let checkRes = this.feedService.checkValueValid(this.displayName);
     if (checkRes) {
-      this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
+      this.native.toastWarn('CreatenewfeedPage.displaynameContainInvalidChars');
       return false;
     }
 

@@ -127,13 +127,13 @@ export class CreatenewfeedPage implements OnInit {
     }
 
     if (displayName.value.length > 32) {
-      this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
+      this.native.toastWarn('CreatenewfeedPage.tipMsgLength2');
       return;
     }
 
     let checkDisplayNameRes = this.feedService.checkValueValid(displayName.value);
     if (checkDisplayNameRes) {
-      this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
+      this.native.toastWarn('CreatenewfeedPage.displaynameContainInvalidChars');
       return;
     }
 
