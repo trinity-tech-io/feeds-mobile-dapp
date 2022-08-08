@@ -392,9 +392,9 @@ export const en = {
     des1: 'Show channel in the Explore Feeds for users to discover.',
     tippingAddress: 'Tipping Address',
     tippingAddressDes: 'Enter tipping address',
-    inputDisplayName:'Add channel DisplayName',
-    channelnamedes :"After the channel name is created, it is not allowed to modify",
-    displaynamedes :"Allow modification of channel display name after creation"
+    inputDisplayName: 'Add channel DisplayName',
+    channelnamedes : 'Modification is not allowed after creation',
+    displaynamedes : 'Allow modification after creation'
   },
   ProfileimagePage: {
     title: 'Choose Avatar',
