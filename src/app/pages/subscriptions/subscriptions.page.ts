@@ -212,7 +212,7 @@ export class SubscriptionsPage implements OnInit {
           ).then(async (result) => {
 
             let newfollowingList = _.filter(this.followingList, (item) => {
-              return item.destDid != destDid && item.channelId != channelId;
+              return  item.channelId != channelId;
             });
             this.followingList = _.cloneDeep(newfollowingList);
             this.searchFollowingList = _.cloneDeep(newfollowingList);
