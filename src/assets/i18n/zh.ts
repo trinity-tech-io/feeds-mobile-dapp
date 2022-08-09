@@ -607,7 +607,7 @@ export const zh = {
     SESSION_START_ERROR: 'Session: 启动出错',
     HIVE_ERROR_507: '抱歉，可用的Hive存储空间不足',
     HIVE_ERROR_undefined: '网络错误，请重试',
-    HIVE_ERROR_URL: '获取did绑定的hive url失败'
+    HIVE_ERROR_URL: '获取DID绑定的Hive url失败'
   },
   EidtchannelPage: {
     title: '编辑频道信息',

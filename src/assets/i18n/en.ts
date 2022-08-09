@@ -609,7 +609,7 @@ export const en = {
     SESSION_START_ERROR: 'Session: Start Error',
     HIVE_ERROR_507: 'Sorry, insufficient Hive storage available',
     HIVE_ERROR_undefined: 'Network error, please try again',
-    HIVE_ERROR_URL: 'Failed to get hive url bound by did'
+    HIVE_ERROR_URL: 'Failed to get Hive url bound by DID'
   },
   EidtchannelPage: {
     title: 'Edit Channel Info',
