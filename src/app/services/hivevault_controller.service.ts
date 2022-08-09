@@ -208,6 +208,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         await this.syncSubscribedChannelFromBackup();
+        await this.refreshSubscription();
         const did = (await this.dataHelper.getSigninData()).did;
         this.syncSelfChannel(did).catch(() => { });
         this.asyncGetAllChannelInfo().catch(() => { });
@@ -365,6 +366,28 @@ export class HiveVaultController {
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
+      }
+    });
+  }
+
+  refreshSubscription(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+      let checkNumber = 0;
+      for (let index = 0; index < subscribedChannels.length; index++) {
+        const subscribedChannel = subscribedChannels[index];
+        this.checkSubscriptionStatusFromRemote(subscribedChannel.destDid, subscribedChannel.channelId)
+          .then((status) => {
+            checkNumber++;
+            if (!status) {
+              this.removeBackupSubscribedChannel(subscribedChannel.destDid, subscribedChannel.channelId);
+            }
+            if (checkNumber == subscribedChannels.length) {
+              resolve('FINISH');
+            }
+          })
+          .catch(() => {
+          });
       }
     });
   }
