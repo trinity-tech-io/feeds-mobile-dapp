@@ -59,8 +59,8 @@ export class HomePage implements OnInit {
   private homeTittleBar: HTMLElement;
   private homeTab: HTMLElement;
   public postList: any = [];
-  public startIndex = 0;
-  public pageNumber = 8;
+  public pageSize = 1;
+  public pageNumber = 4;
   public totalData = [];
   public images = {};
 
@@ -191,6 +191,8 @@ export class HomePage implements OnInit {
   public showPostSearch: boolean = false;
   public disabledSearch: boolean = true;
   private serachPostList: any = [];
+  private observerList: any = {};
+
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -231,10 +233,23 @@ export class HomePage implements OnInit {
 
   async initPostListData(scrollToTop: boolean) {
     this.infiniteScroll.disabled = true;
-    this.startIndex = 0;
+    this.pageSize = 1;
     if (scrollToTop) {
       this.visibleareaItemIndex = 0;
-      this.postList = this.totalData = await this.sortPostList();
+      this.totalData = await this.sortPostList();
+      // if(this.totalData.length <= this.pageNumber){
+      //   this.postList = this.totalData
+      // }else{
+      //   this.postList = this.totalData.slice(0,this.pageNumber);
+      // }
+      console.log("======this.totalData======",this.totalData.length);
+      let data = this.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
+      if(data.currentPage === data.totalPage){
+        this.postList = data.items
+      }else{
+        this.postList = data.items;
+        this.pageSize++;
+      }
       this.scrollToTop(1);
 
     } else {
@@ -258,7 +273,7 @@ export class HomePage implements OnInit {
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
-    this.refreshImage();
+    this.refreshImageV2(this.postList);
     this.dataHelper.resetNewPost();
     this.isPostLoading = false;
     this.infiniteScroll.disabled = false;
@@ -276,7 +291,7 @@ export class HomePage implements OnInit {
   }
 
   async refreshPostList(isRefresh: boolean = true) {
-    if (this.startIndex === 0) {
+    if (this.pageSize === 1) {
       this.initPostListData(isRefresh);
       return;
     }
@@ -792,10 +807,7 @@ export class HomePage implements OnInit {
 
   async menuMore(post: FeedsData.PostV3) {
     let destDid = post.destDid;
-    let channelName = this.hannelNameMap[post.postId] || "";
-    if (channelName === '') {
-      channelName = await this.getChannelName(post.destDid, post.channelId);
-    }
+    let channelName = await this.getChannelName(post.destDid, post.channelId, post.postId);
     if (this.ownerDid != '' && this.ownerDid === destDid) {//自己的post
       this.menuService.showHomeMenu(
         post.destDid,
@@ -813,15 +825,19 @@ export class HomePage implements OnInit {
     }
   }
 
-  async getChannelName(destDid: string, channelId: string) {
-
+  async getChannelName(destDid: string, channelId: string, postId: string) {
+    let channelName = this.hannelNameMap[postId] || "";
+    if(channelName != ""){
+      return channelName;
+    }
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
     if (channel === null) {
       return '';
     }
-
-    const channelName = channel.displayName || channel.name;
-    return channelName;
+    let key = destDid + "-" + channelId;
+    this.channelMap[key] = channel;
+    this.hannelNameMap[postId] = channel.displayName || channel.name;
+    return this.hannelNameMap[postId];
   }
 
   moreName(name: string) {
@@ -832,17 +848,32 @@ export class HomePage implements OnInit {
     this.refreshEvent = event;
     switch (this.tabType) {
       case 'feeds':
-        this.zone.run(() => {
-          this.hiveVaultController.loadPostMoreData(this.useRemoteData, this.postList).then((postList: FeedsData.PostV3[]) => {
-            if (postList.length > 0) {
-              this.postList = postList;
-              this.refreshImage();
-            }
-            event.target.complete();
-          }).catch(err => {
-            event.target.complete();
-          });
-        });
+        // this.zone.run(() => {
+        //   this.hiveVaultController.loadPostMoreData(this.useRemoteData, this.postList).then((postList: FeedsData.PostV3[]) => {
+        //     if (postList.length > 0) {
+        //       this.postList = postList;
+        //       this.refreshImage();
+        //     }
+        //     event.target.complete();
+        //   }).catch(err => {
+        //     event.target.complete();
+        //   });
+        // });
+        let sid = setTimeout(()=>{
+          let data = this.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
+          if(data.currentPage === data.totalPage){
+            this.postList = this.postList.concat(data.items);
+            this.infiniteScroll.disabled = true;
+          }else{
+            this.postList = this.postList.concat(data.items);
+            this.pageSize++;
+          }
+          console.log("====len====",this.postList.length);
+          this.refreshImageV2(data.items);
+          clearTimeout(sid);
+          event.target.complete();
+        },400);
+
         break;
       case 'pasar':
         this.zone.run(() => {
@@ -891,7 +922,7 @@ export class HomePage implements OnInit {
         } catch (error) {
         }
 
-
+        this.handleRefresherInfinite(false);
         if (event != null) event.target.complete();
         this.refreshEvent = null;
 
@@ -988,7 +1019,7 @@ export class HomePage implements OnInit {
     this.channelId = channelId;
     this.destDid = destDid;
     this.channelAvatar = await this.parseAvatar(destDid, channelId);
-    this.channelName = await this.getChannelName(destDid, channelId);
+    this.channelName = await this.getChannelName(destDid, channelId, postId);
     this.hideComment = false;
   }
 
@@ -1252,6 +1283,80 @@ export class HomePage implements OnInit {
     }
   }
 
+  async handlePostAvatarV2(destDid: string,channelId: string,postId: string) {
+    // 13 存在 12不存在
+    let id = destDid+"-"+channelId+"-"+postId;
+    let isload = this.isLoadAvatarImage[id] || '';
+
+        if (isload === '') {
+          this.isLoadAvatarImage[id] = '11';
+          let key = destDid + "-" + channelId;
+          let channel: FeedsData.ChannelV3 = this.channelMap[key] || null;
+          if (channel === null) {
+            channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+          } else {
+            channel = this.channelMap[key];
+          }
+          let avatarUri = "";
+          if(channel === null){
+             return;
+          }
+          avatarUri = channel.avatar || "";
+          if(avatarUri === ""){
+             return;
+          }
+
+          this.avatarImageMap[id] = avatarUri;//存储相同头像的Post的Map
+          let fileName: string = avatarUri.split("@")[0];
+          let isDown = this.downPostAvatarMap[fileName] || "";
+          if (isDown != '') {
+            return;
+          }
+          this.downPostAvatarMap[fileName] = "down";
+          //头像
+          this.hiveVaultController.
+            getV3Data(destDid, avatarUri, fileName, "0")
+            .then(imagedata => {
+              let realImage = imagedata || '';
+              if (realImage != '') {
+                this.downPostAvatarMap[fileName] = "";
+                for (let key in this.avatarImageMap) {
+
+                  let uri = this.avatarImageMap[key] || "";
+                  if (uri === avatarUri) {
+                    this.channelAvatarMap[key] = realImage;
+                    this.isLoadAvatarImage[key] = "13";
+                    delete this.avatarImageMap[key];
+                  }
+                }
+              } else {
+                this.downPostAvatarMap[fileName] = "";
+                for (let key in this.avatarImageMap) {
+                  let uri = this.avatarImageMap[key] || "";
+                  if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
+                    this.isLoadAvatarImage[key] = "13";
+                    delete this.avatarImageMap[key];
+                  }
+                }
+              }
+            })
+            .catch(reason => {
+              this.downPostAvatarMap[fileName] = "";
+              for (let key in this.avatarImageMap) {
+                let uri = this.avatarImageMap[key] || "";
+                if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
+                  this.isLoadAvatarImage[key] = '13';
+                  delete this.avatarImageMap[key];
+                }
+              }
+              Logger.error(TAG,
+                "Excute 'handlePostAvatarV2' in home page is error , get image data error, error msg is ",
+                reason
+              );
+            });
+        }
+  }
+
 
   initTitleBar() {
     let title = this.translate.instant('FeedsPage.tabTitle1');
@@ -1451,6 +1556,82 @@ export class HomePage implements OnInit {
     }
   }
 
+  async handlePostImgV2(destDid: string, channelId: string, postId: string) {
+    // 13 存在 12不存在
+    let id = destDid+'-'+channelId+'-'+postId;
+    let isload = this.isLoadimage[id] || '';
+    let rpostimg = document.getElementById(id + 'rpostimg');
+    //let postImage = document.getElementById(id + 'postimg');
+    try {
+        if (isload === '') {
+          this.isLoadimage[id] = '11';
+          let post = this.postMap[postId] || null;
+          if (post === null) {
+            post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            this.postMap[postId] = post;
+          }
+          if (post === null) {
+            this.isLoadimage[id] = 13;
+            return;
+          }
+          let mediaDatas = post.content.mediaData;
+          const elements = mediaDatas[0];
+          //缩略图
+          let thumbnailKey = elements.thumbnailPath || '';
+          //原图
+          let imageKey = elements.originMediaPath || '';
+          let type = elements.type || '';
+          if (thumbnailKey === '' || imageKey === '') {
+            this.isLoadimage[id] = '13';
+            return;
+          }
+          //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+          let fileOriginName: string = imageKey.split("@")[0];
+          let fileThumbnaiName: string = thumbnailKey.split("@")[0];
+
+          //原图
+          this.hiveVaultController.
+            getV3Data(destDid, imageKey, fileOriginName, type, "false")
+            .then(imagedata => {
+              let realImage = imagedata || '';
+              if (realImage != '') {
+                this.isLoadimage[id] = '13';
+                //postImage.setAttribute('src', realImage);
+                this.postImgMap[id] = realImage;
+                rpostimg.style.display = 'block';
+              } else {
+                this.hiveVaultController.
+                  getV3Data(destDid, thumbnailKey, fileThumbnaiName, type).
+                  then((thumbImagedata) => {
+                    let thumbImage = thumbImagedata || "";
+                    if (thumbImage != '') {
+                      this.isLoadimage[id] = '13';
+                      this.postImgMap[id] = thumbImagedata;
+                      rpostimg.style.display = 'block';
+                    } else {
+                      this.isLoadimage[id] = '12';
+                      rpostimg.style.display = 'block';
+                    }
+                  }).catch(() => {
+                    rpostimg.style.display = 'none';
+                  })
+              }
+            })
+            .catch(reason => {
+              rpostimg.style.display = 'none';
+              Logger.error(TAG,
+                "Excute 'handlePostImg' in home page is error , get image data error, error msg is ",
+                reason
+              );
+            });
+        }
+      } catch (error) {
+      this.isLoadimage[id] = '';
+      this.postImgMap[id] = '';
+    }
+  }
+
+
   async handleVideo(id: string, srcId: string, rowindex: number) {
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
     let videoKuang: any = document.getElementById(id + 'videoKuang') || '';
@@ -1559,32 +1740,121 @@ export class HomePage implements OnInit {
     }
   }
 
+  async handleVideoV2(destDid: string, channelId: string, postId: string) {
+    let id = destDid+'-'+channelId+'-'+postId;
+    let isloadVideoImg = this.isLoadVideoiamge[id] || '';
+    let videoKuang: any = document.getElementById(id + 'videoKuang') || '';
+    //let video: any = document.getElementById(id + 'video') || '';
+    let source: any = document.getElementById(id + 'source') || '';
+    let downStatus = this.videoDownStatus[id] || '';
+    if (id != '' && source != '' && downStatus === '') {
+      this.pauseVideo(id);
+    }
+    try {
 
-  ionScroll() {
-    this.native.throttle(this.handleScroll(), 200, this, true);
-    switch (this.tabType) {
-      case 'feeds':
-        // this.native.throttle(this.setVisibleareaImageV2(), 60, this, true);
-        this.setVisibleareaImageV2();
-        break;
-      case 'pasar':
-        if (this.styleType === 'grid') {
-          this.native.throttle(this.setPasarGridVisibleareaImage(), 200, this, true);
-        } else if (this.styleType === 'list') {
-          this.native.throttle(this.setPasarListVisibleareaImage(), 200, this, true);
+        if (isloadVideoImg === '') {
+          this.isLoadVideoiamge[id] = '11';
+          //vgplayer.style.display = "none";
+
+          let post = this.postMap[postId] || null;
+
+          if (post === null) {
+            post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            this.postMap[postId] = post;
+          }
+
+          if (post === null) {
+            this.isLoadVideoiamge[id] = '13';
+          }
+          let mediaDatas = post.content.mediaData;
+          const elements = mediaDatas[0];
+
+          //缩略图
+          let videoThumbnailKey = elements.thumbnailPath || '';
+          if (videoThumbnailKey === '') {
+            this.isLoadimage[id] = '13';
+            return;
+          }
+          //原图
+          //let imageKey = elements.originMediaPath;
+          let type = elements.type;
+          //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+          let fileName: string = videoThumbnailKey.split("@")[0];
+          this.hiveVaultController
+            .getV3Data(destDid, videoThumbnailKey, fileName, type)
+            .then(imagedata => {
+              let image = imagedata || '';
+              if (image != '') {
+                this.isLoadVideoiamge[id] = '13';
+                //video.setAttribute('poster', image);
+                this.posterImgMap[id] = image;
+                let video: any = document.getElementById(id + 'video') || '';
+                if(video != ''){
+                  video.style.display = "block";
+                    //video.
+                this.setFullScreen(id);
+                this.setOverPlay(id, id, post);
+                }
+
+              } else {
+                this.isLoadVideoiamge[id] = '12';
+                //vgplayer.style.display = 'none';
+              }
+            })
+            .catch(reason => {
+              //vgplayer.style.display = 'none';
+              this.isLoadVideoiamge[id] = '';
+              Logger.error(TAG,
+                "Excute 'hanldVideo' in home page is error , get image data error, error msg is ",
+                reason
+              );
+            });
         }
-        break;
-      default:
-        break;
+      } catch (error) {
+      this.isLoadVideoiamge[id] = '';
     }
   }
 
+
+  ionScroll() {
+    this.native.throttle(this.handleScroll(), 200, this, true);
+    // switch (this.tabType) {
+    //   case 'feeds':
+    //     // this.native.throttle(this.setVisibleareaImageV2(), 60, this, true);
+    //     this.setVisibleareaImageV2();
+    //     break;
+    //   case 'pasar':
+    //     if (this.styleType === 'grid') {
+    //       this.native.throttle(this.setPasarGridVisibleareaImage(), 200, this, true);
+    //     } else if (this.styleType === 'list') {
+    //       this.native.throttle(this.setPasarListVisibleareaImage(), 200, this, true);
+    //     }
+    //     break;
+    //   default:
+    //     break;
+    // }
+  }
+
   refreshImage() {
-    //this.clearRefreshImageSid();
+    this.clearRefreshImageSid();
     this.refreshImageSid = setTimeout(() => {
-      this.setVisibleareaImageV2();
+      //this.setVisibleareaImageV2();
+      this.newSectionObserver();
+
       this.clearRefreshImageSid();
     }, 100);
+    //this.newSectionObserver();
+  }
+
+  refreshImageV2(postList = []) {
+    this.clearRefreshImageSid();
+    this.refreshImageSid = setTimeout(() => {
+      //this.setVisibleareaImageV2();
+      this.newSectionObserver(postList);
+
+      this.clearRefreshImageSid();
+    }, 100);
+    //this.newSectionObserver();
   }
 
   clearRefreshImageSid() {
@@ -1698,7 +1968,7 @@ export class HomePage implements OnInit {
   }
 
   getVideo(id: string, srcId: string, post: FeedsData.PostV3) {
-    let arr = srcId.split('-');
+    let arr = id.split('-');
     let destDid = arr[0];
     let channelId: any = arr[1];
     let postId: any = arr[2];
@@ -2589,6 +2859,128 @@ export class HomePage implements OnInit {
       this.refreshImage();
   }
 
+  newSectionObserver(postList = []) {
+    console.log("======length========", postList.length);
+    for(let index = 0; index < postList.length; index++){
+            let postItem =  postList[index];
+            let postGridId = postItem.destDid+"-"+postItem.channelId+"-"+postItem.postId+"-"+postItem.content.mediaType;
+            let exit = this.observerList[postGridId] || null;
+            if(exit !=null){
+               continue;
+            }
+           let item = document.getElementById(postGridId) || null;
+           if(item != null ){
+             this.observerList[postGridId] = new IntersectionObserver(async (changes:any)=>{
+               let container = changes[0].target;
+               let newId = container.getAttribute("id");
+               // if(changes[0].intersectionRatio === 1){
+               //   console.log("======intersectionRatio0========", newId,changes[0].intersectionRatio);
+               // }else if(changes[0].intersectionRatio === 0){
+               //   console.log("======intersectionRatio1========", newId,changes[0].intersectionRatio);
+               // }
+               let intersectionRatio = changes[0].intersectionRatio;
 
+               let boundingClientRect = changes[0].boundingClientRect;
+               console.log("======boundingClientRect========",boundingClientRect);
 
+               let rootBounds = changes[0].rootBounds;
+               console.log("======rootBoundst========",rootBounds);
+
+               let intersectionRect = changes[0].intersectionRect;
+               console.log("======intersectionRect========",intersectionRect);
+
+               if(intersectionRatio === 0){
+                  console.log("======newId leave========", newId);
+                  console.log("======intersectionRatio0 leave========", changes[0].intersectionRatio);
+                  return;
+               }
+               let arr =  newId.split("-");
+               let destDid: string = arr[0];
+               let channelId: string = arr[1];
+               let postId: string = arr[2];
+               let mediaType: string = arr[3];
+               await this.getChannelName(destDid, channelId, postId);//获取频道name
+               this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
+               this.getDisplayName(destDid, channelId, destDid);
+               if (mediaType === '1') {
+                 this.handlePostImgV2(destDid, channelId, postId);
+               }
+              if (mediaType === '2') {
+                //video
+                 this.handleVideoV2(destDid, channelId, postId);
+              }
+
+              //post like status
+            let id = destDid+'-'+channelId+'-'+postId;
+            CommonPageService.handlePostLikeStatusData(
+            id, id, 0, container,
+            this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+            this.likeMap, this.isLoadingLikeMap)
+          //处理post like number
+          CommonPageService.handlePostLikeNumData(
+            id, id, 0, container,
+            this.clientHeight, this.hiveVaultController,
+            this.likeNumMap, this.isInitLikeNum);
+          //处理post comment
+          CommonPageService.handlePostCommentData(
+            id, id, 0, container,
+            this.clientHeight, this.hiveVaultController,
+            this.isInitComment, this.commentNumMap);
+               console.log("======newId enter========", newId);
+               console.log("======intersectionRatio0 enter========", changes[0].intersectionRatio);
+               //console.log("======intersectionRatio1========",typeof(changes[0]));
+               //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+             });
+
+             this.observerList[postGridId].observe(item);
+           }
+    }
+ }
+
+ getDisplayName(destDid: string,channelId: string, userDid: string) {
+  let displayNameMap = this.handleDisplayNameMap[userDid] || '';
+  if (displayNameMap === "") {
+    let text = destDid.replace('did:elastos:', '');
+    this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+    try {
+      this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
+        then((result: string) => {
+          let name = result || "";
+          if (name != "") {
+            this.handleDisplayNameMap[userDid] = name;
+          }
+        }).catch(() => {
+        });
+    } catch (error) {
+
+    }
+  }
+ }
+
+  getPostformatPageData(currentPage: number,pageSize: number,data = []){
+  let pageData = {"pageSize": pageSize,
+                   "currentPage": currentPage,
+                   "totalPage": 0,
+                   "items": []};
+   let num = data.length;//数据的长度
+   let totalPage = 0;
+   if(num/pageSize > parseInt((num/pageSize).toString())){
+    totalPage = parseInt((num/pageSize).toString())+1;
+   }else{
+    totalPage = parseInt((num/pageSize).toString());
+  }
+
+  pageData.totalPage = totalPage;
+  let maxLength = currentPage * pageSize - 1;
+  var minLength = currentPage * pageSize - pageSize;
+  for (let i = minLength; i < data.length; i++) {
+       if (maxLength < i) {
+          break;
+       } else {
+        pageData.items.push(data[i]);
+       }
+  }
+  console.log("=====pageData===="+JSON.stringify(pageData));
+  return pageData;
+ }
 }
