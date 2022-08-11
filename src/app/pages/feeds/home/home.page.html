@@ -113,16 +113,16 @@
         <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')"></ion-col>
         <ion-col class="img-col" size="2.5" (click)="navTo(post.destDid,post.channelId,post.postId)">
           <div  id="{{post.destDid}}-{{post.channelId}}-{{post.postId}}-homeChannelAvatarKuang" class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-            <img [src] = "channelAvatarMap[post.destDid+'-'+post.channelId+'-'+post.postId]" *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId+'-'+post.postId]">
+            <img [src] = "channelAvatarMap[post.destDid+'-'+post.channelId]" *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId]">
           </div>
         </ion-col>
         <ion-col class="content-col" size="6.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')">
 
-              <ion-label *ngIf="hannelNameMap[post.postId] === '' || hannelNameMap[post.postId] === undefined">
+              <ion-label *ngIf="hannelNameMap[post.channelId] === '' || hannelNameMap[post.channelId] === undefined">
                 ......
               </ion-label>
-              <ion-label *ngIf="hannelNameMap[post.postId] != '' && hannelNameMap[post.postId] != undefined">
-                {{ hannelNameMap[post.postId] }}
+              <ion-label *ngIf="hannelNameMap[post.channelId] != '' && hannelNameMap[post.channelId] != undefined">
+                {{ hannelNameMap[post.channelId] }}
                 <span> {{ handleDisplayTime(post.postId,post.createdAt) }} </span>
               </ion-label>
           <p *ngIf="handleDisplayNameMap[post.destDid] === '' || handleDisplayNameMap[post.destDid] === undefined">
