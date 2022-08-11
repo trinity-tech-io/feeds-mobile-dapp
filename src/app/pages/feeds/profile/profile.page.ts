@@ -190,7 +190,7 @@ export class ProfilePage implements OnInit {
   private visibleareaItemIndex: number = 0;
   private assetSid: any = null;
   private refreshMyFeedsSid: any = null;
-  private setMyFeedsSid: any = null;
+  private myFeedsObserver: any = {};
   constructor(
     private elmRef: ElementRef,
     public theme: ThemeService,
@@ -243,9 +243,9 @@ export class ProfilePage implements OnInit {
       }
 
       this.myFeedsSum = this.channels.length;
+      this.refreshMyFeedsVisibleareaImageV2(this.channels);
       let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
       this.followers = followedList.length;
-      this.refreshMyFeedsVisibleareaImage();
     } catch (error) {
 
     }
@@ -619,7 +619,6 @@ export class ProfilePage implements OnInit {
 
   clearData(isClearAssets: boolean = true) {
     this.clearRefreshMyFeedsSid();
-    this.clearSetMyFeedsSid();
     this.clearRefreshImageSid();
     this.clearAssetSid();
     this.theme.restTheme();
@@ -663,6 +662,7 @@ export class ProfilePage implements OnInit {
     this.isInitComment = {};
     this.curItem = {};
     this.curPostId = '';
+    this.removeMyFeedsObserveList();
   }
 
   clearDownStatus() {
@@ -697,7 +697,6 @@ export class ProfilePage implements OnInit {
         break;
       case 'ProfilePage.myLikes':
         this.clearRefreshMyFeedsSid();
-        this.clearSetMyFeedsSid();
         this.startIndex = 0;
         this.initLike();
         break;
@@ -867,156 +866,46 @@ export class ProfilePage implements OnInit {
   }
 
   ionScroll() {
-    if (this.selectType === 'ProfilePage.myLikes') {
-      this.setVisibleareaImageV2();
-    } else if (this.selectType === 'ProfilePage.collectibles') {
-      this.native.throttle(this.setCollectiblesVisibleareaImage(), 200, this, true);
-    } else if (this.selectType === 'ProfilePage.myFeeds') {
-      this.setMyFeedsVisibleareaImageV2();
-    }
+    // if (this.selectType === 'ProfilePage.myLikes') {
+    //   this.setVisibleareaImageV2();
+    // } else if (this.selectType === 'ProfilePage.collectibles') {
+    //   this.native.throttle(this.setCollectiblesVisibleareaImage(), 200, this, true);
+    // } else if (this.selectType === 'ProfilePage.myFeeds') {
+    //   this.setMyFeedsVisibleareaImageV2();
+    // }
   }
 
-  clearSetMyFeedsSid() {
-    if (this.setMyFeedsSid != null) {
-      clearInterval(this.setMyFeedsSid);
-      this.setMyFeedsSid = null;
-    }
-  }
-
-  async setMyFeedsVisibleareaImageV2() {
-    if (this.setMyFeedsSid != null) {
-      return;
-    }
-    let ionRowMyfeeds = document.getElementsByClassName("ionRowMyfeeds") || null;
-    let len = ionRowMyfeeds.length;
-    let itemIndex = 0;
-    this.setMyFeedsSid = setInterval(async () => {
-      if (itemIndex < len) {
-        let item = ionRowMyfeeds[itemIndex] || null;
-        if (item === null) {
-          itemIndex++;
-          return;
-        }
-        let id = item.getAttribute("id") || "";
-        if (id === "") {
-          itemIndex++;
-          return;
-        }
-        try {
-          this.handleMyFeedsAvatar(id);
-        } catch (error) {
-        }
-        itemIndex++;
-      } else {
-        this.clearSetMyFeedsSid();
-      }
-    }, 10);
-
-  }
-
-  async handleMyFeedsAvatar(id: string) {
-    let myFeedsAvatarKuang = document.getElementById(id + "-myFeedsAvatarKuang");
+  async handleMyFeedsAvatarV2(destDid: string, channelId: string) {
+    let id = destDid+"-"+channelId;
     let isload = this.myFeedsIsLoadimage[id] || '';
-    try {
-      if (
-        id != '' &&
-        myFeedsAvatarKuang.getBoundingClientRect().top >= - Config.rectTop &&
-        myFeedsAvatarKuang.getBoundingClientRect().bottom <= Config.rectBottom
-      ) {
-        if (isload === "") {
-          let arr = id.split("-");
-          this.myFeedsIsLoadimage[id] = '11';
-          let destDid = arr[0];
-          let channelId = arr[1];
-          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-          let avatarUri = "";
-          if (channel != null) {
-            avatarUri = channel.avatar;
-            //关注数
-            let follower = this.subscriptionV3NumMap[channelId] || '';
-            if (follower === "") {
-              try {
-                this.subscriptionV3NumMap[channelId] = "...";
-                this.dataHelper.getSubscriptionV3NumByChannelId(
-                  channel.destDid, channel.channelId).
-                  then((result) => {
-                    result = result || 0;
-                    if (result == 0) {
-                      this.hiveVaultController.querySubscriptionChannelById(channel.destDid, channel.channelId).then(() => {
-                        this.zone.run(async () => {
-                          this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
-                        });
-                      })
-                    }
-                    this.subscriptionV3NumMap[channelId] = result;
-                  }).catch(() => {
-                    this.subscriptionV3NumMap[channelId] = 0;
-
-                  });
-              } catch (error) {
-              }
-            }
-          }
-          let fileName: string = avatarUri.split("@")[0];
-
-          this.myFeedsAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
-          let isDown = this.downMyFeedsAvatarMap[fileName] || "";
-          if (isDown != '') {
-            //itemIndex++;
-            return;
-          }
-          this.downMyFeedsAvatarMap[fileName] = fileName;
-          this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
-            this.zone.run(() => {
-              this.downMyFeedsAvatarMap[fileName] = '';
-              let srcData = data || "";
-              if (srcData != "") {
-                for (let key in this.myFeedsAvatarImageMap) {
-                  let uri = this.myFeedsAvatarImageMap[key] || "";
-                  if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
-                    this.myFeedsIsLoadimage[key] = '13';
-                    this.myFeedAvatarMap[key] = data;
-                    delete this.myFeedsAvatarImageMap[key];
-                  }
-                }
-              } else {
-                for (let key in this.myFeedsAvatarImageMap) {
-                  let uri = this.myFeedsAvatarImageMap[key] || "";
-                  if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
-                    this.myFeedsIsLoadimage[key] = '13';
-                    delete this.myFeedsAvatarImageMap[key];
-                  }
-                }
-              }
-            });
-          }).catch((err) => {
-            this.downMyFeedsAvatarMap[fileName] = '';
-            for (let key in this.myFeedsAvatarImageMap) {
-              let uri = this.myFeedsAvatarImageMap[key] || "";
-              if (uri === avatarUri && this.myFeedsIsLoadimage[key] === "11") {
-                this.myFeedsIsLoadimage[key] = '13';
-                delete this.myFeedsAvatarImageMap[key];
-              }
-            }
-          });
-        }
-      } else {
-        let srcStr = this.myFeedAvatarMap[id] || './assets/icon/reserve.svg';
-        if (
-          myFeedsAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
-          myFeedsAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
-          this.myFeedsIsLoadimage[id] === '13' &&
-          srcStr != './assets/icon/reserve.svg'
-        ) {
-          this.myFeedAvatarMap[id] = null;
-          this.myFeedsIsLoadimage[id] = '';
-          delete this.myFeedsAvatarImageMap[id];
-        }
+    if (isload === "") {
+      let arr = id.split("-");
+      this.myFeedsIsLoadimage[id] = '11';
+      let destDid = arr[0];
+      let channelId = arr[1];
+      let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+      let avatarUri = "";
+      if (channel != null) {
+        avatarUri = channel.avatar;
       }
-    } catch (error) {
-      this.myFeedsIsLoadimage[id] = '';
-      delete this.myFeedsAvatarImageMap[id];
+      let fileName: string = avatarUri.split("@")[0];
+      this.downMyFeedsAvatarMap[fileName] = fileName;
+      this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
+        this.zone.run(() => {
+          let srcData = data || "";
+          if (srcData != "") {
+                this.myFeedsIsLoadimage[id] = '13';
+                this.myFeedAvatarMap[id] = data;
+          } else {
+            this.myFeedsIsLoadimage[id] = '13';
+          }
+        });
+      }).catch((err) => {
+        this.myFeedsIsLoadimage[id] = '';
+      });
     }
+
+
   }
 
   setCollectiblesVisibleareaImage() {
@@ -1100,16 +989,14 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  refreshMyFeedsVisibleareaImage() {
+  refreshMyFeedsVisibleareaImageV2(list = []) {
     if (this.selectType === "ProfilePage.myFeeds") {
       if (this.refreshMyFeedsSid != null) {
         return;
       }
       this.refreshMyFeedsSid = setTimeout(() => {
         this.myFeedsIsLoadimage = {};
-        this.downMyFeedsAvatarMap = {};
-        this.myFeedsAvatarImageMap = {};
-        this.setMyFeedsVisibleareaImageV2();
+        this.getMyFeedsObserverList(list);
         this.clearRefreshMyFeedsSid();
       }, 100);
     }
@@ -2651,4 +2538,101 @@ export class ProfilePage implements OnInit {
 
     this.avatar = imgUri;
   }
+
+  removeMyFeedsObserver(postGridId: string, observer: any){
+    let item = document.getElementById(postGridId) || null;
+    if(item != null){
+      if( observer != null ){
+        observer.unobserve(item);//解除观察器
+        observer.disconnect();  // 关闭观察器
+        this.myFeedsObserver[postGridId] = null;
+      }
+    }
+  }
+
+  getMyFeedsObserverList(myFeedslist = []){
+
+    for(let index = 0; index < myFeedslist.length; index++){
+      let postItem =  myFeedslist[index] || null;
+      if(postItem === null){
+        return;
+      }
+      let postGridId = postItem.destDid+"-"+postItem.channelId;
+      let exit = this.myFeedsObserver[postGridId] || null;
+      if(exit != null){
+         continue;
+      }
+      this.newMyFeedsObserver(postGridId);
+    }
+  }
+
+  newMyFeedsObserver(postGridId: string) {
+    let observer = this.myFeedsObserver[postGridId] || null;
+    if(observer != null){
+      return;
+    }
+    let item = document.getElementById(postGridId) || null;
+    if(item != null ){
+    this.myFeedsObserver[postGridId] = new IntersectionObserver(async (changes:any)=>{
+    let container = changes[0].target;
+    let newId = container.getAttribute("id");
+
+    let intersectionRatio = changes[0].intersectionRatio;
+
+    if(intersectionRatio === 0){
+      console.log("======newId leave========", newId);
+      console.log("======intersectionRatio0 leave========", changes[0].intersectionRatio);
+      return;
+    }
+    let arr =  newId.split("-");
+    let destDid: string = arr[0];
+    let channelId: string = arr[1];
+    this.handleMyFeedsAvatarV2(destDid,channelId);
+    this.getChannelFollower(destDid,channelId);
+    console.log("======newId enter========", newId);
+    console.log("======intersectionRatio0 enter========", changes[0].intersectionRatio);
+    //console.log("======intersectionRatio1========",typeof(changes[0]));
+    //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+    });
+
+    this.myFeedsObserver[postGridId].observe(item);
+    }
+  }
+
+  getChannelFollower(destDid: string,channelId: string) {
+     //关注数
+     let follower = this.subscriptionV3NumMap[channelId] || '';
+     if (follower === "") {
+       try {
+         this.subscriptionV3NumMap[channelId] = "...";
+         this.dataHelper.getSubscriptionV3NumByChannelId(
+           destDid, channelId).
+           then((result) => {
+             result = result || 0;
+             if (result == 0) {
+               this.hiveVaultController.querySubscriptionChannelById(destDid,channelId).then(() => {
+                 this.zone.run(async () => {
+                   this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(destDid, channelId);
+                 });
+               })
+             }
+             this.subscriptionV3NumMap[channelId] = result;
+           }).catch(() => {
+             this.subscriptionV3NumMap[channelId] = 0;
+
+           });
+       } catch (error) {
+       }
+     }
+  }
+
+  removeMyFeedsObserveList() {
+    for(let postGridId in this.myFeedsObserver){
+        let observer = this.myFeedsObserver[postGridId] || null;
+        this.removeMyFeedsObserver(postGridId, observer)
+    }
+    this.myFeedsObserver = {};
+  }
+
+
 }

@@ -39,8 +39,6 @@ export class SubscriptionsPage implements OnInit {
   public channelName: string = null;
   public hideSharMenuComponent: boolean = false;
   private followingIsLoadimage: any = {};
-  private followingAvatarImageMap: any = {};
-  private downFollowingAvatarMap: any = {};
   public isSearch: string = '';
   public scanServiceStyle = { right: '' };
   public subscriptionV3NumMap: any = {};
@@ -48,8 +46,8 @@ export class SubscriptionsPage implements OnInit {
   public isBorderGradient: boolean = false;
   private searchFollowingList: any = [];
   private refreshFollowingImageSid: any = null;
-  private setFollowingSid: any = null;
   private visibleareaItemIndex: number = 0;
+  private follingObserver: any = {};
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -91,13 +89,11 @@ export class SubscriptionsPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.clearSetFollowingSid();
     this.clearRefreshFollowingImageSid();
     this.followingIsLoadimage = {};
-    this.followingAvatarImageMap = {};
-    this.downFollowingAvatarMap = {};
     this.hideSharMenuComponent = false;
     this.removeEvents();
+    this.removeObserveList();
     this.native.handleTabsEvents();
   }
 
@@ -137,7 +133,7 @@ export class SubscriptionsPage implements OnInit {
     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
     this.followingList = await this.getFollowedChannelList(subscribedChannel);
     this.searchFollowingList = _.cloneDeep(this.followingList);
-    this.refreshFollowingVisibleareaImage();
+    this.refreshFollowingVisibleareaImageV2(this.followingList);
   }
 
   async getFollowedChannelList(subscribedChannel: FeedsData.SubscribedChannelV3[]) {
@@ -321,174 +317,48 @@ export class SubscriptionsPage implements OnInit {
   }
 
   ionScroll() {
-    this.setFollowingVisibleareaImageV2();
+    //this.setFollowingVisibleareaImageV2();
   }
 
-
-  async setFollowingVisibleareaImageV2() {
-    let ionRowFollowing = document.getElementsByClassName("ionRowFollowing") || null;
-    let len = ionRowFollowing.length;
-    this.getVisibleareaItemIndex(ionRowFollowing, len);
-    this.clearSetFollowingSid();
-    let startindex = 0;
-    if (this.visibleareaItemIndex - 6 > 0) {
-      startindex = this.visibleareaItemIndex - 6;
-    }
-    if (startindex === 0) {
-      if (this.visibleareaItemIndex + 12 < len) {
-        len = this.visibleareaItemIndex + 12;
-      }
-    } else {
-      if (this.visibleareaItemIndex + 6 < len) {
-        len = this.visibleareaItemIndex + 6;
-      }
-    }
-
-    let itemIndex = startindex;
-    this.setFollowingSid = setInterval(() => {
-      if (itemIndex < len) {
-        let item = ionRowFollowing[itemIndex] || null;
-        if (item === null) {
-          itemIndex++;
-          return;
-        }
-        let id = item.getAttribute("id") || "";
-        if (id === "") {
-          itemIndex++;
-          return;
-        }
-
-        try {
-          this.handleFollingAvatar(id);
-        } catch (error) {
-
-        }
-        itemIndex++;
-      } else {
-        this.clearSetFollowingSid();
-      }
-    }, 10)
-  }
-
-  async handleFollingAvatar(id: string) {
-    let followingAvatarKuang = document.getElementById(id + "-followingAvatarKuang");
+  async handleFollingAvatarV2(destDid: string,channelId: string) {
+    let id = destDid+"-"+channelId;
     let isload = this.followingIsLoadimage[id] || '';
-    try {
-      if (
-        id != '' &&
-        followingAvatarKuang.getBoundingClientRect().top >= - Config.rectTop &&
-        followingAvatarKuang.getBoundingClientRect().bottom <= Config.rectBottom
-      ) {
-        if (isload === "") {
-          let arr = id.split("-");
-          this.followingIsLoadimage[id] = '11';
-          let destDid = arr[0];
-          let channelId = arr[1];
-          let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-          let avatarUri = "";
-          if (channel != null) {
-            avatarUri = channel.avatar;
-            //关注数
-            let follower = this.subscriptionV3NumMap[channelId] || '';
-            if (follower === "") {
-              try {
-                this.subscriptionV3NumMap[channelId] = "...";
-                this.dataHelper.getSubscriptionV3NumByChannelId(
-                  channel.destDid, channel.channelId).
-                  then((result) => {
-                    result = result || 0;
-                    if (result == 0) {
-                      this.hiveVaultController.querySubscriptionChannelById(channel.destDid, channel.channelId).then(() => {
-                        this.zone.run(async () => {
-                          this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
-                        });
-                      })
-                    }
-                    this.subscriptionV3NumMap[channelId] = result;
-
-                  }).catch(() => {
-                    this.subscriptionV3NumMap[channelId] = 0;
-                  });
-              } catch (error) {
-              }
-            }
-          }
-          let fileName: string = avatarUri.split("@")[0];
-          this.followingAvatarImageMap[id] = avatarUri;//存储相同头像的channel的Map
-          let isDown = this.downFollowingAvatarMap[fileName] || "";
-          if (isDown != '') {
-            return;
-          }
-          this.downFollowingAvatarMap[fileName] = fileName;
-          this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
-            this.zone.run(() => {
-              this.downFollowingAvatarMap[fileName] = '';
-              let srcData = data || "";
-              if (srcData != "") {
-                for (let key in this.followingAvatarImageMap) {
-                  let uri = this.followingAvatarImageMap[key] || "";
-                  if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
-                    this.followingIsLoadimage[key] = '13';
-                    this.followAvatarMap[key] = srcData;
-                    delete this.followingAvatarImageMap[key];
-                  }
-                }
-              } else {
-                for (let key in this.followingAvatarImageMap) {
-                  let uri = this.followingAvatarImageMap[key] || "";
-                  if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
-                    this.followingIsLoadimage[key] = '13';
-                    delete this.followingAvatarImageMap[key];
-                  }
-                }
-              }
-            });
-          }).catch((err) => {
-            this.downFollowingAvatarMap[fileName] = '';
-            for (let key in this.followingAvatarImageMap) {
-              let uri = this.followingAvatarImageMap[key] || "";
-              if (uri === avatarUri && this.followingIsLoadimage[key] === '11') {
-                this.followingIsLoadimage[key] = '13';
-                delete this.followingAvatarImageMap[key];
-              }
-            }
-          });
-        }
-      } else {
-        let srcStr = this.followAvatarMap[id] || "./assets/icon/reserve.svg";
-        if (
-          followingAvatarKuang.getBoundingClientRect().top < - Config.rectTop ||
-          followingAvatarKuang.getBoundingClientRect().bottom > Config.rectBottom &&
-          this.followingIsLoadimage[id] === '13' &&
-          srcStr != './assets/icon/reserve.svg'
-        ) {
-          this.followAvatarMap[id] = null;
-          this.followingIsLoadimage[id] = '';
-          delete this.followingAvatarImageMap[id];
-        }
+    if (isload === "") {
+      let arr = id.split("-");
+      this.followingIsLoadimage[id] = '11';
+      let destDid = arr[0];
+      let channelId = arr[1];
+      let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+      let avatarUri = "";
+      if (channel != null) {
+        avatarUri = channel.avatar;
       }
-    } catch (error) {
-      this.followingIsLoadimage[id] = '';
-      delete this.followingAvatarImageMap[id];
+      let fileName: string = avatarUri.split("@")[0];
+      this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
+        this.zone.run(() => {
+          let srcData = data || "";
+          if (srcData != "") {
+            this.followingIsLoadimage[id] = '13';
+            this.followAvatarMap[id] = srcData;
+          } else {
+            this.followingIsLoadimage[id] = '13';
+          }
+        });
+      }).catch((err) => {
+        this.followingIsLoadimage[id] = '';
+      });
     }
+
+
   }
 
-  clearSetFollowingSid() {
-    if (this.setFollowingSid != null) {
-      clearInterval(this.setFollowingSid);
-      this.setFollowingSid = null;
-    }
-  }
-
-  refreshFollowingVisibleareaImage() {
+  refreshFollowingVisibleareaImageV2(list = []) {
     if (this.refreshFollowingImageSid != null) {
       return;
     }
     this.refreshFollowingImageSid = setTimeout(() => {
       this.followingIsLoadimage = {};
-      this.followingAvatarImageMap = {};
-      this.downFollowingAvatarMap = {};
-      this.setFollowingVisibleareaImageV2();
+      this.getFollingObserverList(list);
       this.clearRefreshFollowingImageSid();
     }, 100);
   }
@@ -599,6 +469,101 @@ export class SubscriptionsPage implements OnInit {
 
   ionFocus() {
     this.isBorderGradient = true;
+  }
+
+  removeFollingObserver(postGridId: string, observer: any){
+    let item = document.getElementById(postGridId) || null;
+    if(item != null){
+      if( observer != null ){
+        observer.unobserve(item);//解除观察器
+        observer.disconnect();  // 关闭观察器
+        this.follingObserver[postGridId] = null;
+      }
+    }
+  }
+
+  getFollingObserverList(follingList = []){
+
+    for(let index = 0; index < follingList.length; index++){
+      let postItem =  follingList[index] || null;
+      if(postItem === null){
+        return;
+      }
+      let postGridId = postItem.destDid+"-"+postItem.channelId;
+      let exit = this.follingObserver[postGridId] || null;
+      if(exit != null){
+         continue;
+      }
+      this.newFollingObserver(postGridId);
+    }
+  }
+
+  newFollingObserver(postGridId: string) {
+    let observer = this.follingObserver[postGridId] || null;
+    if(observer != null){
+      return;
+    }
+    let item = document.getElementById(postGridId) || null;
+    if(item != null ){
+    this.follingObserver[postGridId] = new IntersectionObserver(async (changes:any)=>{
+    let container = changes[0].target;
+    let newId = container.getAttribute("id");
+
+    let intersectionRatio = changes[0].intersectionRatio;
+
+    if(intersectionRatio === 0){
+      console.log("======newId leave========", newId);
+      console.log("======intersectionRatio0 leave========", changes[0].intersectionRatio);
+      return;
+    }
+    let arr =  newId.split("-");
+    let destDid: string = arr[0];
+    let channelId: string = arr[1];
+    this.handleFollingAvatarV2(destDid,channelId);
+    this.getChannelFollower(destDid,channelId);
+    console.log("======newId enter========", newId);
+    console.log("======intersectionRatio0 enter========", changes[0].intersectionRatio);
+    //console.log("======intersectionRatio1========",typeof(changes[0]));
+    //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+    });
+
+    this.follingObserver[postGridId].observe(item);
+    }
+  }
+
+  getChannelFollower(destDid: string,channelId: string) {
+     //关注数
+     let follower = this.subscriptionV3NumMap[channelId] || '';
+     if (follower === "") {
+       try {
+         this.subscriptionV3NumMap[channelId] = "...";
+         this.dataHelper.getSubscriptionV3NumByChannelId(
+           destDid, channelId).
+           then((result) => {
+             result = result || 0;
+             if (result == 0) {
+               this.hiveVaultController.querySubscriptionChannelById(destDid, channelId).then(() => {
+                 this.zone.run(async () => {
+                   this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(destDid, channelId);
+                 });
+               })
+             }
+             this.subscriptionV3NumMap[channelId] = result;
+
+           }).catch(() => {
+             this.subscriptionV3NumMap[channelId] = 0;
+           });
+       } catch (error) {
+       }
+     }
+  }
+
+  removeObserveList() {
+    for(let postGridId in this.follingObserver){
+        let observer = this.follingObserver[postGridId] || null;
+        this.removeFollingObserver(postGridId, observer)
+    }
+    this.follingObserver = {};
   }
 
 }
