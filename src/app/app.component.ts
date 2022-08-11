@@ -10,7 +10,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { StorageService } from './services/StorageService';
 import { PopupProvider } from 'src/app/services/popup';
 import { Events } from 'src/app/services/events.service';
-import { LocalIdentityConnector } from '@elastosfoundation/elastos-connector-localidentity-cordova';
+import { LocalIdentityConnector, persistenceService } from '@elastosfoundation/elastos-connector-localidentity-cordova';
 import { EssentialsConnector } from '@elastosfoundation/essentials-connector-cordova';
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
@@ -713,17 +713,18 @@ export class MyApp {
   }
 
   deleteAccount() {
+    // this.popover = await this.popupProvider.ionicConfirm(
+    //   this,
+    //   'ConfirmdialogComponent.signoutTitle',
+    //   'ConfirmdialogComponent.signoutMessage',
+    //   this.cancel,
+    //   this.confirm,
+    //   './assets/images/signOutDialog.svg',
+    //   'common.yes'
+    // );
+
     connectivity.unregisterConnector('local-identity');
-
-    console.log('1111111111111');
-    const localIdentityConnector = new LocalIdentityConnector();
-    console.log('222222222');
-    connectivity.registerConnector(localIdentityConnector);
-    console.log('33333333333');
-    connectivity.setActiveConnector('local-identity').then(() => {
-      console.log('4444444444444');
-    })
-
+    persistenceService.reset();
   }
   menuClose() {
     this.theme.restTheme();
