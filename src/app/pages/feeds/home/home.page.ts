@@ -234,7 +234,7 @@ export class HomePage implements OnInit {
     this.pageSize = 1;
     if (scrollToTop) {
       this.totalData = await this.sortPostList();
-      let data = this.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
+      let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
       if(data.currentPage === data.totalPage){
         this.postList = data.items
       }else{
@@ -836,10 +836,10 @@ export class HomePage implements OnInit {
         // });
         let sid = setTimeout(()=>{
           this.pageSize++;
-          let data = this.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
+          let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
           if(data.currentPage === data.totalPage){
             this.postList = this.postList.concat(data.items);
-            this.infiniteScroll.disabled = true;
+            event.target.disabled = true;
           }else{
             this.postList = this.postList.concat(data.items);
           }
@@ -2466,29 +2466,4 @@ export class HomePage implements OnInit {
   }
  }
 
-  getPostformatPageData(currentPage: number,pageSize: number,data = []){
-  let pageData = {"pageSize": pageSize,
-                   "currentPage": currentPage,
-                   "totalPage": 0,
-                   "items": []};
-   let num = data.length;//数据的长度
-   let totalPage = 0;
-   if(num/pageSize > parseInt((num/pageSize).toString())){
-    totalPage = parseInt((num/pageSize).toString())+1;
-   }else{
-    totalPage = parseInt((num/pageSize).toString());
-  }
-
-  pageData.totalPage = totalPage;
-  let maxLength = currentPage * pageSize - 1;
-  var minLength = currentPage * pageSize - pageSize;
-  for (let i = minLength; i < data.length; i++) {
-       if (maxLength < i) {
-          break;
-       } else {
-        pageData.items.push(data[i]);
-       }
-  }
-  return pageData;
- }
 }

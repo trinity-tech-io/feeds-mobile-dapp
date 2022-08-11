@@ -34,8 +34,7 @@ let TAG: string = 'Feeds-feeds';
 export class ChannelsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonContent, { static: true }) content: IonContent;
-  @ViewChild(IonInfiniteScroll, { static: true })
-  infiniteScroll: IonInfiniteScroll;
+  @ViewChild(IonInfiniteScroll, { static: true }) infiniteScroll: IonInfiniteScroll;
 
   public images = {};
   public isShowPrompt: boolean = false;
@@ -54,9 +53,8 @@ export class ChannelsPage implements OnInit {
   public channelId: string = "0";
 
   public followStatus: boolean = false;
-
-  public startIndex: number = 0;
-  public pageNumber: number = 5;
+  public pageSize = 1;
+  public pageNumber: number = 4;
   public totalData: any = [];
 
   public styleObj: any = { width: '' };
@@ -136,9 +134,8 @@ export class ChannelsPage implements OnInit {
   private isRefresh: boolean = false;
   private postTime: any = {};
   private refreshImageSid: any = null;
-  private visibleareaItemIndex: number = 0;
-  private assetSid: any = null;
   public clickButton: boolean = false;
+  private observerList: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -285,35 +282,49 @@ export class ChannelsPage implements OnInit {
       this.isInitLikeNum = {};
       this.isInitLikeStatus = {};
       this.isInitComment = {};
-      this.refreshImage();
+      this.refreshImageV2(this.postList);
       return;
     }
     this.isRefresh = false;
-    this.startIndex = 0;
-    if (this.totalData.length - this.pageNumber > 0) {
-      this.postList = this.totalData.slice(0, this.pageNumber);
-      this.startIndex++;
-
-      this.isLoadimage = {};
-      this.isLoadVideoiamge = {};
-      this.isInitLikeNum = {};
-      this.isInitLikeStatus = {};
-      this.isInitComment = {};
-      this.refreshImage();
-    } else {
-      this.postList = this.totalData;
-      this.isLoadimage = {};
-      this.isLoadVideoiamge = {};
-      this.isInitLikeNum = {};
-      this.isInitLikeStatus = {};
-      this.isInitComment = {};
-      this.refreshImage();
+    this.pageSize = 1;
+    console.log("====this.totalData======",this.totalData.length);
+    let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
+    if(data.currentPage === data.totalPage){
+      this.postList = data.items
+    }else{
+      this.postList = data.items;
     }
+
+    this.isLoadimage = {};
+    this.isLoadVideoiamge = {};
+    this.isInitLikeNum = {};
+    this.isInitLikeStatus = {};
+    this.isInitComment = {};
+    this.refreshImageV2(this.postList);
+    // if (this.totalData.length - this.pageNumber > 0) {
+    //   this.postList = this.totalData.slice(0, this.pageNumber);
+    //   this.startIndex++;
+
+    //   this.isLoadimage = {};
+    //   this.isLoadVideoiamge = {};
+    //   this.isInitLikeNum = {};
+    //   this.isInitLikeStatus = {};
+    //   this.isInitComment = {};
+    //   this.refreshImageV2();
+    // } else {
+    //   this.postList = this.totalData;
+    //   this.isLoadimage = {};
+    //   this.isLoadVideoiamge = {};
+    //   this.isInitLikeNum = {};
+    //   this.isInitLikeStatus = {};
+    //   this.isInitComment = {};
+    //   this.refreshImageV2();
+    // }
   }
 
   async refreshChannelList() {
     //after delete post refresh
-    if (this.startIndex === 0) {
+    if (this.pageSize === 1) {
       await this.initRefresh();
       return;
     }
@@ -321,10 +332,10 @@ export class ChannelsPage implements OnInit {
     this.totalData = await this.filterDeletedPostList(postList);
     if (this.totalData.length === this.postList.length) {
       this.postList = this.totalData;
-    } else if (this.totalData.length - this.pageNumber * this.startIndex > 0) {
+    } else if (this.totalData.length - this.pageNumber *  this.pageSize > 0) {
       this.postList = this.totalData.slice(
         0,
-        this.startIndex * this.pageNumber,
+        this.pageSize * this.pageNumber,
       );
     } else {
       this.postList = this.totalData;
@@ -334,7 +345,7 @@ export class ChannelsPage implements OnInit {
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
-    this.refreshImage();
+    this.refreshImageV2(this.postList);
   }
 
   async initChannelData() {
@@ -444,7 +455,6 @@ export class ChannelsPage implements OnInit {
 
   ionViewWillLeave() {
     this.clearRefreshImageSid();
-    this.clearAssetSid();
     this.theme.restTheme();
     this.clickButton = false;
     let appChannels: HTMLBaseElement = document.querySelector("app-channels") || null;
@@ -482,6 +492,7 @@ export class ChannelsPage implements OnInit {
     this.isInitLikeStatus = {};
     this.isInitComment = {};
     this.postMap = {};
+    this.removeObserveList();
     this.native.hideLoading();
     this.native.handleTabsEvents();
   }
@@ -687,8 +698,7 @@ export class ChannelsPage implements OnInit {
       }
 
       this.images = {};
-      this.startIndex = 0;
-      this.visibleareaItemIndex = 0;
+      this.pageSize = 1;
       this.postMap = {};
       this.isRefresh = true;
       this.init();
@@ -700,39 +710,18 @@ export class ChannelsPage implements OnInit {
 
   loadData(event: any) {
     let sId = setTimeout(() => {
-      let arr = [];
-      if (this.totalData.length - this.pageNumber * this.startIndex > this.pageNumber) {
-        arr = this.totalData.slice(
-          this.startIndex * this.pageNumber,
-          (this.startIndex + 1) * this.pageNumber,
-        );
-        this.startIndex++;
-        this.zone.run(() => {
-          //this.initStatus(arr);
-          this.postList = this.postList.concat(arr);
-          this.refreshImage();
-
-        });
-        event.target.complete();
-      } else {
-
-        if (this.totalData.length === this.postList.length) {
-          event.target.complete();
-          clearTimeout(sId);
-          return;
-        }
-
-        arr = this.totalData.slice(
-          this.startIndex * this.pageNumber,
-          this.totalData.length,
-        );
-        this.zone.run(() => {
-          this.postList = this.postList.concat(arr);
-        });
-        this.refreshImage();
-        event.target.complete();
-        clearTimeout(sId);
+      this.pageSize++;
+      let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
+      console.log("====data==="+JSON.stringify(data));
+      if(data.currentPage === data.totalPage){
+        this.postList = this.postList.concat(data.items);
+        event.target.disabled = true;
+      }else{
+        this.postList = this.postList.concat(data.items);
       }
+      this.refreshImageV2(data.items);
+      event.target.complete();
+      clearTimeout(sId);
     }, 500);
   }
 
@@ -778,131 +767,14 @@ export class ChannelsPage implements OnInit {
     this.hideComment = true;
   }
 
-  ionScroll() {
-    //this.native.throttle(this.setVisibleareaImage(), 200, this, true);
-    this.setVisibleareaImageV2();
-  }
 
-  // setVisibleareaImage() {
-  //   let postgridList = document.getElementsByClassName('channelgird');
-  //   let postgridNum = document.getElementsByClassName('channelgird').length;
-  //   for (let postgridindex = 0; postgridindex < postgridNum; postgridindex++) {
-  //     let srcId = postgridList[postgridindex].getAttribute('id') || '';
-  //     if (srcId != '') {
-  //       let arr = srcId.split('-');
-  //       let destDid = arr[0];
-  //       let channelId = arr[1];
-  //       let postId = arr[2];
-  //       let mediaType = arr[3];
-  //       let id = destDid + '-' + channelId + '-' + postId;
-  //       //post like status
-  //       CommonPageService.handlePostLikeStatusData(
-  //         id, srcId, postgridindex, postgridList[postgridindex],
-  //         this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
-  //         this.likeMap, this.isLoadingLikeMap)
-  //       //处理post like number
-  //       CommonPageService.handlePostLikeNumData(
-  //         id, srcId, postgridindex, postgridList[postgridindex],
-  //         this.clientHeight, this.hiveVaultController,
-  //         this.likeNumMap, this.isInitLikeNum);
-  //       //处理post comment
-  //       CommonPageService.handlePostCommentData(
-  //         id, srcId, postgridindex, postgridList[postgridindex],
-  //         this.clientHeight, this.hiveVaultController,
-  //         this.isInitComment, this.commentNumMap);
-  //       //postImg
-  //       if (mediaType === '1') {
-  //         this.handlePostImg(id, srcId, postgridindex);
-  //       }
-  //       if (mediaType === '2') {
-  //         //video
-  //         this.handleVideo(id, srcId, postgridindex);
-  //       }
-  //     }
-  //   }
-  // }
-
-
-  setVisibleareaImageV2() {
-    let postgridList = document.getElementsByClassName('channelgird');
-    let postgridNum = document.getElementsByClassName('channelgird').length;
-    this.getVisibleareaItemIndex(postgridList, postgridNum);
-    let startindex = 0;
-    if (this.visibleareaItemIndex - 4 > 0) {
-      startindex = this.visibleareaItemIndex - 4;
-    }
-    if (this.visibleareaItemIndex + 4 < postgridNum) {
-      postgridNum = this.visibleareaItemIndex + 4;
-    }
-    this.clearAssetSid();
-    let postgridindex = startindex;
-    this.assetSid = setInterval(() => {
-      if (postgridindex < postgridNum) {
-        let postgrid = postgridList[postgridindex] || '';
-        if (postgrid === '') {
-          postgridindex++;
-          return;
-        }
-
-        let srcId = postgridList[postgridindex].getAttribute('id') || '';
-        if (srcId != '') {
-          let arr = srcId.split('-');
-          let destDid = arr[0];
-          let channelId = arr[1];
-          let postId = arr[2];
-          let mediaType = arr[3];
-          let id = destDid + '-' + channelId + '-' + postId;
-          //post like status
-          CommonPageService.handlePostLikeStatusData(
-            id, srcId, postgridindex, postgridList[postgridindex],
-            this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
-            this.likeMap, this.isLoadingLikeMap)
-          //处理post like number
-          CommonPageService.handlePostLikeNumData(
-            id, srcId, postgridindex, postgridList[postgridindex],
-            this.clientHeight, this.hiveVaultController,
-            this.likeNumMap, this.isInitLikeNum);
-          //处理post comment
-          CommonPageService.handlePostCommentData(
-            id, srcId, postgridindex, postgridList[postgridindex],
-            this.clientHeight, this.hiveVaultController,
-            this.isInitComment, this.commentNumMap);
-          //postImg
-          if (mediaType === '1') {
-            this.handlePostImg(id, srcId, postgridindex);
-          }
-          if (mediaType === '2') {
-            //video
-            this.handleVideo(id, srcId, postgridindex);
-          }
-        }
-        postgridindex++;
-      } else {
-        this.clearAssetSid();
-      }
-    }, 10);
-
-  }
-
-  async handlePostImg(id: string, srcId: string, rowindex: number) {
+  async handlePostImgV2(destDid: string, channelId: string, postId: string) {
     // 13 存在 12不存在
+    let id = destDid+'-'+channelId+'-'+postId;
     let isload = this.isLoadimage[id] || '';
     let rpostImage = document.getElementById(id + 'channelrow');
-    let postimgChannelKuang = document.getElementById(id + 'postimgChannelKuang');
-    //let postImage: any = document.getElementById(id + 'postimgchannel') || '';
-    try {
-      if (
-        id != '' &&
-        postimgChannelKuang.getBoundingClientRect().top >= - Config.rectTop &&
-        postimgChannelKuang.getBoundingClientRect().bottom <= Config.rectBottom
-      ) {
         if (isload === '') {
           this.isLoadimage[id] = '11';
-
-          let arr = srcId.split('-');
-
-          let destDid: string = arr[0];
-          let postId: string = arr[2];
 
           let posts = _.filter(this.postList, (post: FeedsData.PostV3) => {
             return destDid == post.destDid && postId == post.postId;
@@ -957,53 +829,19 @@ export class ChannelsPage implements OnInit {
                   })
               }
             })
-            .catch(reason => {
-              rpostImage.style.display = 'none';
-              Logger.error(TAG,
-                "Excute 'handlePsotImg' in feeds page is error , get image data error, error msg is ",
-                reason
-              );
-            });
         }
-      } else {
-        if (
-          postimgChannelKuang.getBoundingClientRect().top < - Config.rectTop ||
-          postimgChannelKuang.getBoundingClientRect().bottom > Config.rectBottom &&
-          this.isLoadimage[id] === '13'
-        ) {
-          this.isLoadimage[id] = '';
-          this.postImgMap[id] = '';
-        }
-      }
-    } catch (error) {
-      Logger.error(TAG,
-        "Excute 'handlePsotImg' in feeds page is error , get image data error, error msg is ",
-        error
-      );
-    }
   }
 
-  async handleVideo(id: string, srcId: string, rowindex: number) {
+  async handleVideoV2(destDid: string, channelId: string, postId: string) {
+    let id = destDid+'-'+channelId+'-'+postId;
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
-    let vgplayer = document.getElementById(id + 'vgplayerchannel');
-    let videoKuang: any = document.getElementById(id + 'videoKuang') || '';
     let source: any = document.getElementById(id + 'sourcechannel');
     let downStatus = this.videoDownStatus[id] || '';
     if (id != '' && source != '' && downStatus === '') {
       this.pauseVideo(id);
     }
-    try {
-      if (
-        id != '' &&
-        videoKuang.getBoundingClientRect().top >= - Config.rectTop &&
-        videoKuang.getBoundingClientRect().bottom <= Config.rectBottom
-      ) {
         if (isloadVideoImg === '') {
           this.isLoadVideoiamge[id] = '11';
-          let arr = srcId.split('-');
-          let destDid = arr[0];
-          let postId: any = arr[2];
-
           let post = this.postMap[postId] || null;
           if (post === null) {
             post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
@@ -1037,7 +875,7 @@ export class ChannelsPage implements OnInit {
                 let video: any = document.getElementById(id + 'videochannel') || '';
                 video.style.display = "block";
                 this.setFullScreen(id);
-                this.setOverPlay(id, srcId, post);
+                this.setOverPlay(id, id, post);
               } else {
                 this.isLoadVideoiamge[id] = '12';
                 //vgplayer.style.display = 'none';
@@ -1051,38 +889,13 @@ export class ChannelsPage implements OnInit {
               );
             });
         }
-      } else {
-        if (
-          videoKuang.getBoundingClientRect().top < - Config.rectTop ||
-          videoKuang.getBoundingClientRect().bottom > Config.rectBottom &&
-          this.isLoadVideoiamge[id] === '13'
-        ) {
-          if (source != '') {
-            let sourcesrc = source.getAttribute('src') || '';
-            if (sourcesrc != '') {
-              source.removeAttribute('src');
-            }
-          }
+}
 
-          let video: any = document.getElementById(id + 'videochannel');
-          video.style.display = "none";
-
-          let vgoverlayplay: any =
-            document.getElementById(id + 'vgoverlayplaychannel') || '';
-          vgoverlayplay.style.display = "none";
-
-          this.posterImgMap[id] = "";
-          this.isLoadVideoiamge[id] = '';
-        }
-      }
-    } catch (error) { }
-  }
-
-  refreshImage() {
+  refreshImageV2(postList = []) {
     this.clearRefreshImageSid();
     this.refreshImageSid = setTimeout(() => {
-      this.setVisibleareaImageV2();
-      this.clearRefreshImageSid();
+    this.getObserveList(postList);
+    this.clearRefreshImageSid();
     }, 100);
   }
 
@@ -1520,34 +1333,109 @@ export class ChannelsPage implements OnInit {
   retry(destDid: string, channelId: string, postId: string) {
   }
 
-  getVisibleareaItemIndex(postgridList: any, postgridNum: any) {
-
-    for (let positionIndex = 0; positionIndex < postgridNum; positionIndex++) {
-      let postgrid = postgridList[positionIndex] || null;
-      if (
-        postgrid != null &&
-        postgrid.getBoundingClientRect().top >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom / 2
-      ) {
-        if (positionIndex === 0) {
-          this.visibleareaItemIndex = positionIndex;
-          return;
-        }
-        this.visibleareaItemIndex = positionIndex;
-      }
-    }
-
-  }
-
-  clearAssetSid() {
-    if (this.assetSid != null) {
-      clearInterval(this.assetSid);
-      this.assetSid = null;
-    }
-  }
-
   handlePostText(url: string, event: any) {
       event.stopPropagation();
+  }
+
+  getObserveList(postList = []){
+    for(let index = 0; index < postList.length; index++){
+      let postItem =  postList[index];
+      let postGridId = postItem.destDid+"-"+postItem.channelId+"-"+postItem.postId+"-"+postItem.content.mediaType;
+      let exit = this.observerList[postGridId] || null;
+      if(exit != null){
+         continue;
+      }
+      this.newSectionObserver(postGridId);
+    }
+  }
+
+  removeObserveList() {
+    for(let postGridId in this.observerList){
+        let observer = this.observerList[postGridId] || null;
+        this.removeSectionObserver(postGridId, observer)
+    }
+    this.observerList = {};
+  }
+
+  removeSectionObserver(postGridId: string, observer: any){
+    let item = document.getElementById(postGridId) || null;
+    if(item != null){
+      if( observer != null ){
+        observer.unobserve(item);//解除观察器
+        observer.disconnect();  // 关闭观察器
+        this.observerList[postGridId] = null;
+      }
+    }
+  }
+
+  newSectionObserver(postGridId: string) {
+    let observer = this.observerList[postGridId] || null;
+    if(observer != null){
+      return;
+    }
+    let item = document.getElementById(postGridId) || null;
+    if(item != null ){
+    this.observerList[postGridId] = new IntersectionObserver(async (changes:any)=>{
+    let container = changes[0].target;
+    let newId = container.getAttribute("id");
+    // if(changes[0].intersectionRatio === 1){
+    //   console.log("======intersectionRatio0========", newId,changes[0].intersectionRatio);
+    // }else if(changes[0].intersectionRatio === 0){
+    //   console.log("======intersectionRatio1========", newId,changes[0].intersectionRatio);
+    // }
+    let intersectionRatio = changes[0].intersectionRatio;
+
+    // let boundingClientRect = changes[0].boundingClientRect;
+    // console.log("======boundingClientRect========",boundingClientRect);
+
+    // let rootBounds = changes[0].rootBounds;
+    // console.log("======rootBoundst========",rootBounds);
+
+    // let intersectionRect = changes[0].intersectionRect;
+    // console.log("======intersectionRect========",intersectionRect);
+
+    if(intersectionRatio === 0){
+      console.log("======newId leave========", newId);
+      console.log("======intersectionRatio0 leave========", changes[0].intersectionRatio);
+      return;
+    }
+    let arr =  newId.split("-");
+    let destDid: string = arr[0];
+    let channelId: string = arr[1];
+    let postId: string = arr[2];
+    let mediaType: string = arr[3];
+    if (mediaType === '1') {
+      this.handlePostImgV2(destDid, channelId, postId);
+    }
+    if (mediaType === '2') {
+    //video
+      this.handleVideoV2(destDid, channelId, postId);
+    }
+
+    //post like status
+    let id = destDid+'-'+channelId+'-'+postId;
+    CommonPageService.handlePostLikeStatusData(
+    id, id, 0, container,
+    this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+    this.likeMap, this.isLoadingLikeMap)
+    //处理post like number
+    CommonPageService.handlePostLikeNumData(
+    id, id, 0, container,
+    this.clientHeight, this.hiveVaultController,
+    this.likeNumMap, this.isInitLikeNum);
+    //处理post comment
+    CommonPageService.handlePostCommentData(
+    id, id, 0, container,
+    this.clientHeight, this.hiveVaultController,
+    this.isInitComment, this.commentNumMap);
+    console.log("======newId enter========", newId);
+    console.log("======intersectionRatio0 enter========", changes[0].intersectionRatio);
+    //console.log("======intersectionRatio1========",typeof(changes[0]));
+    //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+    });
+
+    this.observerList[postGridId].observe(item);
+    }
   }
 
 }

@@ -847,4 +847,33 @@ export class UtilService {
   public static generateDIDLocalVersion(userDid: string) {
     return userDid + 'localScriptVersion';
   }
+
+  public static getPostformatPageData(currentPage: number,pageSize: number,data = []){
+    let pageData = {"pageSize": pageSize,
+                      "currentPage": currentPage,
+                      "totalPage": 0,
+                      "items": []};
+      let num = data.length;//数据的长度
+      let totalPage = 0;
+      if(num/pageSize > parseInt((num/pageSize).toString())){
+      totalPage = parseInt((num/pageSize).toString())+1;
+      }else{
+      totalPage = parseInt((num/pageSize).toString());
+    }
+
+    pageData.totalPage = totalPage;
+    let maxLength = currentPage * pageSize - 1;
+    let minLength = currentPage * pageSize - pageSize;
+    for (let i = minLength; i < data.length; i++) {
+          if (maxLength < i) {
+            break;
+          } else {
+          let item = data[i] || "";
+          if(item != ""){
+            pageData.items.push(data[i]);
+          }
+          }
+    }
+    return pageData;
+    }
 }

@@ -74,7 +74,7 @@
   </div> -->
 
   <!-- POSTS -->
-  <ion-content *ngIf="postList.length > 0" (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
+  <ion-content *ngIf="postList.length > 0"  [scrollEvents]="true">
     <div  *ngFor="let post of postList let i=index">
     <ion-grid style="padding-top:5px" class="post-grid ion-activatable ripple channelgird" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === postList[postList.length - 1]"
     id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}>
