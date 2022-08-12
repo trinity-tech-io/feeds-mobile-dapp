@@ -287,10 +287,9 @@ export class ChannelsPage implements OnInit {
     }
     this.isRefresh = false;
     this.pageSize = 1;
-    console.log("====this.totalData======",this.totalData.length);
     let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
     if(data.currentPage === data.totalPage){
-      this.postList = data.items
+      this.postList = data.items;
     }else{
       this.postList = data.items;
     }
@@ -701,6 +700,7 @@ export class ChannelsPage implements OnInit {
       this.pageSize = 1;
       this.postMap = {};
       this.isRefresh = true;
+      event.target.disabled = false;
       this.init();
       event.target.complete();
     } catch (error) {
@@ -1340,7 +1340,7 @@ export class ChannelsPage implements OnInit {
   getObserveList(postList = []){
     for(let index = 0; index < postList.length; index++){
       let postItem =  postList[index];
-      let postGridId = postItem.destDid+"-"+postItem.channelId+"-"+postItem.postId+"-"+postItem.content.mediaType;
+      let postGridId = postItem.destDid+"-"+postItem.channelId+"-"+postItem.postId+"-"+postItem.content.mediaType+'-channel';
       let exit = this.observerList[postGridId] || null;
       if(exit != null){
          continue;
@@ -1395,8 +1395,7 @@ export class ChannelsPage implements OnInit {
     // console.log("======intersectionRect========",intersectionRect);
 
     if(intersectionRatio === 0){
-      console.log("======newId leave========", newId);
-      console.log("======intersectionRatio0 leave========", changes[0].intersectionRatio);
+      //console.log("======newId leave========", newId);
       return;
     }
     let arr =  newId.split("-");

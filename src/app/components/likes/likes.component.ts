@@ -342,8 +342,8 @@ export class LikesComponent implements OnInit {
   }
 
   handleName(post: FeedsData.PostV3) {
-    let postId: string = post.postId;
-    let name = this.channelNameMap[postId] || '';
+    let channelId: string = post.channelId;
+    let name = this.channelNameMap[channelId] || '';
     if (name != '') {
       return name;
     }

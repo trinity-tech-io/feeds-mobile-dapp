@@ -12,21 +12,21 @@
 
 <div *ngIf="likeList.length > 0">
   <div *ngFor="let post of likeList let i=index">
-  <ion-grid  class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}>
+  <ion-grid  class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-like>
     <ion-row class="post-row">
       <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
 
       </ion-col>
       <ion-col class="img-col" size="2.5" (click)="navTo(post.destDid, post.channelId,post.postId)">
         <div class="feedAvatar"  id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-likeChannelAvatarKuang [class.dark-feedAvatar]="theme.darkMode">
-          <img [src] = "channelAvatarMap[post.destDid+'-'+post.channelId+'-'+post.postId]" *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId+'-'+post.postId]  != null && channelAvatarMap[post.destDid+'-'+post.channelId+'-'+post.postId] != undefined">
+          <img [src] = "channelAvatarMap[post.destDid+'-'+post.channelId]" *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId]  != null && channelAvatarMap[post.destDid+'-'+post.channelId] != undefined">
         </div>
       </ion-col>
       <ion-col class="content-col" size="6.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
-            <ion-label  *ngIf="channelNameMap[post.postId] === '' || channelNameMap[post.postId] === undefined">
+            <ion-label  *ngIf="channelNameMap[post.channelId] === '' || channelNameMap[post.channelId] === undefined">
               ......
             </ion-label>
-            <ion-label  *ngIf="channelNameMap[post.postId] != '' && channelNameMap[post.postId] != undefined">
+            <ion-label  *ngIf="channelNameMap[post.channelId] != '' && channelNameMap[post.channelId] != undefined">
               {{ handleName(post) }}
               <span> {{ handleDisplayTime(post.postId,post.createdAt) }}</span>
             </ion-label>

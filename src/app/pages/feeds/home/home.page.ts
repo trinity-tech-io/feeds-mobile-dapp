@@ -843,7 +843,6 @@ export class HomePage implements OnInit {
           }else{
             this.postList = this.postList.concat(data.items);
           }
-          console.log("====len====",this.postList.length);
           this.refreshImageV2(data.items);
           clearTimeout(sid);
           event.target.complete();
@@ -1024,6 +1023,7 @@ export class HomePage implements OnInit {
           let channel: FeedsData.ChannelV3 = this.channelMap[key] || null;
           if (channel === null) {
             channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+            this.channelMap[key] = channel;
           } else {
             channel = this.channelMap[key];
           }
@@ -2345,7 +2345,7 @@ export class HomePage implements OnInit {
   getObserveList(postList = []){
     for(let index = 0; index < postList.length; index++){
       let postItem =  postList[index];
-      let postGridId = postItem.destDid+"-"+postItem.channelId+"-"+postItem.postId+"-"+postItem.content.mediaType;
+      let postGridId = postItem.destDid+"-"+postItem.channelId+"-"+postItem.postId+"-"+postItem.content.mediaType+'-home';
       let exit = this.observerList[postGridId] || null;
       if(exit != null){
          continue;
@@ -2400,8 +2400,7 @@ export class HomePage implements OnInit {
     // console.log("======intersectionRect========",intersectionRect);
 
     if(intersectionRatio === 0){
-      console.log("======newId leave========", newId);
-      console.log("======intersectionRatio0 leave========", changes[0].intersectionRatio);
+      //console.log("======newId leave========", newId);
       return;
     }
     let arr =  newId.split("-");
@@ -2436,8 +2435,6 @@ export class HomePage implements OnInit {
     id, id, 0, container,
     this.clientHeight, this.hiveVaultController,
     this.isInitComment, this.commentNumMap);
-    console.log("======newId enter========", newId);
-    console.log("======intersectionRatio0 enter========", changes[0].intersectionRatio);
     //console.log("======intersectionRatio1========",typeof(changes[0]));
     //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
     });

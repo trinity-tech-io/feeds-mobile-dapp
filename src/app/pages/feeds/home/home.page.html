@@ -108,7 +108,7 @@
     <div  *ngFor="let post of postList let i=index" >
     <ion-grid style="padding-top: 0px;" class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode"
       [class.removeBorder]="post === postList[postList.length - 1]" [class.blur]="!hideComment"
-      id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}>
+      id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-home>
       <ion-row class="post-row">
         <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')"></ion-col>
         <ion-col class="img-col" size="2.5" (click)="navTo(post.destDid,post.channelId,post.postId)">

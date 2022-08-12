@@ -489,7 +489,7 @@ export class SubscriptionsPage implements OnInit {
       if(postItem === null){
         return;
       }
-      let postGridId = postItem.destDid+"-"+postItem.channelId;
+      let postGridId = postItem.destDid+"-"+postItem.channelId+'-subscriptions';
       let exit = this.follingObserver[postGridId] || null;
       if(exit != null){
          continue;
@@ -512,8 +512,7 @@ export class SubscriptionsPage implements OnInit {
     let intersectionRatio = changes[0].intersectionRatio;
 
     if(intersectionRatio === 0){
-      console.log("======newId leave========", newId);
-      console.log("======intersectionRatio0 leave========", changes[0].intersectionRatio);
+      //console.log("======newId leave========", newId);
       return;
     }
     let arr =  newId.split("-");
@@ -521,10 +520,6 @@ export class SubscriptionsPage implements OnInit {
     let channelId: string = arr[1];
     this.handleFollingAvatarV2(destDid,channelId);
     this.getChannelFollower(destDid,channelId);
-    console.log("======newId enter========", newId);
-    console.log("======intersectionRatio0 enter========", changes[0].intersectionRatio);
-    //console.log("======intersectionRatio1========",typeof(changes[0]));
-    //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
     });
 
     this.follingObserver[postGridId].observe(item);

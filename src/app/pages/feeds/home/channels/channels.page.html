@@ -77,7 +77,7 @@
   <ion-content *ngIf="postList.length > 0"  [scrollEvents]="true">
     <div  *ngFor="let post of postList let i=index">
     <ion-grid style="padding-top:5px" class="post-grid ion-activatable ripple channelgird" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === postList[postList.length - 1]"
-    id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}>
+    id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-channel>
       <ion-row class="post-row">
         <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></ion-col>
         <ion-col class="img-col" size="2.5">
@@ -220,7 +220,6 @@
       <ion-ripple-effect></ion-ripple-effect>
     </ion-grid>
     </div>
-
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content
         class="ion-padding-top"
@@ -228,10 +227,8 @@
       >
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
-
    </ion-content>
   </div>
-
 </ion-content>
 
 <!---------------- ADD COMMENT FOOTER ---------------->
