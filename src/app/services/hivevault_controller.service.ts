@@ -2098,4 +2098,33 @@ export class HiveVaultController {
   createSQLTables(userDid: string): Promise<string> {
     return this.dataHelper.createSQLTables(userDid);
   }
+
+  deleteAllPost() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const channelList = await this.dataHelper.getSelfChannelListV3();
+        let sum = 0;
+        for (let index = 0; index < channelList.length; index++) {
+          const channel = channelList[index];
+          const postList = await this.dataHelper.getPostListV3FromChannel(channel.destDid, channel.channelId);
+          for (let indexPost = 0; indexPost < postList.length; indexPost++) {
+            const post = postList[indexPost];
+            sum++;
+
+            this.deletePost(post).then(() => {
+              sum--;
+              if (sum == 0) {
+                resolve('FINISH');
+              }
+            });
+          }
+        }
+        if (sum == 0) {
+          resolve('FINISH');
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 }

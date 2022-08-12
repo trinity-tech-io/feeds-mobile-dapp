@@ -320,6 +320,8 @@ export const en = {
   ConfirmdialogComponent: {
     signoutTitle: 'Sign Out',
     signoutMessage: 'Are you sure you want to sign out?',
+    deleteAccountTitle: 'Delete account',
+    deleteAccountMessage: 'Are you sure you want to delete your account and clear all posts?'
   },
   SearchPage: {
     title: 'Channels',
@@ -394,10 +396,10 @@ export const en = {
     tippingAddress: 'Tipping Address',
     tippingAddressDes: 'Enter tipping address',
     inputDisplayName: 'Add channel DisplayName',
-    channelnamedes : 'Modification is not allowed after creation',
-    displaynamedes : 'Allow modification after creation',
+    channelnamedes: 'Modification is not allowed after creation',
+    displaynamedes: 'Allow modification after creation',
     displaynameContainInvalidChars:
-    'Channel DisplayName cannot include characters except alphabet letters A-Z, a-z, digits 0-9, hyphen “-”, and underscore “_”.',
+      'Channel DisplayName cannot include characters except alphabet letters A-Z, a-z, digits 0-9, hyphen “-”, and underscore “_”.',
     tipMsgLength2: 'Maximum DisplayName length is 32 characters',
 
   },

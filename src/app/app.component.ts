@@ -447,6 +447,32 @@ export class MyApp {
     //that.disconnectWallet();
   }
 
+  async confirmDeleteAccount(that: any) {
+    if (this.popover != null) {
+      this.popover.dismiss();
+    }
+
+    await that.native.showLoading('common.waitMoment');
+
+    try {
+      await that.hiveVaultController.deleteAllPost();
+    } catch (error) {
+    } finally {
+      const activeConnector = connectivity.getActiveConnector();
+      if (activeConnector.name == 'local-identity') {
+        connectivity.unregisterConnector('local-identity');
+        persistenceService.reset();
+      } else {
+        connectivity.unregisterConnector('essentials');
+      }
+      await that.dataHelper.removeData("feeds.initHive");
+
+      that.native.hideLoading();
+      that.clearData();
+      //that.disconnectWallet();
+    }
+  }
+
   async disconnectWallet() {
     await this.walletConnectControllerService.disconnect();
     await this.walletConnectControllerService.destroyWalletConnect();
@@ -712,19 +738,16 @@ export class MyApp {
     this.native.openUrl('https://trinity-feeds.app/disclaimer');
   }
 
-  deleteAccount() {
-    // this.popover = await this.popupProvider.ionicConfirm(
-    //   this,
-    //   'ConfirmdialogComponent.signoutTitle',
-    //   'ConfirmdialogComponent.signoutMessage',
-    //   this.cancel,
-    //   this.confirm,
-    //   './assets/images/signOutDialog.svg',
-    //   'common.yes'
-    // );
-
-    connectivity.unregisterConnector('local-identity');
-    persistenceService.reset();
+  async deleteAccount() {
+    this.popover = await this.popupProvider.ionicConfirm(
+      this,
+      'ConfirmdialogComponent.deleteAccountTitle',
+      'ConfirmdialogComponent.deleteAccountMessage',
+      this.cancel,
+      this.confirmDeleteAccount,
+      './assets/images/signOutDialog.svg',
+      'common.yes'
+    );
   }
   menuClose() {
     this.theme.restTheme();

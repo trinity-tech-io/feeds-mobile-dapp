@@ -318,6 +318,8 @@ export const zh = {
   ConfirmdialogComponent: {
     signoutTitle: '登出',
     signoutMessage: '确认要登出吗？',
+    deleteAccountTitle: '删除账户',
+    deleteAccountMessage: '确认要删除账户并清空全部微说么？'
   },
   SearchPage: {
     title: '频道',
@@ -392,8 +394,8 @@ export const zh = {
     tippingAddress: '打赏地址',
     tippingAddressDes: '输入打赏地址',
     inputDisplayName: '请输入频道显示名称',
-    channelnamedes : '创建后不允许修改',
-    displaynamedes : '创建后允许修改',
+    channelnamedes: '创建后不允许修改',
+    displaynamedes: '创建后允许修改',
     displaynameContainInvalidChars:
       '频道显示名称不能包含除字母A-Z、a-z、数字0-9、连字符“-”和下划线“_”以外的字符。',
     tipMsgLength2: '显示名称长度最大为32个字符',
