@@ -1414,21 +1414,16 @@ export class ChannelsPage implements OnInit {
     //post like status
     let id = destDid+'-'+channelId+'-'+postId;
     CommonPageService.handlePostLikeStatusData(
-    id, id, 0, container,
-    this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+    destDid, channelId, postId, this.isInitLikeStatus, this.hiveVaultController,
     this.likeMap, this.isLoadingLikeMap)
     //处理post like number
     CommonPageService.handlePostLikeNumData(
-    id, id, 0, container,
-    this.clientHeight, this.hiveVaultController,
+    destDid, channelId, postId, this.hiveVaultController,
     this.likeNumMap, this.isInitLikeNum);
     //处理post comment
     CommonPageService.handlePostCommentData(
-    id, id, 0, container,
-    this.clientHeight, this.hiveVaultController,
+    destDid, channelId, postId, this.hiveVaultController,
     this.isInitComment, this.commentNumMap);
-    console.log("======newId enter========", newId);
-    console.log("======intersectionRatio0 enter========", changes[0].intersectionRatio);
     //console.log("======intersectionRatio1========",typeof(changes[0]));
     //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
     });

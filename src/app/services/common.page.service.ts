@@ -244,29 +244,21 @@ export class CommonPageService {
   }
 
   public static handlePostLikeStatusData(
-    id: any, srcId: any, postgridindex: any, postgrid: any,
-    clientHeight: any, isInitLikeStatus: any, hiveVaultController: any,
-    likeMap: any, isLoadingLikeMap: any
+    destDid: string,
+    channelId: string,
+    postId: string,
+    isInitLikeStatus: any,
+    hiveVaultController: any,
+    likeMap: any,
+    isLoadingLikeMap: any
   ) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= - Config.rectTop &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
-      ) {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
+
         let isInit = isInitLikeStatus[postId] || '';
         if (isInit === '') {
           isInitLikeStatus[postId] = "11";
           this.initPostLikeStatusData(destDid, channelId, postId,
             isLoadingLikeMap, hiveVaultController, likeMap, isInitLikeStatus);
         }
-      }
-    } catch (error) {
-    }
   }
 
   static initPostLikeStatusData(
@@ -296,28 +288,15 @@ export class CommonPageService {
   }
 
   public static handlePostLikeNumData(
-    id: string, srcId: string, rowindex: number, postgrid: any,
-    clientHeight: any, hiveVaultController: any,
+    destDid: string, channelId: string, postId: string,
+    hiveVaultController: any,
     likeNumMap: any, isInitLikeNum: any
   ) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= - Config.rectTop &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
-      ) {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let isInit = isInitLikeNum[postId] || '';
-        if (isInit === '') {
-          isInitLikeNum[postId] = "11";
-          this.initPostLikeNumData(destDid, channelId, postId,
-            hiveVaultController, likeNumMap, isInitLikeNum);
-        }
-      }
-    } catch (error) {
+    let isInit = isInitLikeNum[postId] || '';
+    if (isInit === '') {
+    isInitLikeNum[postId] = "11";
+    this.initPostLikeNumData(destDid, channelId, postId,
+      hiveVaultController, likeNumMap, isInitLikeNum);
     }
   }
 
@@ -342,30 +321,17 @@ export class CommonPageService {
   }
 
   public static handlePostCommentData(
-    id: string, srcId: string, rowindex: number, postgrid: any,
-    clientHeight: any, hiveVaultController: any,
+    destDid: string, channelId: string, postId: string,
+    hiveVaultController: any,
     isInitComment: any, commentNumMap: any
   ) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= - Config.rectTop &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
-      ) {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let isInit = isInitComment[postId] || '';
-        if (isInit === '') {
-          isInitComment[postId] = "11";
-          this.initPostCommentData(destDid, channelId, postId,
-            hiveVaultController, isInitComment, commentNumMap
-          );
-        }
+      let isInit = isInitComment[postId] || '';
+      if (isInit === '') {
+        isInitComment[postId] = "11";
+        this.initPostCommentData(destDid, channelId, postId,
+          hiveVaultController, isInitComment, commentNumMap
+        );
       }
-    } catch (error) {
-    }
   }
   static initPostCommentData(destDid: string, channelId: string, postId: string,
     hiveVaultController: any, isInitComment: any, commentNumMap: any

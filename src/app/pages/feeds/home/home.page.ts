@@ -2383,11 +2383,6 @@ export class HomePage implements OnInit {
     this.observerList[postGridId] = new IntersectionObserver(async (changes:any)=>{
     let container = changes[0].target;
     let newId = container.getAttribute("id");
-    // if(changes[0].intersectionRatio === 1){
-    //   console.log("======intersectionRatio0========", newId,changes[0].intersectionRatio);
-    // }else if(changes[0].intersectionRatio === 0){
-    //   console.log("======intersectionRatio1========", newId,changes[0].intersectionRatio);
-    // }
     let intersectionRatio = changes[0].intersectionRatio;
 
     // let boundingClientRect = changes[0].boundingClientRect;
@@ -2420,20 +2415,16 @@ export class HomePage implements OnInit {
     }
 
     //post like status
-    let id = destDid+'-'+channelId+'-'+postId;
     CommonPageService.handlePostLikeStatusData(
-    id, id, 0, container,
-    this.clientHeight, this.isInitLikeStatus, this.hiveVaultController,
+    destDid, channelId, postId,this.isInitLikeStatus, this.hiveVaultController,
     this.likeMap, this.isLoadingLikeMap)
     //处理post like number
     CommonPageService.handlePostLikeNumData(
-    id, id, 0, container,
-    this.clientHeight, this.hiveVaultController,
+      destDid, channelId, postId, this.hiveVaultController,
     this.likeNumMap, this.isInitLikeNum);
     //处理post comment
     CommonPageService.handlePostCommentData(
-    id, id, 0, container,
-    this.clientHeight, this.hiveVaultController,
+      destDid, channelId, postId, this.hiveVaultController,
     this.isInitComment, this.commentNumMap);
     //console.log("======intersectionRatio1========",typeof(changes[0]));
     //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
