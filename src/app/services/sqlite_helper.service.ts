@@ -3,6 +3,7 @@ import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { Logger } from './logger';
 import _ from 'lodash';
 import { Config } from './config';
+import { StorageService } from './StorageService';
 
 const TAG: string = 'sqlite-helper';
 
