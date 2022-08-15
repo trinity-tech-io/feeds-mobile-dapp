@@ -171,7 +171,7 @@ export class SubscriptionsPage implements OnInit {
       promiseList.push(syncChannelInfoPromise);
 
       await Promise.all(promiseList)
-
+      this.removeObserveList();
       this.subscriptionV3NumMap = {};
       this.visibleareaItemIndex = 0;
       this.initFollowing();

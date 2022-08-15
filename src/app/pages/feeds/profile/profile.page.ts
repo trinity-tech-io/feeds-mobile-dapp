@@ -12,7 +12,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TranslateService } from '@ngx-translate/core';
 import { StorageService } from 'src/app/services/StorageService';
-import _, { result } from 'lodash';
+import _ from 'lodash';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { UtilService } from 'src/app/services/utilService';
@@ -714,6 +714,7 @@ export class ProfilePage implements OnInit {
           await this.hiveVaultController.syncSubscribedChannelFromBackup();
           this.subscriptionV3NumMap = {};
           this.channelMap = {};
+          this.removeMyFeedsObserveList();
           await this.initMyFeeds(selfchannels);
           event.target.complete();
         } catch (error) {
@@ -733,6 +734,7 @@ export class ProfilePage implements OnInit {
       case 'ProfilePage.myLikes':
         try {
           await this.hiveVaultController.syncAllLikeData();
+          this.removeLikeObserveList();
           this.pageSize= 1;
           this.handleDisplayNameMap = {};
           this.postImgMap = {};
@@ -2270,7 +2272,6 @@ export class ProfilePage implements OnInit {
   }
 
   getMyFeedsObserverList(myFeedslist = []){
-
     for(let index = 0; index < myFeedslist.length; index++){
       let postItem =  myFeedslist[index] || null;
       if(postItem === null){
@@ -2287,9 +2288,11 @@ export class ProfilePage implements OnInit {
 
   newMyFeedsObserver(postGridId: string) {
     let observer = this.myFeedsObserver[postGridId] || null;
+    console.log("=====test========3");
     if(observer != null){
       return;
     }
+    console.log("=====test========4");
     let item = document.getElementById(postGridId) || null;
     if(item != null ){
     this.myFeedsObserver[postGridId] = new IntersectionObserver(async (changes:any)=>{
@@ -2306,6 +2309,7 @@ export class ProfilePage implements OnInit {
     let destDid: string = arr[0];
     let channelId: string = arr[1];
     this.handleMyFeedsAvatarV2(destDid,channelId);
+    console.log("=====test========");
     this.getChannelFollower(destDid,channelId);
     //console.log("======intersectionRatio1========",typeof(changes[0]));
     //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));

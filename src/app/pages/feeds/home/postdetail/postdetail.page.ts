@@ -49,7 +49,7 @@ export class PostdetailPage implements OnInit {
   public destDid: string = '';
   public channelId: string = "0";
   public postId: string = "";
-  public startIndex: number = 0;
+  public pageSize: number = 1;
   public pageNumber: number = 5;
   public totalData: any = [];
 
@@ -210,14 +210,15 @@ export class PostdetailPage implements OnInit {
   }
 
   async initRefresh() {
-    this.startIndex = 0;
+    this.pageSize = 1;
     this.totalData = await this.sortCommentList();
-    if (this.totalData.length - this.pageNumber > 0) {
-      this.captainCommentList = this.totalData.slice(0, this.pageNumber);
-
-      this.startIndex++;
-    } else {
-      this.captainCommentList = this.totalData;
+    let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
+    if(data.currentPage === data.totalPage){
+      this.captainCommentList = data.items
+      this.infiniteScroll.disabled = true;
+    }else{
+      this.captainCommentList = data.items;
+      this.infiniteScroll.disabled = false;
     }
     this.initOwnCommentObj();
     this.refreshLikeAndCommentV2(this.captainCommentList);
@@ -241,12 +242,12 @@ export class PostdetailPage implements OnInit {
     if (this.totalData.length === this.captainCommentList.length) {
       this.captainCommentList = this.totalData;
     } else if (
-      this.startIndex != 0 &&
-      this.totalData.length - this.pageNumber * this.startIndex > 0
+      this.pageSize != 1 &&
+      this.totalData.length - this.pageNumber * this.pageSize > 0
     ) {
       this.captainCommentList = this.totalData.slice(
         0,
-        this.startIndex * this.pageNumber,
+        this.pageSize * this.pageNumber,
       );
     } else {
       this.captainCommentList = this.totalData;
@@ -352,7 +353,7 @@ export class PostdetailPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.getCommentFinish, (comment: FeedsData.CommentV3) => {
       this.zone.run(() => {
         Logger.log(TAG, 'Received commentDataUpdate event');
-        this.startIndex = 0;
+        this.pageSize = 1;
         this.initData(true);
       });
     });
@@ -396,7 +397,7 @@ export class PostdetailPage implements OnInit {
             if (index > -1) {
               cachedCommentList[index] = newComment;
             }
-            this.startIndex = 0;
+            this.pageSize = 1;
             await this.initData(false);
             this.native.hideLoading();
           }).catch(() => {
@@ -743,6 +744,8 @@ export class PostdetailPage implements OnInit {
       await this.hiveVaultController.queryPostByPostId(this.destDid, this.channelId, this.postId);
       await this.hiveVaultController.syncCommentFromPost(this.destDid, this.channelId, this.postId);
       await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
+      this.removeReplyCommentObserverList();
+      this.removeCaptainCommentObserverList();
       this.initData(true);
       event.target.complete();
     } catch (error) {
@@ -751,38 +754,22 @@ export class PostdetailPage implements OnInit {
   }
 
   loadData(event: any) {
-    let sId = setTimeout(() => {
-      let arr = [];
-      if (this.totalData.length - this.pageNumber * this.startIndex > this.pageNumber) {
-        arr = this.totalData.slice(
-          this.startIndex * this.pageNumber,
-          (this.startIndex + 1) * this.pageNumber,
-        );
-        this.startIndex++;
-        this.zone.run(() => {
-          this.captainCommentList = this.captainCommentList.concat(arr);
-        });
-        this.initOwnCommentObj();
-        event.target.complete();
-      } else {
-        //上拉加载到底
-        if (this.totalData.length === this.captainCommentList.length) {
-          event.target.complete();
-          clearTimeout(sId);
-          return;
-        }
-        arr = this.totalData.slice(
-          this.startIndex * this.pageNumber,
-          this.totalData.length,
-        );
-        this.zone.run(() => {
-          this.captainCommentList = this.captainCommentList.concat(arr);
-        });
-        this.initOwnCommentObj();
-        event.target.complete();
-        clearTimeout(sId);
+
+    let sid = setTimeout(()=>{
+      this.pageSize++;
+      let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
+      if(data.currentPage === data.totalPage){
+        this.captainCommentList  = this.captainCommentList.concat(data.items);
+        event.target.disabled = true;
+      }else{
+        this.captainCommentList  = this.captainCommentList.concat(data.items);
       }
-    }, 500);
+      this.initOwnCommentObj();
+      this.refreshLikeAndCommentV2(data.items);
+      clearTimeout(sid);
+      event.target.complete();
+    },500);
+
   }
 
   pressName() {

@@ -701,6 +701,7 @@ export class ChannelsPage implements OnInit {
       this.postMap = {};
       this.isRefresh = true;
       event.target.disabled = false;
+      this.removeObserveList();
       this.init();
       event.target.complete();
     } catch (error) {

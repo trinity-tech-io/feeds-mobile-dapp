@@ -892,6 +892,7 @@ export class HomePage implements OnInit {
         });
 
         try {
+          this.removeObserveList();
           await this.refreshPage();
         } catch (error) {
         }
