@@ -138,6 +138,7 @@ export class PostdetailPage implements OnInit {
   public ownerDid: string = "";
   public updatedTimeStr: string = "";
   private commentTime: any = {};
+  private captainObserverList: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -217,7 +218,7 @@ export class PostdetailPage implements OnInit {
       this.captainCommentList = this.totalData;
     }
     this.initOwnCommentObj();
-    this.refreshLikeAndComment();
+    this.refreshLikeAndCommentV2(this.captainCommentList);
     //this.totalData = this.sortCommentList();
   }
 
@@ -1238,7 +1239,63 @@ export class PostdetailPage implements OnInit {
     }, 50);
   }
 
+  refreshLikeAndCommentV2(list = []) {
+    let sid = setTimeout(() => {
+      this.isInitComment = {};
+      this.isInitLikeNum = {};
+      this.isInitLikeStatus = {};
+      //this.handleLikeAndComment();
+      this.getCaptainCommentObserveList(this.captainCommentList);
+      clearTimeout(sid);
+    }, 100);
+  }
+
   async handleLikeAndComment() {
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    let captainComment = document.getElementsByClassName('captainComment');
+    let captainCommentNum = document.getElementsByClassName('captainComment').length;
+    for (let captainCommentIndex = 0; captainCommentIndex < captainCommentNum; captainCommentIndex++) {
+      let srcId = captainComment[captainCommentIndex].getAttribute('id') || '';
+      if (srcId != '') {
+        let arr = srcId.split('-');
+        let destDid = arr[0];
+        let channelId = arr[1];
+        let postId = arr[2];
+        let commentId = arr[3];
+        let userDid = arr[4];
+        let id = destDid + '-' + channelId + '-' + postId + '-' + commentId;
+        //处理Name
+        CommonPageService.handleDisplayUserName(
+          id, srcId, captainCommentIndex,
+          captainComment[captainCommentIndex],
+          this.clientHeight, this.isInitUserNameMap,
+          this.userNameMap, this.hiveVaultController,
+          ownerDid,
+          this.channelName
+        );
+        //处理commnet like status
+        CommonPageService.
+          handleCommentLikeStatus(
+            id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
+            this.clientHeight, this.hiveVaultController,
+            this.isInitLikeStatus, this.isloadingLikeMap,
+            this.likedCommentMap);
+        //处理commnet like num
+        CommonPageService.handleCommentLikeNum(
+          id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
+          this.clientHeight, this.hiveVaultController,
+          this.isInitLikeNum, this.likedCommentNum);
+        //处理post comment
+        CommonPageService.handleCommentNum(
+          id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
+          this.clientHeight, this.hiveVaultController,
+          this.isInitComment, this.commentNum
+        )
+      }
+    }
+  }
+
+  async handleLikeAndCommentV2() {
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     let captainComment = document.getElementsByClassName('captainComment');
     let captainCommentNum = document.getElementsByClassName('captainComment').length;
@@ -1319,5 +1376,49 @@ export class PostdetailPage implements OnInit {
   handlePostText(url: string, event: any) {
     event.stopPropagation();
   }
+
+  getCaptainCommentObserveList(postList = []){
+    for(let index = 0; index < postList.length; index++){
+      let postItem =  postList[index];
+      let postGridId = postItem.destDid+"-"+postItem.channelId+"-"+postItem.postId+"-"+postItem.content.mediaType+'-home';
+      let exit = this.captainObserverList[postGridId] || null;
+      if(exit != null){
+         continue;
+      }
+      this.newSectionObserver(postGridId);
+    }
+  }
+
+  newSectionObserver(postGridId: string) {
+    let observer = this.captainObserverList[postGridId] || null;
+    if(observer != null){
+      return;
+    }
+    let item = document.getElementById(postGridId) || null;
+    if(item != null ){
+    this.captainObserverList[postGridId] = new IntersectionObserver(async (changes:any)=>{
+    let container = changes[0].target;
+    let newId = container.getAttribute("id");
+    let intersectionRatio = changes[0].intersectionRatio;
+
+    if(intersectionRatio === 0){
+      //console.log("======newId leave========", newId);
+      return;
+    }
+    let arr =  newId.split("-");
+    let destDid: string = arr[0];
+    let channelId: string = arr[1];
+    let postId: string = arr[2];
+    let mediaType: string = arr[3];
+
+    //console.log("======intersectionRatio1========",typeof(changes[0]));
+    //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+    });
+
+    this.captainObserverList[postGridId].observe(item);
+    }
+  }
+
+
 }
 
