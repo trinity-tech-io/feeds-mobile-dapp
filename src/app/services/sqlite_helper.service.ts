@@ -16,6 +16,7 @@ export class FeedsSqliteHelper {
   private readonly TABLE_SUBSCRIPTION_CHANNEL: string = 'subscriptionchannel';
   private readonly TABLE_SUBSCRIPTION: string = 'subscription';
   private readonly TABLE_CHANNEL_NEW: string = 'channelnew';
+  private readonly TABLE_POST_NEW: string = 'postsnew';
   private readonly TABLE_PINPOST: string = 'pinpost';
 
   public isOpen: boolean = false;

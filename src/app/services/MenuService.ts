@@ -609,8 +609,16 @@ export class MenuService {
     return {
       text: 'pinPost',
       icon: 'create',
-      handler: () => {
-        this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.PINNED);
+      handler: async () => {
+        try {
+          await this.native.showLoading("common.waitMoment");
+          await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.PINNED);
+          this.events.publish(FeedsEvent.PublishType.pinPostFinish);
+        } catch (error) {
+          this.native.toastWarn('PinPostError');
+        } finally {
+          this.native.hideLoading()
+        }
       }
     }
   }
@@ -619,8 +627,16 @@ export class MenuService {
     return {
       text: 'unpinPost',
       icon: 'create',
-      handler: () => {
-        this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.NOTPINNED);
+      handler: async () => {
+        try {
+          await this.native.showLoading("common.waitMoment");
+          await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.NOTPINNED);
+          this.events.publish(FeedsEvent.PublishType.unpinPostFinish);
+        } catch (error) {
+          this.native.toastWarn('UnPinPostError');
+        } finally {
+          this.native.hideLoading()
+        }
       }
     }
   }

@@ -186,7 +186,10 @@ declare namespace FeedsEvent {
     authEssentialSuccess = 'feeds:authEssentialSuccess',
     initHiveData = 'feeds:initHiveData',
     // updateSyncHiveData = 'feeds:updateSyncHiveData',
-    authEssentialFail = 'feeds:authEssentialFail'
+    authEssentialFail = 'feeds:authEssentialFail',
+
+    pinPostFinish = 'feeds:pinPostFinish',
+    unpinPostFinish = 'feeds:unpinPostFinish'
   }
 
   type TipDialogData = {

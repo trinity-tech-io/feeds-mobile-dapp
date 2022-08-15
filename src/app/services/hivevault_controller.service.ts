@@ -131,6 +131,8 @@ export class HiveVaultController {
           const posts = await this.syncPostListByChannel(destDid, channelId);
           postList.push(posts);
         }
+
+        console.log('postList====>', postList);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'Sync post from channel error', error);
@@ -644,8 +646,7 @@ export class HiveVaultController {
 
   public pinPost(originPost: FeedsData.PostV3, pinStatus: FeedsData.PinStatus): Promise<FeedsData.PostV3> {
     console.log('===========>originPost', originPost, '===========>pinStatus', pinStatus);
-    // return this.updatePost(originPost, originPost.content, pinStatus, originPost.updatedAt, originPost.type, originPost.tag, originPost.status, originPost.memo, originPost.proof);
-    return null;
+    return this.updatePost(originPost, originPost.content, pinStatus, originPost.updatedAt, originPost.type, originPost.tag, originPost.status, originPost.memo, originPost.proof);
   }
 
   private async progressMediaData(newPostText: string, newImagesBase64: string[], newVideoData: FeedsData.videoData) {

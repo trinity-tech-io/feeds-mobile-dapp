@@ -45,6 +45,9 @@ export class Config {
     public static IPFS_TEST_SERVER: string = 'https://ipfs-test.trinity-feeds.app/';
 
     public static readonly scriptVersion = "1.0.2";
+
+    //30101 update channel sql -> add display_name
+    //30102 update post sql -> add pin_status
     public static readonly SQL_VERSION: number = 30101;
 
     public static changeApi(api: string) {

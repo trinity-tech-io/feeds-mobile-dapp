@@ -7,11 +7,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { UtilService } from 'src/app/services/utilService';
 import { MenuService } from 'src/app/services/MenuService';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  PopoverController,
-  IonInfiniteScroll,
-  IonContent,
-} from '@ionic/angular';
+import { PopoverController, IonInfiniteScroll, IonContent, } from '@ionic/angular';
 import { AppService } from 'src/app/services/AppService';
 import { PopupProvider } from 'src/app/services/popup';
 import { ViewHelper } from 'src/app/services/viewhelper.service';
@@ -476,6 +472,14 @@ export class ChannelsPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.channelRightMenu, () => {
       this.clickAvatar();
     });
+
+    this.events.subscribe(FeedsEvent.PublishType.pinPostFinish, async () => {
+      await this.refreshChannelList();
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.unpinPostFinish, async () => {
+      await this.refreshChannelList();
+    })
   }
 
   ionViewWillLeave() {
@@ -508,6 +512,9 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
     this.events.unsubscribe(FeedsEvent.PublishType.channelRightMenu);
+
+    this.events.unsubscribe(FeedsEvent.PublishType.pinPostFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.unpinPostFinish);
     this.removeImages();
     this.removeAllVideo();
     this.postTime = {};
@@ -688,11 +695,7 @@ export class ChannelsPage implements OnInit {
     let isMine = await this.checkChannelIsMine();
     this.curPostId = post.postId;
 
-    this.menuService.showChannelItemMenu(
-      post,
-      this.channelName,
-      isMine === 1 && post.status != FeedsData.PostCommentStatus.deleted
-    );
+    this.menuService.showChannelItemMenu(post, this.channelName, isMine === 1 && post.status != FeedsData.PostCommentStatus.deleted);
   }
 
   async doRefresh(event: any) {
