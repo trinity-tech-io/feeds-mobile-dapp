@@ -227,7 +227,7 @@
     <div  *ngIf="replyCommentsMap[comment.commentId] != undefined && replyCommentsMap[comment.commentId].length >0">
     <div *ngFor="let replyComment of replyCommentsMap[comment.commentId] let i=index">
       <ion-grid  class="post-grid ion-activatable ripple captainComment" [class.darkPostGrid]="theme.darkMode"
-      id={{replyComment.destDid}}-{{replyComment.channelId}}-{{replyComment.postId}}-{{replyComment.commentId}}-{{replyComment.createrDid}}
+      id={{replyComment.destDid}}-{{replyComment.channelId}}-{{replyComment.postId}}-{{replyComment.commentId}}-{{replyComment.createrDid}}-replyComment
       >
         <ion-row class="post-row">
           <ion-col size="1.5"></ion-col>

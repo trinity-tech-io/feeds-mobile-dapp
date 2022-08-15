@@ -24,10 +24,6 @@ export class CommonPageService {
 
   public static handleDisplayUserName(
     id: string,
-    srcId: string,
-    rowindex: number,
-    postgrid: any,
-    clientHeight: any,
     isInitUserNameMap: any,
     userNameMap: any,
     hiveVaultController: any,
@@ -35,12 +31,8 @@ export class CommonPageService {
     channelName?: string,
   ) {
     try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= -100 &&
-        postgrid.getBoundingClientRect().bottom <= clientHeight
-      ) {
-        let arr = srcId.split('-');
+
+        let arr = id.split('-');
         let destDid = arr[0];
         let channelId = arr[1];
         let commentId = arr[3];
@@ -65,7 +57,7 @@ export class CommonPageService {
               userNameMap[userDid] = this.indexText(userDid);
             });
         }
-      }
+
     } catch (error) {
     }
   }
@@ -351,18 +343,13 @@ export class CommonPageService {
   }
 
   public static handleCommentLikeStatus(
-    id: string, srcId: string, rowindex: number, postgrid: any,
-    clientHeight: any, hiveVaultController: any,
+    id: string, hiveVaultController: any,
     isInitLikeStatus: any, isloadingLikeMap: any,
     likedCommentMap: any
   ) {
     try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= - Config.rectTop &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
-      ) {
-        let arr = srcId.split('-');
+
+        let arr = id.split('-');
         let destDid = arr[0];
         let channelId = arr[1];
         let postId = arr[2];
@@ -381,7 +368,7 @@ export class CommonPageService {
             likedCommentMap
           );
         }
-      }
+
     } catch (error) {
     }
   }
@@ -421,17 +408,12 @@ export class CommonPageService {
   }
 
   public static handleCommentLikeNum(
-    id: string, srcId: string, rowindex: number, postgrid: any,
-    clientHeight: any, hiveVaultController: any,
+    id: string, hiveVaultController: any,
     isInitLikeNum: any, likedCommentNum: any
   ) {
     try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= -Config.rectTop &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
-      ) {
-        let arr = srcId.split('-');
+
+        let arr = id.split('-');
         let destDid = arr[0];
         let channelId = arr[1];
         let postId = arr[2];
@@ -449,7 +431,7 @@ export class CommonPageService {
             likedCommentNum,
           );
         }
-      }
+
     } catch (error) {
     }
   }
@@ -478,17 +460,12 @@ export class CommonPageService {
   }
 
   public static handleCommentNum(
-    id: string, srcId: string, rowindex: number, postgrid: any,
-    clientHeight: any, hiveVaultController: any,
+    id: string,hiveVaultController: any,
     isInitComment: any, commentNum: any
   ) {
-    try {
-      if (
-        id != '' &&
-        postgrid.getBoundingClientRect().top >= - Config.rectTop &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom
-      ) {
-        let arr = srcId.split('-');
+    try
+      {
+        let arr = id.split('-');
         let destDid = arr[0];
         let channelId = arr[1];
         let postId = arr[2];
@@ -504,7 +481,7 @@ export class CommonPageService {
             commentNum
           );
         }
-      }
+
     } catch (error) {
     }
   }

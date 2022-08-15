@@ -139,6 +139,7 @@ export class PostdetailPage implements OnInit {
   public updatedTimeStr: string = "";
   private commentTime: any = {};
   private captainObserverList: any = {};
+  private replyObserverList: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -189,6 +190,7 @@ export class PostdetailPage implements OnInit {
     for (let key in this.replyCommentsMap) {
       let commentList: FeedsData.CommentV3[] = this.replyCommentsMap[key] || [];
       this.checkRelyCommentIsMine(commentList, ownerDid);
+      this.getReplyCommentObserverList(commentList);
     }
   }
 
@@ -250,7 +252,7 @@ export class PostdetailPage implements OnInit {
       this.captainCommentList = this.totalData;
     }
     this.initOwnCommentObj();
-    this.refreshLikeAndComment();
+    this.refreshLikeAndCommentV2(this.captainCommentList);
   }
 
   async sortCommentList() {
@@ -418,6 +420,8 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
+    this.removeCaptainCommentObserverList();
+    this.removeReplyCommentObserverList();
     this.native.handleTabsEvents();
     this.isInitLikeNum = {};
     this.isInitComment = {};
@@ -1225,18 +1229,7 @@ export class PostdetailPage implements OnInit {
   }
 
   ionScroll() {
-    this.native.throttle(this.handleLikeAndComment(), 200, this, true);
-    this.native.throttle(this.handleUserName(), 200, this, true);
-  }
 
-  refreshLikeAndComment() {
-    let sid = setTimeout(() => {
-      this.isInitComment = {};
-      this.isInitLikeNum = {};
-      this.isInitLikeStatus = {};
-      this.handleLikeAndComment();
-      clearTimeout(sid);
-    }, 50);
   }
 
   refreshLikeAndCommentV2(list = []) {
@@ -1244,31 +1237,23 @@ export class PostdetailPage implements OnInit {
       this.isInitComment = {};
       this.isInitLikeNum = {};
       this.isInitLikeStatus = {};
-      //this.handleLikeAndComment();
-      this.getCaptainCommentObserveList(this.captainCommentList);
+      this.getCaptainCommentObserveList(list);
       clearTimeout(sid);
     }, 100);
   }
 
-  async handleLikeAndComment() {
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    let captainComment = document.getElementsByClassName('captainComment');
-    let captainCommentNum = document.getElementsByClassName('captainComment').length;
-    for (let captainCommentIndex = 0; captainCommentIndex < captainCommentNum; captainCommentIndex++) {
-      let srcId = captainComment[captainCommentIndex].getAttribute('id') || '';
-      if (srcId != '') {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let commentId = arr[3];
-        let userDid = arr[4];
-        let id = destDid + '-' + channelId + '-' + postId + '-' + commentId;
+
+  async handleLikeAndCommentV2(destDid: string, channelId: string, postId: string, commentId: string,userDid: string) {
+    let ownerDid = this.ownerDid || "";
+    if(ownerDid === ""){
+      ownerDid = (await this.dataHelper.getSigninData()).did;
+      this.ownerDid = ownerDid;
+    }
+
+    let id = destDid + '-' + channelId + '-' + postId + '-' + commentId+"-"+userDid;
         //处理Name
         CommonPageService.handleDisplayUserName(
-          id, srcId, captainCommentIndex,
-          captainComment[captainCommentIndex],
-          this.clientHeight, this.isInitUserNameMap,
+          id,this.isInitUserNameMap,
           this.userNameMap, this.hiveVaultController,
           ownerDid,
           this.channelName
@@ -1276,120 +1261,56 @@ export class PostdetailPage implements OnInit {
         //处理commnet like status
         CommonPageService.
           handleCommentLikeStatus(
-            id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
-            this.clientHeight, this.hiveVaultController,
+            id, this.hiveVaultController,
             this.isInitLikeStatus, this.isloadingLikeMap,
             this.likedCommentMap);
         //处理commnet like num
         CommonPageService.handleCommentLikeNum(
-          id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
-          this.clientHeight, this.hiveVaultController,
+          id,this.hiveVaultController,
           this.isInitLikeNum, this.likedCommentNum);
         //处理post comment
         CommonPageService.handleCommentNum(
-          id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
-          this.clientHeight, this.hiveVaultController,
+          id, this.hiveVaultController,
           this.isInitComment, this.commentNum
         )
-      }
-    }
+
   }
 
-  async handleLikeAndCommentV2() {
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    let captainComment = document.getElementsByClassName('captainComment');
-    let captainCommentNum = document.getElementsByClassName('captainComment').length;
-    for (let captainCommentIndex = 0; captainCommentIndex < captainCommentNum; captainCommentIndex++) {
-      let srcId = captainComment[captainCommentIndex].getAttribute('id') || '';
-      if (srcId != '') {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let commentId = arr[3];
-        let userDid = arr[4];
-        let id = destDid + '-' + channelId + '-' + postId + '-' + commentId;
-        //处理Name
-        CommonPageService.handleDisplayUserName(
-          id, srcId, captainCommentIndex,
-          captainComment[captainCommentIndex],
-          this.clientHeight, this.isInitUserNameMap,
-          this.userNameMap, this.hiveVaultController,
-          ownerDid,
-          this.channelName
-        );
-        //处理commnet like status
-        CommonPageService.
-          handleCommentLikeStatus(
-            id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
-            this.clientHeight, this.hiveVaultController,
-            this.isInitLikeStatus, this.isloadingLikeMap,
-            this.likedCommentMap);
-        //处理commnet like num
-        CommonPageService.handleCommentLikeNum(
-          id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
-          this.clientHeight, this.hiveVaultController,
-          this.isInitLikeNum, this.likedCommentNum);
-        //处理post comment
-        CommonPageService.handleCommentNum(
-          id, srcId, captainCommentIndex, captainComment[captainCommentIndex],
-          this.clientHeight, this.hiveVaultController,
-          this.isInitComment, this.commentNum
-        )
-      }
-    }
-  }
+  async handleUserNameV2(destDid: string, channelId: string,postId: string, commentId: string, userDid: string) {
 
-  async handleUserName() {
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    let replayComments = document.getElementsByClassName('replayCommentPostGrid') || [];
-    let replayCommentNum = replayComments.length;
-    for (let replayCommentIndex = 0; replayCommentIndex < replayCommentNum; replayCommentIndex++) {
-      let replayComment = replayComments[replayCommentIndex];
-      let srcId = replayComment.getAttribute('id') || '';
-      if (srcId != '') {
-        let arr = srcId.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let commentId = arr[3];
-        let userDid = arr[4];
-        let id = destDid + '-' + channelId + '-' + postId + '-' + commentId;
-        CommonPageService.handleDisplayUserName(
-          id, srcId, replayCommentIndex,
-          replayComment, this.clientHeight, this.isInitUserNameMap,
-          this.userNameMap, this.hiveVaultController,
-          ownerDid,
-          this.userNameMap[userDid]
-        );
-      }
+    let ownerDid = this.ownerDid || "";
+    if(ownerDid === ""){
+      ownerDid = (await this.dataHelper.getSigninData()).did;
+      this.ownerDid = ownerDid;
     }
-  }
 
-  refresuserName() {
-    let sid = setTimeout(() => {
-      this.handleUserName();
-      clearTimeout(sid);
-    }, 50);
+    let id = destDid + '-' + channelId + '-' + postId + '-' + commentId+"-"+userDid;
+    CommonPageService.handleDisplayUserName(
+    id,this.isInitUserNameMap,
+    this.userNameMap, this.hiveVaultController,
+    ownerDid,
+    this.userNameMap[userDid]
+    );
   }
 
   handlePostText(url: string, event: any) {
     event.stopPropagation();
   }
 
-  getCaptainCommentObserveList(postList = []){
-    for(let index = 0; index < postList.length; index++){
-      let postItem =  postList[index];
-      let postGridId = postItem.destDid+"-"+postItem.channelId+"-"+postItem.postId+"-"+postItem.content.mediaType+'-home';
+  getCaptainCommentObserveList(commentList = []){
+    for(let index = 0; index < commentList.length; index++){
+      let commentItem =  commentList[index];
+      let postGridId = commentItem.destDid+"-"+commentItem.channelId+"-"
+      +commentItem.postId+"-"+commentItem.commentId+"-"+commentItem.createrDid+'-captainComment';
       let exit = this.captainObserverList[postGridId] || null;
       if(exit != null){
          continue;
       }
-      this.newSectionObserver(postGridId);
+      this.newCaptainCommentObserver(postGridId);
     }
   }
 
-  newSectionObserver(postGridId: string) {
+  newCaptainCommentObserver(postGridId: string) {
     let observer = this.captainObserverList[postGridId] || null;
     if(observer != null){
       return;
@@ -1409,14 +1330,91 @@ export class PostdetailPage implements OnInit {
     let destDid: string = arr[0];
     let channelId: string = arr[1];
     let postId: string = arr[2];
-    let mediaType: string = arr[3];
-
-    //console.log("======intersectionRatio1========",typeof(changes[0]));
-    //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+    let commentId: string = arr[3];
+    let createrDid: string = arr[4];
+    this.handleLikeAndCommentV2(destDid, channelId,postId, commentId, createrDid);
     });
-
     this.captainObserverList[postGridId].observe(item);
     }
+  }
+
+  removeCaptainCommentObserverList() {
+    for(let postGridId in this.captainObserverList){
+      let observer = this.captainObserverList[postGridId] || null;
+      this.removeCaptainCommentObserver(postGridId, observer)
+    }
+    this.captainObserverList = {};
+  }
+
+  removeCaptainCommentObserver(postGridId: string, observer: any){
+    let item = document.getElementById(postGridId) || null;
+    if(item != null){
+      if( observer != null ){
+        observer.unobserve(item);//解除观察器
+        observer.disconnect();  // 关闭观察器
+        this.captainObserverList[postGridId] = null;
+      }
+    }
+  }
+
+  getReplyCommentObserverList(replyCommentList = []){
+    for(let index = 0; index < replyCommentList.length; index++){
+      let commentItem =  replyCommentList[index];
+      let postGridId = commentItem.destDid+"-"+commentItem.channelId+"-"
+      +commentItem.postId+"-"+commentItem.commentId+"-"+commentItem.createrDid+'-replyComment';
+      let exit = this.replyObserverList[postGridId] || null;
+      if(exit != null){
+         continue;
+      }
+      this.newReplyCommentObserver(postGridId);
+    }
+  }
+
+  newReplyCommentObserver(postGridId: string) {
+    let observer = this.replyObserverList[postGridId] || null;
+    if(observer != null){
+      return;
+    }
+    let item = document.getElementById(postGridId) || null;
+    if(item != null ){
+    this.replyObserverList[postGridId] = new IntersectionObserver(async (changes:any)=>{
+    let container = changes[0].target;
+    let newId = container.getAttribute("id");
+    let intersectionRatio = changes[0].intersectionRatio;
+
+    if(intersectionRatio === 0){
+      //console.log("======newId leave========", newId);
+      return;
+    }
+    let arr =  newId.split("-");
+    let destDid: string = arr[0];
+    let channelId: string = arr[1];
+    let postId: string = arr[2];
+    let commentId: string = arr[3];
+    let createrDid: string = arr[4];
+    this,this.handleUserNameV2(destDid, channelId, postId, commentId, createrDid);
+    });
+    this.replyObserverList[postGridId].observe(item);
+    }
+  }
+
+  removeReplyCommentObserver(postGridId: string, observer: any){
+    let item = document.getElementById(postGridId) || null;
+    if(item != null){
+      if( observer != null ){
+        observer.unobserve(item);//解除观察器
+        observer.disconnect();  // 关闭观察器
+        this.replyObserverList[postGridId] = null;
+      }
+    }
+  }
+
+  removeReplyCommentObserverList(){
+    for(let postGridId in this.replyObserverList){
+      let observer = this.replyObserverList[postGridId] || null;
+      this.removeReplyCommentObserver(postGridId, observer)
+    }
+    this.replyObserverList = {};
   }
 
 
