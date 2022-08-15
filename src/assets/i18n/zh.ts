@@ -62,7 +62,7 @@ export const zh = {
     videoloading: '视频加载中',
     theFeedSource: 'Feeds出版号',
     fulltext: '更多',
-    uploading: '正在上传',
+    uploading: '正在发布中',
     downloading: '正在下载',
     mustUpdate: '您的Feeds服务版本需要升级到最新版本，否则您将无法发布内容。',
     downDes: '有文件正在下载，请下载完成后再试。',
