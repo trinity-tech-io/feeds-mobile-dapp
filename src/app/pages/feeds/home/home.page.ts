@@ -892,7 +892,7 @@ export class HomePage implements OnInit {
         });
 
         try {
-          this.removeObserveList();
+          //this.removeObserveList();
           await this.refreshPage();
         } catch (error) {
         }
@@ -925,6 +925,7 @@ export class HomePage implements OnInit {
       this.handleDisplayNameMap = {};
       this.postMap = {};
       this.channelMap = {};
+      this.removeObserveList();
       await this.initPostListData(true);
     } catch (error) {
       throw error
