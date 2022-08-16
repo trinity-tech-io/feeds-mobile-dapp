@@ -253,22 +253,34 @@ export class ProfilePage implements OnInit {
 
   initLike() {
     // 赞/收藏
-    this.pageSize = 1;
     this.initRefresh();
   }
 
   async initRefresh() {
     this.totalLikeList = await this.sortLikeList();
     this.likeSum = this.totalLikeList.length;
-    this.pageSize = 1;
-    let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalLikeList);
-    if(data.currentPage === data.totalPage){
-      this.likeList = data.items;
-      this.infiniteScroll.disabled = true;
+    if(this.likeList.length > 0){
+     let newList  =  _.cloneDeep(this.totalLikeList);
+      _.each(this.likeList, (item: FeedsData.PostV3, index) => {
+        let postId = item.postId;
+        let post = _.find(newList, (newItem: FeedsData.PostV3) => {
+          return newItem.postId === postId;
+        }) || null;
+        if (post != null && !(_.isEqual(item, post))) {
+            this.likeList.splice(index, 1, post);
+        }
+      });
     }else{
-      this.likeList = data.items;
-      this.infiniteScroll.disabled = false;
+      let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalLikeList);
+      if(data.currentPage === data.totalPage){
+        this.likeList = data.items;
+        this.infiniteScroll.disabled = true;
+      }else{
+        this.likeList = data.items;
+        this.infiniteScroll.disabled = false;
+      }
     }
+
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
     this.isLoadAvatarImage = {};
@@ -568,8 +580,8 @@ export class ProfilePage implements OnInit {
     // }
 
 
-    this.totalLikeList = await this.sortLikeList() || [];
-    this.likeSum = this.totalLikeList.length;
+    // this.totalLikeList = await this.sortLikeList() || [];
+    // this.likeSum = this.totalLikeList.length;
   }
 
   ionViewDidEnter() {
@@ -680,6 +692,7 @@ export class ProfilePage implements OnInit {
     document.getElementById("feedstab").style.display = "block";
     switch (type) {
       case 'ProfilePage.myFeeds':
+        this.removeMyFeedsObserveList();
         this.clearRefreshImageSid();
         this.initMyFeeds();
         break;
@@ -689,6 +702,7 @@ export class ProfilePage implements OnInit {
         await this.getCollectiblesList();
         break;
       case 'ProfilePage.myLikes':
+        this.removeLikeObserveList();
         this.clearRefreshMyFeedsSid();
         this.pageSize = 1;
         this.initLike();
@@ -1244,10 +1258,10 @@ export class ProfilePage implements OnInit {
     for (let id in videoids) {
       let value = videoids[id] || '';
       if (value === '13') {
-        let videoElement: any = document.getElementById(id + 'videolike') || '';
-        if (videoElement != '') {
-          videoElement.setAttribute('poster', "./assets/images/loading.png"); // empty source
-        }
+        // let videoElement: any = document.getElementById(id + 'videolike') || '';
+        // if (videoElement != '') {
+        //     videoElement.setAttribute('poster', "./assets/images/loading.png"); // empty source
+        // }
         let source: any = document.getElementById(id + 'sourcelike') || '';
         let sourcesrc = '';
         if (source != '') {
