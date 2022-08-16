@@ -229,6 +229,14 @@ export class CreatenewpostPage implements OnInit {
           //dismiss dialog
           this.backHome();
         } catch (error) {
+
+          if(error.status === -4){
+            this.native.toastWarn("common.twitterError");
+            this.isLoading = false;
+            this.isPublishing = false;
+            return;
+          }
+
           const emsg = "{\"detail\":\"You are not allowed to create a Tweet with duplicate content.\",\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403}"
           if (emsg === error.error) {
             this.native.toastWarn("common.duplicate")

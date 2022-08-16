@@ -2302,11 +2302,9 @@ export class ProfilePage implements OnInit {
 
   newMyFeedsObserver(postGridId: string) {
     let observer = this.myFeedsObserver[postGridId] || null;
-    console.log("=====test========3");
     if(observer != null){
       return;
     }
-    console.log("=====test========4");
     let item = document.getElementById(postGridId) || null;
     if(item != null ){
     this.myFeedsObserver[postGridId] = new IntersectionObserver(async (changes:any)=>{
@@ -2323,7 +2321,6 @@ export class ProfilePage implements OnInit {
     let destDid: string = arr[0];
     let channelId: string = arr[1];
     this.handleMyFeedsAvatarV2(destDid,channelId);
-    console.log("=====test========");
     this.getChannelFollower(destDid,channelId);
     //console.log("======intersectionRatio1========",typeof(changes[0]));
     //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
