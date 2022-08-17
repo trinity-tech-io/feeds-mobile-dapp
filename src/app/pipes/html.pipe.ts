@@ -21,9 +21,13 @@ export class HtmlPipe implements PipeTransform {
     });
 
     //# 高亮
-    let reg1 =  /(#|＃)((?!#).)*(#|＃)/g
-    result = result.replace(/&lt;[^&gt;]*?&gt;(.*?)/gi, '').replace(/(.*?)&lt;\/[^&gt;]*?&gt;/gi, '').replace(reg1, function(item) {
-      return "<span class='httpSpan'>" + item + '</span>';
+    let reg1 = /#(.+?)(?=[\s.,:,]|$)/g;
+    result = result.replace(reg1, function(item) {
+      let count = item.split('#').length - 1;
+      if(count === 1){
+        return "<span class='httpSpan'>" + item + '</span>';
+      }
+      return item;
     });
 
     return result;
