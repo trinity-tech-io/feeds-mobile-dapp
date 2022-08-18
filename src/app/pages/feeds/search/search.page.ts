@@ -657,7 +657,6 @@ export class SearchPage implements OnInit {
           }).catch(() => {
           });
       } catch (error) {
-
       }
     }
   }
