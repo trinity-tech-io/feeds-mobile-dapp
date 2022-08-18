@@ -4238,26 +4238,26 @@ export class DataHelper {
   // addPosts(postList: FeedsData.PostV3[], useCache: boolean, usePersistence: boolean) {
   // }
 
-  queryPinPostDataByChannelId(userdid: string, channelId: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const pinPostList = await this.sqliteHelper.queryPinPostDataByChannelId(userdid, channelId);
-        if (!pinPostList) {
-          resolve([]);
-          return;
-        }
-        resolve(pinPostList);
-      } catch (error) {
-        resolve(null);
-      }
-    });
-  }
+  // queryPinPostDataByChannelId(userdid: string, channelId: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const pinPostList = await this.sqliteHelper.queryPinPostDataByChannelId(userdid, channelId);
+  //       if (!pinPostList) {
+  //         resolve([]);
+  //         return;
+  //       }
+  //       resolve(pinPostList);
+  //     } catch (error) {
+  //       resolve(null);
+  //     }
+  //   });
+  // }
 
-  insertPinPostData(userdid: string, destDid: string, channelId: string, postId: string) {
-    return new Promise(async (resolve, reject) => {
-      this.sqliteHelper.insertPinPostData(userdid, destDid, channelId, postId);
+  // insertPinPostData(userdid: string, destDid: string, channelId: string, postId: string) {
+  //   return new Promise(async (resolve, reject) => {
+  //     this.sqliteHelper.insertPinPostData(userdid, destDid, channelId, postId);
 
-    });
+  //   });
 
-  }
+  // }
 }

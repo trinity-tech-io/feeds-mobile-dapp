@@ -245,7 +245,7 @@ export class ChannelsPage implements OnInit {
     // return sortList;
 
     console.log('sortPostList postList ====>', postList);
-    let sortList = _.orderBy(postList, ['createdAt', 'pinStatus'], ['desc', 'desc']);
+    let sortList = _.orderBy(postList, ['pinStatus', 'createdAt'], ['desc', 'desc']);
     console.log('sortPostList sortList ====>', sortList);
     return sortList;
   }

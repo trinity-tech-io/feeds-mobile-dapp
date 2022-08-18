@@ -17,7 +17,7 @@ export class FeedsSqliteHelper {
   private readonly TABLE_SUBSCRIPTION: string = 'subscription';
   private readonly TABLE_CHANNEL_NEW: string = 'channelnew';
   private readonly TABLE_POST_NEW: string = 'postsnew';
-  private readonly TABLE_PINPOST: string = 'pinpost';
+  // private readonly TABLE_PINPOST: string = 'pinpost';
 
   public isOpen: boolean = false;
   private limitNum: number = 30;
@@ -118,10 +118,10 @@ export class FeedsSqliteHelper {
         const p4 = this.createSubscriptionTable(dbUserDid);
         const p5 = this.createCommentTable(dbUserDid);
         const p6 = this.createLikeTable(dbUserDid);
-        const p7 = this.createPinPostTable(dbUserDid);
+        // const p7 = this.createPinPostTable(dbUserDid);
 
         Promise.all(
-          [p1, p2, p3, p4, p5, p6, p7]
+          [p1, p2, p3, p4, p5, p6]
         );
 
         resolve('SUCCESS');
@@ -250,7 +250,7 @@ export class FeedsSqliteHelper {
   insertPostData(dbUserDid: string, postV3: FeedsData.PostV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'INSERT INTO ' + this.TABLE_POST
+        const statement = 'INSERT INTO ' + this.TABLE_POST_NEW
           + '(post_id, dest_did, channel_id, created_at, updated_at, content, status, type, tag, proof, memo, pin_status) VALUES'
           + '(?,?,?,?,?,?,?,?,?,?,?,?)';
         const pinStatus = postV3.pinStatus || FeedsData.PinStatus.NOTPINNED;
@@ -270,7 +270,7 @@ export class FeedsSqliteHelper {
   updatePostData(dbUserDid: string, postV3: FeedsData.PostV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'UPDATE ' + this.TABLE_POST
+        const statement = 'UPDATE ' + this.TABLE_POST_NEW
           + ' SET updated_at=?, content=?, status=?, type=?, tag=?, proof=?, memo=?, pin_status=? WHERE post_id=?';
         const pinStatus = postV3.pinStatus || FeedsData.PinStatus.NOTPINNED
         const params = [postV3.updatedAt, JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, pinStatus, postV3.postId];
@@ -286,6 +286,23 @@ export class FeedsSqliteHelper {
   }
 
   deletePostData(dbUserDid: string, postId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_POST_NEW + ' WHERE post_id=?'
+        const params = [postId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'delete post data result: ', result)
+        resolve('SUCCESS');
+      }
+      catch (error) {
+        Logger.error(TAG, 'delete post data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  deleteOriginPostData(dbUserDid: string, postId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_POST + ' WHERE post_id=?'
@@ -305,7 +322,7 @@ export class FeedsSqliteHelper {
   removePostDataByChannel(dbUserDid: string, channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'DELETE FROM ' + this.TABLE_POST + ' WHERE channel_id=?'
+        const statement = 'DELETE FROM ' + this.TABLE_POST_NEW + ' WHERE channel_id=?'
         const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
 
@@ -1032,42 +1049,42 @@ export class FeedsSqliteHelper {
   }
 
   //pinpost
-  private createPinPostTable(dbUserDid: string): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const statement = 'create table if not exists ' + this.TABLE_PINPOST
-          + '('
-          + 'dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64)'
-          + ')';
+  // private createPinPostTable(dbUserDid: string): Promise<any> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const statement = 'create table if not exists ' + this.TABLE_PINPOST
+  //         + '('
+  //         + 'dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64)'
+  //         + ')';
 
-        const result = await this.executeSql(dbUserDid, statement);
-        Logger.log(TAG, 'Create pin post  table result is', result);
-        resolve('SUCCESS');
-      } catch (error) {
-        Logger.error(TAG, 'Create subscription table error', error);
-        reject(error);
-      }
-    });
-  }
+  //       const result = await this.executeSql(dbUserDid, statement);
+  //       Logger.log(TAG, 'Create pin post  table result is', result);
+  //       resolve('SUCCESS');
+  //     } catch (error) {
+  //       Logger.error(TAG, 'Create subscription table error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
-  insertPinPostData(dbUserDid: string, destDid: string, channelId: string, postId: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const statement = 'INSERT INTO ' + this.TABLE_PINPOST
-          + '(dest_did, channel_id, post_id) VALUES'
-          + '(?,?,?)';
+  // insertPinPostData(dbUserDid: string, destDid: string, channelId: string, postId: string): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const statement = 'INSERT INTO ' + this.TABLE_PINPOST
+  //         + '(dest_did, channel_id, post_id) VALUES'
+  //         + '(?,?,?)';
 
-        const params = [destDid, channelId, postId];
+  //       const params = [destDid, channelId, postId];
 
-        const result = await this.executeSql(dbUserDid, statement, params);
-        Logger.log(TAG, 'Insert pin post Data result is', result);
-        resolve('SUCCESS');
-      } catch (error) {
-        Logger.error(TAG, 'Insert pin post table date error', error);
-        reject(error);
-      }
-    });
-  }
+  //       const result = await this.executeSql(dbUserDid, statement, params);
+  //       Logger.log(TAG, 'Insert pin post Data result is', result);
+  //       resolve('SUCCESS');
+  //     } catch (error) {
+  //       Logger.error(TAG, 'Insert pin post table date error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
   // queryPinPostList(dbUserDid: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
   //   return new Promise(async (resolve, reject) => {
@@ -1400,6 +1417,7 @@ export class FeedsSqliteHelper {
           for (let index = 0; index < postData.length; index++) {
             const post = postData[index];
             await this.insertPostData(dbUserDid, post)
+            await this.deleteOriginPostData
           }
         }
         resolve('FINISH');
