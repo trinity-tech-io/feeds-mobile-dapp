@@ -36,7 +36,9 @@ export class CreatenewfeedPage implements OnInit {
   public lightThemeType: number = 3;
   public clickButton: boolean = false;
   private infoPopover: any = null;
-  private displayName: string = "";
+  public displayName: string = "";
+  public channelName: string = "";
+  public channelDes: string = "";
   constructor(
     private feedService: FeedService,
     private popoverController: PopoverController,
@@ -88,7 +90,7 @@ export class CreatenewfeedPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
   // 创建频道
-  async createChannel(name: HTMLInputElement, displayName: HTMLInputElement, desc: HTMLInputElement) {
+  async createChannel( ) {
 
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
@@ -96,29 +98,27 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    await this.processCreateChannel(name, displayName, desc);
+    await this.processCreateChannel();
   }
 
-  async processCreateChannel(name: HTMLInputElement, displayName: HTMLInputElement, desc: HTMLInputElement) {
-    let nameValue = name.value || '';
-    nameValue = this.native.iGetInnerText(nameValue);
+  async processCreateChannel( ) {
+    let nameValue = this.channelName || '';
     if (nameValue == '') {
       this.native.toastWarn('CreatenewfeedPage.tipMsg1');
       return;
     }
 
-    if (name.value.length > 32) {
-      this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
-      return;
-    }
-
-    let checkNameRes = this.feedService.checkValueValid(name.value);
-    if (checkNameRes) {
+    if(!UtilService.checkChannelName(nameValue)){
       this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
       return;
     }
 
-    let dispalyNameValue = displayName.value || '';
+    if (nameValue.length > 32) {
+      this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
+      return;
+    }
+
+    let dispalyNameValue = this.displayName || '';
     dispalyNameValue = this.native.iGetInnerText(dispalyNameValue);
 
     if (dispalyNameValue == '') {
@@ -126,25 +126,25 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    if (displayName.value.length > 32) {
+    if (dispalyNameValue.length > 32) {
       this.native.toastWarn('CreatenewfeedPage.tipMsgLength2');
       return;
     }
 
-    let checkDisplayNameRes = this.feedService.checkValueValid(displayName.value);
+    let checkDisplayNameRes = this.feedService.checkValueValid(dispalyNameValue);
     if (checkDisplayNameRes) {
       this.native.toastWarn('CreatenewfeedPage.displaynameContainInvalidChars');
       return;
     }
 
-    let descValue = desc.value || '';
+    let descValue = this.channelDes || '';
     descValue = this.native.iGetInnerText(descValue);
     if (descValue == '') {
       this.native.toastWarn('CreatenewfeedPage.tipMsg2');
       return;
     }
 
-    if (desc.value.length > 128) {
+    if (descValue.length > 128) {
       this.native.toastWarn('CreatenewfeedPage.tipMsgLength');
       return;
     }
@@ -161,7 +161,7 @@ export class CreatenewfeedPage implements OnInit {
 
     this.clickButton = true;
     const signinDid = (await this.dataHelper.getSigninData()).did;
-    const channelId = UtilService.generateChannelId(signinDid, name.value);
+    const channelId = UtilService.generateChannelId(signinDid,  nameValue);
     await this.native.showLoading('common.waitMoment');
     try {
 
@@ -183,7 +183,7 @@ export class CreatenewfeedPage implements OnInit {
         this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
         return;
       }
-      await this.uploadChannel(name.value, displayName.value, desc.value);
+      await this.uploadChannel( nameValue, dispalyNameValue, descValue);
     } catch (error) {
 
       this.native.handleHiveError(error, 'common.createChannelFail');

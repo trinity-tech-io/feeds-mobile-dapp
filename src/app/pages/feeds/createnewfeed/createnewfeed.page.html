@@ -17,7 +17,7 @@
             <ion-label position="stacked">
               <span>{{ 'CreatenewfeedPage.name' | translate }}</span>
             </ion-label>
-            <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputName'|translate}}" #name ></ion-input>
+            <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputName'|translate}}" [(ngModel)] ="channelName" ></ion-input>
         </ion-item>
         <div style="margin-left: 10px;">
           <span class="twitterInfo">{{ 'CreatenewfeedPage.channelnamedes' | translate }}</span>
@@ -26,7 +26,7 @@
         <ion-item lines="none">
           <ion-label position="stacked"><span style="margin-right: 5px;">{{ 'CreatenewfeedPage.displayName' | translate }}</span>
           </ion-label>
-          <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputDisplayName'|translate}}" #displayName ></ion-input>
+          <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputDisplayName'|translate}}" [(ngModel)] ="displayName" ></ion-input>
         </ion-item>
         <div style="margin-left: 10px;">
           <span class="twitterInfo">{{ 'CreatenewfeedPage.displaynamedes' | translate }}</span>
@@ -34,7 +34,7 @@
 
         <ion-item lines="none">
             <ion-label position="stacked">{{ 'CreatenewfeedPage.description' | translate }}</ion-label>
-            <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}" #desc ></ion-input>
+            <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.inputFeedDesc'|translate}}"  [(ngModel)] ="channelDes" ></ion-input>
         </ion-item>
 
         <!-- <ion-item lines="none">
@@ -69,7 +69,7 @@
       {{'CreatenewfeedPage.des1'|translate}}
      </div>
     <ion-row class="btn-row">
-        <ion-button (click)="createChannel(name, displayName ,desc)" [disabled]="clickButton">
+        <ion-button (click)="createChannel()" [disabled]="clickButton">
             <ion-label  *ngIf="!clickButton"> {{'CreatenewfeedPage.createFeed'|translate}}</ion-label>
             <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
         </ion-button>

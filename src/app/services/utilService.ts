@@ -876,4 +876,10 @@ export class UtilService {
     }
     return pageData;
     }
+
+  public static checkChannelName(channelName: string){
+       let channelNameReg = /^[a-zA-Z][a-zA-Z0-9]*$/;
+       let isValid = channelNameReg.test(channelName);
+       return isValid;
+  }
 }
