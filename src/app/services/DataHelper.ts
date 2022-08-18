@@ -2926,7 +2926,7 @@ export class DataHelper {
   }
 
   restoreSqlData(userDid: string) {
-    return this.sqliteHelper.restoreChannelV311(userDid);
+    return this.sqliteHelper.restoreSqlData(userDid);
   }
   //// New data type
 
@@ -4251,5 +4251,13 @@ export class DataHelper {
         resolve(null);
       }
     });
+  }
+
+  insertPinPostData(userdid: string, destDid: string, channelId: string, postId: string) {
+    return new Promise(async (resolve, reject) => {
+      this.sqliteHelper.insertPinPostData(userdid, destDid, channelId, postId);
+
+    });
+
   }
 }

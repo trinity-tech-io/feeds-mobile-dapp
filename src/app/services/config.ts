@@ -48,7 +48,9 @@ export class Config {
 
     //30101 update channel sql -> add display_name
     //30102 update post sql -> add pin_status
-    public static readonly SQL_VERSION: number = 30101;
+    public static readonly SQL_VERSION311: number = 30101;
+    public static readonly SQL_VERSION312: number = 30101;
+    public static readonly SQL_VERSION: number = 30102;
 
     public static changeApi(api: string) {
         if (api == 'elastos.io') {

@@ -112,7 +112,7 @@ export class FeedsSqliteHelper {
   createTables(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const p1 = this.cretePostTable(dbUserDid);
+        const p1 = this.createPostTable(dbUserDid);
         const p2 = this.createChannelTable(dbUserDid);
         const p3 = this.createSubscribedChannelTable(dbUserDid);
         const p4 = this.createSubscriptionTable(dbUserDid);
@@ -133,13 +133,13 @@ export class FeedsSqliteHelper {
   }
 
   // Post
-  private cretePostTable(dbUserDid: string): Promise<any> {
+  private createPostTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'create table if not exists ' + this.TABLE_POST
+        const statement = 'create table if not exists ' + this.TABLE_POST_NEW
           + '('
           + 'post_id VARCHAR(64) UNIQUE, dest_did VARCHAR(64), channel_id VARCHAR(64), created_at REAL(64), updated_at REAL(64),'
-          + 'content TEXT, status INTEGER, type VARCHAR(64), tag VARCHAR(64), proof VARCHAR(64), memo TEXT'
+          + 'content TEXT, status INTEGER, type VARCHAR(64), tag VARCHAR(64), proof VARCHAR(64), memo TEXT, pin_status INTEGER'
           + ')';
 
         const result = await this.executeSql(dbUserDid, statement);
@@ -155,10 +155,25 @@ export class FeedsSqliteHelper {
   queryPostData(dbUserDid: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW;
+        const result = await this.executeSql(dbUserDid, statement);
+        // const pinpostList = await this.queryPinPostList(dbUserDid);
+        const postList = this.parsePostData(result);
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'query post data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryOriginPostData(dbUserDid: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
         const statement = 'SELECT * FROM ' + this.TABLE_POST;
         const result = await this.executeSql(dbUserDid, statement);
-        const pinpostList = await this.queryPinPostList(dbUserDid);
-        const postList = this.parsePostData(result, pinpostList);
+        // const pinpostList = await this.queryPinPostList(dbUserDid);
+        const postList = this.parsePostData(result);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'query post data error', error);
@@ -170,10 +185,10 @@ export class FeedsSqliteHelper {
   queryPostDataByTime(dbUserDid: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST + ' WHERE updated_at>=? and updated_at<=?  ORDER BY updated_at Desc limit ' + this.limitNum;
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW + ' WHERE updated_at>=? and updated_at<=?  ORDER BY updated_at Desc limit ' + this.limitNum;
         const result = await this.executeSql(dbUserDid, statement, [start, end]);
-        const pinpostList = await this.queryPinPostList(dbUserDid);
-        const postList = this.parsePostData(result, pinpostList);
+        // const pinpostList = await this.queryPinPostList(dbUserDid);
+        const postList = this.parsePostData(result);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'query post data by time error', error);
@@ -185,10 +200,10 @@ export class FeedsSqliteHelper {
   queryChannelPostDataByTime(dbUserDid: string, channelId: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST + ' WHERE channel_id=? and updated_at>=? and updated_at<=?  ORDER BY updated_at Desc limit ' + this.limitNum;
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW + ' WHERE channel_id=? and updated_at>=? and updated_at<=?  ORDER BY updated_at Desc limit ' + this.limitNum;
         const result = await this.executeSql(dbUserDid, statement, [channelId, start, end]);
-        const pinpostList = await this.queryPinPostDataByChannelId(dbUserDid, channelId);
-        const postList = this.parsePostData(result, pinpostList);
+        // const pinpostList = await this.queryPinPostDataByChannelId(dbUserDid, channelId);
+        const postList = this.parsePostData(result);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'query post data by time error', error);
@@ -200,11 +215,11 @@ export class FeedsSqliteHelper {
   queryPostDataByID(dbUserDid: string, postId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST + ' WHERE post_id=?';
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW + ' WHERE post_id=?';
         const params = [postId];
         const result = await this.executeSql(dbUserDid, statement, params);
-        const pinpostList = await this.queryPinPostList(dbUserDid);
-        const postList = this.parsePostData(result, pinpostList);
+        // const pinpostList = await this.queryPinPostList(dbUserDid);
+        const postList = this.parsePostData(result);
         Logger.log(TAG, 'query post data by id result: ', postList)
         resolve(postList);
       } catch (error) {
@@ -217,11 +232,11 @@ export class FeedsSqliteHelper {
   queryPostDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST + ' WHERE channel_id=?';
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW + ' WHERE channel_id=?';
         const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
-        const pinpostList = await this.queryPinPostDataByChannelId(dbUserDid, channelId);
-        const postList = this.parsePostData(result, pinpostList);
+        // const pinpostList = await this.queryPinPostDataByChannelId(dbUserDid, channelId);
+        const postList = this.parsePostData(result);
 
         Logger.log(TAG, 'query post data by channel id result: ', postList)
         resolve(postList);
@@ -236,10 +251,11 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_POST
-          + '(post_id, dest_did, channel_id, created_at, updated_at, content, status, type, tag, proof, memo) VALUES'
-          + '(?,?,?,?,?,?,?,?,?,?,?)';
+          + '(post_id, dest_did, channel_id, created_at, updated_at, content, status, type, tag, proof, memo, pin_status) VALUES'
+          + '(?,?,?,?,?,?,?,?,?,?,?,?)';
+        const pinStatus = postV3.pinStatus || FeedsData.PinStatus.NOTPINNED;
         const params = [postV3.postId, postV3.destDid, postV3.channelId, postV3.createdAt, postV3.updatedAt
-          , JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo];
+          , JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, pinStatus];
 
         const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'InsertData result is', result);
@@ -255,8 +271,9 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_POST
-          + ' SET updated_at=?, content=?, status=?, type=?, tag=?, proof=?, memo=? WHERE post_id=?';
-        const params = [postV3.updatedAt, JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, postV3.postId];
+          + ' SET updated_at=?, content=?, status=?, type=?, tag=?, proof=?, memo=?, pin_status=? WHERE post_id=?';
+        const pinStatus = postV3.pinStatus || FeedsData.PinStatus.NOTPINNED
+        const params = [postV3.updatedAt, JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, pinStatus, postV3.postId];
         const result = await this.executeSql(dbUserDid, statement, params);
 
         Logger.log(TAG, 'update post data result: ', result)
@@ -1052,100 +1069,100 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryPinPostList(dbUserDid: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const statement = 'SELECT * FROM ' + this.TABLE_PINPOST;
-        const result = await this.executeSql(dbUserDid, statement);
-        const pinPostList = this.parsePinPostData(result);
-        resolve(pinPostList);
-      } catch (error) {
-        Logger.error(TAG, 'query pin post Data error', error);
-        reject(error);
-      }
-    });
-  }
+  // queryPinPostList(dbUserDid: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const statement = 'SELECT * FROM ' + this.TABLE_PINPOST;
+  //       const result = await this.executeSql(dbUserDid, statement);
+  //       const pinPostList = this.parsePinPostData(result);
+  //       resolve(pinPostList);
+  //     } catch (error) {
+  //       Logger.error(TAG, 'query pin post Data error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
-  queryPinPostDataByChannelId(dbUserDid: string, channelId: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const statement = 'SELECT * FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=?';
-        const params = [channelId];
-        const result = await this.executeSql(dbUserDid, statement, params);
-        const pinPostList = this.parsePinPostData(result);
+  // queryPinPostDataByChannelId(dbUserDid: string, channelId: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const statement = 'SELECT * FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=?';
+  //       const params = [channelId];
+  //       const result = await this.executeSql(dbUserDid, statement, params);
+  //       const pinPostList = this.parsePinPostData(result);
 
-        Logger.log(TAG, 'query pin post data by channel id result is', result);
-        resolve(pinPostList);
-      } catch (error) {
-        Logger.error(TAG, 'query pin post Data By ID  error', error);
-        reject(error);
-      }
-    });
-  }
+  //       Logger.log(TAG, 'query pin post data by channel id result is', result);
+  //       resolve(pinPostList);
+  //     } catch (error) {
+  //       Logger.error(TAG, 'query pin post Data By ID  error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
-  queryPinPostData(dbUserDid: string, channelId: string, postId: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const statement = 'SELECT * FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=? and post_id=?';
-        const params = [channelId];
-        const result = await this.executeSql(dbUserDid, statement, params);
-        const pinPostList = this.parsePinPostData(result);
+  // queryPinPostData(dbUserDid: string, channelId: string, postId: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const statement = 'SELECT * FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=? and post_id=?';
+  //       const params = [channelId];
+  //       const result = await this.executeSql(dbUserDid, statement, params);
+  //       const pinPostList = this.parsePinPostData(result);
 
-        Logger.log(TAG, 'query pin post data by channel id result is', result);
-        resolve(pinPostList);
-      } catch (error) {
-        Logger.error(TAG, 'query pin post Data By ID  error', error);
-        reject(error);
-      }
-    });
-  }
+  //       Logger.log(TAG, 'query pin post data by channel id result is', result);
+  //       resolve(pinPostList);
+  //     } catch (error) {
+  //       Logger.error(TAG, 'query pin post Data By ID  error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
-  deletePinPostData(dbUserDid: string, channelId: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const statement = 'DELETE FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=?'
-        const params = [channelId];
-        const result = await this.executeSql(dbUserDid, statement, params);
-        Logger.log(TAG, 'remove pin post result is', result);
-        resolve('SUCCESS');
-      } catch (error) {
-        Logger.error(TAG, 'delete pin post data error', error);
-        reject(error);
-      }
-    });
-  }
+  // deletePinPostData(dbUserDid: string, channelId: string): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const statement = 'DELETE FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=?'
+  //       const params = [channelId];
+  //       const result = await this.executeSql(dbUserDid, statement, params);
+  //       Logger.log(TAG, 'remove pin post result is', result);
+  //       resolve('SUCCESS');
+  //     } catch (error) {
+  //       Logger.error(TAG, 'delete pin post data error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
-  deletePinPostDataByChannelId(dbUserDid: string, channelId: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const statement = 'DELETE FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=?'
-        const params = [channelId];
-        const result = await this.executeSql(dbUserDid, statement, params);
-        Logger.log(TAG, 'remove pin post result is', result);
-        resolve('SUCCESS');
-      } catch (error) {
-        Logger.error(TAG, 'delete pin post data error', error);
-        reject(error);
-      }
-    });
-  }
+  // deletePinPostDataByChannelId(dbUserDid: string, channelId: string): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const statement = 'DELETE FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=?'
+  //       const params = [channelId];
+  //       const result = await this.executeSql(dbUserDid, statement, params);
+  //       Logger.log(TAG, 'remove pin post result is', result);
+  //       resolve('SUCCESS');
+  //     } catch (error) {
+  //       Logger.error(TAG, 'delete pin post data error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
-  cleanPinPostData(dbUserDid: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const statement = 'DELETE FROM ' + this.TABLE_PINPOST;
-        const params = [];
-        const result = await this.executeSql(dbUserDid, statement, params);
-        Logger.log(TAG, 'clean pin post result is', result);
-        resolve('SUCCESS');
-      } catch (error) {
-        Logger.error(TAG, 'clean subscription data error', error);
-        reject(error);
-      }
-    });
-  }
+  // cleanPinPostData(dbUserDid: string): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const statement = 'DELETE FROM ' + this.TABLE_PINPOST;
+  //       const params = [];
+  //       const result = await this.executeSql(dbUserDid, statement, params);
+  //       Logger.log(TAG, 'clean pin post result is', result);
+  //       resolve('SUCCESS');
+  //     } catch (error) {
+  //       Logger.error(TAG, 'clean subscription data error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
-  parsePostData(result: any, pinPostList: { destDid: string, channelId: string, postId: string }[]): FeedsData.PostV3[] {
+  parsePostData(result: any): FeedsData.PostV3[] {
     Logger.log(TAG, 'Parse post result from sql, result is', result);
     if (!result) {
       return [];
@@ -1186,11 +1203,12 @@ export class FeedsSqliteHelper {
       const destDid = element['dest_did'];
       const channelId = element['channel_id'];
       const postId = element['post_id'];
-      const pinpost = _.find(pinPostList, { destDid: destDid, channelId: channelId, postId: postId }) || null;
-      let pinPostStatus = FeedsData.PinStatus.NOTPINNED;
-      if (pinpost) {
-        pinPostStatus = FeedsData.PinStatus.PINNED;
-      }
+      const pinStatus = element['pin_status'] || FeedsData.PinStatus.NOTPINNED;
+      // const pinpost = _.find(pinPostList, { destDid: destDid, channelId: channelId, postId: postId }) || null;
+      // let pinPostStatus = FeedsData.PinStatus.NOTPINNED;
+      // if (pinpost) {
+      //   pinPostStatus = FeedsData.PinStatus.PINNED;
+      // }
 
       let postV3: FeedsData.PostV3 = {
         destDid: destDid,
@@ -1204,7 +1222,7 @@ export class FeedsSqliteHelper {
         tag: element['tag'],
         proof: element['proof'],
         memo: element['memo'],
-        pinStatus: pinPostStatus
+        pinStatus: pinStatus
       }
       list.push(postV3);
     }
@@ -1359,11 +1377,11 @@ export class FeedsSqliteHelper {
     return list;
   }
 
-  restoreChannelV311(dbUserDid: string): Promise<string> {
+  restoreSqlData(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const sqlversion = await this.storageService.get(FeedsData.PersistenceKey.sqlversion) || 0;
-        if (sqlversion < Config.SQL_VERSION) {
+        if (sqlversion < Config.SQL_VERSION311) {
 
           await this.createChannelTable(dbUserDid);
           const channelData = await this.queryOriginChannelData(dbUserDid);
@@ -1373,6 +1391,16 @@ export class FeedsSqliteHelper {
             await this.deleteOriginChannelData(dbUserDid, channel.channelId);
           }
           // await this.dropOriginChannel(dbUserDid);
+        }
+
+        if (sqlversion < Config.SQL_VERSION312) {
+          await this.createPostTable(dbUserDid);
+
+          const postData = await this.queryOriginPostData(dbUserDid);
+          for (let index = 0; index < postData.length; index++) {
+            const post = postData[index];
+            await this.insertPostData(dbUserDid, post)
+          }
         }
         resolve('FINISH');
       } catch (error) {

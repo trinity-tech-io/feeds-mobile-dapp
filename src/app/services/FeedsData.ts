@@ -997,6 +997,7 @@ declare namespace FeedsData {
     tag: string,
     proof: string,
     memo: string,
+
     pinStatus: PinStatus
   }
 

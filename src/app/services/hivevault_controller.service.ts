@@ -614,7 +614,6 @@ export class HiveVaultController {
   public updatePost(originPost: FeedsData.PostV3, newContent: FeedsData.postContentV3, pinStatus: FeedsData.PinStatus, updateAt: number, newType: string = 'public', newTag: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string = '', newProof: string = ''): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-
         const result = await this.hiveVaultApi.updatePost(originPost.postId, originPost.channelId, newType, newTag, JSON.stringify(newContent), newStatus, updateAt, newMemo, newProof, pinStatus);
         if (!result) {
           const errorMsg = 'Update post error';
