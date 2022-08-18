@@ -474,11 +474,23 @@ export class ChannelsPage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.pinPostFinish, async () => {
-      await this.refreshChannelList();
+      console.log('pinFinish');
+      this.images = {};
+      this.startIndex = 0;
+      this.visibleareaItemIndex = 0;
+      this.postMap = {};
+      this.isRefresh = true;
+      this.init();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.unpinPostFinish, async () => {
-      await this.refreshChannelList();
+      console.log('unpinFinish');
+      this.images = {};
+      this.startIndex = 0;
+      this.visibleareaItemIndex = 0;
+      this.postMap = {};
+      this.isRefresh = true;
+      this.init();
     })
   }
 
