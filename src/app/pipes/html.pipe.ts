@@ -21,11 +21,16 @@ export class HtmlPipe implements PipeTransform {
     });
 
     //# 高亮
-    let reg1 = /#(.+?)(?=[\s.,:,]|$)/g;
+    let reg1 = /#(.+?)(?=[-\s.,:,｜，]|$)/g;
     result = result.replace(reg1, function(item) {
       let count = item.split('#').length - 1;
       if(count === 1){
-        return "<span class='httpSpan'>" + item + '</span>';
+       let re = /[a-zA-Z]/;//是否包含英文
+       let re1 =  /([\u4e00-\u9fa5]|[\ufe30-\uffa0])/; //是否包含中文
+       if(item.match(re) == null && item.match(re1) == null){
+           return item;
+       }
+       return "<span class='httpSpan'>" + item + '</span>';
       }
       return item;
     });
