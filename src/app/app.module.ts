@@ -94,6 +94,7 @@ import { Events } from './services/events.service';
 import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { TwitterService } from 'src/app/services/TwitterService';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
+import { RedditService } from 'src/app/services/RedditService';
 
 Sentry.init({
   dsn:
@@ -206,6 +207,7 @@ export function TranslateLoaderFactory() {
   providers: [
     HTTP,
     TwitterService,
+    RedditService,
     QRScanner,
     Keyboard,
     File,
