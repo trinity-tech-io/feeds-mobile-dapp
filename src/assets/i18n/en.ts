@@ -213,7 +213,7 @@ export const en = {
     editChannelFail: 'Update Channel Failed',
     createCommentFail: 'Comment Failed',
     editCommentFail: 'Update Comment Failed',
-    twitterError: 'The request timed out'
+    twitterError: 'The twitter request timed out'
   },
   app: {
     profileDetails: 'Profile Details',

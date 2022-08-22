@@ -213,7 +213,7 @@ export const zh = {
     editChannelFail: '更新频道失败',
     createCommentFail: '创建微评失败',
     editCommentFail: '更新微评失败',
-    twitterError: '请求超时'
+    twitterError: 'Twitter 请求超时'
   },
   app: {
     profileDetails: '档案详情',
