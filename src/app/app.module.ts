@@ -98,7 +98,7 @@ import { DIDHelperService } from 'src/app/services/did_helper.service';
 Sentry.init({
   dsn:
     'https://4196003a1c864f5798dd2be18be5cb48@o339076.ingest.sentry.io/5524842',
-  release: '3.1.1',
+  release: '3.1.2',
   integrations: [new RewriteFrames()],
 });
 
