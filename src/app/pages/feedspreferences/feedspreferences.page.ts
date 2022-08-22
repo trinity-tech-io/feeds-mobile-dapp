@@ -6,8 +6,6 @@ import { ThemeService } from '../../services/theme.service';
 import { FeedService } from '../../services/FeedService';
 import { NativeService } from '../../services/NativeService';
 import { HttpService } from '../../services/HttpService';
-import { ApiUrl } from '../../services/ApiUrl';
-import { StorageService } from '../../services/StorageService';
 import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
 import { Events } from 'src/app/services/events.service';
@@ -54,7 +52,8 @@ export class FeedspreferencesPage implements OnInit {
   public loadingMaxNumber: string = null;
   public isShowMint: boolean = false;
   private channelInfo: any = null;
-  private unPublicDialog: any = null
+  private unPublicDialog: any = null;
+  private channelPublicStatus: any = {};
   constructor(
     private translate: TranslateService,
     private events: Events,
@@ -63,7 +62,6 @@ export class FeedspreferencesPage implements OnInit {
     private feedService: FeedService,
     private native: NativeService,
     public httpService: HttpService,
-    private storageService: StorageService,
     public popupProvider: PopupProvider,
     private popoverController: PopoverController,
     private zone: NgZone,
@@ -92,16 +90,11 @@ export class FeedspreferencesPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
 
-  async ionViewWillEnter() {
+  ionViewWillEnter() {
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
     this.addEvent();
-    this.channelInfo = await this.getChannelInfo();
-    if(this.channelInfo != null){
-       this.zone.run(()=>{
-         this.curFeedPublicStatus = true;
-       });
-    }
+    this.getChannelPublicStatus(this.destDid,this.channelId);
   }
 
   ionViewWillLeave() {
@@ -204,11 +197,11 @@ export class FeedspreferencesPage implements OnInit {
     this.native.navigateForward(['/galleriachannel'], { queryParams: { "destDid": this.destDid, "channelId": this.channelId } });
   }
 
-  async getChannelInfo() {
+  async getChannelInfo(channelId: string) {
 
     try {
       await this.native.showLoading("common.waitMoment");
-      let tokenId: string = "0x" + this.channelId;
+      let tokenId: string = "0x" + channelId;
       Logger.log(TAG,"tokenId:",tokenId);
       tokenId = UtilService.hex2dec(tokenId);
       Logger.log(TAG,"tokenIdHex2dec:",tokenId);
@@ -284,6 +277,36 @@ export class FeedspreferencesPage implements OnInit {
         clearTimeout(sId);
         that.native.toastWarn("common.burnNFTSFailed");
       });
+  }
+
+  async getChannelPublicStatus(destDid: string,channelId: string) {
+    let channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
+    let key = destDid +'-'+channelId;
+    let channelPublicStatus = channelPublicStatusList[key] || '';
+    if(channelPublicStatus === '1'){
+      this.zone.run(()=>{
+        this.curFeedPublicStatus = false;
+      });
+      return;
+    }
+    if(channelPublicStatus === '2'){
+      this.zone.run(()=>{
+        this.curFeedPublicStatus = true;
+      });
+      return;
+    }
+    if(channelPublicStatus === ''){
+      this.channelInfo = await this.getChannelInfo(this.channelId);
+      if(this.channelInfo != null){
+         this.zone.run(()=>{
+           this.curFeedPublicStatus = true;
+           channelPublicStatusList[key] = "2";//已公开
+         });
+      }else{
+        channelPublicStatusList[key] = "1";//未公开
+      }
+      return;
+    }
   }
 
 

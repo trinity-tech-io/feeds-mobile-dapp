@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Platform, PopoverController, MenuController, ModalController, ActionSheetController } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FeedService, Avatar } from './services/FeedService';
 import { AppService } from './services/AppService';
@@ -61,7 +60,6 @@ export class MyApp {
     private events: Events,
     private platform: Platform,
     private statusBar: StatusBar,
-    private splashScreen: SplashScreen,
     private feedService: FeedService,
     private appService: AppService,
     public theme: ThemeService,
@@ -118,10 +116,6 @@ export class MyApp {
       this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress, amount, memo);
     });
 
-    // this.events.subscribe(FeedsEvent.PublishType.initHiveData, async () => {
-    //   await this.initScript();
-    // });
-
     this.twitterService.checkTwitterIsExpired()
   }
 
@@ -136,7 +130,6 @@ export class MyApp {
       .then(async (api) => {
         Config.changeApi(api);
         this.feedService.initDidManager();
-        //this.splashScreen.hide();
         //for ios
         if (this.isIOSPlatform()) {
           this.statusBar.backgroundColorByHexString('#f8f8ff');

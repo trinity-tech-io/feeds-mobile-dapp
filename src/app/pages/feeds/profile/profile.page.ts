@@ -198,6 +198,8 @@ export class ProfilePage implements OnInit {
   public isFullPost: boolean = false;
   public isLoadingLike: boolean = true;
   public isLoadingMyFeeds: boolean = true;
+  private setMyFeedsSid: any = null;
+  private channelPublicStatusList: any = {};
   constructor(
     private elmRef: ElementRef,
     public theme: ThemeService,
@@ -722,6 +724,7 @@ export class ProfilePage implements OnInit {
           this.isLoadSubscriptionV3Num = {};
           this.isLoadChannelNameMap = {};
           this.removeMyFeedsObserveList();
+          this.channelPublicStatusList = {};
           await this.initMyFeeds(selfchannels);
           event.target.complete();
         } catch (error) {
@@ -744,6 +747,8 @@ export class ProfilePage implements OnInit {
           this.removeLikeObserveList();
           this.pageSize = 1;
           this.isLoadHandleDisplayNameMap = {};
+          this.likeList = [];
+          this.handleDisplayNameMap = {};
           this.postImgMap = {};
           this.initLike();
           event.target.complete();
@@ -2445,7 +2450,6 @@ export class ProfilePage implements OnInit {
     }
 
     let channelName = this.channelNameMap[channelId] || "";
-
     if (channelName != "") {
       return channelName;
     }
@@ -2540,4 +2544,38 @@ export class ProfilePage implements OnInit {
   }
 
 
+  async getChannelInfo(channelId: string) {
+
+    try {
+      let tokenId: string = "0x" + channelId;
+      Logger.log(TAG, "tokenId:", tokenId);
+      tokenId = UtilService.hex2dec(tokenId);
+      Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      Logger.log(TAG, "tokenInfo:", tokenInfo);
+      if (tokenInfo[0] != '0') {
+        return tokenInfo;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async getChannelPublicStatus(destDid: string, channelId: string) {
+    this.channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
+    let key = destDid + '-' + channelId;
+    let channelPublicStatus = this.channelPublicStatusList[key] || '';
+    if (channelPublicStatus === '') {
+      let channelInfo = await this.getChannelInfo(this.channelId);
+      if (channelInfo != null) {
+        this.channelPublicStatusList[key] = "2";//已公开
+        this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+      } else {
+        this.channelPublicStatusList[key] = "1";//未公开
+        this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+
+      }
+    }
+  }
 }
