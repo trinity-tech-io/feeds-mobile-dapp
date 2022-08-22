@@ -35,7 +35,20 @@ export class HtmlPipe implements PipeTransform {
       return item;
     });
 
+     //$高亮
+     let reg2 = /[$](.+?)(?=[\s]|$)/g;
+     result = result.replace(reg2, function(item) {
+       let count = item.split('$').length - 1;
+       if(count === 1){
+        let re = /^[A-Za-z$]*$/;//必须是英文字母
+        if(item.match(re) == null){
+            return item;
+        }
+        return "<span class='httpSpan'>" + item + '</span>';
+       }
+       return item;
+     });
     return result;
-  }
 
+  }
 }
