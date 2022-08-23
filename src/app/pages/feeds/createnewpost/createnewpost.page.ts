@@ -169,6 +169,10 @@ export class CreatenewpostPage implements OnInit {
         this.isPostTwitter = true
         const userDid = (await this.dataHelper.getSigninData()).did
         localStorage.setItem(userDid + "isSyncToTwitter", "true");
+      }else{
+        this.isPostTwitter = false
+        const userDid = (await this.dataHelper.getSigninData()).did
+        localStorage.setItem(userDid + "isSyncToTwitter", "false");
       }
     })
   }
@@ -229,6 +233,13 @@ export class CreatenewpostPage implements OnInit {
           //dismiss dialog
           this.backHome();
         } catch (error) {
+
+          if(error.status === 403 && this.isPostTwitter){
+            this.native.toastWarn("common.twitterError401");
+            this.isLoading = false;
+            this.isPublishing = false;
+            return;
+          }
 
           if(error.status === 401 && this.isPostTwitter){
             this.native.toastWarn("common.twitterError401");
