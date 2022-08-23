@@ -130,6 +130,7 @@ export class RedditService {
         "Authorization": "bearer " + token,
         "scope": "submit"
       }
+      this.http.setDataSerializer('urlencoded')
       const result = await this.http.post(RedditApi.REDDIT_SUBMIT, params, header)
       const jsonResult = JSON.parse(result.data)
       const resultSuccess = jsonResult.success
