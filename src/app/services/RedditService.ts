@@ -130,15 +130,14 @@ export class RedditService {
         "Authorization": "bearer " + token,
         "scope": "submit"
       }
-      // this.http.setDataSerializer('json')
       const result = await this.http.post(RedditApi.REDDIT_SUBMIT, params, header)
       const jsonResult = JSON.parse(result.data)
       const resultSuccess = jsonResult.success
 
       if (resultSuccess === false) {
-        const str = jsonResult.jquery[14][3][0]
-
-        console.log('false >>>>>>>>>> post Reddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> str = ', str)
+        const limitedStr = jsonResult.jquery[14][3][0]
+        Logger.log(TAG, 'Your Reddit is limited >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', limitedStr)
+        this.native.toastWarn(limitedStr)
       }
       Logger.log(TAG, 'post Reddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result)
       return result
@@ -164,11 +163,12 @@ export class RedditService {
         const elastosUrl = "/r/Elastos/"
         const myUrl = item.data.url
         if (elastosUrl === myUrl) {
-          console.log('get Reddit success contains elastos  >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', children)
+          console.log('get Reddit success: contains elastos  >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', children)
+          return true
         }
       })
-      Logger.log(TAG, 'get subReddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result)
-      return result
+      Logger.log(TAG, 'get subReddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result.data)
+      return false
     }
     catch (error) {
       console.log('get subReddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
@@ -198,7 +198,6 @@ export class RedditService {
     catch (error) {
       // TODO: 处理refresh token 过期
       this.dataHelper.removeRedditToken(userDid)
-      // this.native.toastWarn("common.RedditExpired");
       throw error
     }
   }

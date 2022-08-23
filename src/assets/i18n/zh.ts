@@ -213,7 +213,10 @@ export const zh = {
     editChannelFail: '更新频道失败',
     createCommentFail: '创建微评失败',
     editCommentFail: '更新微评失败',
-    twitterError: '请求超时'
+    twitterError: '请求超时',
+    RedditNotLogin: '您没有登录 Reddit',
+    RedditExpired: 'Reddit 登录已过期，请返回设置页面登录。',
+    RedditAuthFailed: 'Reddit 授权失败',
   },
   app: {
     profileDetails: '档案详情',

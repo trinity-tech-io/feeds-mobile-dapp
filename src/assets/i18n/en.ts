@@ -213,7 +213,10 @@ export const en = {
     editChannelFail: 'Update Channel Failed',
     createCommentFail: 'Comment Failed',
     editCommentFail: 'Update Comment Failed',
-    twitterError: 'The request timed out'
+    twitterError: 'The request timed out',
+    RedditNotLogin: 'You are not logged into Reddit. Please return to the Settings page to log in.',
+    RedditExpired: 'Reddit login has expired. Please return to the Settings page to log in.',
+    RedditAuthFailed: 'Reddit auth Failed',
   },
   app: {
     profileDetails: 'Profile Details',
