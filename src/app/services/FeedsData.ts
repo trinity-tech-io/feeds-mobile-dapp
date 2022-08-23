@@ -79,6 +79,8 @@ declare namespace FeedsData {
     noMeida = 0,
     containsImg = 1,
     containsVideo = 2,
+    repost = 3,
+    quetepost = 4
   }
 
   const enum PostCommentStatus {
@@ -1018,6 +1020,7 @@ declare namespace FeedsData {
     imageIndex: number,
     additionalInfo: any,
     memo: any
+    repostUrl: string
   }
 
   // 新添加

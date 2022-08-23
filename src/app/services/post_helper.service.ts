@@ -55,10 +55,16 @@ export class PostHelperService {
     });
   }
 
-  prepareMediaDataV3(imagesBase64: string[], videoData: FeedsData.videoData): Promise<FeedsData.mediaDataV3[]> {
+  prepareMediaDataV3(imagesBase64: string[], videoData: FeedsData.videoData, repostUrl: string): Promise<FeedsData.mediaDataV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const mediaDatas: FeedsData.mediaDataV3[] = await this.processUploadMeidasV3(imagesBase64, videoData);
+        let mediaDatas: FeedsData.mediaDataV3[] = null;
+        if (repostUrl) {
+          mediaDatas = this.processRepostMeidasV3(repostUrl);
+        } else {
+          mediaDatas = await this.processUploadMeidasV3(imagesBase64, videoData);
+        }
+
         // resolve(JSON.stringify(mediaDatas));
         resolve(mediaDatas)
       } catch (error) {
@@ -66,7 +72,6 @@ export class PostHelperService {
         Logger.error(TAG, errorMsg, error);
         reject(error);
       }
-
     });
   }
 
@@ -114,6 +119,13 @@ export class PostHelperService {
     return content;
   }
 
+  processRepostMeidasV3(repostUrl: string): FeedsData.mediaDataV3[] {
+    let mediasData: FeedsData.mediaDataV3[] = [];
+    const mediaData: FeedsData.mediaDataV3 = this.createMediaDataV3('', '', '', 0, '', 0, 0, '', '', repostUrl);
+    mediasData.push(mediaData);
+    return mediasData;
+  }
+
   processUploadMeidasV3(imagesBase64: string[], videoData: FeedsData.videoData): Promise<FeedsData.mediaDataV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -130,8 +142,8 @@ export class PostHelperService {
             if (originMediaData) {
               const medaPath = originMediaData.medaPath;
               // this.fileHelperService.savePostData(medaPath, elementBuffer);
-              let fileOriginName: string =  medaPath.split("@")[0];
-              await this.fileHelperService.saveV3Data(fileOriginName,element);
+              let fileOriginName: string = medaPath.split("@")[0];
+              await this.fileHelperService.saveV3Data(fileOriginName, element);
             }
 
             const thumbnail = await UtilService.compress(element);
@@ -145,7 +157,7 @@ export class PostHelperService {
             }
 
             if (originMediaData && thumbnailMediaData) {
-              const mediaData = this.createMediaDataV3("image", originMediaData.medaPath, originMediaData.type, originMediaData.size, thumbnailMediaData.medaPath, 0, 0, {}, {});
+              const mediaData = this.createMediaDataV3("image", originMediaData.medaPath, originMediaData.type, originMediaData.size, thumbnailMediaData.medaPath, 0, 0, {}, {}, '');
               mediasData.push(mediaData);
             }
           }
@@ -159,7 +171,7 @@ export class PostHelperService {
           if (originMediaData) {
             const medaPath = originMediaData.medaPath;
             let fileName: string = medaPath.split("@")[0];
-            await this.fileHelperService.saveV3Data(fileName,videoData.video);
+            await this.fileHelperService.saveV3Data(fileName, videoData.video);
           }
 
           const videoThumbBlob = this.base64ToBlob(videoData.thumbnail);
@@ -168,11 +180,11 @@ export class PostHelperService {
           if (thumbnailMediaData) {
             const medaPath = thumbnailMediaData.medaPath;
             let fileName: string = medaPath.split("@")[0];
-            await this.fileHelperService.saveV3Data(fileName,videoData.thumbnail);
+            await this.fileHelperService.saveV3Data(fileName, videoData.thumbnail);
           }
 
           if (originMediaData && thumbnailMediaData) {
-            const mediaData = this.createMediaDataV3("video", originMediaData.medaPath, originMediaData.type, originMediaData.size, thumbnailMediaData.medaPath, videoData.duration, 0, {}, {});
+            const mediaData = this.createMediaDataV3("video", originMediaData.medaPath, originMediaData.type, originMediaData.size, thumbnailMediaData.medaPath, videoData.duration, 0, {}, {}, '');
             mediasData.push(mediaData);
           }
         }
@@ -324,7 +336,7 @@ export class PostHelperService {
     return mediaData;
   }
 
-  createMediaDataV3(kind: string, originMediaPath: string, type: string, size: number, thumbnailPath: string, duration: number, index: number, additionalInfo: any, memo: any): FeedsData.mediaDataV3 {
+  createMediaDataV3(kind: string, originMediaPath: string, type: string, size: number, thumbnailPath: string, duration: number, index: number, additionalInfo: any, memo: any, repostUrl: string): FeedsData.mediaDataV3 {
     const mediaData: FeedsData.mediaDataV3 = {
       kind: kind,
       originMediaPath: originMediaPath,
@@ -334,7 +346,8 @@ export class PostHelperService {
       thumbnailPath: thumbnailPath,
       duration: duration,
       additionalInfo: additionalInfo,
-      memo: memo
+      memo: memo,
+      repostUrl: repostUrl
     }
 
     return mediaData;
@@ -388,7 +401,7 @@ export class PostHelperService {
   }
 
   checkVideoDurationValid(duration: number): boolean {
-    let durationStr =  duration.toString();
+    let durationStr = duration.toString();
     if (parseInt(durationStr) > 15)
       return false;
     return true;

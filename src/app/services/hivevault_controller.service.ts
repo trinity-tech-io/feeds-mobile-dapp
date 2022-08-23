@@ -587,7 +587,7 @@ export class HiveVaultController {
           await this.twitterService.postTweet(postText);
         }
 
-        const content = await this.progressMediaData(postText, imagesBase64, videoData)
+        const content = await this.progressMediaData(postText, imagesBase64, videoData, null);
         const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
 
         Logger.log(TAG, "Publish new post , result is", result);
@@ -669,15 +669,23 @@ export class HiveVaultController {
     return this.updatePost(originPost, originPost.content, pinStatus, UtilService.getCurrentTimeNum(), originPost.type, originPost.tag, originPost.status, originPost.memo, originPost.proof);
   }
 
-  private async progressMediaData(newPostText: string, newImagesBase64: string[], newVideoData: FeedsData.videoData) {
-    const mediaData = await this.postHelperService.prepareMediaDataV3(newImagesBase64, newVideoData);
+  private async progressMediaData(newPostText: string, newImagesBase64: string[], newVideoData: FeedsData.videoData, repostUrl: string) {
+    const mediaData = await this.postHelperService.prepareMediaDataV3(newImagesBase64, newVideoData, repostUrl);
+    const postText = newPostText || '';
+    let content = null;
     let mediaType = FeedsData.MediaType.noMeida;
-    if (newImagesBase64.length > 0 && newImagesBase64[0] != null && newImagesBase64[0] != '') {
+
+    if (repostUrl && postText.length == 0) {
+      mediaType = FeedsData.MediaType.repost;
+    } else if (repostUrl && postText.length > 0) {
+      mediaType = FeedsData.MediaType.quetepost
+    } else if (newImagesBase64.length > 0 && newImagesBase64[0] != null && newImagesBase64[0] != '') {
       mediaType = FeedsData.MediaType.containsImg
     } else if (newVideoData) {
       mediaType = FeedsData.MediaType.containsVideo
     }
-    const content = this.postHelperService.preparePublishPostContentV3(newPostText, mediaData, mediaType);
+
+    content = this.postHelperService.preparePublishPostContentV3(newPostText, mediaData, mediaType);
 
     return content
   }

@@ -525,10 +525,10 @@ export class HomePage implements OnInit {
           let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: FeedsData.PostV3) => {
             let newList = await this.sortPostList();
-            let deletePostIndex = _.findIndex( newList,(item: any)=>{
-                  return item.postId === result.postId;
+            let deletePostIndex = _.findIndex(newList, (item: any) => {
+              return item.postId === result.postId;
             })
-            if(deletePostIndex > -1){
+            if (deletePostIndex > -1) {
               newList[deletePostIndex].status = 1;
             }
             this.removeObserveList();
@@ -836,7 +836,7 @@ export class HomePage implements OnInit {
   async getChannelName(destDid: string, channelId: string) {
     let key = destDid + "-" + channelId;
     let isLoad = this.isLoaChannelMap[key] || "";
-    if(isLoad === "") {
+    if (isLoad === "") {
       this.isLoaChannelMap[key] = "11";
       let channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
       this.channelMap[key] = channel;
@@ -935,11 +935,11 @@ export class HomePage implements OnInit {
         } catch (error) {
         }
 
-        let sid = setTimeout(()=>{
+        let sid = setTimeout(() => {
           event.target.complete();
           this.refreshEvent = null;
           clearTimeout(sid);
-        },500);
+        }, 500);
 
         break;
       case 'pasar':
@@ -2416,6 +2416,14 @@ export class HomePage implements OnInit {
           this.handleVideoV2(destDid, channelId, postId);
         }
 
+        if (mediaType === '3') {
+          //repost
+        }
+
+        if (mediaType === '4') {
+          //quetePost
+        }
+
         //post like status
         CommonPageService.handlePostLikeStatusData(
           destDid, channelId, postId, this.isInitLikeStatus, this.hiveVaultController,
@@ -2441,7 +2449,7 @@ export class HomePage implements OnInit {
     if (displayNameMap === "") {
       this.isLoadHandleDisplayNameMap[userDid] = "11";
       let displayName = this.handleDisplayNameMap[userDid] || "";
-      if(displayName === ""){
+      if (displayName === "") {
         let text = destDid.replace('did:elastos:', '');
         this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
       }

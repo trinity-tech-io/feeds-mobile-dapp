@@ -45,6 +45,7 @@ export class HiveVaultResultParse {
               for (let index = 0; index < mDatas.length; index++) {
                 mData = mDatas[index];
               }
+              const repostUrl = mData['repostUrl'] || '';
               // mediaDataV3
               const mediaDataV3: FeedsData.mediaDataV3 = {
                 kind: mData['kind'],
@@ -55,7 +56,8 @@ export class HiveVaultResultParse {
                 duration: mData['duration'],
                 imageIndex: mData['imageIndex'],
                 additionalInfo: mData['additionalInfo'],
-                memo: mData['memo']
+                memo: mData['memo'],
+                repostUrl: repostUrl
               }
               let mediaDatasV3: FeedsData.mediaDataV3[] = []
               mediaDatasV3.push(mediaDataV3)

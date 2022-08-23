@@ -820,7 +820,15 @@ export class UtilService {
   }
 
   public static generateFeedsQrCodeString(targetDid: string, channelId: string): string {
+    return UtilService.generateFeedsChannelLink(targetDid, channelId);
+  }
+
+  public static generateFeedsChannelLink(targetDid: string, channelId: string): string {
     return "feeds://v3/" + targetDid + "/" + channelId;
+  }
+
+  public static generateFeedsPostLink(targetDid: string, channelId: string, postId: string): string {
+    return "feeds://v3/" + targetDid + "/" + channelId + "/" + postId;
   }
 
   public static generateChannelShareLink(baseUrl: string, targetDid: string, channelId: string): string {
@@ -836,6 +844,29 @@ export class UtilService {
       + "&postId=" + postId;
   }
 
+  public static decodeFeedsUrl(feedsUrl: string): { targetDid: string, channelId: string, postId: string } {
+    if (!feedsUrl) {
+      return null;
+    }
+
+    if (!feedsUrl.startsWith('feeds://v3/')) {
+      return null;
+    }
+
+    const link = feedsUrl.replace('feeds://v3/', '');
+
+    const params = link.split('/');
+    if (params.length <= 1 || params.length > 3) {
+      return null;
+    }
+
+    const targetDid = params[0];
+    const channelId = params[1];
+    const postId = params[2] || '';
+
+    return { targetDid: targetDid, channelId: channelId, postId: postId };
+  }
+
   public static getESSAvatarKey(userDid: string) {
     return userDid + "_ess_avatar";
   }
@@ -848,38 +879,40 @@ export class UtilService {
     return userDid + 'localScriptVersion';
   }
 
-  public static getPostformatPageData(currentPage: number,pageSize: number,data = []){
-    let pageData = {"pageSize": pageSize,
-                      "currentPage": currentPage,
-                      "totalPage": 0,
-                      "items": []};
-      let num = data.length;//数据的长度
-      let totalPage = 0;
-      if(num/pageSize > parseInt((num/pageSize).toString())){
-      totalPage = parseInt((num/pageSize).toString())+1;
-      }else{
-      totalPage = parseInt((num/pageSize).toString());
+  public static getPostformatPageData(currentPage: number, pageSize: number, data = []) {
+    let pageData = {
+      "pageSize": pageSize,
+      "currentPage": currentPage,
+      "totalPage": 0,
+      "items": []
+    };
+    let num = data.length;//数据的长度
+    let totalPage = 0;
+    if (num / pageSize > parseInt((num / pageSize).toString())) {
+      totalPage = parseInt((num / pageSize).toString()) + 1;
+    } else {
+      totalPage = parseInt((num / pageSize).toString());
     }
 
     pageData.totalPage = totalPage;
     let maxLength = currentPage * pageSize - 1;
     let minLength = currentPage * pageSize - pageSize;
     for (let i = minLength; i < data.length; i++) {
-          if (maxLength < i) {
-            break;
-          } else {
-          let item = data[i] || "";
-          if(item != ""){
-            pageData.items.push(data[i]);
-          }
-          }
+      if (maxLength < i) {
+        break;
+      } else {
+        let item = data[i] || "";
+        if (item != "") {
+          pageData.items.push(data[i]);
+        }
+      }
     }
     return pageData;
-    }
+  }
 
-  public static checkChannelName(channelName: string){
-       let channelNameReg = /^[a-zA-Z][a-zA-Z0-9]*$/;
-       let isValid = channelNameReg.test(channelName);
-       return isValid;
+  public static checkChannelName(channelName: string) {
+    let channelNameReg = /^[a-zA-Z][a-zA-Z0-9]*$/;
+    let isValid = channelNameReg.test(channelName);
+    return isValid;
   }
 }
