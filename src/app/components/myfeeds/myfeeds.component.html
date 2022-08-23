@@ -38,6 +38,7 @@
         <div class="feedAvatar" id={{channel.destDid}}-{{channel.channelId}}-myFeedsAvatarKuang [class.dark-feedAvatar]="theme.darkMode">
           <img [src] = "channelAvatarMap[channel.destDid+'-'+channel.channelId]" *ngIf="channelAvatarMap[channel.destDid+'-'+channel.channelId]  != null && channelAvatarMap[channel.destDid+'-'+channel.channelId] != undefined">
         </div>
+        <img src="./assets/images/darkmode/publicChannel.svg">
       </ion-col>
       <ion-col
         size="7.2"
