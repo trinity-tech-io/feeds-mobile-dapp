@@ -9,6 +9,5 @@ export class RedditApi {
   public static TOKEN: string = "https://www.reddit.com/api/v1/access_token"
   public static BASE: string = "https://oauth.reddit.com"
   public static REDDIT_SUBMIT: string = RedditApi.BASE + "/api/submit"
-  public static ADD_POST: string = RedditApi.BASE + "/api/v1/collections/add_post_to_collection"
-
+  public static subreddits = RedditApi.BASE + "/subreddits/mine/subscriber"
 }

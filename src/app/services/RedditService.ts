@@ -126,7 +126,7 @@ export class RedditService {
         "kind": "self",
         "title": tittle,
         "text": text,       
-        "sr": "668899" //Elastos
+        "sr": "Elastos" //Elastos //668899
       }
       const token = await this.checkRedditIsExpired()
       let header = {
@@ -136,14 +136,48 @@ export class RedditService {
       }
       // this.http.setDataSerializer('json')
       const result = await this.http.post(RedditApi.REDDIT_SUBMIT, params, header)
-      console.log('post Reddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result)
-      console.log('post Reddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result.data)
+      const jsonResult = JSON.parse(result.data)
+      const resultSuccess = jsonResult.success
+
+      if (resultSuccess === false) {
+        const str = jsonResult.jquery[14][3][0]
+
+        console.log('false >>>>>>>>>> post Reddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> str = ', str)
+      }
       Logger.log(TAG, 'post Reddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result)
       return result
     }
     catch (error) {
       console.log('post Reddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
       Logger.log(TAG, 'post Reddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
+      throw error
+    }
+  }
+
+  public async subreddits() {
+    try {
+      const token = await this.checkRedditIsExpired()
+      let header = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "bearer " + token
+      }
+      const result = await this.http.get(RedditApi.subreddits, {}, header)
+      const jsonResult = JSON.parse(result.data)
+      console.log('get subReddit success result.data = >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result.data)
+      const children = jsonResult.data.children
+      children.forEach(item => {
+        const elastosUrl = "/r/Elastos/"
+        const myUrl = item.data.url
+        if (elastosUrl === myUrl) {
+          console.log('get Reddit success 包含 elastos社区 >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', children)
+        }
+      })
+      Logger.log(TAG, 'get subReddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result)
+      return result
+    }
+    catch (error) {
+      console.log('get subReddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
+      Logger.log(TAG, 'get subReddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
       throw error
     }
   }
