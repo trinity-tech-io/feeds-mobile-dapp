@@ -230,7 +230,21 @@ export class CreatenewpostPage implements OnInit {
           this.backHome();
         } catch (error) {
 
-          if(error.status === -4){
+          if(error.status === 401 && this.isPostTwitter){
+            this.native.toastWarn("common.twitterError401");
+            this.isLoading = false;
+            this.isPublishing = false;
+            return;
+          }
+
+          if(error.status === -1 && this.isPostTwitter){
+            this.native.toastWarn("common.connectionError");
+            this.isLoading = false;
+            this.isPublishing = false;
+            return;
+          }
+
+          if(error.status === -4 && this.isPostTwitter){
             this.native.toastWarn("common.twitterError");
             this.isLoading = false;
             this.isPublishing = false;
@@ -238,7 +252,7 @@ export class CreatenewpostPage implements OnInit {
           }
 
           const emsg = "{\"detail\":\"You are not allowed to create a Tweet with duplicate content.\",\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403}"
-          if (emsg === error.error) {
+          if (emsg === error.error && this.isPostTwitter) {
             this.native.toastWarn("common.duplicate")
             this.isLoading = false;
             this.isPublishing = false;

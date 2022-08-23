@@ -213,7 +213,8 @@ export const zh = {
     editChannelFail: '更新频道失败',
     createCommentFail: '创建微评失败',
     editCommentFail: '更新微评失败',
-    twitterError: 'Twitter 请求超时'
+    twitterError: 'Twitter 请求超时',
+    twitterError401:'Twitter 授权失效，请重新授权'
   },
   app: {
     profileDetails: '档案详情',
@@ -934,6 +935,7 @@ export const zh = {
     addConnection: '添加连接',
     addConnectionDes: '整合新账户',
     twitter: '推特',
-    connected: '已连接'
+    connected: '已连接',
+    disconnect: '断开'
   }
 };

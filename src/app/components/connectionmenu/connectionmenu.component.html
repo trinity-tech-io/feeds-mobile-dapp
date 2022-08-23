@@ -4,10 +4,17 @@
 <div class="feedlist" [class.darkfeedlist]="theme.darkMode" [class.lightfeedlist]="!theme.darkMode">
     <ion-grid style="padding:0px;">
 
-      <ion-row (click)="clickItem('twitter')" class="share">
+      <ion-row (click)="clickItem('twitter')" class="share" *ngIf="connectTwitter">
         <ion-col
         size="12">
         <img src="./assets/images/gTwitter.svg"><span>{{"ConnectionsPage.twitter"|translate}}</span>
+      </ion-col>
+      </ion-row>
+
+      <ion-row (click)="clickItem('disconnectTwittet')" class="share" *ngIf="disconnectTwitter">
+        <ion-col
+        size="12">
+        <img src="./assets/images/ios-delete.svg"><span style="color: #ff453a;">{{"ConnectionsPage.disconnect"|translate}}</span>
       </ion-col>
       </ion-row>
 

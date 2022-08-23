@@ -2,7 +2,7 @@
 <ion-content>
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
 
-    <ion-row class="section" *ngIf="twitterConnectStatus === 1">
+    <ion-row class="section" *ngIf="twitterConnectStatus === 1" (click)="removeConnection()">
       <ion-col size="2.5" class="left-col">
         <img src="assets/images/darkmode/connections/twitter.svg"/>
       </ion-col>
@@ -26,6 +26,8 @@
 <!---------------- ADD share menu---------------->
 <app-connectionmenu
  *ngIf="hideConnectionMenuComponent"
+ [connectTwitter] = "connectTwitter"
+ [disconnectTwitter] = "disconnectTwitter"
  (hideConnectionMenu)="hideConnectionMenu($event)"
 >
 </app-connectionmenu>

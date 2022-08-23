@@ -8,6 +8,8 @@ import { Events } from 'src/app/services/events.service';
 import { Injectable } from '@angular/core';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Platform } from '@ionic/angular';
+import { NativeService } from 'src/app/services/NativeService';
+import { TwitterApi } from 'src/app/services/TwitterApi';
 
 @Component({
   selector: 'app-connections',
@@ -21,6 +23,8 @@ export class ConnectionsPage implements OnInit {
   public hideConnectionMenuComponent: boolean = false;
   // public testToken: boolean = false;
   public twitterConnectStatus: number = 0;
+  public connectTwitter: boolean = false;
+  public disconnectTwitter: boolean = false;
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -29,7 +33,7 @@ export class ConnectionsPage implements OnInit {
     private events: Events,
     private dataHelper: DataHelper,
     private zone: NgZone,
-
+    private native: NativeService,
     private platform: Platform,
   ) {
 
@@ -67,6 +71,8 @@ export class ConnectionsPage implements OnInit {
     this.reloadStatus()
   }
   ionViewWillLeave() {
+    this.events.unsubscribe("FeedsEvent.PublishType.twitterLoginSuccess");
+    this.events.unsubscribe("FeedsEvent.PublishType.twitterLoginFailed");
   }
 
   initTitle() {
@@ -79,9 +85,17 @@ export class ConnectionsPage implements OnInit {
 
   addConnection() {
     this.hideConnectionMenuComponent = true;
+    this.connectTwitter = true;
+    this.disconnectTwitter = false;
   }
 
-  hideConnectionMenu(data: any) {
+  removeConnection() {
+    this.hideConnectionMenuComponent = true;
+    this.connectTwitter = false;
+    this.disconnectTwitter = true;
+  }
+
+  async hideConnectionMenu(data: any) {
     let typeButton: string = data.buttonType;
     switch (typeButton) {
       case "twitter":
@@ -91,6 +105,30 @@ export class ConnectionsPage implements OnInit {
         }
         else {
           this.twitterService.openTwitterLoginPage("android");
+        }
+        break;
+      case "disconnectTwittet":
+        await this.native.showLoading("common.waitMoment");
+        let signinData = await this.dataHelper.getSigninData() || null
+        if (signinData == null || signinData == undefined) {
+           this.native.hideLoading();
+           this.hideConnectionMenuComponent = false;
+          return null
+        }
+        const userDid = signinData.did || ''
+        if(userDid === ''){
+          this.native.hideLoading();
+          this.hideConnectionMenuComponent = false;
+          return null
+        }
+        const key = userDid + TwitterApi.CLIENT_ID + "TWITTERTOKEN"
+        try {
+          localStorage.removeItem(key);
+          this.twitterConnectStatus = 0;
+          this.native.hideLoading();
+          this.hideConnectionMenuComponent = false;
+        } catch (error) {
+          this.native.hideLoading();
         }
         break;
       case "cancel":

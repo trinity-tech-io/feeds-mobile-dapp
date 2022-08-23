@@ -213,7 +213,8 @@ export const en = {
     editChannelFail: 'Update Channel Failed',
     createCommentFail: 'Comment Failed',
     editCommentFail: 'Update Comment Failed',
-    twitterError: 'The twitter request timed out'
+    twitterError: 'The twitter request timed out',
+    twitterError401:'Twitter authorization is invalid, please re-authorize'
   },
   app: {
     profileDetails: 'Profile Details',
@@ -932,6 +933,7 @@ export const en = {
     addConnection: 'Add Connection',
     addConnectionDes: 'Integrate new account',
     twitter: 'Twitter',
-    connected: 'Connected'
+    connected: 'Connected',
+    disconnect: 'disconnect'
   }
 };

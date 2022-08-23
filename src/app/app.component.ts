@@ -442,9 +442,25 @@ export class MyApp {
     if (this.popover != null) {
       this.popover.dismiss();
     }
-    await that.dataHelper.removeData("feeds.initHive");
+    try {
+      await that.dataHelper.removeData("feeds.initHive");
+    } catch (error) {
+
+    }
     that.clearData();
     //that.disconnectWallet();
+  }
+
+  async removeTwitterToken() {
+    let signinData = await this.dataHelper.getSigninData() || null
+    if (signinData == null || signinData == undefined) {
+      return null
+    }
+    const userDid = signinData.did || ''
+    if(userDid === ''){
+      return null
+    }
+    this.dataHelper.removeTwitterToken(userDid);
   }
 
   async confirmDeleteAccount(that: any) {
@@ -480,6 +496,7 @@ export class MyApp {
   }
 
   clearData() {
+    this.removeTwitterToken();
     this.feedService.signOut()
       .then(() => {
         this.events.publish(FeedsEvent.PublishType.clearHomeEvent);
