@@ -150,6 +150,11 @@
         <edit-config file="*-Info.plist" mode="merge" target="NSMicrophoneUsageDescription">
             <string>need microphone access to take video</string>
         </edit-config>
+
+        <edit-config target="UISupportsDocumentBrowser" file="*-Info.plist" mode="merge">
+        <true/>
+        </edit-config>
+
         <config-file parent="CFBundleDocumentTypes" target="*-Info.plist">
             <array>
                 <dict>
