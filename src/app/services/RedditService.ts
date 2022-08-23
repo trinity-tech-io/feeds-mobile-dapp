@@ -80,12 +80,8 @@ export class RedditService {
     }
 
     try {
-      console.log("param ===== ", params)
-
       const result = await this.http.post(RedditApi.TOKEN, params, header)
-      console.log("result ====== ", result)
       const ddata = JSON.parse(result.data)
-      console.log("ddata ====== ", ddata)
       this.dataHelper.UpdateRedditToken(userDid, ddata)
       const accessToken = ddata.access_token
       return accessToken
@@ -148,7 +144,6 @@ export class RedditService {
       return result
     }
     catch (error) {
-      console.log('post Reddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
       Logger.log(TAG, 'post Reddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
       throw error
     }
@@ -169,7 +164,7 @@ export class RedditService {
         const elastosUrl = "/r/Elastos/"
         const myUrl = item.data.url
         if (elastosUrl === myUrl) {
-          console.log('get Reddit success 包含 elastos社区 >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', children)
+          console.log('get Reddit success contains elastos  >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', children)
         }
       })
       Logger.log(TAG, 'get subReddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result)
@@ -197,7 +192,6 @@ export class RedditService {
       if (token === false) {
         // TODO: refreshTOken 同样过期，提示用户重新登录
         token = await this.fetchRedditAccessToken(userDid)
-        console.log("开始刷新refresh token2 ============== ", token)
       }
       return token
     }
