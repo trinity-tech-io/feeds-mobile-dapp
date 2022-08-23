@@ -4233,6 +4233,61 @@ export class DataHelper {
     });
   }
 
+  UpdateRedditToken(userDid: string, tokenData: any) {
+    let time = new Date()
+    const tt = time.getTime()
+    const hour = 60 * 60 * 1000 * 24 // 2小时
+    time.setTime(tt + hour)
+    tokenData['expired_time'] = time.getTime()
+
+    localStorage.setItem(userDid + "REDDITTOKEN", JSON.stringify(tokenData))
+  }
+
+  getRedditRefreshToken(userDid: string) {
+    const data = localStorage.getItem(userDid + "REDDITTOKEN") || ''
+    console.log("getRedditRefreshToken ======= ", data)
+    if (data === '' || data === undefined) {
+      return null // 标识 本地没有token
+    }
+    const tokenData = JSON.parse(data)
+    console.log("getRedditRefreshToken tokenData ======= ", tokenData)
+    let refreshToken = tokenData['refresh_token']
+
+    return refreshToken
+  }
+
+  getRedditAccessToken(userDid: string) {
+    // return false // 标识 token 过期
+
+    const data = localStorage.getItem(userDid + "REDDITTOKEN") || ''
+    console.log("getRedditAccessToken ===== ", data)
+    if (data === '' || data === undefined) {
+      return null // 标识 本地没有token
+    }
+    const tokenData = JSON.parse(data)
+
+    const access_token = tokenData.access_token
+    const expired_time = tokenData.expired_time
+    const currentTime = new Date().getTime()
+
+    console.log("currentTime ==== ", currentTime)
+    console.log("expired_time ==== ", expired_time)
+
+    if (currentTime > expired_time) {
+      console.log("getRedditAccessToken ===== 过期")
+      return false // 标识 token 过期
+    }
+
+    return access_token
+  }
+
+  removeRedditToken(userDid: string) {
+    const data = localStorage.getItem(userDid + "REDDITTOKEN") || ''
+    if (data === '' || data === undefined || data == null) {
+      return
+    }
+    localStorage.removeItem(userDid + "REDDITTOKEN")
+  }
 
   //API
   // addPosts(postList: FeedsData.PostV3[], useCache: boolean, usePersistence: boolean) {
