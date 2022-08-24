@@ -389,7 +389,7 @@ export const zh = {
     tipMsgLength1: '名称长度最大为32个字符',
     alreadyExist: '频道已存在，请更改名称后重试',
     nameContainInvalidChars:
-      '频道名称以英文字母开头，只能包含英文字母、数字',
+      '频道名称必须以英文字母开头，并且只能包含英文字母和数字',
     feedMaxNumber: '最多可创建5个频道',
     //feedNum: '您最多可以创建5个频道',
     des1: '在探索 Feeds 中显示频道，以供用户发现和订阅。',

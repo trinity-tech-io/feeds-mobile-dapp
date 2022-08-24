@@ -213,7 +213,7 @@ export const en = {
     editChannelFail: 'Update Channel Failed',
     createCommentFail: 'Comment Failed',
     editCommentFail: 'Update Comment Failed',
-    twitterError: 'The twitter request timed out',
+    twitterError: 'Twitter request timed out',
     twitterError401:'Twitter authorization is invalid, please re-authorize'
   },
   app: {
@@ -391,7 +391,7 @@ export const en = {
     tipMsgLength1: 'Maximum name length is 32 characters',
     alreadyExist: 'Channel already exists. Please change name and try again',
     nameContainInvalidChars:
-      'The channel name starts with an English letter and can only contain English letters and numbers',
+      'Channel name must start with an English letter and may only contain English letters and numbers',
     feedMaxNumber: '5 channels may be created at maximum',
     // feedNum: 'You can create up to 5 channels',
     des1: 'Show channel in the Explore Feeds for users to discover.',
