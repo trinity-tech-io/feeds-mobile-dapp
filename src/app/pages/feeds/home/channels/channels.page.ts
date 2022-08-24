@@ -476,8 +476,6 @@ export class ChannelsPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.pinPostFinish, async () => {
       console.log('pinFinish');
       this.images = {};
-      this.startIndex = 0;
-      this.visibleareaItemIndex = 0;
       this.postMap = {};
       this.isRefresh = true;
       this.init();
@@ -486,8 +484,6 @@ export class ChannelsPage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.unpinPostFinish, async () => {
       console.log('unpinFinish');
       this.images = {};
-      this.startIndex = 0;
-      this.visibleareaItemIndex = 0;
       this.postMap = {};
       this.isRefresh = true;
       this.init();

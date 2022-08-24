@@ -214,7 +214,9 @@ export const en = {
     createCommentFail: 'Comment Failed',
     editCommentFail: 'Update Comment Failed',
     twitterError: 'Twitter request timed out',
-    twitterError401:'Twitter authorization is invalid, please re-authorize'
+    twitterError401: 'Twitter authorization is invalid, please re-authorize',
+    pinPost: 'Pin to channel',
+    unpinPost: 'Unpin from channel',
   },
   app: {
     profileDetails: 'Profile Details',
@@ -399,8 +401,8 @@ export const en = {
     tippingAddress: 'Tipping Address',
     tippingAddressDes: 'Enter tipping address',
     inputDisplayName: 'Add channel DisplayName',
-    channelnamedes : 'Users may not make modifications after creation',
-    displaynamedes : 'Users may make modifications after creation',
+    channelnamedes: 'Users may not make modifications after creation',
+    displaynamedes: 'Users may make modifications after creation',
     displaynameContainInvalidChars:
       'Channel DisplayName cannot include characters except alphabet letters A-Z, a-z, digits 0-9, hyphen “-”, and underscore “_”.',
     tipMsgLength2: 'Maximum DisplayName length is 32 characters',

@@ -86,8 +86,8 @@
           </div>
         </ion-col>
         <ion-col class="content-col" size="6.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
-          <p *ngIf="pinnedPostMap[post.destDid+'-'+post.channelId+'-'+post.postId]" class="pinnedPost"><img src="assets/images/darkmode/pinned.svg"> <span>{{ 'ChannelsPage.pinnedPost' | translate}}</span></p>
-              <ion-label [ngClass]="{'pinnedPostTop':pinnedPostMap[post.destDid+'-'+post.channelId+'-'+post.postId]}">
+          <p *ngIf="post.pinStatus==1 " class="pinnedPost"><img src="assets/images/darkmode/pinned.svg"> <span>{{ 'ChannelsPage.pinnedPost' | translate}}</span></p>
+              <ion-label [ngClass]="{'pinnedPostTop':post.pinStatus==1}">
                 {{ channelName }}
                 <span> {{ handleDisplayTime(post.postId,post.createdAt) }}</span>
               </ion-label>

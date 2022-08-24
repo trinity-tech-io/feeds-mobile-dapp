@@ -214,7 +214,9 @@ export const zh = {
     createCommentFail: '创建微评失败',
     editCommentFail: '更新微评失败',
     twitterError: 'Twitter 请求超时',
-    twitterError401:'Twitter 授权失效，请重新授权'
+    twitterError401: 'Twitter 授权失效，请重新授权',
+    pinPost: '置顶',
+    unpinPost: '取消置顶',
   },
   app: {
     profileDetails: '档案详情',

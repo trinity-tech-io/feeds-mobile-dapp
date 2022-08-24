@@ -47,10 +47,10 @@ export class MenuService {
 
       if (post.pinStatus == FeedsData.PinStatus.NOTPINNED) {
         const pinpostButton = this.createPinPostButton(post);
-        buttons = [pinpostButton, sharePostButton, editPostButton, removePostButton, cancelButton];
+        buttons = [sharePostButton, editPostButton, pinpostButton, removePostButton, cancelButton];
       } else {
         const unpinPostButton = this.createUnpinPostButton(post);
-        buttons = [unpinPostButton, sharePostButton, editPostButton, removePostButton, cancelButton];
+        buttons = [sharePostButton, editPostButton, unpinPostButton, removePostButton, cancelButton];
       }
     }
 
@@ -607,8 +607,8 @@ export class MenuService {
 
   private createPinPostButton(originPost: FeedsData.PostV3) {
     return {
-      text: 'pinPost',
-      icon: 'create',
+      text: this.translate.instant('common.pinPost'),
+      icon: 'ios-pin',
       handler: async () => {
         try {
           await this.native.showLoading("common.waitMoment");
@@ -625,8 +625,8 @@ export class MenuService {
 
   private createUnpinPostButton(originPost: FeedsData.PostV3) {
     return {
-      text: 'unpinPost',
-      icon: 'create',
+      text: this.translate.instant('common.unpinPost'),
+      icon: 'ios-pin',
       handler: async () => {
         try {
           await this.native.showLoading("common.waitMoment");
