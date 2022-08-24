@@ -340,7 +340,7 @@ export class ProfilePage implements OnInit {
   }
 
   async addProflieEvent() {
-    //this.updateWalletAddress("");
+    this.updateWalletAddress(null);
     this.events.subscribe(FeedsEvent.PublishType.clickDisconnectWallet, () => {
       this.walletAddress = '';
       this.walletAddressStr = '';
@@ -2574,7 +2574,6 @@ export class ProfilePage implements OnInit {
       } else {
         this.channelPublicStatusList[key] = "1";//未公开
         this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
-
       }
     }
   }

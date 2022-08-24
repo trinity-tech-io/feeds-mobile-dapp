@@ -447,7 +447,7 @@ export class MyApp {
 
     }
     that.clearData();
-    //that.disconnectWallet();
+    that.disconnectWallet();
   }
 
   async removeTwitterToken() {
@@ -499,7 +499,7 @@ export class MyApp {
       that.removeTwitterToken();
       that.removeRedditToken();
       that.clearData();
-      //that.disconnectWallet();
+      that.disconnectWallet();
     }
   }
 

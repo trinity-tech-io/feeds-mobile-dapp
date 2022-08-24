@@ -721,7 +721,12 @@ export const en = {
     des3: 'Cancel the public channel ',
     des4: 'Whether to remove the channel from the discovery feeds square',
     des5: 'Yes',
-    des6: 'No'
+    des6: 'No',
+    burnNFTs: 'Cancel the public channel ',
+    burningNFTSDesc: 'Cancel the public channel , please wait',
+    burningNFTSTimeoutDesc: 'Cancel the public channel  timeout, you can confirm later',
+    burnNFTSFailed: 'Failed to cancel the public channel ',
+    burnNFTSSuccess: 'Cancel the public channel successfully',
   } /***NFT*/,
   MintnftPage: {
     title: 'Create Collectible',
@@ -929,6 +934,7 @@ export const en = {
     mintSuccess: 'Channel NFT Collectible created',
     mintSuccessDesc: 'Congratulations, you channel collectible has been created successfully.',
     mintSuccessDesc1: 'Congratulations, you channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
+    publishSameDataFailed: 'Failed to publish to Explore Feeds：Explore Feeds has same channel data',
   },
   ScanPage: {
     title: 'Scanner',

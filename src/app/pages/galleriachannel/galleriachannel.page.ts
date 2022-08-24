@@ -175,6 +175,10 @@ export class GalleriachannelPage implements OnInit {
           this.loadingCurNumber = "2";
           this.loadingText = "GalleriachannelPage.checkingCollectibleResult";
           this.isLoading = false;
+          let channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
+          let key = this.destDid +'-'+this.channelId;
+          channelPublicStatusList[key] = "2";
+          this.dataHelper.setChannelPublicStatusList(channelPublicStatusList);
           this.showSuccessDialog();
           this.clearMintSid();
       })

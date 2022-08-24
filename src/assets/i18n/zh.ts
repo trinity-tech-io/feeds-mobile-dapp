@@ -719,7 +719,12 @@ export const zh = {
     des3: '取消公开频道',
     des4: '是否把频道从探索Feeds广场下架',
     des5: '是',
-    des6: '否'
+    des6: '否',
+    burnNFTs: '取消公开频道 ',
+    burningNFTSDesc: '取消公开频道, 请稍后',
+    burningNFTSTimeoutDesc: '取消公开频道超时, 稍后您可自行确认',
+    burnNFTSFailed: '取消公开频道失败',
+    burnNFTSSuccess: '取消公开频道成功',
   }, /***NFT*/
   MintnftPage: {
     title: '创建收藏品',
@@ -927,6 +932,7 @@ export const zh = {
     mintSuccess: '创建频道收藏品成功',
     mintSuccessDesc: '恭喜您，创建频道收藏品成功',
     mintSuccessDesc1: '恭喜您，创建频道收藏品成功，建议删除临时中心化广场上的频道展示',
+    publishSameDataFailed: '公开频道失败：探索频道中已有相同的频道',
   },
   ScanPage: {
     title: '扫描器',
