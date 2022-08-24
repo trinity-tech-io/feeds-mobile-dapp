@@ -358,7 +358,8 @@ export const zh = {
     subscribeChannel: '订阅此频道可查看帖子',
     viewall: '查看全部',
     allempty1: '频道未订阅',
-    emptyDes1: '订阅以查看此频道的内容'
+    emptyDes1: '订阅以查看此频道的内容',
+    pinnedPost: '置顶微说'
   },
   NotificationPage: {
     allempty: '这里什么都找不到',

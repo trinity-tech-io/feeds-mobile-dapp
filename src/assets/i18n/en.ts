@@ -360,7 +360,8 @@ export const en = {
     subscribeChannel: 'Subscribe to view posts from this channel',
     viewall: 'View all',
     allempty1: 'Channel not subscribed',
-    emptyDes1: 'Subscribe to view contents from this channel'
+    emptyDes1: 'Subscribe to view contents from this channel',
+    pinnedPost: 'Pinned Post'
   },
   NotificationPage: {
     allempty: 'Nothing to find here',

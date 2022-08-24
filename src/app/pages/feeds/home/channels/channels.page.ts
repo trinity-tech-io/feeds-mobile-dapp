@@ -136,6 +136,8 @@ export class ChannelsPage implements OnInit {
   private refreshImageSid: any = null;
   public clickButton: boolean = false;
   private observerList: any = {};
+  public  pinnedPostMap: any = {};
+  private isLoadPinnedPost:any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -491,6 +493,8 @@ export class ChannelsPage implements OnInit {
     this.isInitLikeStatus = {};
     this.isInitComment = {};
     this.postMap = {};
+    this.pinnedPostMap = {};
+    this.isLoadPinnedPost = {};
     this.removeObserveList();
     this.native.hideLoading();
     this.native.handleTabsEvents();
@@ -699,6 +703,8 @@ export class ChannelsPage implements OnInit {
       this.images = {};
       this.pageSize = 1;
       this.postMap = {};
+      this.pinnedPostMap = {};
+      this.isLoadPinnedPost = {};
       this.isRefresh = true;
       event.target.disabled = false;
       this.removeObserveList();
@@ -1399,11 +1405,13 @@ export class ChannelsPage implements OnInit {
       //console.log("======newId leave========", newId);
       return;
     }
+
     let arr =  newId.split("-");
     let destDid: string = arr[0];
     let channelId: string = arr[1];
     let postId: string = arr[2];
     let mediaType: string = arr[3];
+    this.handlePinnedPost(destDid, channelId, postId);
     if (mediaType === '1') {
       this.handlePostImgV2(destDid, channelId, postId);
     }
@@ -1431,6 +1439,17 @@ export class ChannelsPage implements OnInit {
 
     this.observerList[postGridId].observe(item);
     }
+  }
+
+  handlePinnedPost(destDid:string, channelId: string, postId: string){
+       let key = destDid+'-'+channelId+'-'+postId;
+       let isLoad = this.isLoadPinnedPost[key] || "";
+       if(isLoad === ""){
+        let pinnedPost = this.pinnedPostMap[key] || '';
+        if(pinnedPost === ''){
+         this.pinnedPostMap[key] = "1";
+        }
+       }
   }
 
 }
