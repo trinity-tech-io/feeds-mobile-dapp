@@ -1448,4 +1448,168 @@ export class FeedsSqliteHelper {
     Logger.log(TAG, 'Parse subscription list from sql, list is', list);
     return list;
   }
+
+  dropAllData(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.dropChannelData(dbUserDid);
+      } catch (error) {
+      }
+
+      try {
+        await this.dropCommentData(dbUserDid);
+      } catch (error) {
+      }
+
+      try {
+        await this.dropLikeData(dbUserDid);
+      } catch (error) {
+      }
+
+      try {
+        await this.dropNewChannelData(dbUserDid);
+      } catch (error) {
+      }
+
+
+      try {
+        await this.dropNewPostData(dbUserDid);
+      } catch (error) {
+      }
+
+
+      try {
+        await this.dropPostData(dbUserDid);
+      } catch (error) {
+      }
+
+      try {
+        await this.dropSubscriptionChannelData(dbUserDid);
+      } catch (error) {
+      }
+
+      try {
+        await this.dropSubscriptionChannelData(dbUserDid);
+      } catch (error) {
+      }
+
+      resolve('FINISH');
+    });
+  }
+
+  dropChannelData(dbUserDid: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement =
+          'DROP TABLE ' + this.TABLE_CHANNEL + " ; ";
+        const params = [];
+        await this.executeSql(dbUserDid, statement, params);
+        resolve('SUCCESS');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  dropNewChannelData(dbUserDid: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement =
+          'DROP TABLE ' + this.TABLE_CHANNEL_NEW + " ; ";
+        const params = [];
+        await this.executeSql(dbUserDid, statement, params);
+        resolve('SUCCESS');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  dropPostData(dbUserDid: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement =
+          'DROP TABLE ' + this.TABLE_POST + " ; ";
+        const params = [];
+        await this.executeSql(dbUserDid, statement, params);
+        resolve('SUCCESS');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  dropNewPostData(dbUserDid: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement =
+          'DROP TABLE ' + this.TABLE_POST_NEW + " ; ";
+        const params = [];
+        await this.executeSql(dbUserDid, statement, params);
+        resolve('SUCCESS');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  dropSubscriptionData(dbUserDid: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement =
+          'DROP TABLE ' + this.TABLE_SUBSCRIPTION + " ; ";
+        const params = [];
+        await this.executeSql(dbUserDid, statement, params);
+        resolve('SUCCESS');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  dropSubscriptionChannelData(dbUserDid: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement =
+          'DROP TABLE ' + this.TABLE_SUBSCRIPTION_CHANNEL + " ; ";
+        const params = [];
+        await this.executeSql(dbUserDid, statement, params);
+        resolve('SUCCESS');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  dropCommentData(dbUserDid: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement =
+          'DROP TABLE ' + this.TABLE_COMMENT + " ; ";
+        const params = [];
+        await this.executeSql(dbUserDid, statement, params);
+
+        resolve('SUCCESS');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  dropLikeData(dbUserDid: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement =
+          'DROP TABLE ' + this.TABLE_LIKE + " ; ";
+        const params = [];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'drop channel data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'drop channel data error', error);
+        reject(error);
+      }
+    });
+  }
 }

@@ -10,6 +10,7 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { PopupProvider } from 'src/app/services/popup';
 import { GlobalService } from 'src/app/services/global.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 
 @Component({
   selector: 'app-developer',
@@ -32,7 +33,8 @@ export class DeveloperPage implements OnInit {
     private hiveVaultController: HiveVaultController,
     public popupProvider: PopupProvider,
     private globalService: GlobalService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private feedsSqliteHelper: FeedsSqliteHelper
   ) { }
 
   ngOnInit() {
@@ -78,7 +80,7 @@ export class DeveloperPage implements OnInit {
     this.popover = this.popupProvider.ionicConfirm(
       this,
       'SearchPage.confirmTitle',
-      '是否删除所有收藏品',
+      'Confirm delete all data?',
       this.cancel,
       this.confirm,
       '',
@@ -93,33 +95,35 @@ export class DeveloperPage implements OnInit {
 
   async confirm(that: any) {
     if (this.popover != null) {
-       await this.popover.dismiss();
-       this.popover = null;
+      await this.popover.dismiss();
+      this.popover = null;
     }
 
     that.deleteAllCollections(that);
   }
 
-  async deleteAllCollections(that: any){
-   await that.native.showLoading("common.waitMoment");
-   try {
-   let reslut  = await that.hiveVaultController.deleteAllCollections();
-   if(reslut === "true"){
+  async deleteAllCollections(that: any) {
+    await that.native.showLoading("common.waitMoment");
+    try {
+      let reslut = await that.hiveVaultController.deleteAllCollections();
+      if (reslut === "true") {
         await that.dataHelper.removeData("feeds.initHive");
         await that.dataHelper.removeData("feeds.syncHiveData");
         const signinData = await this.dataHelper.getSigninData();
         let userDid = signinData.did
-     localStorage.removeItem(userDid + "localScriptVersion");
+        localStorage.removeItem(userDid + "localScriptVersion");
+        await that.feedsSqliteHelper.dropAllData(userDid);
         that.native.hideLoading();
-        alert("success");
-   }else{
-     that.native.hideLoading();
-    alert("fail");
-   }
-   } catch (error) {
-     that.native.hideLoading();
-     alert("====error==="+JSON.stringify(error));
-   }
+        that.globalService.restartApp();
+        // alert("success");
+      } else {
+        that.native.hideLoading();
+        alert("fail");
+      }
+    } catch (error) {
+      that.native.hideLoading();
+      alert("====error===" + JSON.stringify(error));
+    }
   }
 
   toggleDeveloperMode() {
@@ -134,4 +138,5 @@ export class DeveloperPage implements OnInit {
       this.ipfsService.setTESTMode(false);
     }
   }
+
 }
