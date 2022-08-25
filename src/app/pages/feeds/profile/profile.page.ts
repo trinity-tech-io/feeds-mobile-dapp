@@ -2563,19 +2563,23 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  async getChannelPublicStatus(destDid: string, channelId: string) {
+  getChannelPublicStatus(destDid: string, channelId: string) {
     this.channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
     let key = destDid + '-' + channelId;
     let channelPublicStatus = this.channelPublicStatusList[key] || '';
     if (channelPublicStatus === '') {
-      let channelInfo = await this.getChannelInfo(channelId);
-      if (channelInfo != null) {
-        this.channelPublicStatusList[key] = "2";//已公开
-        this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
-      } else {
-        this.channelPublicStatusList[key] = "1";//未公开
-        this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
-      }
+      this.getChannelInfo(channelId).then((channelInfo)=>{
+        if (channelInfo != null) {
+          this.channelPublicStatusList[key] = "2";//已公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+        } else {
+          this.channelPublicStatusList[key] = "1";//未公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+        }
+      }).catch((err)=>{
+
+      });
+
     }
   }
 }
