@@ -151,7 +151,6 @@ export class SearchPage implements OnInit {
       FeedsEvent.PublishType.subscribeFinish,
       (subscribeFinishData: FeedsEvent.SubscribeFinishData) => {
         this.zone.run(() => {
-
         });
       },
     );

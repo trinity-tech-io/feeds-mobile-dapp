@@ -895,4 +895,12 @@ export class UtilService {
     return device;
   }
 
+  /**
+ *根据数据条数与每页多少条数据计算页数
+ * totalnum 数据条数
+ * limit 每页多少条
+ */
+  public static pageCount(totalnum: number, limit: number) {
+    return totalnum > 0 ? ((totalnum < limit) ? 1 : ((totalnum % limit) ? (parseInt((totalnum / limit).toString()) + 1) : (totalnum / limit))) : 0;
+  }
 }

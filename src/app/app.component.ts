@@ -244,7 +244,7 @@ export class MyApp {
 
         this.initSetting();
         this.initNftFirstdisclaimer();
-        this.initFeedPublicStatus();
+        this.initChannelPublicStatusList();
         this.initCurrentChannel();
         this.initSpecificChannelCollectionPageList();
         this.initCollectibleSetting();
@@ -325,15 +325,15 @@ export class MyApp {
       .catch(err => { });
   }
 
-  initFeedPublicStatus() {
+  initChannelPublicStatusList() {
     this.dataHelper
-      .loadData('feeds.feedPublicStatus')
-      .then(feedPublicStatus => {
-        if (feedPublicStatus === null) {
-          this.dataHelper.setFeedPublicStatus({});
+      .loadData('feeds.channelPublicStatus.list')
+      .then(channelPublicStatusList => {
+        if (channelPublicStatusList === null) {
+          this.dataHelper.setChannelPublicStatusList({});
           return;
         }
-        this.dataHelper.setFeedPublicStatus(JSON.parse(feedPublicStatus));
+        this.dataHelper.setChannelPublicStatusList(channelPublicStatusList);
       })
       .catch(err => { });
   }

@@ -2325,6 +2325,7 @@ export class ProfilePage implements OnInit {
         let channelId: string = arr[1];
         this.handleMyFeedsAvatarV2(destDid, channelId);
         this.getChannelFollower(destDid, channelId);
+        this.getChannelPublicStatus(destDid, channelId);
         //console.log("======intersectionRatio1========",typeof(changes[0]));
         //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
       });
@@ -2567,7 +2568,7 @@ export class ProfilePage implements OnInit {
     let key = destDid + '-' + channelId;
     let channelPublicStatus = this.channelPublicStatusList[key] || '';
     if (channelPublicStatus === '') {
-      let channelInfo = await this.getChannelInfo(this.channelId);
+      let channelInfo = await this.getChannelInfo(channelId);
       if (channelInfo != null) {
         this.channelPublicStatusList[key] = "2";//已公开
         this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
