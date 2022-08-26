@@ -2,7 +2,7 @@
 <ion-content>
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
 
-    <ion-row class="section" *ngIf="twitterConnectStatus === 1" (click)="removeConnection()">
+    <ion-row class="section" *ngIf="twitterConnectStatus === 1" (click)="removeConnection('twitter')">
       <ion-col size="2.5" class="left-col">
         <img src="assets/images/darkmode/connections/twitter.svg"/>
       </ion-col>
@@ -12,7 +12,17 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="section" (click)="addConnection()" *ngIf="twitterConnectStatus === 0">
+    <ion-row class="section" *ngIf="redditConnectStatus === 1" (click)="removeConnection('reddit')">
+      <ion-col size="2.5" class="left-col">
+        <img src="assets/images/darkmode/connections/reddit.svg"/>
+      </ion-col>
+      <ion-col size="9.5" class="title-col">
+          <h1>{{"ConnectionsPage.reddit" | translate }}</h1>
+          <h2>{{"ConnectionsPage.connected" | translate }} </h2>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="section" (click)="addConnection()" *ngIf="twitterConnectStatus === 0 || redditConnectStatus === 0">
       <ion-col size="2.5" class="left-col">
         <img src="assets/images/darkmode/connections/add.svg"/>
       </ion-col>
@@ -28,6 +38,8 @@
  *ngIf="hideConnectionMenuComponent"
  [connectTwitter] = "connectTwitter"
  [disconnectTwitter] = "disconnectTwitter"
+ [connectReddit] = "connectReddit"
+ [disconnectReddit] = "disconnectReddit"
  (hideConnectionMenu)="hideConnectionMenu($event)"
 >
 </app-connectionmenu>

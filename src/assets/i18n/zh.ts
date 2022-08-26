@@ -939,6 +939,7 @@ export const zh = {
     addConnectionDes: '整合新账户',
     twitter: '推特',
     connected: '已连接',
-    disconnect: '断开'
+    disconnect: '断开',
+    reddit: 'Reddit'
   }
 };

@@ -9,6 +9,8 @@ import { ThemeService } from '../../services/theme.service';
 export class ConnectionmenuComponent implements OnInit {
   @Input()  connectTwitter: boolean = false;
   @Input()  disconnectTwitter: boolean = false;
+  @Input()  connectReddit: boolean = false;
+  @Input()  disconnectReddit: boolean = false;
   @Output() hideConnectionMenu = new EventEmitter();
   constructor(
     public theme: ThemeService

@@ -937,6 +937,7 @@ export const en = {
     addConnectionDes: 'Integrate new account',
     twitter: 'Twitter',
     connected: 'Connected',
-    disconnect: 'disconnect'
+    disconnect: 'disconnect',
+    reddit: 'Reddit'
   }
 };

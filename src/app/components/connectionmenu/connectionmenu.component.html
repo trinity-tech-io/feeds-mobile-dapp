@@ -11,7 +11,21 @@
       </ion-col>
       </ion-row>
 
+      <ion-row (click)="clickItem('reddit')" class="share" *ngIf="connectReddit">
+        <ion-col
+        size="12">
+        <img src="./assets/images/gReddit.svg"><span>{{"ConnectionsPage.reddit"|translate}}</span>
+      </ion-col>
+      </ion-row>
+
       <ion-row (click)="clickItem('disconnectTwittet')" class="share" *ngIf="disconnectTwitter">
+        <ion-col
+        size="12">
+        <img src="./assets/images/removeTwitter.svg"><span style="color: #ff453a;">{{"ConnectionsPage.disconnect"|translate}}</span>
+      </ion-col>
+      </ion-row>
+
+      <ion-row (click)="clickItem('disconnectReddit')" class="share" *ngIf="disconnectReddit">
         <ion-col
         size="12">
         <img src="./assets/images/removeTwitter.svg"><span style="color: #ff453a;">{{"ConnectionsPage.disconnect"|translate}}</span>
