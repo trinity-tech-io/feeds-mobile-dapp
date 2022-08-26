@@ -34,7 +34,7 @@ export class MenuService {
     private hiveVaultController: HiveVaultController
   ) { }
 
-  async showChannelItemMenu(post: FeedsData.PostV3, channelName: string, isMineAndCanEdit: boolean) {
+  async showChannelItemMenu(post: FeedsData.PostV3, channelName: string, isMineAndCanEdit: boolean, needUnpinPost: FeedsData.PostV3) {
     if (this.actionSheetMenu != null) {
       return;
     }
@@ -46,7 +46,7 @@ export class MenuService {
       const removePostButton = this.createRemovePostButton(post.destDid, post.channelId, channelName, post.postId);
 
       if (post.pinStatus == FeedsData.PinStatus.NOTPINNED) {
-        const pinpostButton = this.createPinPostButton(post);
+        const pinpostButton = this.createPinPostButton(post, needUnpinPost);
         buttons = [sharePostButton, editPostButton, pinpostButton, removePostButton, cancelButton];
       } else {
         const unpinPostButton = this.createUnpinPostButton(post);
@@ -605,13 +605,14 @@ export class MenuService {
     }
   }
 
-  private createPinPostButton(originPost: FeedsData.PostV3) {
+  private createPinPostButton(originPost: FeedsData.PostV3, needUnpinPost: FeedsData.PostV3) {
     return {
       text: this.translate.instant('common.pinPost'),
       icon: 'ios-pin',
       handler: async () => {
         try {
           await this.native.showLoading("common.waitMoment");
+          if (needUnpinPost) await this.hiveVaultController.pinPost(needUnpinPost, FeedsData.PinStatus.NOTPINNED);
           await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.PINNED);
           this.events.publish(FeedsEvent.PublishType.pinPostFinish);
         } catch (error) {

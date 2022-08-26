@@ -645,7 +645,7 @@ export class HiveVaultController {
 
   public pinPost(originPost: FeedsData.PostV3, pinStatus: FeedsData.PinStatus): Promise<FeedsData.PostV3> {
     console.log('===========>originPost', originPost, '===========>pinStatus', pinStatus);
-    return this.updatePost(originPost, originPost.content, pinStatus, originPost.updatedAt, originPost.type, originPost.tag, originPost.status, originPost.memo, originPost.proof);
+    return this.updatePost(originPost, originPost.content, pinStatus, UtilService.getCurrentTimeNum(), originPost.type, originPost.tag, originPost.status, originPost.memo, originPost.proof);
   }
 
   private async progressMediaData(newPostText: string, newImagesBase64: string[], newVideoData: FeedsData.videoData) {

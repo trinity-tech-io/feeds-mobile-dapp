@@ -134,6 +134,7 @@ export class ChannelsPage implements OnInit {
   private observerList: any = {};
   public pinnedPostMap: any = {};
   private isLoadPinnedPost: any = {};
+  private currentPinPost: FeedsData.PostV3 = null;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -243,11 +244,15 @@ export class ChannelsPage implements OnInit {
     //   return -item.createdAt;
     // });
     // return sortList;
-
-    console.log('sortPostList postList ====>', postList);
     let sortList = _.orderBy(postList, ['pinStatus', 'createdAt'], ['desc', 'desc']);
-    console.log('sortPostList sortList ====>', sortList);
     return sortList;
+  }
+
+  findCurrentPinPost(postList: FeedsData.PostV3[]) {
+    let pinPostList = _.filter(postList, (item: FeedsData.PostV3) => {
+      return item.pinStatus == FeedsData.PinStatus.PINNED;
+    });
+    return pinPostList;
   }
 
   // includePinPost(postList: FeedsData.PostV3[]): FeedsData.PostV3 {
@@ -282,6 +287,8 @@ export class ChannelsPage implements OnInit {
     }
     let tmpPostList = await this.filterDeletedPostList(posts);
     this.totalData = this.sortPostList(tmpPostList);
+    const pinPostList = this.findCurrentPinPost(this.totalData);
+    this.currentPinPost = pinPostList[0];
 
     if (this.postList.length > 0 && !this.isRefresh) {
       if (this.curPostId != '') {
@@ -474,19 +481,13 @@ export class ChannelsPage implements OnInit {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.pinPostFinish, async () => {
-      console.log('pinFinish');
-      this.images = {};
-      this.postMap = {};
       this.isRefresh = true;
-      this.init();
+      this.initRefresh();
     });
 
     this.events.subscribe(FeedsEvent.PublishType.unpinPostFinish, async () => {
-      console.log('unpinFinish');
-      this.images = {};
-      this.postMap = {};
       this.isRefresh = true;
-      this.init();
+      this.initRefresh();
     })
   }
 
@@ -703,7 +704,7 @@ export class ChannelsPage implements OnInit {
     let isMine = await this.checkChannelIsMine();
     this.curPostId = post.postId;
 
-    this.menuService.showChannelItemMenu(post, this.channelName, isMine === 1 && post.status != FeedsData.PostCommentStatus.deleted);
+    this.menuService.showChannelItemMenu(post, this.channelName, isMine === 1 && post.status != FeedsData.PostCommentStatus.deleted, this.currentPinPost);
   }
 
   async doRefresh(event: any) {
