@@ -1399,21 +1399,27 @@ export class FeedsSqliteHelper {
       try {
         const sqlversion = await this.storageService.get(FeedsData.PersistenceKey.sqlversion) || 0;
         if (sqlversion < Config.SQL_VERSION311) {
-
           await this.createChannelTable(dbUserDid);
-          const channelData = await this.queryOriginChannelData(dbUserDid);
+          let channelData = [];
+          try {
+            channelData = await this.queryOriginChannelData(dbUserDid);
+          } catch (error) {
+          }
           for (let index = 0; index < channelData.length; index++) {
             const channel = channelData[index];
             await this.insertChannelData(dbUserDid, channel);
             await this.deleteOriginChannelData(dbUserDid, channel.channelId);
           }
-          // await this.dropOriginChannel(dbUserDid);
         }
 
         if (sqlversion < Config.SQL_VERSION320) {
           await this.createPostTable(dbUserDid);
+          let postData = [];
+          try {
+            postData = await this.queryOriginPostData(dbUserDid);
+          } catch (error) {
+          }
 
-          const postData = await this.queryOriginPostData(dbUserDid);
           for (let index = 0; index < postData.length; index++) {
             const post = postData[index];
             await this.insertPostData(dbUserDid, post)
@@ -1422,7 +1428,6 @@ export class FeedsSqliteHelper {
         }
         resolve('FINISH');
       } catch (error) {
-        console.log("xxxxxxx", error);
       } finally {
         this.storageService.set(FeedsData.PersistenceKey.sqlversion, Config.SQL_VERSION);
       }

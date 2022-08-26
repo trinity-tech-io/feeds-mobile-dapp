@@ -457,7 +457,7 @@ export class MyApp {
       return null
     }
     const userDid = signinData.did || ''
-    if(userDid === ''){
+    if (userDid === '') {
       return null
     }
     this.dataHelper.removeTwitterToken(userDid);
