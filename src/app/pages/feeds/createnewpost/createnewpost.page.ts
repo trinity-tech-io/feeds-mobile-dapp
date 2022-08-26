@@ -14,7 +14,6 @@ import { ViewHelper } from 'src/app/services/viewhelper.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/services/logger';
-import { IPFSService } from 'src/app/services/ipfs.service';
 import { PostHelperService } from 'src/app/services/post_helper.service';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { DataHelper } from 'src/app/services/DataHelper';
@@ -68,6 +67,8 @@ export class CreatenewpostPage implements OnInit {
   public curTextNum: number = 0;
   public extraNumber:number = 0;
   private infoPopover: any = null;
+  public isPostReddit: boolean = false;
+
   constructor(
     private popoverController: PopoverController,
     private platform: Platform,
@@ -86,7 +87,6 @@ export class CreatenewpostPage implements OnInit {
     private storageService: StorageService,
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
-    private ipfsService: IPFSService,
     private dataHelper: DataHelper,
 
     private postHelperService: PostHelperService,
@@ -652,5 +652,26 @@ export class CreatenewpostPage implements OnInit {
     });
 
     return await this.infoPopover.present();
+  }
+
+  async clickTwitter() {
+
+    const userDid = (await this.dataHelper.getSigninData()).did
+    if(this.isPostTwitter){
+      this.isPostTwitter = false;
+      localStorage.setItem(userDid + "isSyncToTwitter", "false");
+    }else{
+      const token = await this.twitterService.checkTwitterIsExpired();
+      if (token === null) {
+        this.native.toastWarn("common.twitterNotLogin");
+        return;
+      }
+      this.isPostTwitter = true;
+      localStorage.setItem(userDid + "isSyncToTwitter", "true")
+    }
+  }
+
+  clickReddit() {
+    this.isPostReddit = !this.isPostReddit;
   }
 }

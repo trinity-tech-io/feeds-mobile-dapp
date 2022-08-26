@@ -6,9 +6,9 @@
       <ion-col size="2.5" class="left-col">
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
           <img src={{channelAvatar}} *ngIf="channelAvatar != ''">
-          <div class="postTwitter" *ngIf="isPostTwitter">
+          <!-- <div class="postTwitter" *ngIf="isPostTwitter">
             <img src="./assets/images/postTwitter.svg">
-          </div>
+          </div> -->
         </div>
       </ion-col>
       <ion-col size="9" class="middle-col" (click)="clickFeedAvatar()">
@@ -27,13 +27,43 @@
   (ionBlur)="ionBlur()" (ionFocus)="ionFocus()" (ionChange) = "inputTextarea()">
   </ion-textarea>
   </div>
-  <div class="twitter">
+  <ion-row class="twitter1">
+    <ion-col size="3.5" class="des ionColTopBottom">
+      <img  src="/assets/images/twitterInfo.svg" (click)="twitterInfo($event)" style="margin-right:5px;"/>
+      <span>{{ 'CreatenewpostPage.twitterDes' | translate}}</span>
+    </ion-col>
+    <ion-col size="2" class="twitterLogo ionColTopBottom" (click)="clickTwitter()">
+      <img src="assets/images/darkmode/connections/twitter.svg" *ngIf="isPostTwitter"/>
+      <img src="/assets/images/gTwitter.svg" *ngIf="!isPostTwitter"/>
+      <!-- <span>{{ 'ConnectionsPage.twitter' | translate}}</span> -->
+    </ion-col>
+    <ion-col size="2" class="redditLogo ionColTopBottom" (click)="clickReddit()">
+      <img src="assets/images/darkmode/connections/reddit.svg" *ngIf="isPostReddit"/>
+      <img src="/assets/images/gReddit.svg" *ngIf="!isPostReddit"/>
+      <!-- <span>{{ 'ConnectionsPage.reddit' | translate}}</span> -->
+    </ion-col>
+    <ion-col size="4.5" class="ionColTopBottom">
+      <p class="extraNumber" *ngIf="isPostTwitter && extraNumber < 0">{{ extraNumber }}</p>
+    </ion-col>
+
+    <ion-col size="3.5" class="des ionColTopBottom">
+    </ion-col>
+    <ion-col size="2" class="twitterLogo ionColTopBottom" (click)="clickTwitter()">
+      <span>{{ 'ConnectionsPage.twitter' | translate}}</span>
+    </ion-col>
+    <ion-col size="2" class="redditLogo ionColTopBottom" (click)="clickReddit()">
+      <span>{{ 'ConnectionsPage.reddit' | translate}}</span>
+    </ion-col>
+    <ion-col size="4.5" class="ionColTopBottom">
+    </ion-col>
+  </ion-row>
+  <!-- <div class="twitter">
   <p class="extraNumber" *ngIf="isPostTwitter && extraNumber < 0">{{ extraNumber }}</p>
   <img  src="/assets/images/twitterInfo.svg" (click)="twitterInfo($event)" style="margin-right:5px;"/>
   <span>{{ 'CreatenewpostPage.twitterDes' | translate}}</span>
   <ion-checkbox mode='md' checked="true" class="checkbox" [(ngModel)]="isPostTwitter" (ionChange)="checkBoxClick($event)">
   </ion-checkbox>
-  </div>
+  </div> -->
   <div *ngIf="imgUrl !== ''" class="img-container">
     <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
     <img class="remove" src="/assets/icons/remove.svg" (click)="removeImg()"/>

@@ -146,6 +146,67 @@
     border-radius: 20px;
   }
 
+.ionColTopBottom{
+    padding: 0px;
+}
+
+.twitter1{
+     display: flex;
+     align-items: center;
+    .des{
+        justify-content: flex-start;
+        img{
+          vertical-align: middle;
+          margin-right: 5px;
+        }
+        span{
+            font-style: normal;
+            font-weight: 600;
+            font-size: 12px;
+            background: linear-gradient(90deg, #7624FE 0%, #368BFF 100.78%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-right: 4px;
+        }
+    }
+
+    .twitterLogo{
+       display: flex;
+       justify-content:center;
+       img{
+        width:30px;
+        height:30px;
+        margin-bottom:5px;
+       }
+
+       span{
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        color: #FFFFFF;
+       }
+    }
+
+    .redditLogo{
+        display: flex;
+        justify-content:center;
+        img{
+            width:30px;
+            height:30px;
+            margin-bottom:5px;
+           }
+
+           span{
+            font-style: normal;
+            font-weight: 400;
+            font-size: 12px;
+            color: #FFFFFF;
+           }
+    }
+
+}
+
 .twitter{
     position: relative;
     display: flex;
