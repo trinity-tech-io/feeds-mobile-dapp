@@ -1410,14 +1410,14 @@ export class FeedsSqliteHelper {
           // await this.dropOriginChannel(dbUserDid);
         }
 
-        if (sqlversion < Config.SQL_VERSION312) {
+        if (sqlversion < Config.SQL_VERSION320) {
           await this.createPostTable(dbUserDid);
 
           const postData = await this.queryOriginPostData(dbUserDid);
           for (let index = 0; index < postData.length; index++) {
             const post = postData[index];
             await this.insertPostData(dbUserDid, post)
-            await this.deleteOriginPostData
+            await this.deleteOriginPostData(dbUserDid, post.postId);
           }
         }
         resolve('FINISH');
