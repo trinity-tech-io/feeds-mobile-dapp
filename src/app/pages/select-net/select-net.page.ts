@@ -76,7 +76,7 @@ export class SelectNetPage implements OnInit {
     if (this.popover != null) {
       this.popover.dismiss();
       this.popover = null;
-
+      that.dataHelper.setChannelPublicStatusList({});
       that.feedService.resetConnectionStatus();
       //that.feedService.destroyCarrier();
       that.globalService.restartApp();
