@@ -2487,4 +2487,9 @@ export class HomePage implements OnInit {
       }
     }
   }
+
+  repost(post: FeedsData.PostV3) {
+
+  }
+
 }

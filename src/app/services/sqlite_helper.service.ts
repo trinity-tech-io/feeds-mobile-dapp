@@ -1215,15 +1215,16 @@ export class FeedsSqliteHelper {
 
       if (mediaDataV3Data != undefined) {
         const mediaDataV3: FeedsData.mediaDataV3 = {
-          kind: mediaDataV3Data['kind'],       //"image/video/audio"
+          kind: mediaDataV3Data['kind'],
           originMediaPath: mediaDataV3Data['originMediaPath'],
-          type: mediaDataV3Data['type'],           //"image/jpg",
-          size: mediaDataV3Data['size'],           //origin file size
-          thumbnailPath: mediaDataV3Data['thumbnailPath'],   //"thumbnailCid"
+          type: mediaDataV3Data['type'],
+          size: mediaDataV3Data['size'],
+          thumbnailPath: mediaDataV3Data['thumbnailPath'],
           duration: mediaDataV3Data['duration'],
           imageIndex: mediaDataV3Data['imageIndex'],
           additionalInfo: mediaDataV3Data['additionalInfo'],
           memo: mediaDataV3Data['memo'],
+          repostUrl: mediaDataV3Data['repostUrl']
         }
         mediaDataV3Array.push(mediaDataV3)
       }

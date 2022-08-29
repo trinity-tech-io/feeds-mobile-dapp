@@ -300,15 +300,16 @@ export class HiveInterfaceTestPage implements OnInit {
   async insertPostData() {
     console.log('insertPostData');
     const mediaDataV3: FeedsData.mediaDataV3 = {
-      kind: 'kind',           //"image/video/audio"
+      kind: 'kind',
       originMediaPath: 'originMediaPath',
-      type: 'type',           //"image/jpg",
-      size: 0,           //origin file size
-      thumbnailPath: 'testpath',    //"thumbnailCid"
+      type: 'type',
+      size: 0,
+      thumbnailPath: 'testpath',
       duration: 0,
       imageIndex: 0,
       additionalInfo: 'additionalInfo',
-      memo: 'memo'
+      memo: 'memo',
+      repostUrl: ''
     }
     const testContent: FeedsData.postContentV3 = {
       version: "3.0",

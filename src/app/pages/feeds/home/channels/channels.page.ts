@@ -477,10 +477,10 @@ export class ChannelsPage implements OnInit {
           let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
             let newList = await this.dataHelper.getPostListV3FromChannel(this.destDid, this.channelId);
-            let deletePostIndex = _.findIndex( newList,(item: any)=>{
-                  return item.postId === result.postId;
+            let deletePostIndex = _.findIndex(newList, (item: any) => {
+              return item.postId === result.postId;
             })
-            if(deletePostIndex > -1){
+            if (deletePostIndex > -1) {
               newList[deletePostIndex].status = 1;
             }
             this.removeObserveList();
@@ -770,7 +770,7 @@ export class ChannelsPage implements OnInit {
 
   loadData(event: any) {
     let sId = setTimeout(() => {
-      if(this.postList.length === this.totalData.length){
+      if (this.postList.length === this.totalData.length) {
         event.target.complete();
         clearTimeout(sId);
         return;
@@ -1558,4 +1558,7 @@ export class ChannelsPage implements OnInit {
     }
   }
 
+  repost(post: FeedsData.PostV3) {
+
+  }
 }

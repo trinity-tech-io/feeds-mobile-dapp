@@ -1422,6 +1422,9 @@ export class PostdetailPage implements OnInit {
     this.replyObserverList = {};
   }
 
+  repost() {
+
+  }
 
 }
 

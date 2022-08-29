@@ -358,4 +358,9 @@ export class LikesComponent implements OnInit {
   handlePostText(url: string, event: any) {
       event.stopPropagation();
   }
+
+  repost(post: FeedsData.PostV3) {
+
+  }
+
 }
