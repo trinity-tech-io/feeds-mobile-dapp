@@ -220,6 +220,7 @@ export const en = {
     RedditNotLogin: 'You are not logged into Reddit. Please return to the Settings page to log in.',
     RedditExpired: 'Reddit login has expired. Please return to the Settings page to log in.',
     RedditAuthFailed: 'Reddit auth Failed',
+    SubscribeElastosCommunity: 'Please subscribe to the elastos community in Reddit first',
   },
   app: {
     profileDetails: 'Profile Details',

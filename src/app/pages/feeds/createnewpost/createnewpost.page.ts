@@ -20,6 +20,8 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { TwitterService } from 'src/app/services/TwitterService';
 import { MorenameComponent } from 'src/app/components/morename/morename.component';
+import { RedditService } from 'src/app/services/RedditService';
+
 let TAG: string = 'Feeds-createpost';
 
 @Component({
@@ -95,6 +97,7 @@ export class CreatenewpostPage implements OnInit {
     // private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController,
     private twitterService: TwitterService,
+    private redditService: RedditService,
 
   ) { }
 
@@ -175,6 +178,14 @@ export class CreatenewpostPage implements OnInit {
         localStorage.setItem(userDid + "isSyncToTwitter", "false");
       }
     })
+    try {
+      await this.redditService.subreddits()
+      this.clickReddit()
+    }
+    catch (error) {
+      // TODO:
+    }
+
   }
 
   ionViewWillLeave() {
@@ -671,7 +682,27 @@ export class CreatenewpostPage implements OnInit {
     }
   }
 
-  clickReddit() {
-    this.isPostReddit = !this.isPostReddit;
+  async clickReddit() {
+    // this.isPostReddit = !this.isPostReddit;
+    const userDid = (await this.dataHelper.getSigninData()).did
+    if (this.isPostReddit) {
+      this.isPostReddit = false;
+      localStorage.setItem(userDid + "isSyncToReddit", "false");
+    } else {
+      const token = await this.redditService.checkRedditIsExpired();
+      if (token === null) {
+        localStorage.setItem(userDid + "isSyncToReddit", "false")
+        this.native.toastWarn("common.RedditNotLogin");
+        return;
+      }
+      const isSubscribeElastos = this.dataHelper.getRedditIsSubscribeElastos(userDid);
+      if (isSubscribeElastos === false) {
+        localStorage.setItem(userDid + "isSyncToReddit", "false")
+        this.native.toastWarn("common.SubscribeElastosCommunity");
+        return;
+      }
+      this.isPostReddit = true;
+      localStorage.setItem(userDid + "isSyncToReddit", "true")
+    }
   }
 }

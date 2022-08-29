@@ -9,6 +9,7 @@ import { Events } from 'src/app/services/events.service';
 import { Logger } from './logger';
 import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 import { TwitterApi } from './TwitterApi';
+import { RedditApi } from './RedditApi';
 
 let TAG: string = 'DataHelper';
 declare let didManager: DIDPlugin.DIDManager;
@@ -4239,18 +4240,20 @@ export class DataHelper {
     const hour = 60 * 60 * 1000 * 24 // 2小时
     time.setTime(tt + hour)
     tokenData['expired_time'] = time.getTime()
+    const key = userDid + RedditApi.CLIENT_ID + "REDDITTOKEN"
 
-    localStorage.setItem(userDid + "REDDITTOKEN", JSON.stringify(tokenData))
+    localStorage.setItem(key, JSON.stringify(tokenData))
   }
 
   getRedditRefreshToken(userDid: string) {
-    const data = localStorage.getItem(userDid + "REDDITTOKEN") || ''
+    const key = userDid + RedditApi.CLIENT_ID + "REDDITTOKEN"
+    const data = localStorage.getItem(key) || ''
     console.log("getRedditRefreshToken ======= ", data)
     if (data === '' || data === undefined) {
       return null // 标识 本地没有token
     }
     const tokenData = JSON.parse(data)
-    console.log("getRedditRefreshToken tokenData ======= ", tokenData)
+    Logger.log(TAG, "getRedditRefreshToken tokenData =====", tokenData)
     let refreshToken = tokenData['refresh_token']
 
     return refreshToken
@@ -4258,9 +4261,10 @@ export class DataHelper {
 
   getRedditAccessToken(userDid: string) {
     // return false // 标识 token 过期
+    const key = userDid + RedditApi.CLIENT_ID + "REDDITTOKEN"
+    const data = localStorage.getItem(key) || ''
+    Logger.log(TAG, "getRedditAccessToken =====", data)
 
-    const data = localStorage.getItem(userDid + "REDDITTOKEN") || ''
-    console.log("getRedditAccessToken ===== ", data)
     if (data === '' || data === undefined) {
       return null // 标识 本地没有token
     }
@@ -4270,11 +4274,11 @@ export class DataHelper {
     const expired_time = tokenData.expired_time
     const currentTime = new Date().getTime()
 
-    console.log("currentTime ==== ", currentTime)
-    console.log("expired_time ==== ", expired_time)
+    Logger.log(TAG, "currentTime =====", currentTime)
+    Logger.log(TAG, "expired_time =====", expired_time)
 
     if (currentTime > expired_time) {
-      console.log("getRedditAccessToken ===== 过期")
+      Logger.log(TAG, "getRedditAccessToken data ===== 过期")
       return false // 标识 token 过期
     }
 
@@ -4282,12 +4286,46 @@ export class DataHelper {
   }
 
   removeRedditToken(userDid: string) {
-    const data = localStorage.getItem(userDid + "REDDITTOKEN") || ''
+    const key = userDid + RedditApi.CLIENT_ID + "REDDITTOKEN"
+    Logger.log(TAG, "removeRedditToken key ===== ", key)
+
+    const data = localStorage.getItem(key) || ''
+    Logger.log(TAG, "removeRedditToken data ===== ", data)
+
     if (data === '' || data === undefined || data == null) {
       return
     }
-    localStorage.removeItem(userDid + "REDDITTOKEN")
+    localStorage.removeItem(key)
   }
+
+  getRedditIsSubscribeElastos(userDid: string) {
+    const key = userDid + RedditApi.CLIENT_ID + "isSubscribeElastos"
+    const isSubscribeElastos = localStorage.getItem(key) || ''
+    Logger.log(TAG, "getRedditIsSubscribeElastos isSubscribeElastos =====", isSubscribeElastos)
+
+    if (isSubscribeElastos === '' || isSubscribeElastos === undefined) {
+      return false
+    }
+    if (isSubscribeElastos === "true") {
+      return true
+    }
+    return false
+  }
+
+  updateRedditIsSubscribeElastos(userDid: string, isElastos: string) {
+    const key = userDid + RedditApi.CLIENT_ID + "isSubscribeElastos"
+    localStorage.setItem(key, isElastos)
+  }
+
+  removeRedditIsSubscribeElastos(userDid: string) {
+    const key = userDid + RedditApi.CLIENT_ID + "isSubscribeElastos"
+    const data = localStorage.getItem(key) || ''
+    if (data === '' || data === undefined || data == null) {
+      return
+    }
+    localStorage.removeItem(key)
+  }
+
 
   //API
   // addPosts(postList: FeedsData.PostV3[], useCache: boolean, usePersistence: boolean) {

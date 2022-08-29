@@ -15,7 +15,9 @@ declare namespace FeedsEvent {
     ////////
     twitterLoginSuccess = 'twitter:loginSuccess',
     twitterLoginFailed = 'twitter:loginFailed',
-
+    RedditLoginSuccess = 'reddit:loginSuccess',
+    RedditLoginFailed = 'reddit:loginFailed',
+    
     ////////
     networkStatusChanged = 'feeds:networkStatusChanged',
 

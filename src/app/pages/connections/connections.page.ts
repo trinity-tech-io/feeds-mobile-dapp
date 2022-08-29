@@ -10,6 +10,8 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { Platform } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TwitterApi } from 'src/app/services/TwitterApi';
+import { RedditApi } from 'src/app/services/RedditApi';
+import { RedditService } from 'src/app/services/RedditService';
 
 @Component({
   selector: 'app-connections',
@@ -39,20 +41,32 @@ export class ConnectionsPage implements OnInit {
     private zone: NgZone,
     private native: NativeService,
     private platform: Platform,
+    private redditService: RedditService,
   ) {
     this.addEvents();
   }
 
   async reloadStatus() {
-    let token = await this.twitterService.checkTwitterIsExpired()
+    let twitterToken = await this.twitterService.checkTwitterIsExpired()
+    let redditToken = await this.redditService.checkRedditIsExpired()
+
     this.zone.run(() => {
-      if (token != false && token != null) {
+      if (twitterToken != false && twitterToken != null) {
         this.hideConnectionMenuComponent = false;
         this.twitterConnectStatus = 1;
       }
       else {
         this.hideConnectionMenuComponent = false
         this.twitterConnectStatus = 0
+      }
+
+      if (redditToken != false && redditToken != null) {
+        this.hideConnectionMenuComponent = false;
+        this.redditConnectStatus = 1;
+      }
+      else {
+        this.hideConnectionMenuComponent = false
+        this.redditConnectStatus = 0
       }
     });
   }
@@ -75,11 +89,21 @@ export class ConnectionsPage implements OnInit {
    this.events.subscribe(FeedsEvent.PublishType.twitterLoginFailed, () => {
 
    });
+
+    this.events.subscribe(FeedsEvent.PublishType.RedditLoginSuccess, (obj) => {
+      this.reloadStatus();
+    });
+    this.events.subscribe(FeedsEvent.PublishType.RedditLoginFailed, () => {
+
+  });
   }
 
   ionViewWillLeave() {
     this.events.unsubscribe(FeedsEvent.PublishType.twitterLoginSuccess);
     this.events.unsubscribe(FeedsEvent.PublishType.twitterLoginFailed);
+
+    this.events.unsubscribe(FeedsEvent.PublishType.RedditLoginSuccess);
+    this.events.unsubscribe(FeedsEvent.PublishType.RedditLoginFailed);
   }
 
   ionViewDidLeave() {
@@ -171,15 +195,36 @@ export class ConnectionsPage implements OnInit {
         }
         break;
       case 'reddit':
-        console.log("=====reddit====");
-        this.redditConnectStatus = 1;
         this.hideConnectionMenuComponent = false;
-
+        if (this.platform.is("ios")) {
+          await this.redditService.openRedditLoginPage("ios");
+        }
+        else {
+          await this.redditService.openRedditLoginPage("android");
+        }
         break;
       case 'disconnectReddit':
-        this.redditConnectStatus = 0;
-        this.hideConnectionMenuComponent = false;
-        console.log("=====disconnectReddit====");
+        await this.native.showLoading("common.waitMoment");
+        const userData = await this.dataHelper.getSigninData() || null
+        if (userData == null || userData == undefined) {
+          this.native.hideLoading();
+          this.hideConnectionMenuComponent = false;
+          return null
+        }
+        const userDID = userData.did || ''
+
+        if (userDID === '') {
+          this.native.hideLoading();
+          this.hideConnectionMenuComponent = false;
+          return null
+        }
+        try {
+          this.dataHelper.removeRedditToken(userDID)
+          this.reloadStatus()
+          this.native.hideLoading();
+        } catch (error) {
+          this.native.hideLoading();
+        }
         break;
       case "cancel":
         this.hideConnectionMenuComponent = false;

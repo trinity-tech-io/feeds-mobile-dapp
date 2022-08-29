@@ -7,7 +7,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { Logger } from './logger';
 import { HiveVaultResultParse } from './hivevault_resultparse.service';
 import { TwitterService } from 'src/app/services/TwitterService';
-
+import { RedditService } from 'src/app/services/RedditService';
 import { FileHelperService } from './FileHelperService';
 import _ from 'lodash';
 import { Config } from './config';
@@ -24,6 +24,8 @@ export class HiveVaultController {
     private fileHelperService: FileHelperService,
     private eventBus: Events,
     private twitterService: TwitterService,
+    private redditService: RedditService,
+
   ) {
   }
 
@@ -603,6 +605,18 @@ export class HiveVaultController {
           pinStatus: FeedsData.PinStatus.NOTPINNED
         }
         await this.dataHelper.addPost(postV3);
+
+        if (localStorage.getItem(userDid + "isSyncToReddit") === "true") {
+          let length = UtilService.getSize(postText)
+          let tittle = postText
+          let content = ''
+          if (length > 299) {
+            tittle = postText.substring(0, 299) + '...'
+            content = postText.substring(299, postText.length)
+          }
+          await this.redditService.postReddit(tittle, content)
+        }
+
         resolve(postV3);
       } catch (error) {
         Logger.error(TAG, 'Publish post error', error);

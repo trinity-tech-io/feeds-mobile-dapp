@@ -41,7 +41,7 @@ export class RedditService {
   public fetchRedditAccessToken(userDid: string) {
     const token = this.dataHelper.getRedditRefreshToken(userDid)
     if (token === null) {
-      // this.native.toastWarn("common.RedditNotLogin");
+      this.native.toastWarn("common.RedditNotLogin");
       return
     }
     return this.fetchTokenFromRefreshToken(token, RedditApi.GRANT_TYPE_REFRESH)
@@ -65,9 +65,10 @@ export class RedditService {
     }
     try {
       await this.fetchTokenFromReddit(params)
-      // this.events.publish(FeedsEvent.PublishType.RedditLoginSuccess);
+      this.events.publish(FeedsEvent.PublishType.RedditLoginSuccess);
     }
     catch (error) {
+      this.events.publish(FeedsEvent.PublishType.RedditLoginFailed);
       throw error
     }
   }
@@ -80,6 +81,7 @@ export class RedditService {
     }
 
     try {
+      this.http.setDataSerializer('urlencoded')
       const result = await this.http.post(RedditApi.TOKEN, params, header)
       const ddata = JSON.parse(result.data)
       this.dataHelper.UpdateRedditToken(userDid, ddata)
@@ -87,7 +89,7 @@ export class RedditService {
       return accessToken
     }
     catch (error) {
-      // this.events.publish(FeedsEvent.PublishType.RedditLoginFailed);
+      this.events.publish(FeedsEvent.PublishType.RedditLoginFailed);
       throw error
     }
   }
@@ -108,6 +110,10 @@ export class RedditService {
           browser.hide()
           const codeValue = this.getJsonFromUrl(event.url)["code"]
           await this.getRedditAccessToken(codeValue)
+          const isElastos = await this.subreddits()
+          if (isElastos == false) {
+            await this.native.showLoading("common.SubscribeElastosCommunity");
+          }
         }
       }, err => {
         alert("InAppBrowser load auth Reddit Error: " + err);
@@ -156,23 +162,30 @@ export class RedditService {
         "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": "bearer " + token
       }
+      this.http.setDataSerializer('urlencoded')
       const result = await this.http.get(RedditApi.subreddits, {}, header)
       const jsonResult = JSON.parse(result.data)
       console.log('get subReddit success result.data = >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result.data)
       const children = jsonResult.data.children
-      children.forEach(item => {
+      const userDid = (await this.dataHelper.getSigninData()).did
+      let containsElastos = false
+      children.forEach(async item => {
         const elastosUrl = "/r/Elastos/"
         const myUrl = item.data.url
         if (elastosUrl === myUrl) {
-          console.log('get Reddit success: contains elastos  >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', children)
+          this.dataHelper.updateRedditIsSubscribeElastos(userDid, "true")
+          Logger.log(TAG, 'get Reddit success: contains elastos  >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', children)
+
+          containsElastos = true
           return true
         }
       })
-      Logger.log(TAG, 'get subReddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result.data)
-      return false
+
+      this.dataHelper.updateRedditIsSubscribeElastos(userDid, containsElastos.toString())
+      Logger.log(TAG, 'get subReddit success >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', containsElastos.toString())
+      return containsElastos
     }
     catch (error) {
-      console.log('get subReddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
       Logger.log(TAG, 'get subReddit error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
       throw error
     }
@@ -191,13 +204,12 @@ export class RedditService {
     try {
       let token = this.dataHelper.getRedditAccessToken(userDid)// todo
       if (token === false) {
-        // TODO: refreshTOken 同样过期，提示用户重新登录
         token = await this.fetchRedditAccessToken(userDid)
       }
       return token
     }
     catch (error) {
-      // TODO: 处理refresh token 过期
+      Logger.log(TAG, 'fetch reddit accessToken error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
       this.dataHelper.removeRedditToken(userDid)
       throw error
     }
