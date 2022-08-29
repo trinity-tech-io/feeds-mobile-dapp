@@ -103,11 +103,11 @@ export class CreatenewfeedPage implements OnInit {
 
   async processCreateChannel( ) {
     let nameValue = this.channelName || '';
+     nameValue = this.native.iGetInnerText(nameValue);
     if (nameValue == '') {
       this.native.toastWarn('CreatenewfeedPage.tipMsg1');
       return;
     }
-
     if(!UtilService.checkChannelName(nameValue)){
       this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
       return;

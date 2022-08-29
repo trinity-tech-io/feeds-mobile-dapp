@@ -194,9 +194,9 @@ export class NativeService {
   }
 
   iGetInnerText(testStr: string) {
-    var resultStr = testStr.replace(/\s+/g, ''); //去掉空格
+    var resultStr = testStr.replace(/(^\s*)|(\s*$)/g, ''); //去掉字符串前后空格
     if (resultStr != '') {
-      resultStr = testStr.replace(/[\r\n]/g, ''); //去掉回车换行
+      resultStr = resultStr.replace(/[\r\n]/g, ''); //去掉回车换行
     }
     return resultStr;
   }
