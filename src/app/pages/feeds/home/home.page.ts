@@ -222,7 +222,7 @@ export class HomePage implements OnInit {
     private http: HTTP,
     private twitterService: TwitterService,
     private redditService: RedditService,
-    
+
   ) { }
 
   ngOnInit() {
@@ -640,6 +640,7 @@ export class HomePage implements OnInit {
       this.clearAssets();
     }
     this.postMap = {};
+    this.hannelNameMap = {};
     this.channelMap = {};
     this.removeObserveList();
   }
@@ -923,7 +924,7 @@ export class HomePage implements OnInit {
       this.dataHelper.cleanCachedComment();
       this.dataHelper.cleanCacheLikeNum();
       this.dataHelper.cleanCachedLikeStatus();
-
+      this.hannelNameMap = {};
       this.handleDisplayNameMap = {};
       this.postMap = {};
       this.channelMap = {};
