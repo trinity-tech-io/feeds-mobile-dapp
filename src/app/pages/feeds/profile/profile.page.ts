@@ -259,28 +259,14 @@ export class ProfilePage implements OnInit {
   async initRefresh() {
     this.totalLikeList = await this.sortLikeList();
     this.likeSum = this.totalLikeList.length;
-    if(this.likeList.length > 0){
-     let newList  =  _.cloneDeep(this.totalLikeList);
-      _.each(this.likeList, (item: FeedsData.PostV3, index) => {
-        let postId = item.postId;
-        let post = _.find(newList, (newItem: FeedsData.PostV3) => {
-          return newItem.postId === postId;
-        }) || null;
-        if (post != null && !(_.isEqual(item, post))) {
-            this.likeList.splice(index, 1, post);
-        }
-      });
+    let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalLikeList);
+    if(data.currentPage === data.totalPage){
+      this.likeList = data.items;
+      this.infiniteScroll.disabled = true;
     }else{
-      let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalLikeList);
-      if(data.currentPage === data.totalPage){
-        this.likeList = data.items;
-        this.infiniteScroll.disabled = true;
-      }else{
-        this.likeList = data.items;
-        this.infiniteScroll.disabled = false;
-      }
+      this.likeList = data.items;
+      this.infiniteScroll.disabled = false;
     }
-
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
     this.isLoadAvatarImage = {};
@@ -293,11 +279,10 @@ export class ProfilePage implements OnInit {
   }
 
   async refreshLikeList() {
-    if (this.pageSize === 1) {
-      this.initRefresh();
-      return;
-    }
-
+    // if (this.pageSize === 1) {
+    //   this.initRefresh();
+    //   return;
+    // }
     this.totalLikeList = await this.sortLikeList();
     this.likeSum = this.totalLikeList.length;
     if (this.totalLikeList.length === this.likeList.length) {
@@ -572,9 +557,7 @@ export class ProfilePage implements OnInit {
     });
 
     this.addProflieEvent();
-
-    this.initMyFeeds();
-
+    //this.changeType(this.selectType);
     // if (!this.collectiblesList || this.collectiblesList.length == 0) {
     //   await this.getCollectiblesList();
     // }
@@ -750,6 +733,7 @@ export class ProfilePage implements OnInit {
           await this.hiveVaultController.syncAllLikeData();
           this.removeLikeObserveList();
           this.pageSize= 1;
+          this.likeList = [];
           this.handleDisplayNameMap = {};
           this.postImgMap = {};
           this.initLike();
