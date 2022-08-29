@@ -492,7 +492,7 @@ export class HiveVaultController {
           return;
         }
         const posts = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
-        await this.dataHelper.addPost(posts[0]);
+        // await this.dataHelper.addPost(posts[0]); //repost
         resolve(posts[0]);
       } catch (error) {
         Logger.error(TAG, error);

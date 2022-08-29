@@ -2405,6 +2405,35 @@ export class HomePage implements OnInit {
         let channelId: string = arr[1];
         let postId: string = arr[2];
         let mediaType: string = arr[3];
+
+        if (mediaType === '3' || mediaType == '4') {
+          const post = await this.dataHelper.getPostV3ById(postId);
+
+          if (!post || !post.content || !post.content.mediaData || post.content.mediaData.length == 0 || !post.content.mediaData[0] || !post.content.mediaData[0].repostUrl) {
+            console.log('Repost url null');
+            return '';
+          }
+
+          const repostUrl = post.content.mediaData[0].repostUrl;
+          const feedsUrlObj = UtilService.decodeFeedsUrl(repostUrl);
+
+          const repostChannelName = await this.getChannelName(feedsUrlObj.targetDid, feedsUrlObj.channelId);//获取频道name
+          if (!repostChannelName) {
+            //本地没有，去远程拿
+            const remoteChannel = await this.hiveVaultController.getChannelInfoById(feedsUrlObj.targetDid, feedsUrlObj.channelId);
+          }
+
+          const remotePost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId);
+          this.handlePostAvatarV2(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId);//获取头像
+          this.getDisplayName(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.targetDid);
+          if (remotePost.content.mediaType === FeedsData.MediaType.containsImg) {
+            this.handlePostImgV2(destDid, channelId, postId);
+          }
+          if (remotePost.content.mediaType === FeedsData.MediaType.containsVideo) {
+            //video
+            this.handleVideoV2(destDid, channelId, postId);
+          }
+        }
         await this.getChannelName(destDid, channelId);//获取频道name
         this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
         this.getDisplayName(destDid, channelId, destDid);
@@ -2414,14 +2443,6 @@ export class HomePage implements OnInit {
         if (mediaType === '2') {
           //video
           this.handleVideoV2(destDid, channelId, postId);
-        }
-
-        if (mediaType === '3') {
-          //repost
-        }
-
-        if (mediaType === '4') {
-          //quetePost
         }
 
         //post like status
@@ -2463,9 +2484,7 @@ export class HomePage implements OnInit {
           }).catch(() => {
           });
       } catch (error) {
-
       }
     }
   }
-
 }
