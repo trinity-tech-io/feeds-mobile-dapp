@@ -372,3 +372,13 @@
 </app-nftloading>
 
 
+<app-repost
+  *ngIf="!hideRepostComment"
+  [postId]="postId"
+  [destDid]="destDid"
+  [channelId]="channelId"
+  [repostChannelList]="repostChannelList"
+  (hideComment)="hideRepostComponent($event)"
+></app-repost>
+
+

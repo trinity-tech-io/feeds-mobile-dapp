@@ -171,6 +171,16 @@ export class MyApp {
               return;
             }
 
+            //post转发框
+            let repost: HTMLElement = document.querySelector("app-repost") || null;
+            if (repost != null) {
+              let repostMask: HTMLElement = document.getElementById("repostMask") || null;
+              if (repostMask != null) {
+                 repostMask.click();
+              }
+              return;
+            }
+
             //评论框
             let comment: HTMLElement = document.querySelector("app-comment") || null;
             if (comment != null) {

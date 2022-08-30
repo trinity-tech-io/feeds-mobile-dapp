@@ -20,6 +20,7 @@ import { FollowingComponent } from './following/following.component';
 import { ChannelcollectionsitemComponent } from './channelcollectionsitem/channelcollectionsitem.component';
 import { LikesComponent } from './likes/likes.component';
 import { CommentComponent } from './comment/comment.component';
+import { RepostComponent } from './repost/repost.component';
 import { SwitchfeedComponent } from './switchfeed/switchfeed.component';
 import { PreviewqrcodeComponent } from './previewqrcode/previewqrcode.component';
 import { SharemenuComponent } from './sharemenu/sharemenu.component';
@@ -72,6 +73,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     ChannelcollectionsitemComponent,
     LikesComponent,
     CommentComponent,
+    RepostComponent,
     SwitchfeedComponent,
     SharemenuComponent,
     ConnectionmenuComponent,
@@ -103,6 +105,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     ChannelcollectionsitemComponent,
     LikesComponent,
     CommentComponent,
+    RepostComponent,
     SwitchfeedComponent,
     SharemenuComponent,
     ConnectionmenuComponent,

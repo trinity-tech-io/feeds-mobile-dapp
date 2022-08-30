@@ -950,5 +950,9 @@ export const zh = {
     connected: '已连接',
     disconnect: '断开',
     reddit: 'Reddit'
+  },
+  RepostComponent: {
+   "repostto": "转推到",
+   "repost": "转推微说"
   }
 };

@@ -948,5 +948,9 @@ export const en = {
     connected: 'Connected',
     disconnect: 'disconnect',
     reddit: 'Reddit'
-  }
+  },
+  RepostComponent: {
+    "repostto": "Repost to",
+    "repost": "Repost"
+   }
 };

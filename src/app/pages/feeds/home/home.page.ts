@@ -64,7 +64,6 @@ export class HomePage implements OnInit {
   public styleObj: any = { width: '' };
 
   public hideComment = true;
-
   // For comment component
   public postId: string = '';
   public destDid: string = '';
@@ -187,6 +186,8 @@ export class HomePage implements OnInit {
   private serachPostList: any = [];
   private observerList: any = {};
   private scrollToTopSid: NodeJS.Timer = null;
+  public hideRepostComment = true;
+  public repostChannelList: any = [];
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -1026,14 +1027,6 @@ export class HomePage implements OnInit {
       return;
     }
 
-    // if (this.checkServerStatus(destDid) != 0) {
-    //   this.native.toastWarn('common.connectionError1');
-    //   return;
-    // }
-
-    // let post = this.feedService.getPostFromId(nodeId, channelId, postId);
-    // if (!this.feedService.checkPostIsAvalible(post)) return;
-
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
 
     this.postId = postId;
@@ -1051,6 +1044,15 @@ export class HomePage implements OnInit {
     this.channelAvatar = null;
     this.channelName = null;
     this.hideComment = true;
+  }
+
+  hideRepostComponent(event) {
+    this.postId = "";
+    this.channelId = "";
+    this.destDid = "";
+    this.channelAvatar = null;
+    this.channelName = null;
+    this.hideRepostComment = true;
   }
 
   async handlePostAvatarV2(destDid: string, channelId: string, postId: string) {
@@ -1870,6 +1872,7 @@ export class HomePage implements OnInit {
     this.clearData(true);
     const channels = await this.dataHelper.getSelfChannelListV3();
     if (channels.length === 0) {
+      this.clearData(true);
       this.native.navigateForward(['/createnewfeed'], '');
       return;
     }
@@ -2488,8 +2491,33 @@ export class HomePage implements OnInit {
     }
   }
 
-  repost(post: FeedsData.PostV3) {
+  async repost(post: FeedsData.PostV3) {
 
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    let destDid =  post.destDid;
+    let channelId = post.channelId;
+    let postId = post.postId;
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
+    const channels = await this.dataHelper.getSelfChannelListV3();
+    if (channels.length === 0) {
+      this.native.navigateForward(['/createnewfeed'], '');
+      return;
+    }
+    this.repostChannelList = channels;
+    let channel = this.dataHelper.getCurrentChannel() || null;
+    if(channel === null){
+      channel = await this.dataHelper.getChannelV3ById(channels[0].destDid, channels[0].channelId);
+      this.dataHelper.setCurrentChannel(channel);
+    }
+
+    this.postId = postId;
+    this.channelId = channelId;
+    this.destDid = destDid;
+    this.hideRepostComment = false;
   }
 
 }
