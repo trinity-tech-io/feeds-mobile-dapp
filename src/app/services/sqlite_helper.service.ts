@@ -17,6 +17,7 @@ export class FeedsSqliteHelper {
   private readonly TABLE_SUBSCRIPTION: string = 'subscription';
   private readonly TABLE_CHANNEL_NEW: string = 'channelnew';
   private readonly TABLE_POST_NEW: string = 'postsnew';
+  private readonly TABLE_CACHED_POST: string = 'cachedpost';
   // private readonly TABLE_PINPOST: string = 'pinpost';
 
   public isOpen: boolean = false;
@@ -349,6 +350,132 @@ export class FeedsSqliteHelper {
       }
       catch (error) {
         Logger.error(TAG, 'delete post from channel error', error);
+        reject(error);
+      }
+    });
+  }
+
+  // Cached Post
+  private createCachedPostTable(dbUserDid: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'create table if not exists ' + this.TABLE_CACHED_POST
+          + '('
+          + 'post_id VARCHAR(64) UNIQUE, dest_did VARCHAR(64), channel_id VARCHAR(64), created_at REAL(64), updated_at REAL(64),'
+          + 'content TEXT, status INTEGER, type VARCHAR(64), tag VARCHAR(64), proof VARCHAR(64), memo TEXT, pin_status INTEGER'
+          + ')';
+
+        const result = await this.executeSql(dbUserDid, statement);
+        Logger.log(TAG, 'crete cached post table result: ', result)
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Create cached post table error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryCachedPostData(dbUserDid: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_CACHED_POST;
+        const result = await this.executeSql(dbUserDid, statement);
+        // const pinpostList = await this.queryPinPostList(dbUserDid);
+        const postList = this.parsePostData(result);
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'query cached post data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryCachedPostDataByID(dbUserDid: string, postId: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_CACHED_POST + ' WHERE post_id=?';
+        const params = [postId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        // const pinpostList = await this.queryPinPostList(dbUserDid);
+        const postList = this.parsePostData(result);
+        Logger.log(TAG, 'query cached post data by id result: ', postList)
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'query cached post table error', error);
+        reject(error);
+      }
+    });
+  }
+
+  insertCachedPostData(dbUserDid: string, postV3: FeedsData.PostV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'INSERT INTO ' + this.TABLE_CACHED_POST
+          + '(post_id, dest_did, channel_id, created_at, updated_at, content, status, type, tag, proof, memo, pin_status) VALUES'
+          + '(?,?,?,?,?,?,?,?,?,?,?,?)';
+        const pinStatus = postV3.pinStatus || FeedsData.PinStatus.NOTPINNED;
+        const params = [postV3.postId, postV3.destDid, postV3.channelId, postV3.createdAt, postV3.updatedAt
+          , JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, pinStatus];
+
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Insert cached post result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'insert cached post data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  updateCachedPostData(dbUserDid: string, postV3: FeedsData.PostV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'UPDATE ' + this.TABLE_CACHED_POST
+          + ' SET updated_at=?, content=?, status=?, type=?, tag=?, proof=?, memo=?, pin_status=? WHERE post_id=?';
+        const pinStatus = postV3.pinStatus || FeedsData.PinStatus.NOTPINNED
+        const params = [postV3.updatedAt, JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, pinStatus, postV3.postId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'update cached post data result: ', result)
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'update cached post data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  deleteCachedPostData(dbUserDid: string, postId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_CACHED_POST + ' WHERE post_id=?'
+        const params = [postId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'delete cached post data result: ', result)
+        resolve('SUCCESS');
+      }
+      catch (error) {
+        Logger.error(TAG, 'delete cached post data error', error);
+        reject(error);
+      }
+    });
+  }
+
+
+
+  removeCachedPostDataByChannel(dbUserDid: string, channelId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_CACHED_POST + ' WHERE channel_id=?'
+        const params = [channelId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'delete cached post from channel result: ', result)
+        resolve('SUCCESS');
+      }
+      catch (error) {
+        Logger.error(TAG, 'delete cached post from channel error', error);
         reject(error);
       }
     });
