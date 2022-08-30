@@ -31,6 +31,7 @@ export class RedditService {
       var item = part.split("=")
       result[item[0]] = decodeURIComponent(item[1])
     })
+
     return result
   }
 
@@ -81,14 +82,20 @@ export class RedditService {
     }
 
     try {
+      Logger.log(TAG, "fetchTokenFromReddit header = ", header)
+      Logger.log(TAG, "fetchTokenFromReddit params = ", params)
+      Logger.log(TAG, "fetchTokenFromReddit url = ", RedditApi.TOKEN)
+
       this.http.setDataSerializer('urlencoded')
       const result = await this.http.post(RedditApi.TOKEN, params, header)
+      Logger.log(TAG, "fetchTokenFromReddit result = ", result.data)
       const ddata = JSON.parse(result.data)
       this.dataHelper.UpdateRedditToken(userDid, ddata)
       const accessToken = ddata.access_token
       return accessToken
     }
     catch (error) {
+      Logger.log(TAG, "fetchTokenFromReddit error = ", error)
       this.events.publish(FeedsEvent.PublishType.RedditLoginFailed);
       throw error
     }
@@ -109,7 +116,9 @@ export class RedditService {
           && event.url.includes("code=")) {
           browser.hide()
           const codeValue = this.getJsonFromUrl(event.url)["code"]
-          await this.getRedditAccessToken(codeValue)
+          const lent = codeValue.length - 2
+          const c = codeValue.substring(0, lent)
+          await this.getRedditAccessToken(c)
           const isElastos = await this.subreddits()
           if (isElastos == false) {
             await this.native.showLoading("common.SubscribeElastosCommunity");
