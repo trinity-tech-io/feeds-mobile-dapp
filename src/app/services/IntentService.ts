@@ -475,6 +475,10 @@ export class IntentService {
   async handleRedditIntent(params: any) {
     try {
       await this.redditService.getRedditAccessToken(params["code"])
+      const isElastos = await this.redditService.subreddits()
+      if (isElastos == false) {
+        this.native.toastWarn("common.SubscribeElastosCommunity");
+      }
     }
     catch (error) {
       throw error

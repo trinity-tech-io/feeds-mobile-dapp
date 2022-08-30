@@ -121,7 +121,7 @@ export class RedditService {
           await this.getRedditAccessToken(c)
           const isElastos = await this.subreddits()
           if (isElastos == false) {
-            await this.native.showLoading("common.SubscribeElastosCommunity");
+            this.native.toastWarn("common.SubscribeElastosCommunity");
           }
         }
       }, err => {
