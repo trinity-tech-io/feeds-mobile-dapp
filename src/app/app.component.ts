@@ -484,6 +484,7 @@ export class MyApp {
       await that.dataHelper.removeData("feeds.initHive");
 
       that.native.hideLoading();
+      this.removeTwitterToken();
       that.clearData();
       //that.disconnectWallet();
     }
@@ -496,7 +497,6 @@ export class MyApp {
   }
 
   clearData() {
-    this.removeTwitterToken();
     this.feedService.signOut()
       .then(() => {
         this.events.publish(FeedsEvent.PublishType.clearHomeEvent);
