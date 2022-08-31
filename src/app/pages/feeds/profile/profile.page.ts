@@ -62,7 +62,7 @@ export class ProfilePage implements OnInit {
 
   // For comment component
   public postId = null;
-  public nodeId = null;
+  public destDid = null;
   public channelId = null;
   public channelAvatar = null;
   public channelName = null;
@@ -821,7 +821,7 @@ export class ProfilePage implements OnInit {
   showComment(commentParams) {
     this.postId = commentParams.postId;
     this.channelId = commentParams.channelId;
-    this.nodeId = commentParams.nodeId;
+    this.destDid = commentParams.destDid;
     this.channelAvatar = commentParams.channelAvatar;
     this.channelName = commentParams.channelName;
     this.hideComment = false;
@@ -830,7 +830,7 @@ export class ProfilePage implements OnInit {
   hideComponent(event) {
     this.postId = null;
     this.channelId = null;
-    this.nodeId = null;
+    this.destDid = null;
     this.channelAvatar = null;
     this.channelName = null;
     this.hideComment = true;
