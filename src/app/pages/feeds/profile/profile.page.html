@@ -122,6 +122,7 @@
        (fromChild)="showMenuMore($event)"
        (commentParams)="showComment($event)"
        (clickImage)="showBigImage($event)"
+       (repostParams)="showRepost($event)"
        (toPage)="toPage($event)"
        >
     </app-likes>
@@ -170,3 +171,12 @@
   [channelName]="channelName"
   (hideComment)="hideComponent($event)"
 ></app-comment>
+
+<app-repost
+  *ngIf="!hideRepostComment"
+  [postId]="postId"
+  [destDid]="destDid"
+  [channelId]="channelId"
+  [repostChannelList]="repostChannelList"
+  (hideComment)="hideRepostComponent($event)"
+></app-repost>

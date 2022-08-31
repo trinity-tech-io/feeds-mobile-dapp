@@ -1046,12 +1046,10 @@ export class HomePage implements OnInit {
     this.hideComment = true;
   }
 
-  hideRepostComponent(event) {
+  hideRepostComponent(event: any) {
     this.postId = "";
     this.channelId = "";
     this.destDid = "";
-    this.channelAvatar = null;
-    this.channelName = null;
     this.hideRepostComment = true;
   }
 

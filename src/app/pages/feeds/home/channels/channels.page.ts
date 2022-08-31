@@ -15,7 +15,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
@@ -139,6 +139,10 @@ export class ChannelsPage implements OnInit {
   private firstScrollTop = 0;
   public isFullPost: boolean = false;
   private infoPopover: any = null;
+
+  public hideRepostComment = true;
+  public repostChannelList: any = [];
+
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -1531,6 +1535,42 @@ export class ChannelsPage implements OnInit {
     };
   }
 
+  async repost(post: FeedsData.PostV3) {
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    let destDid = post.destDid;
+    let channelId = post.channelId;
+    let postId = post.postId;
+    this.pauseVideo(destDid + '-' + channelId + '-' + postId);
+    const channels = await this.dataHelper.getSelfChannelListV3();
+    if (channels.length === 0) {
+      this.native.navigateForward(['/createnewfeed'], '');
+      return;
+    }
+    this.repostChannelList = channels;
+    let channel = this.dataHelper.getCurrentChannel() || null;
+    if (channel === null) {
+      channel = await this.dataHelper.getChannelV3ById(channels[0].destDid, channels[0].channelId);
+      this.dataHelper.setCurrentChannel(channel);
+    }
+
+    this.postId = postId;
+    this.channelId = channelId;
+    this.destDid = destDid;
+    this.hideRepostComment = false;
+  }
+
+  hideRepostComponent(event: any) {
+    this.postId = "";
+    this.channelId = "";
+    this.destDid = "";
+    this.hideRepostComment = true;
+  }
+
 
   async presentPopover(e: Event) {
 
@@ -1556,9 +1596,5 @@ export class ChannelsPage implements OnInit {
       this.isFullPost = false;
       this.refresher.disabled = false;
     }
-  }
-
-  repost(post: FeedsData.PostV3) {
-
   }
 }

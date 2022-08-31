@@ -117,7 +117,7 @@ export class PostdetailPage implements OnInit {
 
   public curComment: any = {};
   private maxCount: number = 0;
-  private post: FeedsData.PostV3 = null;
+  public post: FeedsData.PostV3 = null;
   private channelAvatarUri: string = null;
   public isLike: boolean = false;
   public likedCommentMap: any = {};
@@ -140,6 +140,10 @@ export class PostdetailPage implements OnInit {
   private commentTime: any = {};
   private captainObserverList: any = {};
   private replyObserverList: any = {};
+
+  public hideRepostComment = true;
+  public repostChannelList: any = [];
+
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -1422,8 +1426,40 @@ export class PostdetailPage implements OnInit {
     this.replyObserverList = {};
   }
 
-  repost() {
+  async repost(post: FeedsData.PostV3) {
 
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+    let destDid =  post.destDid;
+    let channelId = post.channelId;
+    let postId = post.postId;
+    this.pauseVideo();
+    const channels = await this.dataHelper.getSelfChannelListV3();
+    if (channels.length === 0) {
+      this.native.navigateForward(['/createnewfeed'], '');
+      return;
+    }
+    this.repostChannelList = channels;
+    let channel = this.dataHelper.getCurrentChannel() || null;
+    if(channel === null){
+      channel = await this.dataHelper.getChannelV3ById(channels[0].destDid, channels[0].channelId);
+      this.dataHelper.setCurrentChannel(channel);
+    }
+
+    this.postId = postId;
+    this.channelId = channelId;
+    this.destDid = destDid;
+    this.hideRepostComment = false;
+  }
+
+  hideRepostComponent(event: any) {
+    this.postId = "";
+    this.channelId = "";
+    this.destDid = "";
+    this.hideRepostComment = true;
   }
 
 }

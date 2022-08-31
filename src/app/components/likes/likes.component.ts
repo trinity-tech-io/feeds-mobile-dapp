@@ -51,6 +51,7 @@ export class LikesComponent implements OnInit {
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();
   @Output() toPage = new EventEmitter();
+  @Output() repostParams = new EventEmitter();
   public styleObj: any = { width: '' };
   public maxTextSize = 240;
   public isPress: boolean = false;
@@ -359,8 +360,10 @@ export class LikesComponent implements OnInit {
       event.stopPropagation();
   }
 
-  repost(post: FeedsData.PostV3) {
-
+  async clickRepost(post: FeedsData.PostV3) {
+    this.repostParams.emit({
+      post: post,
+    });
   }
 
 }
