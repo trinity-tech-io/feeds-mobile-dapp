@@ -419,11 +419,11 @@ export class UtilService {
   public static gethtmlId(
     page: string,
     type: string,
-    nodeId: string,
-    feedId: string,
+    destDid: string,
+    channelId: string,
     postId: string,
   ) {
-    return page + '-' + type + '-' + nodeId + '-' + feedId + '-' + postId;
+    return page + '-' + type + '-' + destDid + '-' + channelId + '-' + postId;
   }
 
   //截取字符

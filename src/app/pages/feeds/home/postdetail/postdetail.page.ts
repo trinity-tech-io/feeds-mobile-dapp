@@ -123,8 +123,6 @@ export class PostdetailPage implements OnInit {
   public likedCommentMap: any = {};
   public likedCommentNum: any = {};
   public commentNum: any = {};
-  private clientHeight: number = 0;
-  private clientWidth: number = 0;
   private isInitLikeNum: any = {};
   private isInitLikeStatus: any = {};
   private isInitComment: any = {};
@@ -140,10 +138,19 @@ export class PostdetailPage implements OnInit {
   private commentTime: any = {};
   private captainObserverList: any = {};
   private replyObserverList: any = {};
-
+  private observerList: any = {};
+  public hannelNameMap: any = {};
+  private channelMap: any = {};
+  private isLoadAvatarImage: any = {};
+  public channelAvatarMap: any = {};
+  private refreshImageSid: any = null;
+  private isLoadimage: any = {};
+  public postImgMap: any = {};
+  private postMap: any = {};
+  private isLoadVideoiamge: any = {};
+  private posterImgMap: any = {};
   public hideRepostComment = true;
   public repostChannelList: any = [];
-
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -175,9 +182,11 @@ export class PostdetailPage implements OnInit {
     let channelAvatarUri = channel['avatar'] || '';
     if (channelAvatarUri != '') {
       this.channelAvatarUri = channelAvatarUri;
-      this.handleChannelAvatar(channelAvatarUri);
     }
     this.initPostContent();
+
+
+
     if (isInit) {
       this.initRefresh();
     } else {
@@ -306,21 +315,10 @@ export class PostdetailPage implements OnInit {
     let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId);
     this.post = post;
     this.postStatus = post.status || 0;
-    this.mediaType = post.content.mediaType;
-    this.postContent = post.content.content;
     this.updatedTime = post.updatedAt;
+    this.mediaType = post.content.mediaType;
     this.updatedTimeStr = this.handleUpdateDate(this.updatedTime);
-    if (this.mediaType === FeedsData.MediaType.containsImg) {
-      this.getImage(post);
-    }
-    if (this.mediaType === FeedsData.MediaType.containsVideo) {
-      this.getVideoPoster(post);
-    }
-
-    // like status
-    this.getLikeStatus(post.postId, '0');
-    this.getPostLikeNum(post.postId, '0');
-
+    this.refreshImageV2(post);
   }
 
   getLikeStatus(postId: string, commentId: string) {
@@ -339,8 +337,6 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.clientHeight = screen.availHeight;
-    this.clientWidth = screen.availWidth;
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
@@ -435,7 +431,8 @@ export class PostdetailPage implements OnInit {
       this.popoverController.dismiss();
       this.popover = null;
     }
-
+    this.removeObserveList();
+    this.clearPageMap();
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
@@ -447,6 +444,18 @@ export class PostdetailPage implements OnInit {
     this.isInitLikeNum = {};
     this.isInitComment = {};
     this.isInitLikeStatus = {};
+  }
+
+  clearPageMap() {
+    this.channelMap = {};
+    this.channelAvatarMap = {};
+    this.hannelNameMap = {};
+    this.isLoadAvatarImage = {};
+    this.channelAvatarMap = {};
+    this.isLoadimage = {};
+    this.postMap = {};
+    this.postImgMap = {};
+    this.isLoadVideoiamge = {};
   }
 
   ionViewDidLeave() {
@@ -516,8 +525,7 @@ export class PostdetailPage implements OnInit {
       }
     }
 
-
-
+    // let id = this.destDid + '-' + this.channelId + '-' + this.postId;
     this.pauseVideo();
     this.hideComment = false;
   }
@@ -766,6 +774,8 @@ export class PostdetailPage implements OnInit {
       await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
       this.removeReplyCommentObserverList();
       this.removeCaptainCommentObserverList();
+      this.removeObserveList();
+      this.clearPageMap();
       this.initData(true);
       event.target.complete();
     } catch (error) {
@@ -878,8 +888,8 @@ export class PostdetailPage implements OnInit {
               if (video != '') {
                 video.setAttribute('poster', this.posterImg);
               }
-              this.setFullScreen();
-              this.setOverPlay();
+              this.setFullScreen(id);
+              this.setOverPlay(id);
               clearTimeout(sid);
             }, 10);
           });
@@ -890,7 +900,7 @@ export class PostdetailPage implements OnInit {
       .catch(err => { });
   }
 
-  getVideo() {
+  getVideo(id: string) {
     let videoId = UtilService.gethtmlId(
       'postdetail',
       'video',
@@ -929,7 +939,7 @@ export class PostdetailPage implements OnInit {
               .then((downVideodata) => {
                 let downVideoData = downVideodata || '';
                 this.videoObj = downVideoData;
-                this.loadVideo(downVideoData);
+                this.loadVideo(downVideoData, id);
               }).catch((err) => {
                 this.videoDownStatus = '';
                 this.isVideoPercentageLoading = false;
@@ -938,7 +948,7 @@ export class PostdetailPage implements OnInit {
             return;
           }
           this.videoObj = videoData;
-          this.loadVideo(videoData);
+          this.loadVideo(videoData, id);
         });
       }).catch((err) => {
         this.videoDownStatus = '';
@@ -947,11 +957,10 @@ export class PostdetailPage implements OnInit {
       });
   }
 
-  loadVideo(videodata: any) {
+  loadVideo(videodata: any, id: string) {
     this.isVideoLoading = false;
     this.isVideoPercentageLoading = false;
     this.videoDownStatus = '';
-    let id = this.destDid + this.channelId + this.postId;
     let source: any = document.getElementById(id + 'postdetailsource') || '';
     source.setAttribute('src', videodata);
     let video: any = document.getElementById(id + 'postdetailvideo') || '';
@@ -1008,8 +1017,7 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  setFullScreen() {
-    let id = this.destDid + this.channelId + this.postId;
+  setFullScreen(id: string) {
     let vgfullscreen: any =
       document.getElementById(id + 'vgfullscreenpostdetail') || '';
     if (vgfullscreen != '') {
@@ -1030,8 +1038,7 @@ export class PostdetailPage implements OnInit {
   }
 
 
-  setOverPlay() {
-    let id = this.destDid + this.channelId + this.postId;
+  setOverPlay(id: string) {
     let vgoverlayplay: any =
       document.getElementById(id + 'vgoverlayplaypostdetail') || '';
     if (vgoverlayplay != '') {
@@ -1046,7 +1053,7 @@ export class PostdetailPage implements OnInit {
           let sourceSrc = source.getAttribute('src') || '';
           if (sourceSrc != '') return;
 
-          this.getVideo();
+          this.getVideo(id);
         });
       };
     }
@@ -1160,6 +1167,7 @@ export class PostdetailPage implements OnInit {
       this.native.toast('common.noElaAddress');
       return;
     }
+    // let id = this.destDid + '-' + this.channelId + '-' + this.postId;
     this.pauseVideo();
     this.viewHelper.showPayPrompt(this.destDid, this.channelId, tippingAddress);
   }
@@ -1426,6 +1434,308 @@ export class PostdetailPage implements OnInit {
     this.replyObserverList = {};
   }
 
+  newSectionObserver(postItem: any) {
+    let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-postdetail';
+    let observer = this.observerList[postGridId] || null;
+    if (observer != null) {
+      return;
+    }
+    let item = document.getElementById(postGridId) || null;
+    if (item != null) {
+      this.observerList[postGridId] = new IntersectionObserver(async (changes: any) => {
+        let container = changes[0].target;
+        let newId = container.getAttribute("id");
+        let intersectionRatio = changes[0].intersectionRatio;
+
+        if (intersectionRatio === 0) {
+          //console.log("======newId leave========", newId);
+          return;
+        }
+        let arr = newId.split("-");
+        let destDid: string = arr[0];
+        let channelId: string = arr[1];
+        let postId: string = arr[2];
+        let mediaType: string = arr[3];
+
+        if (mediaType === '3' || mediaType == '4') {
+        }
+        await this.getChannelName(destDid, channelId, null);//获取频道name
+        this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
+        if (mediaType === '1') {
+          this.handlePostImgV2(destDid, channelId, postId);
+        }
+
+        if (mediaType === '2') {
+          //video
+          this.handleVideoV2(destDid, channelId, postId);
+        }
+
+        //post like status
+        this.getLikeStatus(postId, '0');
+        this.getPostLikeNum(postId, '0');
+
+      });
+
+      this.observerList[postGridId].observe(item);
+    }
+  }
+
+  async getChannelName(destDid: string, channelId: string, inputChannel: FeedsData.ChannelV3) {
+    let channelName = this.hannelNameMap[channelId] || "";
+    if (channelName != "") {
+      return channelName;
+    }
+    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || inputChannel || null;
+    if (channel === null) {
+      return '';
+    }
+    let key = destDid + "-" + channelId;
+    this.channelMap[key] = channel;
+    this.hannelNameMap[channelId] = channel.displayName || channel.name;
+    return this.hannelNameMap[channelId];
+  }
+
+
+  async handlePostAvatarV2(destDid: string, channelId: string, postId: string) {
+    // 13 存在 12不存在
+    let id = destDid + "-" + channelId;
+    let isload = this.isLoadAvatarImage[id] || '';
+
+    if (isload === '') {
+      this.isLoadAvatarImage[id] = '11';
+      let key = destDid + "-" + channelId;
+      let channel: FeedsData.ChannelV3 = this.channelMap[key] || null;
+      if (channel === null) {
+        channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+        this.channelMap[key] = channel;
+      } else {
+        channel = this.channelMap[key];
+      }
+      let avatarUri = "";
+      if (channel === null) {
+        return;
+      }
+      avatarUri = channel.avatar || "";
+      if (avatarUri === "") {
+        return;
+      }
+      let fileName: string = avatarUri.split("@")[0];
+      //头像
+      this.hiveVaultController.
+        getV3Data(destDid, avatarUri, fileName, "0")
+        .then(imagedata => {
+          let realImage = imagedata || '';
+          if (realImage != '') {
+            this.channelAvatarMap[id] = realImage;
+            this.isLoadAvatarImage[id] = "13";
+          } else {
+            this.isLoadAvatarImage[id] = "13";
+          }
+        })
+        .catch(reason => {
+          // this.downPostAvatarMap[fileName] = "";
+          // for (let key in this.avatarImageMap) {
+          //   let uri = this.avatarImageMap[key] || "";
+          //   if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
+          //     this.isLoadAvatarImage[key] = '13';
+          //     delete this.avatarImageMap[key];
+          //   }
+
+          // }
+          this.isLoadAvatarImage[id] = '';
+
+          Logger.error(TAG,
+            "Excute 'handlePostAvatarV2' in home page is error , get image data error, error msg is ",
+            reason
+          );
+        });
+    }
+  }
+
+  refreshImageV2(post = null) {
+    this.clearRefreshImageSid();
+    this.refreshImageSid = setTimeout(() => {
+      this.newSectionObserver(post);
+      this.clearRefreshImageSid();
+    }, 100);
+    //this.newSectionObserver();
+  }
+
+  clearRefreshImageSid() {
+    if (this.refreshImageSid != null) {
+      clearTimeout(this.refreshImageSid);
+      this.refreshImageSid = null;
+    }
+  }
+
+  removeObserveList() {
+    for (let postGridId in this.observerList) {
+      let observer = this.observerList[postGridId] || null;
+      this.removeSectionObserver(postGridId, observer)
+    }
+    this.observerList = {};
+  }
+
+  removeSectionObserver(postGridId: string, observer: any) {
+    let item = document.getElementById(postGridId) || null;
+    if (item != null) {
+      if (observer != null) {
+        observer.unobserve(item);//解除观察器
+        observer.disconnect();  // 关闭观察器
+        this.observerList[postGridId] = null;
+      }
+    }
+  }
+
+  async handlePostImgV2(destDid: string, channelId: string, postId: string) {
+    // 13 存在 12不存在
+    let id = destDid + '-' + channelId + '-' + postId;
+    let isload = this.isLoadimage[id] || '';
+    let rpostimg = document.getElementById(id + 'rpostimg');
+    //let postImage = document.getElementById(id + 'postimg');
+    try {
+      if (isload === '') {
+        this.isLoadimage[id] = '11';
+        let post = this.postMap[postId] || null;
+        if (post === null) {
+          post = await this.dataHelper.getPostV3ById(postId) || null;
+          this.postMap[postId] = post;
+        }
+        if (post === null) {
+          this.isLoadimage[id] = 13;
+          return;
+        }
+        console.log('post ====>', post.content);
+        console.log('content ====>', post.content);
+        let mediaDatas = post.content.mediaData;
+        const elements = mediaDatas[0];
+        //缩略图
+        let thumbnailKey = elements.thumbnailPath || '';
+        //原图
+        let imageKey = elements.originMediaPath || '';
+        let type = elements.type || '';
+        if (thumbnailKey === '' || imageKey === '') {
+          this.isLoadimage[id] = '13';
+          return;
+        }
+        //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+        let fileOriginName: string = imageKey.split("@")[0];
+        let fileThumbnaiName: string = thumbnailKey.split("@")[0];
+
+        //原图
+        this.hiveVaultController.
+          getV3Data(destDid, imageKey, fileOriginName, type, "false")
+          .then(imagedata => {
+            let realImage = imagedata || '';
+            if (realImage != '') {
+              this.isLoadimage[id] = '13';
+              //postImage.setAttribute('src', realImage);
+              this.postImgMap[id] = realImage;
+              rpostimg.style.display = 'block';
+            } else {
+              this.hiveVaultController.
+                getV3Data(destDid, thumbnailKey, fileThumbnaiName, type).
+                then((thumbImagedata) => {
+                  let thumbImage = thumbImagedata || "";
+                  if (thumbImage != '') {
+                    this.isLoadimage[id] = '13';
+                    this.postImgMap[id] = thumbImagedata;
+                    rpostimg.style.display = 'block';
+                  } else {
+                    this.isLoadimage[id] = '12';
+                    rpostimg.style.display = 'block';
+                  }
+                }).catch(() => {
+                  rpostimg.style.display = 'none';
+                })
+            }
+          })
+          .catch(reason => {
+            rpostimg.style.display = 'none';
+            Logger.error(TAG,
+              "Excute 'handlePostImg' in home page is error , get image data error, error msg is ",
+              reason
+            );
+          });
+      }
+    } catch (error) {
+      this.isLoadimage[id] = '';
+      this.postImgMap[id] = '';
+    }
+  }
+
+  async handleVideoV2(destDid: string, channelId: string, postId: string) {
+    let id = destDid + '-' + channelId + '-' + postId;
+    let isloadVideoImg = this.isLoadVideoiamge[id] || '';
+    let source: any = document.getElementById(id + 'postdetailsource') || '';
+    let downStatus = this.videoDownStatus[id] || '';
+    if (id != '' && source != '' && downStatus === '') {
+      this.pauseVideo();
+    }
+    try {
+
+      if (isloadVideoImg === '') {
+        this.isLoadVideoiamge[id] = '11';
+        let post = this.postMap[postId] || null;
+
+        if (post === null) {
+          post = await this.dataHelper.getPostV3ById(postId) || null;
+          this.postMap[postId] = post;
+        }
+        if (post === null) {
+          this.isLoadVideoiamge[id] = '13';
+        }
+
+        let mediaDatas = post.content.mediaData;
+        const elements = mediaDatas[0];
+
+        //缩略图
+        let videoThumbnailKey = elements.thumbnailPath || '';
+        if (videoThumbnailKey === '') {
+          this.isLoadimage[id] = '13';
+          return;
+        }
+        //原图
+        //let imageKey = elements.originMediaPath;
+        let type = elements.type;
+        //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+        let fileName: string = videoThumbnailKey.split("@")[0];
+        this.hiveVaultController
+          .getV3Data(destDid, videoThumbnailKey, fileName, type)
+          .then(imagedata => {
+            let image = imagedata || '';
+            if (image != '') {
+              this.isLoadVideoiamge[id] = '13';
+              //video.setAttribute('poster', image);
+              this.posterImgMap[id] = image;
+              let video: any = document.getElementById(id + 'postdetailvideo') || '';
+              if (video != '') {
+                video.style.display = "block";
+                //video.
+                this.setFullScreen(id);
+                this.setOverPlay(id);
+              }
+
+            } else {
+              this.isLoadVideoiamge[id] = '13';
+              //vgplayer.style.display = 'none';
+            }
+          })
+          .catch(reason => {
+            //vgplayer.style.display = 'none';
+            this.isLoadVideoiamge[id] = '';
+            Logger.error(TAG,
+              "Excute 'hanldVideo' in home page is error , get image data error, error msg is ",
+              reason
+            );
+          });
+      }
+    } catch (error) {
+      console.log("=============video10");
+      this.isLoadVideoiamge[id] = '';
+    }
+  }
+
   async repost(post: FeedsData.PostV3) {
 
     let connectStatus = this.dataHelper.getNetworkStatus();
@@ -1433,9 +1743,10 @@ export class PostdetailPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    let destDid =  post.destDid;
+    let destDid = post.destDid;
     let channelId = post.channelId;
     let postId = post.postId;
+    let id = destDid + '-' + channelId + '-' + postId;
     this.pauseVideo();
     const channels = await this.dataHelper.getSelfChannelListV3();
     if (channels.length === 0) {
@@ -1444,7 +1755,7 @@ export class PostdetailPage implements OnInit {
     }
     this.repostChannelList = channels;
     let channel = this.dataHelper.getCurrentChannel() || null;
-    if(channel === null){
+    if (channel === null) {
       channel = await this.dataHelper.getChannelV3ById(channels[0].destDid, channels[0].channelId);
       this.dataHelper.setCurrentChannel(channel);
     }
@@ -1461,6 +1772,5 @@ export class PostdetailPage implements OnInit {
     this.destDid = "";
     this.hideRepostComment = true;
   }
-
 }
 
