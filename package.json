@@ -23,7 +23,7 @@
     "@awesome-cordova-plugins/core": "^5.40.0",
     "@awesome-cordova-plugins/http": "^5.44.0",
     "@awesome-cordova-plugins/sqlite": "^5.40.0",
-    "@elastosfoundation/did-js-sdk": "^2.2.2",
+    "@elastosfoundation/did-js-sdk": "2.2.9",
     "@elastosfoundation/elastos-connectivity-sdk-cordova": "2.0.2",
     "@elastosfoundation/elastos-connector-localidentity-cordova": "file:localsdk/Elastos.Connectivity.Connector.LocalIdentity.Cordova",
     "@elastosfoundation/essentials-connector-cordova": "1.0.16",
