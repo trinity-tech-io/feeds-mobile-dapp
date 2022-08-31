@@ -124,6 +124,112 @@
 
       </ion-col>
       </ion-row>
+      <!-- repost -->
+      <!-- id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-postdetail -->
+      <ion-grid class="postDetail-grid ion-activatable ripple" [class.dark-postDetail-grid]="theme.darkMode" *ngIf="post != null" style="border: none;display: none;" >
+      <ion-row class="top-row">
+        <ion-col size="1"></ion-col>
+        <ion-col class="left-col" size="2.5">
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(destDid, channelId)">
+            <img [src] = "channelAvatarMap[post.destDid+'-'+post.channelId]" *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId]">
+          </div>
+        </ion-col>
+        <ion-col class="mid-col" size="6" (press)="pressName()" (click)="navTo(destDid, channelId)" [style.touch-action]="'pan-y'">
+          <ion-label *ngIf="hannelNameMap[post.channelId] === '' || hannelNameMap[post.channelId] === undefined">
+            ......
+          </ion-label>
+          <ion-label *ngIf="hannelNameMap[post.channelId] != '' && hannelNameMap[post.channelId] != undefined">
+            {{ hannelNameMap[post.channelId] }}
+          </ion-label>
+           <!-- <p>@...</p> -->
+        </ion-col>
+        <ion-col size="0.5" (click)="menuMore()"></ion-col>
+        <ion-col class="right-col" size="1.5" (click)="menuMore()">
+          <img *ngIf="postStatus!=1"
+            [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
+          >
+        </ion-col>
+        <ion-col size="0.5"></ion-col>
+      </ion-row>
+      <!--text--->
+      <ion-row class="mid-row">
+        <ion-col size="1"></ion-col>
+        <ion-col size="10.5">
+          <h2 *ngIf="postStatus===1">
+            <pre>{{'common.deleted' | translate}}</pre>
+          </h2>
+          <h2 *ngIf="postStatus!=1" (press)="pressContent(post.content.content)" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
+            <pre [innerHTML]="post.content.content | html"></pre>
+          </h2>
+        </ion-col>
+        <ion-col size="0.5"></ion-col>
+      </ion-row>
+       <!--img video--->
+      <ion-row class="mid-row">
+        <ion-col size="12">
+          <div style="position:relative;width: 100%;">
+            <app-percentageloading
+            *ngIf="isImgPercentageLoading"
+            [ngStyle]="imgloadingStyleObj"
+            [percent]="imgPercent"
+            [rotateNum]="imgRotateNum"
+            >
+            </app-percentageloading>
+
+          <app-roundloading
+          *ngIf="isImgLoading"
+          [ngStyle]="imgloadingStyleObj"
+          >
+          </app-roundloading>
+            <img
+            id=postdetail-img-{{destDid}}-{{channelId}}-{{postId}}
+            *ngIf="postStatus != 1&&mediaType===1&&postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
+            [src] = "postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
+            class="post-img"
+            (click)="showBigImage(destDid,channelId,postId)"
+            />
+          </div>
+
+          <!---video-->
+        <div *ngIf="postStatus != 1&&mediaType===2&&posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]!=''" style="width:100%;height:200px;margin-top:10px;position: relative;" id=postdetail-video-{{destDid}}-{{channelId}}-{{postId}}>
+
+          <app-roundloading
+          *ngIf="isVideoLoading"
+          [ngStyle]="videoloadingStyleObj"
+          >
+          </app-roundloading>
+
+          <app-percentageloading
+            *ngIf="isVideoPercentageLoading"
+            [ngStyle]="videoloadingStyleObj"
+            [percent]="videoPercent"
+            [rotateNum]="videoRotateNum"
+          >
+          </app-percentageloading>
+
+        <vg-player>
+          <vg-overlay-play id={{destDid}}-{{channelId}}-{{postId}}vgoverlayplaypostdetail></vg-overlay-play>
+          <vg-controls id={{destDid}}-{{channelId}}-{{postId}}vgcontrolspostdetail style="display:none;">
+            <img class="vgfullscreen" id={{destDid}}-{{channelId}}-{{postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg" />
+            </vg-controls>
+
+            <video #media [vgMedia]="media" [poster]="posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]" style="display: none;" id={{destDid}}-{{channelId}}-{{postId}}postdetailvideo
+              playsinline webkit-playsinline>
+              <source type="video/mp4" id={{destDid}}-{{channelId}}-{{postId}}postdetailsource />
+              </video>
+        </vg-player>
+      </div>
+        </ion-col>
+      <ion-col size="1">
+      </ion-col>
+      <ion-col size="10">
+        <span style="font-size: 10px;font-weight: 500;color: #C4C4C4;">{{ updatedTimeStr }}</span>
+      </ion-col>
+      <ion-col size="0.5">
+
+      </ion-col>
+      </ion-row>
+      </ion-grid>
       <ion-row class="bottom-row">
         <ion-col size="0.5"></ion-col>
         <ion-col size="1.75" (click)="like()">
@@ -162,6 +268,8 @@
               <ion-button (click)="retry(destDid, channelId, postId)" class="retrybutton">{{ "common.retry" | translate }}</ion-button>
           </ion-col>
       </ion-row>
+
+
     </ion-grid>
 
     <!---------------- rePOST---------------->
