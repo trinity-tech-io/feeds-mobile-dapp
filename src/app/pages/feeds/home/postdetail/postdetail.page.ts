@@ -55,7 +55,6 @@ export class PostdetailPage implements OnInit {
 
   public popover: any;
 
-  public postStatus: number = 0;
   public styleObj: any = { width: '' };
   public dstyleObj: any = { width: '' };
 
@@ -68,8 +67,6 @@ export class PostdetailPage implements OnInit {
 
   public cacheGetBinaryRequestKey = '';
   public cachedMediaType = '';
-
-  public mediaType: FeedsData.MediaType;
 
   public hideDeletedComments: boolean = false;
 
@@ -151,6 +148,10 @@ export class PostdetailPage implements OnInit {
   private posterImgMap: any = {};
   public hideRepostComment = true;
   public repostChannelList: any = [];
+  public rePost: any = null;
+  public repostUpdatedTimeStr: string = "";
+  private refreshRepostImageSid: any = null;
+
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -184,8 +185,6 @@ export class PostdetailPage implements OnInit {
       this.channelAvatarUri = channelAvatarUri;
     }
     this.initPostContent();
-
-
 
     if (isInit) {
       this.initRefresh();
@@ -314,9 +313,7 @@ export class PostdetailPage implements OnInit {
   async initPostContent() {
     let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId);
     this.post = post;
-    this.postStatus = post.status || 0;
     this.updatedTime = post.updatedAt;
-    this.mediaType = post.content.mediaType;
     this.updatedTimeStr = this.handleUpdateDate(this.updatedTime);
     this.refreshImageV2(post);
   }
@@ -474,7 +471,11 @@ export class PostdetailPage implements OnInit {
     // this.postImage = '';
     this.isFullContent = {};
     this.isOwnComment = {};
-    this.clearVideo();
+    if (this.rePost != null) {
+      this.clearVideo(this.rePost);
+    } else {
+      this.clearVideo(this.post);
+    }
   }
 
   ionViewDidEnter() { }
@@ -525,8 +526,11 @@ export class PostdetailPage implements OnInit {
       }
     }
 
-    // let id = this.destDid + '-' + this.channelId + '-' + this.postId;
-    this.pauseVideo();
+    if (this.rePost != null) {
+      this.pauseVideo(this.rePost);
+    } else {
+      this.pauseVideo(this.post);
+    }
     this.hideComment = false;
   }
 
@@ -625,11 +629,12 @@ export class PostdetailPage implements OnInit {
     return UtilService.dateFormat(updateDate, 'yyyy-MM-dd HH:mm:ss');
   }
 
-  async menuMore() {
+  async menuMore(post: FeedsData.PostV3) {
     let isMine = await this.checkChannelIsMine();
-    this.pauseVideo();
+    this.pauseVideo(post);
     const needUnpinPost = await this.dataHelper.queryChannelPinPostData(this.channelId);
-    if (isMine === 1 && this.postStatus != 1) {
+
+    if (isMine === 1 && post.status != 1) {
       this.menuService.showPostDetailMenu(
         this.post,
         this.channelName,
@@ -988,9 +993,9 @@ export class PostdetailPage implements OnInit {
     video.load();
   }
 
-  pauseVideo() {
-    if (this.postStatus != 1 && this.mediaType === 2) {
-      let id = this.destDid + this.channelId + this.postId;
+  pauseVideo(post: FeedsData.PostV3) {
+    let id = post.destDid + '-' + post.channelId + '-' + post.postId;
+    if (post.status != 1 && post.content.mediaType === 2) {
       let video: any = document.getElementById(id + 'postdetailvideo') || '';
       let source: any = document.getElementById(id + 'postdetailsource') || '';
       if (video != '' && source != '' && !video.paused) {
@@ -1000,8 +1005,8 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  clearVideo() {
-    if (this.postStatus != 1 && this.mediaType === 2) {
+  clearVideo(post: FeedsData.PostV3) {
+    if (post.status != 1 && post.content.mediaType === 2) {
 
       let id = this.destDid + this.channelId + this.postId;
       let video: any = document.getElementById(id + 'postdetailvideo') || '';
@@ -1022,7 +1027,11 @@ export class PostdetailPage implements OnInit {
       document.getElementById(id + 'vgfullscreenpostdetail') || '';
     if (vgfullscreen != '') {
       vgfullscreen.onclick = async () => {
-        this.pauseVideo();
+        if (this.rePost != null) {
+          this.pauseVideo(this.rePost);
+        } else {
+          this.pauseVideo(this.post);
+        }
         let postImg: string = document
           .getElementById(id + 'postdetailvideo')
           .getAttribute('poster');
@@ -1167,8 +1176,11 @@ export class PostdetailPage implements OnInit {
       this.native.toast('common.noElaAddress');
       return;
     }
-    // let id = this.destDid + '-' + this.channelId + '-' + this.postId;
-    this.pauseVideo();
+    if (this.rePost != null) {
+      this.pauseVideo(this.rePost);
+    } else {
+      this.pauseVideo(this.post);
+    }
     this.viewHelper.showPayPrompt(this.destDid, this.channelId, tippingAddress);
   }
 
@@ -1434,49 +1446,92 @@ export class PostdetailPage implements OnInit {
     this.replyObserverList = {};
   }
 
-  newSectionObserver(postItem: any) {
-    let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-postdetail';
+  newSectionObserver(postItem: any, elementsName: string) {
+
+    let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-' + elementsName;
     let observer = this.observerList[postGridId] || null;
+
     if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
     if (item != null) {
-      this.observerList[postGridId] = new IntersectionObserver(async (changes: any) => {
-        let container = changes[0].target;
-        let newId = container.getAttribute("id");
-        let intersectionRatio = changes[0].intersectionRatio;
+      if (elementsName === "postdetail") {
+        this.observerList[postGridId] = new IntersectionObserver(async (changes: any) => {
+          let container = changes[0].target;
+          let newId = container.getAttribute("id");
+          let intersectionRatio = changes[0].intersectionRatio;
 
-        if (intersectionRatio === 0) {
-          //console.log("======newId leave========", newId);
-          return;
-        }
-        let arr = newId.split("-");
-        let destDid: string = arr[0];
-        let channelId: string = arr[1];
-        let postId: string = arr[2];
-        let mediaType: string = arr[3];
+          if (intersectionRatio === 0) {
+            //console.log("======newId leave========", newId);
+            return;
+          }
+          let arr = newId.split("-");
+          let destDid: string = arr[0];
+          let channelId: string = arr[1];
+          let postId: string = arr[2];
+          let mediaType: string = arr[3];
 
-        if (mediaType === '3' || mediaType == '4') {
-        }
-        await this.getChannelName(destDid, channelId, null);//获取频道name
-        this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
-        if (mediaType === '1') {
-          this.handlePostImgV2(destDid, channelId, postId);
-        }
+          if (mediaType === '3' || mediaType == '4') {
+            //获取repost
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId);
+            this.rePost = post;
+            let updatedTime = post.updatedAt || 0;
+            this.repostUpdatedTimeStr = this.handleUpdateDate(updatedTime);
+            this.refreshRepostImageV2(this.rePost)
+          }
 
-        if (mediaType === '2') {
-          //video
-          this.handleVideoV2(destDid, channelId, postId);
-        }
+          await this.getChannelName(destDid, channelId, null);//获取频道name
+          this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
+          if (mediaType === '1') {
+            this.handlePostImgV2(destDid, channelId, postId);
+          }
 
-        //post like status
-        this.getLikeStatus(postId, '0');
-        this.getPostLikeNum(postId, '0');
+          if (mediaType === '2') {
+            //video
+            this.handleVideoV2(destDid, channelId, postId);
+          }
 
-      });
+          //post like status
+          this.getLikeStatus(postId, '0');
+          this.getPostLikeNum(postId, '0');
 
-      this.observerList[postGridId].observe(item);
+        });
+        this.observerList[postGridId].observe(item);
+        return;
+      }
+      if (elementsName === "postdetail-repost") {
+        this.observerList[postGridId] = new IntersectionObserver(async (changes: any) => {
+          let container = changes[0].target;
+          let newId = container.getAttribute("id");
+          let intersectionRatio = changes[0].intersectionRatio;
+
+          if (intersectionRatio === 0) {
+            //console.log("======newId leave========", newId);
+            return;
+          }
+          let arr = newId.split("-");
+          let destDid: string = arr[0];
+          let channelId: string = arr[1];
+          let postId: string = arr[2];
+          let mediaType: string = arr[3];
+
+          await this.getChannelName(destDid, channelId, null);//获取频道name
+          this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
+          console.log("==========elementsName========1", mediaType);
+          if (mediaType === '1') {
+            this.handlePostImgV2(destDid, channelId, postId);
+          }
+
+          if (mediaType === '2') {
+            //video
+            this.handleVideoV2(destDid, channelId, postId);
+          }
+
+        });
+        this.observerList[postGridId].observe(item);
+        return;
+      }
     }
   }
 
@@ -1555,10 +1610,26 @@ export class PostdetailPage implements OnInit {
   refreshImageV2(post = null) {
     this.clearRefreshImageSid();
     this.refreshImageSid = setTimeout(() => {
-      this.newSectionObserver(post);
+      this.newSectionObserver(post, "postdetail");
       this.clearRefreshImageSid();
     }, 100);
     //this.newSectionObserver();
+  }
+
+  refreshRepostImageV2(post = null) {
+    this.clearRefreshRepostImageV2();
+    this.refreshRepostImageSid = setTimeout(() => {
+      this.newSectionObserver(post, "postdetail-repost");
+      this.clearRefreshRepostImageV2();
+    }, 100);
+    //this.newSectionObserver();
+  }
+
+  clearRefreshRepostImageV2() {
+    if (this.refreshRepostImageSid != null) {
+      clearTimeout(this.refreshRepostImageSid);
+      this.refreshRepostImageSid = null;
+    }
   }
 
   clearRefreshImageSid() {
@@ -1670,7 +1741,11 @@ export class PostdetailPage implements OnInit {
     let source: any = document.getElementById(id + 'postdetailsource') || '';
     let downStatus = this.videoDownStatus[id] || '';
     if (id != '' && source != '' && downStatus === '') {
-      this.pauseVideo();
+      if (this.rePost != null) {
+        this.pauseVideo(this.rePost);
+      } else {
+        this.pauseVideo(this.post);
+      }
     }
     try {
 
@@ -1743,11 +1818,7 @@ export class PostdetailPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    let destDid = post.destDid;
-    let channelId = post.channelId;
-    let postId = post.postId;
-    let id = destDid + '-' + channelId + '-' + postId;
-    this.pauseVideo();
+    this.pauseVideo(post);
     const channels = await this.dataHelper.getSelfChannelListV3();
     if (channels.length === 0) {
       this.native.navigateForward(['/createnewfeed'], '');
@@ -1760,9 +1831,9 @@ export class PostdetailPage implements OnInit {
       this.dataHelper.setCurrentChannel(channel);
     }
 
-    this.postId = postId;
-    this.channelId = channelId;
-    this.destDid = destDid;
+    this.postId = post.postId;
+    this.channelId = post.channelId;
+    this.destDid = post.destDid;
     this.hideRepostComment = false;
   }
 

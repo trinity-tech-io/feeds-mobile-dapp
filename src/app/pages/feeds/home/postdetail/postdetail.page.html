@@ -38,9 +38,9 @@
           </ion-label>
            <!-- <p>@...</p> -->
         </ion-col>
-        <ion-col size="0.5" (click)="menuMore()"></ion-col>
-        <ion-col class="right-col" size="1.5" (click)="menuMore()">
-          <img *ngIf="postStatus!=1"
+        <ion-col size="0.5" (click)="menuMore(post)"></ion-col>
+        <ion-col class="right-col" size="1.5" (click)="menuMore(post)">
+          <img *ngIf="post.status!=1"
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
           >
         </ion-col>
@@ -50,10 +50,10 @@
       <ion-row class="mid-row">
         <ion-col size="0.5"></ion-col>
         <ion-col size="11">
-          <h2 *ngIf="postStatus===1">
+          <h2 *ngIf="post.status===1">
             <pre>{{'common.deleted' | translate}}</pre>
           </h2>
-          <h2 *ngIf="postStatus!=1" (press)="pressContent(post.content.content)" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
+          <h2 *ngIf="post.status!=1" (press)="pressContent(post.content.content)" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
             <pre [innerHTML]="post.content.content | html"></pre>
           </h2>
         </ion-col>
@@ -77,16 +77,16 @@
           >
           </app-roundloading>
             <img
-            id=postdetail-img-{{destDid}}-{{channelId}}-{{postId}}
-            *ngIf="postStatus != 1&&mediaType===1&&postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
+            id=postdetail-img-{{post.destDid}}-{{post.channelId}}-{{post.postId}}
+            *ngIf="post.status != 1&&post.content.mediaType===1&&postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
             [src] = "postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
             class="post-img"
-            (click)="showBigImage(destDid,channelId,postId)"
+            (click)="showBigImage(post.destDid,post.channelId,post.postId)"
             />
           </div>
 
           <!---video-->
-        <div *ngIf="postStatus != 1&&mediaType===2&&posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]!=''" style="width:100%;height:200px;margin-top:10px;position: relative;" id=postdetail-video-{{destDid}}-{{channelId}}-{{postId}}>
+        <div *ngIf="post.status != 1&&post.content.mediaType===2&&posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]!=''" style="width:100%;height:200px;margin-top:10px;position: relative;" id=postdetail-video-{{post.destDid}}-{{post.channelId}}-{{post.postId}}>
 
           <app-roundloading
           *ngIf="isVideoLoading"
@@ -103,14 +103,14 @@
           </app-percentageloading>
 
         <vg-player>
-          <vg-overlay-play id={{destDid}}-{{channelId}}-{{postId}}vgoverlayplaypostdetail></vg-overlay-play>
-          <vg-controls id={{destDid}}-{{channelId}}-{{postId}}vgcontrolspostdetail style="display:none;">
-            <img class="vgfullscreen" id={{destDid}}-{{channelId}}-{{postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg" />
+          <vg-overlay-play id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgoverlayplaypostdetail></vg-overlay-play>
+          <vg-controls id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgcontrolspostdetail style="display:none;">
+            <img class="vgfullscreen" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg" />
             </vg-controls>
 
-            <video #media [vgMedia]="media" [poster]="posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]" style="display: none;" id={{destDid}}-{{channelId}}-{{postId}}postdetailvideo
+            <video #media [vgMedia]="media" [poster]="posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]" style="display: none;" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}postdetailvideo
               playsinline webkit-playsinline>
-              <source type="video/mp4" id={{destDid}}-{{channelId}}-{{postId}}postdetailsource />
+              <source type="video/mp4" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}postdetailsource />
               </video>
         </vg-player>
       </div>
@@ -126,26 +126,27 @@
       </ion-row>
       <!-- repost -->
       <!-- id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-postdetail -->
-      <ion-grid class="postDetail-grid ion-activatable ripple" [class.dark-postDetail-grid]="theme.darkMode" *ngIf="post != null" style="border: none;display: none;" >
+      <ion-grid class="postDetail-grid ion-activatable ripple" [class.dark-postDetail-grid]="theme.darkMode" *ngIf="rePost != null"
+      id={{rePost.destDid}}-{{rePost.channelId}}-{{rePost.postId}}-{{rePost.content.mediaType}}-postdetail-repost>
       <ion-row class="top-row">
         <ion-col size="1"></ion-col>
         <ion-col class="left-col" size="2.5">
-          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(destDid, channelId)">
-            <img [src] = "channelAvatarMap[post.destDid+'-'+post.channelId]" *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId]">
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(rePost.destDid, rePost.channelId)">
+            <img [src] = "channelAvatarMap[rePost.destDid+'-'+rePost.channelId]" *ngIf="channelAvatarMap[rePost.destDid+'-'+rePost.channelId]">
           </div>
         </ion-col>
-        <ion-col class="mid-col" size="6" (press)="pressName()" (click)="navTo(destDid, channelId)" [style.touch-action]="'pan-y'">
-          <ion-label *ngIf="hannelNameMap[post.channelId] === '' || hannelNameMap[post.channelId] === undefined">
+        <ion-col class="mid-col" size="6" (press)="pressName()" (click)="navTo(rePost.destDid, rePost.channelId)" [style.touch-action]="'pan-y'">
+          <ion-label *ngIf="hannelNameMap[rePost.channelId] === '' || hannelNameMap[rePost.channelId] === undefined">
             ......
           </ion-label>
-          <ion-label *ngIf="hannelNameMap[post.channelId] != '' && hannelNameMap[post.channelId] != undefined">
-            {{ hannelNameMap[post.channelId] }}
+          <ion-label *ngIf="hannelNameMap[rePost.channelId] != '' && hannelNameMap[rePost.channelId] != undefined">
+            {{ hannelNameMap[rePost.channelId] }}
           </ion-label>
            <!-- <p>@...</p> -->
         </ion-col>
-        <ion-col size="0.5" (click)="menuMore()"></ion-col>
-        <ion-col class="right-col" size="1.5" (click)="menuMore()">
-          <img *ngIf="postStatus!=1"
+        <ion-col size="0.5" (click)="menuMore(rePost)"></ion-col>
+        <ion-col class="right-col" size="1.5" (click)="menuMore(rePost)">
+          <img *ngIf="rePost.status!=1"
             [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'"
           >
         </ion-col>
@@ -155,11 +156,11 @@
       <ion-row class="mid-row">
         <ion-col size="1"></ion-col>
         <ion-col size="10.5">
-          <h2 *ngIf="postStatus===1">
+          <h2 *ngIf="rePost.status===1">
             <pre>{{'common.deleted' | translate}}</pre>
           </h2>
-          <h2 *ngIf="postStatus!=1" (press)="pressContent(post.content.content)" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
-            <pre [innerHTML]="post.content.content | html"></pre>
+          <h2 *ngIf="rePost.status!=1" (press)="pressContent(rePost.content.content)" (click)="clickUrl($event)" [style.touch-action]="'pan-y'">
+            <pre [innerHTML]="rePost.content.content | html"></pre>
           </h2>
         </ion-col>
         <ion-col size="0.5"></ion-col>
@@ -182,16 +183,16 @@
           >
           </app-roundloading>
             <img
-            id=postdetail-img-{{destDid}}-{{channelId}}-{{postId}}
-            *ngIf="postStatus != 1&&mediaType===1&&postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
-            [src] = "postImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]"
+            id=postdetail-img-{{rePost.destDid}}-{{rePost.channelId}}-{{rePost.postId}}
+            *ngIf="rePost.status != 1&&rePost.content.mediaType===1&&postImgMap[rePost.destDid+'-'+rePost.channelId+'-'+rePost.postId]"
+            [src] = "postImgMap[rePost.destDid+'-'+rePost.channelId+'-'+rePost.postId]"
             class="post-img"
-            (click)="showBigImage(destDid,channelId,postId)"
+            (click)="showBigImage(rePost.destDid,rePost.channelId,rePost.postId)"
             />
           </div>
 
           <!---video-->
-        <div *ngIf="postStatus != 1&&mediaType===2&&posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]!=''" style="width:100%;height:200px;margin-top:10px;position: relative;" id=postdetail-video-{{destDid}}-{{channelId}}-{{postId}}>
+        <div *ngIf="rePost.status != 1&&rePost.content.mediaType===2&&posterImgMap[rePost.destDid+'-'+rePost.channelId+'-'+rePost.postId]!=''" style="width:100%;height:200px;margin-top:10px;position: relative;" id=postdetail-video-{{rePost.destDid}}-{{rePost.channelId}}-{{rePost.postId}}>
 
           <app-roundloading
           *ngIf="isVideoLoading"
@@ -208,22 +209,22 @@
           </app-percentageloading>
 
         <vg-player>
-          <vg-overlay-play id={{destDid}}-{{channelId}}-{{postId}}vgoverlayplaypostdetail></vg-overlay-play>
-          <vg-controls id={{destDid}}-{{channelId}}-{{postId}}vgcontrolspostdetail style="display:none;">
-            <img class="vgfullscreen" id={{destDid}}-{{channelId}}-{{postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg" />
+          <vg-overlay-play id={{rePost.destDid}}-{{rePost.channelId}}-{{rePost.postId}}vgoverlayplaypostdetail></vg-overlay-play>
+          <vg-controls id={{rePost.destDid}}-{{rePost.channelId}}-{{rePost.postId}}vgcontrolspostdetail style="display:none;">
+            <img class="vgfullscreen" id={{rePost.destDid}}-{{rePost.channelId}}-{{rePost.postId}}vgfullscreenpostdetail src="assets/images/fullscreen.svg" />
             </vg-controls>
 
-            <video #media [vgMedia]="media" [poster]="posterImgMap[post.destDid+'-'+post.channelId+'-'+post.postId]" style="display: none;" id={{destDid}}-{{channelId}}-{{postId}}postdetailvideo
+            <video #media [vgMedia]="media" [poster]="posterImgMap[rePost.destDid+'-'+rePost.channelId+'-'+rePost.postId]" style="display: none;" id={{rePost.destDid}}-{{rePost.channelId}}-{{rePost.postId}}postdetailvideo
               playsinline webkit-playsinline>
-              <source type="video/mp4" id={{destDid}}-{{channelId}}-{{postId}}postdetailsource />
+              <source type="video/mp4" id={{rePost.destDid}}-{{rePost.channelId}}-{{rePost.postId}}postdetailsource />
               </video>
         </vg-player>
-      </div>
+        </div>
         </ion-col>
       <ion-col size="1">
       </ion-col>
       <ion-col size="10">
-        <span style="font-size: 10px;font-weight: 500;color: #C4C4C4;">{{ updatedTimeStr }}</span>
+        <span style="font-size: 10px;font-weight: 500;color: #C4C4C4;">{{ repostUpdatedTimeStr }}</span>
       </ion-col>
       <ion-col size="0.5">
 
@@ -237,26 +238,30 @@
           <img [src]="isLike ? '/assets/images/like-s.svg' : '/assets/images/like.svg'" *ngIf="!theme.darkMode">
           <ion-label [class.liked]="isLike">{{ likesNum }}</ion-label>
         </ion-col>
+
+        <ion-col  size="1.75" (click)="repost(post)">
+          <img src="/assets/images/repost.svg" *ngIf="!theme.darkMode">
+          <img src="/assets/images/darkmode/repost.svg" *ngIf="theme.darkMode">
+          <ion-label>{{ 0 }}</ion-label>
+        </ion-col>
+
         <ion-col size="1.75" (click)="showComment(null)">
           <img src="/assets/images/bubble-line.svg" *ngIf="!theme.darkMode">
           <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode">
           <ion-label>{{ commentsNum }}</ion-label>
         </ion-col>
-        <ion-col  size="2.25" (click)="repost(post)">
-          <img src="/assets/images/repost.svg" *ngIf="!theme.darkMode">
-          <img src="/assets/images/darkmode/repost.svg" *ngIf="theme.darkMode">
-        </ion-col>
+
         <!-- <ion-col (click)="clickDashang()" *ngIf="isAndroid">
           <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
           <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
         </ion-col> -->
         <ion-col>
-          <ion-label class="status" *ngIf="postStatus === 2">{{ 'common.edit' | translate}} </ion-label>
-          <ion-label class="status" *ngIf="postStatus === 11">{{ 'common.sending' | translate}} </ion-label>
-          <ion-label class="status" *ngIf="postStatus === 12">{{ 'common.sendFail' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="post.status === 2">{{ 'common.edit' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="post.status === 11">{{ 'common.sending' | translate}} </ion-label>
+          <ion-label class="status" *ngIf="post.status === 12">{{ 'common.sendFail' | translate}} </ion-label>
         </ion-col>
       </ion-row>
-      <ion-row *ngIf="postStatus === 12" class="bottom-row">
+      <ion-row *ngIf="post.status === 12" class="bottom-row">
           <ion-col size="2.25">
           </ion-col>
           <ion-col size="2.25">
@@ -271,8 +276,6 @@
 
 
     </ion-grid>
-
-    <!---------------- rePOST---------------->
 
     <!---------------- COMMENTS ---------------->
     <div *ngFor="let comment of captainCommentList let i=index">
