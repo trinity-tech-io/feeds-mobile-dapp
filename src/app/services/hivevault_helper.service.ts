@@ -22,7 +22,7 @@ export class HiveVaultHelper {
     public static readonly TABLE_COMMENTS = "comments";
     public static readonly TABLE_LIKES = "likes";
     public static readonly TABLE_BACKUP_SUBSCRIBEDCHANNEL = "backup_subscribed_channel";
-
+    public static readonly TABLE_REPOST = "repost";
 
     // public static readonly SCRIPT_ALLPOST = "script_allpost_name";
     public static readonly SCRIPT_SPECIFIED_POST = "script_specified_post_name";
@@ -30,6 +30,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_CHANNEL = "script_channel_name";
     public static readonly SCRIPT_COMMENT = "script_comment_name";
     public static readonly SCRIPT_SUBSCRIPTION = "script_subscriptions_name";
+
 
     public static readonly SCRIPT_QUERY_POST_BY_CHANNEL = "script_query_post_by_channel";//all
     public static readonly SCRIPT_QUERY_CHANNEL_INFO = "script_query_channel_info";
@@ -68,6 +69,11 @@ export class HiveVaultHelper {
     public static readonly QUERY_PUBLIC_SPECIFIED_POST = "query_public_specified_post";
     public static readonly QUERY_PUBLIC_SOMETIME_POST = "query_public_sometime_post";
     public static readonly QUERY_PUBLIC_POST_BY_CHANNEL = "query_public_post_by_channel";
+
+    public static readonly SCRIPT_REPOST = "script_repost";
+    public static readonly SCRIPT_REMOVE_REPOST = "script_remove_repost";
+    public static readonly SCRIPT_QUERY_REPOST = "script_query_repost";
+
     private buyStorageSpaceDialog: any = null;
     constructor(
         private hiveService: HiveService,
@@ -125,7 +131,12 @@ export class HiveVaultHelper {
                 const p27 = this.registerQueryPublicPostRangeOfTimeScripting();
 
                 const p28 = this.registerQuerySubscriptionInfoByUserDIDAndChannelIdScripting();
-                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28] as const
+
+                const p29 = this.registerCreateRepostScripting();
+                const p30 = this.registerRemoveRepostScripting();
+                const p31 = this.registerQueryRepostScripting();
+
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
                 }, reason => {
@@ -275,7 +286,8 @@ export class HiveVaultHelper {
             const p6 = this.createCollection(HiveVaultHelper.TABLE_LIKES);
             const p7 = this.createCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
 
-            const array = [p1, p2, p3, p4, p5, p6, p7] as const
+            const p8 = this.createCollection(HiveVaultHelper.TABLE_REPOST);
+            const array = [p1, p2, p3, p4, p5, p6, p7, p8] as const
             Promise.all(array).then(values => {
                 resolve('true');
             }, async reason => {
@@ -299,6 +311,8 @@ export class HiveVaultHelper {
                 await this.deleteCollection(HiveVaultHelper.TABLE_LIKES);
                 await this.deleteCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
                 await this.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
+
+                await this.deleteCollection(HiveVaultHelper.TABLE_REPOST);
                 resolve("true")
             } catch (error) {
                 Logger.error(TAG, 'delete Collections error', error);
@@ -2259,6 +2273,180 @@ export class HiveVaultHelper {
         return this.callQueryPublicPostRangeOfTime(targetDid, channelId, start, end);
     }
     /** query public post data range of time end */
+
+
+    /** Repost start */
+    private registerCreateRepostScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let executablefilter = {
+                    "repost_id": "$params.repost_id",
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id",
+                    "repost_channel_id": "$params.repost_channel_id",
+                    "repost_post_id": "$params.repost_post_id",
+                    "created_at": "$params.created_at",
+                    "operator_did": "$caller_did"
+                }
+
+                let options = {
+                    "projection":
+                    {
+                        "_id": false
+                    }
+                };
+                const executable = new InsertExecutable("database_update", HiveVaultHelper.TABLE_REPOST, executablefilter, options).setOutput(true)
+
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_REPOST, executable, null, false);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(TAG, "registerCreateComment error", error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    private callRepost(targetDid: string, repostId: string, channelId: string, postId: string, repostChannelId: string, repostPostId: string, createdAt: number): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const params = {
+                    "repost_id": repostId,
+                    "channel_id": channelId,
+                    "post_id": postId,
+                    "repost_channel_id": repostChannelId,
+                    "repost_post_id": repostPostId,
+                    "created_at": createdAt
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_REPOST, params);
+                console.log("Create repost from scripting , result is", result);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Create repost from scripting , error:', error);
+                reject(error)
+            }
+        });
+    }
+
+    repost(targetDid: string, channelId: string, postId: string, repostChannelId: string, repostPostId: string): Promise<{ repostId: string, createdAt: number }> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const repostId = UtilService.generateRepostId(channelId, postId, repostChannelId, repostPostId);
+                const createdAt = UtilService.getCurrentTimeNum();
+                const result = await this.callRepost(targetDid, repostId, channelId, postId, repostChannelId, repostPostId, createdAt);
+
+                resolve({ repostId: repostId, createdAt: createdAt });
+            } catch (error) {
+                reject(await this.handleError(error));
+            }
+        });
+    }
+    /** Repost end */
+
+
+    /** Remove repost start */
+    private registerRemoveRepostScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const filter = {
+                    "repost_channel_id": "$params.repost_channel_id",
+                    "repost_post_id": "$params.repost_post_id",
+                    "operator_did": "$caller_did"
+                }
+
+                const executable = new DeleteExecutable("database_delete", HiveVaultHelper.TABLE_REPOST, filter);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_REMOVE_REPOST, executable, null);
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(TAG, "Remove repost error", error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    private callRemoveRepost(targetDid: string, repostChannelId: string, repostPostId: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const params = {
+                    "repost_channel_id": repostChannelId,
+                    "repost_post_id": repostPostId,
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_REMOVE_REPOST, params);
+                console.log("Remove repost from scripting , result is", result);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Remove repost from scripting , error:', error);
+                reject(error)
+            }
+        });
+    }
+
+    removeRepost(targetDid: string, repostChannelId: string, repostPostId: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await this.callRemoveRepost(targetDid, repostChannelId, repostPostId);
+                resolve(result);
+            } catch (error) {
+                reject(await this.handleError(error));
+            }
+        });
+    }
+    /** Remove repost end */
+
+    /** Query repost start */
+    private registerQueryRepostScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let executablefilter = {
+                    "channel_id": "$params.channel_id",
+                    "post_id": "$params.post_id"
+                }
+
+                let options = {
+                    "projection":
+                    {
+                        "_id": false
+                    }
+                };
+
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_REPOST, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_REPOST, executable, null, false);
+                resolve("SUCCESS");
+            } catch (error) {
+                Logger.error(TAG, "registerCreateComment error", error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    private callQueryRepost(targetDid: string, channelId: string, postId: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const params = {
+                    "channel_id": channelId,
+                    "post_id": postId
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_REPOST, params);
+                console.log("Query repost from scripting , result is", result);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query repost from scripting , error:', error);
+                reject(error)
+            }
+        });
+    }
+
+    queryRepostById(targetDid: string, channelId: string, postId: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await this.callQueryRepost(targetDid, channelId, postId);
+                resolve(result);
+            } catch (error) {
+                reject(await this.handleError(error));
+            }
+        });
+    }
+    /** Remove repost end */
+
 
     async showBuyStorageSpaceDialog(message: string) {
 
