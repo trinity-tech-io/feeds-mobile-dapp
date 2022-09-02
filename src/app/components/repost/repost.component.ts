@@ -13,6 +13,7 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { Events } from 'src/app/services/events.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { UtilService } from 'src/app/services/utilService';
 
 @Component({
   selector: 'app-repost',
@@ -22,7 +23,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 export class RepostComponent implements OnInit {
   @ViewChild('comment', { static: false }) comment: IonTextarea;
-  @Input() public repostChannelList:any = [];
+  @Input() public repostChannelList: any = [];
   @Input() public destDid: string = '';
   @Input() public channelId: string = '';
   @Input() public postId: string = '0';
@@ -49,7 +50,7 @@ export class RepostComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    console.log("=========",this.repostChannelList);
+    console.log("=========", this.repostChannelList);
     if (this.platform.is('ios')) {
       this.isAndroid = "ios";
     } else {
@@ -59,10 +60,10 @@ export class RepostComponent implements OnInit {
     let channel: FeedsData.ChannelV3 = this.dataHelper.getCurrentChannel() || null;
     this.repostChannel = channel;
     this.channelAvatar = channel.avatar || '';
-    if(this.channelAvatar === ""){
+    if (this.channelAvatar === "") {
       this.isBorder = true;
       this.channelAvatar = "./assets/images/default-contact.svg";
-    }else{
+    } else {
       this.isBorder = false;
       this.parseAvatar();
     }
@@ -84,24 +85,24 @@ export class RepostComponent implements OnInit {
   }
 
   async parseAvatar() {
-   let avatarUri = this.channelAvatar;
+    let avatarUri = this.channelAvatar;
     this.channelAvatar = "./assets/icon/reserve.svg";
-    let avatar = await this.handleChannelAvatar(avatarUri,this.destDid);
+    let avatar = await this.handleChannelAvatar(avatarUri, this.destDid);
     this.channelAvatar = avatar;
   }
 
-  handleChannelAvatar(channelAvatarUri: string,destDid: string): Promise<string>{
+  handleChannelAvatar(channelAvatarUri: string, destDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        let fileName:string = channelAvatarUri.split("@")[0];
-        this.hiveVaultController.getV3Data(destDid,channelAvatarUri,fileName,"0")
-        .then((result)=>{
-           let channelAvatar = result || '';
-           resolve(channelAvatar);
-        }).catch((err)=>{
-          resolve('');
-        })
-      }catch(err){
+        let fileName: string = channelAvatarUri.split("@")[0];
+        this.hiveVaultController.getV3Data(destDid, channelAvatarUri, fileName, "0")
+          .then((result) => {
+            let channelAvatar = result || '';
+            resolve(channelAvatar);
+          }).catch((err) => {
+            resolve('');
+          })
+      } catch (err) {
         resolve('');
       }
     });
@@ -125,8 +126,15 @@ export class RepostComponent implements OnInit {
     this.clickButton = true;
     this.native
       .showLoading('common.waitMoment')
-      .then(() => {
-        console.log("========",this.repostChannel);
+      .then(async () => {
+        console.log("click========", this.repostChannel);
+        let postText = this.native.iGetInnerText(this.newComment) || '';
+
+
+        const repostUrl = UtilService.generateFeedsPostLink(this.destDid, this.channelId, this.postId);
+        const tag: string = '';
+        await this.hiveVaultController.repost(this.channelId, postText, repostUrl, tag);
+
         this.native.hideLoading();
         this.clickButton = false;
         this.hideComponent();
@@ -148,26 +156,26 @@ export class RepostComponent implements OnInit {
       // this.keyboard.show();
       return;
     }
-   }
+  }
 
-   ionFocus() {
-     this.isBorderGradient = true;
-   }
+  ionFocus() {
+    this.isBorderGradient = true;
+  }
 
-   handleSelect(event:any){
+  handleSelect(event: any) {
     let channel = event.detail.value;
     this.channelAvatar = channel.avatar || '';
-    if(this.channelAvatar === ""){
+    if (this.channelAvatar === "") {
       this.isBorder = true;
       this.channelAvatar = "./assets/images/default-contact.svg";
-    }else{
+    } else {
       this.isBorder = false;
       this.parseAvatar();
     }
-   }
-
-   compareWith(o1: FeedsData.ChannelV3, o2: FeedsData.ChannelV3) {
-    return o1 && o2 ? o1.channelId === o2.channelId : o1 === o2;
-   }
-
   }
+
+  compareWith(o1: FeedsData.ChannelV3, o2: FeedsData.ChannelV3) {
+    return o1 && o2 ? o1.channelId === o2.channelId : o1 === o2;
+  }
+
+}

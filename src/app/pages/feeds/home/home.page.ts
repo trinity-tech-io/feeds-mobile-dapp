@@ -2496,7 +2496,7 @@ export class HomePage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
-    let destDid =  post.destDid;
+    let destDid = post.destDid;
     let channelId = post.channelId;
     let postId = post.postId;
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
@@ -2507,7 +2507,7 @@ export class HomePage implements OnInit {
     }
     this.repostChannelList = channels;
     let channel = this.dataHelper.getCurrentChannel() || null;
-    if(channel === null){
+    if (channel === null) {
       channel = await this.dataHelper.getChannelV3ById(channels[0].destDid, channels[0].channelId);
       this.dataHelper.setCurrentChannel(channel);
     }
@@ -2517,5 +2517,4 @@ export class HomePage implements OnInit {
     this.destDid = destDid;
     this.hideRepostComment = false;
   }
-
 }
