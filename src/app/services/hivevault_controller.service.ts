@@ -482,7 +482,7 @@ export class HiveVaultController {
     console.log("rangeOfTimePostList >>>>>>>>>>>> ", rangeOfTimePostList)
   }
 
-  async queryPostByPostId(targetDid: string, channelId: string, postId: string): Promise<FeedsData.PostV3> {
+  async queryPostByPostId(targetDid: string, channelId: string, postId: string, withSave: boolean): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryPostById(targetDid, channelId, postId);
@@ -492,7 +492,12 @@ export class HiveVaultController {
           return;
         }
         const posts = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
-        // await this.dataHelper.addPost(posts[0]); //repost
+
+        if (withSave) {
+          await this.dataHelper.addPost(posts[0]); //repost
+        } else {
+          await this.dataHelper.cachePost(posts[0]);
+        }
         resolve(posts[0]);
       } catch (error) {
         Logger.error(TAG, error);

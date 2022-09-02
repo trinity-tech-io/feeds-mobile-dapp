@@ -4327,33 +4327,83 @@ export class DataHelper {
     localStorage.removeItem(key)
   }
 
+  //cached post
+  cachePost(newPost: FeedsData.PostV3): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let isNewPost: boolean = false;
+        let originPost: FeedsData.PostV3 = await this.getCachedPostV3ById(newPost.postId) || null;
+        if (!originPost) {
+          try {
+            await this.cachePostV3(newPost);
+            isNewPost = true;
+          } catch (error) {
+          }
+        } else {
+          const isEqual = _.isEqual(newPost, originPost);
+          if (isEqual) {
+            resolve(isNewPost);
+            return;
+          }
+          await this.updateCachedPostV3(newPost);
+        }
+        resolve(isNewPost);
+      } catch (error) {
+        Logger.error(TAG, 'Cache post error', error);
+        reject(error);
+      }
+    });
+  }
 
-  //API
-  // addPosts(postList: FeedsData.PostV3[], useCache: boolean, usePersistence: boolean) {
-  // }
+  private cachePostV3(post: FeedsData.PostV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.insertCachedPostData(selfDid, post);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Cache post error,', error);
+        reject(error);
+      }
+    });
+  }
 
-  // queryPinPostDataByChannelId(userdid: string, channelId: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const pinPostList = await this.sqliteHelper.queryPinPostDataByChannelId(userdid, channelId);
-  //       if (!pinPostList) {
-  //         resolve([]);
-  //         return;
-  //       }
-  //       resolve(pinPostList);
-  //     } catch (error) {
-  //       resolve(null);
-  //     }
-  //   });
-  // }
+  private updateCachedPostV3(post: FeedsData.PostV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = this.sqliteHelper.updateCachedPostData(selfDid, post)
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Update post error', error);
+        reject(error);
+      }
+    });
+  }
 
-  // insertPinPostData(userdid: string, destDid: string, channelId: string, postId: string) {
-  //   return new Promise(async (resolve, reject) => {
-  //     this.sqliteHelper.insertPinPostData(userdid, destDid, channelId, postId);
+  deleteCachedPostData(postId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.deleteCachedPostData(selfDid, postId);
+        resolve(result);
+      } catch (error) {
+        resolve('FINISH');
+      }
+    });
+  }
 
-  //   });
-
-  // }
+  getCachedPostV3ById(postId: string): Promise<FeedsData.PostV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryCachedPostDataByID(selfDid, postId)
+        resolve(result[0]);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 
   getChannelCollectionPageList() {
     return this.channelCollectionPageList;

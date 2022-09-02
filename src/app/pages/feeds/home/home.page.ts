@@ -2424,7 +2424,7 @@ export class HomePage implements OnInit {
             const remoteChannel = await this.hiveVaultController.getChannelInfoById(feedsUrlObj.targetDid, feedsUrlObj.channelId);
           }
 
-          const remotePost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId);
+          const remotePost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId, false);
           this.handlePostAvatarV2(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId);//获取头像
           this.getDisplayName(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.targetDid);
           if (remotePost.content.mediaType === FeedsData.MediaType.containsImg) {
