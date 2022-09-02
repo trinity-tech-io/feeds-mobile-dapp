@@ -53,11 +53,17 @@
     </div>
     </ion-col>
     <ion-col
-      size="5.7"
+      size="9.2"
       class="middle-col"
       (click)="clickChannelCollection(channelCollection)"
     >
       <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{channelCollection.displayName  || channelCollection.name }}</ion-label>
+      <div class="displayName" *ngIf="handleDisplayNameMap[channelCollection.destDid] === '' || handleDisplayNameMap[channelCollection.destDid] === undefined">
+        @......
+      </div>
+      <div class="displayName" *ngIf="handleDisplayNameMap[channelCollection.destDid] != '' && handleDisplayNameMap[channelCollection.destDid] != undefined">
+        @{{ handleDisplayNameMap[channelCollection.destDid] }}
+      </div>
       <ion-row>
         <br>
         <p>
@@ -66,17 +72,21 @@
         </p>
       </ion-row>
       <ion-row>
-        <!-- <p  class="des" [class.white]="theme.darkMode">{{ channelCollection.intro }}</p> -->
+          <div  class="des">{{ channelCollection.intro }}</div>
       </ion-row>
+      <div  class="btn-row-empty unsubscribed">
+        <span>{{ "SearchPage.follow" | translate }}</span>
+      </div>
     </ion-col>
-    <ion-col size="0.5" class="right-col" (click)="subscribeChannelCollection(channelCollection)">
+    <!-- <ion-col size="0.2" class="right-col" (click)="subscribeChannelCollection(channelCollection)">
 
     </ion-col>
-    <ion-col size="3" class="right-col" (click)="subscribeChannelCollection(channelCollection)">
-      <ion-button  class="unsubscribed" fill="outline">
-        <ion-label >{{'SearchPage.follow' | translate}}</ion-label>
-      </ion-button>
-    </ion-col>
+    <ion-col size="3.3" class="right-col" (click)="subscribeChannelCollection(channelCollection)">
+      <div  class="btn-row-empty unsubscribed">
+        <span>{{ "SearchPage.follow" | translate }}</span>
+      </div>
+    </ion-col> -->
+
     <ion-ripple-effect></ion-ripple-effect>
   </ion-row>
 </ion-item>

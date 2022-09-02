@@ -253,7 +253,7 @@ export class MyApp {
         this.initNftFirstdisclaimer();
         this.initFeedPublicStatus();
         this.initCurrentChannel();
-        this.initDiscoverfeeds();
+        this.initSpecificChannelCollectionPageList();
         this.initCollectibleSetting();
         this.initFeedsSortType();
         this.initHideAdult();
@@ -300,15 +300,16 @@ export class MyApp {
     connectivity.setApplicationDID(Config.APPLICATION_DID);
   }
 
-  initDiscoverfeeds() {
+  initSpecificChannelCollectionPageList() {
     this.dataHelper
-      .loadData('feed:discoverfeeds')
-      .then(discoverfeeds => {
-        if (discoverfeeds === null) {
-          this.dataHelper.setDiscoverfeeds([]);
+      .loadData('feedsNetWork:specificChannelCollectionPageList')
+      .then(channelCollectionPageList => {
+        if (channelCollectionPageList === null) {
+          this.dataHelper.setChannelCollectionPageList([]);
           return;
         }
-        this.dataHelper.setDiscoverfeeds(JSON.parse(discoverfeeds));
+        console.log("=====channelCollectionPageList======",channelCollectionPageList);
+        this.dataHelper.setChannelCollectionPageList(channelCollectionPageList);
       })
       .catch(err => { });
   }

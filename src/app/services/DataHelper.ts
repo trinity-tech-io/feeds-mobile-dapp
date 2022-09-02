@@ -16,6 +16,7 @@ declare let didManager: DIDPlugin.DIDManager;
 
 @Injectable()
 export class DataHelper {
+  private channelCollectionPageList = [];
   private hiveAuthStatus: number = null;
   private syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" };
   // TODO new add
@@ -4353,4 +4354,13 @@ export class DataHelper {
   //   });
 
   // }
+
+  getChannelCollectionPageList() {
+    return this.channelCollectionPageList;
+ }
+
+ setChannelCollectionPageList(channelCollectionPageList = []) {
+    this.channelCollectionPageList = channelCollectionPageList;
+    this.saveData("feedsNetWork:specificChannelCollectionPageList",this.channelCollectionPageList);
+ }
 }

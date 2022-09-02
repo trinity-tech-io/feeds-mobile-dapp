@@ -34,7 +34,7 @@ ion-searchbar {
   z-index: 2;
 }
 
-.channel-list ion-item .channel-row .middle-col p, .channel-list ion-item .channel-row .middle-col .des{
+.channel-list ion-item .channel-row .middle-col p{
   font-size: 12px;
   font-stretch: normal;
   font-style: normal;
@@ -44,6 +44,21 @@ ion-searchbar {
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
+  color: #C4C4C4;
+}
+
+.channel-list ion-item .channel-row .middle-col .des{
+  font-size: 12px;
+  font-stretch: normal;
+  font-style: normal;
+  font-weight: normal;
+  margin-top: 5px;
+  color: #C4C4C4;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
 }
 
 .channel-list ion-item .channel-row .middle-col p, .channel-list ion-item .channel-row .middle-col .ownerName{
@@ -97,4 +112,24 @@ ion-searchbar {
   p{
       margin: 5px 0px;
   }
+}
+.displayName {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #c4c4c4;
+  font-style: normal;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.unsubscribed {
+  right: 9px;
+  position: absolute;
+  width: 100px;
+  height: 35px;
+  line-height: 31px;
+  margin: 0;
+  top: 12px;
 }
