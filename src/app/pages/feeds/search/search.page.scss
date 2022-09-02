@@ -84,3 +84,17 @@ ion-searchbar {
   background-image: linear-gradient(90deg,#161c24,#161c24),linear-gradient(90deg,#7624fe,#368bff);
   border-radius: 20px;
 }
+
+.loading{
+  display: flex;
+  justify-content: center;
+  padding: 0px;
+  img{
+     width: 24px;
+     height: 24px;
+  }
+
+  p{
+      margin: 5px 0px;
+  }
+}

@@ -463,6 +463,19 @@ export class MyApp {
     this.dataHelper.removeTwitterToken(userDid);
   }
 
+
+  async removeRedditToken(){
+    let signinData = await this.dataHelper.getSigninData() || null
+    if (signinData == null || signinData == undefined) {
+      return null
+    }
+    const userDid = signinData.did || ''
+    if (userDid === '') {
+      return null
+    }
+    this.dataHelper.removeRedditToken(userDid);
+  }
+
   async confirmDeleteAccount(that: any) {
     if (this.popover != null) {
       this.popover.dismiss();
@@ -484,7 +497,8 @@ export class MyApp {
       await that.dataHelper.removeData("feeds.initHive");
 
       that.native.hideLoading();
-      this.removeTwitterToken();
+      that.removeTwitterToken();
+      that.removeRedditToken();
       that.clearData();
       //that.disconnectWallet();
     }
