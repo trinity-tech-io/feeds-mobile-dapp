@@ -1474,9 +1474,21 @@ export class PostdetailPage implements OnInit {
 
           if (mediaType === '3' || mediaType == '4') {
             //获取repost
-            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId);
-            this.rePost = post;
-            let updatedTime = post.updatedAt || 0;
+
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId) || null;
+
+            const repostUrl = post.content.mediaData[0].repostUrl;
+            const feedsUrlObj = UtilService.decodeFeedsUrl(repostUrl);
+            //1.load from local
+            //2.load from remote
+            let loadedRepost: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(feedsUrlObj.postId) || null;//TODO replace with load repost later
+            if (!loadedRepost) {
+              loadedRepost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId);
+              //cache repost
+            }
+            this.rePost = loadedRepost;
+
+            let updatedTime = loadedRepost.updatedAt || 0;
             this.repostUpdatedTimeStr = this.handleUpdateDate(updatedTime);
             this.refreshRepostImageV2(this.rePost)
           }
@@ -1518,7 +1530,6 @@ export class PostdetailPage implements OnInit {
 
           await this.getChannelName(destDid, channelId, null);//获取频道name
           this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
-          console.log("==========elementsName========1", mediaType);
           if (mediaType === '1') {
             this.handlePostImgV2(destDid, channelId, postId);
           }
