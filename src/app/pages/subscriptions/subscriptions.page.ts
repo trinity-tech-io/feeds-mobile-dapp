@@ -398,7 +398,7 @@ export class SubscriptionsPage implements OnInit {
       this.hiveVaultController.checkSubscriptionStatusFromRemote(feedsUrl.destDid, feedsUrl.channelId);
     } catch (error) {
       this.native.hideLoading();
-      this.native.toast("common.subscribeFail");
+      this.native.toastWarn("common.subscribeFail");
     }
   }
 

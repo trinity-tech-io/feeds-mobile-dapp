@@ -616,7 +616,7 @@ export class MenuService {
           await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.PINNED);
           this.events.publish(FeedsEvent.PublishType.pinPostFinish);
         } catch (error) {
-          this.native.toastWarn('PinPostError');
+          this.native.toastWarn('ChannelsPage.PinPostError');
         } finally {
           this.native.hideLoading()
         }
@@ -634,7 +634,7 @@ export class MenuService {
           await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.NOTPINNED);
           this.events.publish(FeedsEvent.PublishType.unpinPostFinish);
         } catch (error) {
-          this.native.toastWarn('UnPinPostError');
+          this.native.toastWarn('ChannelsPage.UnPinPostError');
         } finally {
           this.native.hideLoading()
         }

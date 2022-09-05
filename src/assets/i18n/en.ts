@@ -367,7 +367,9 @@ export const en = {
     viewall: 'View all',
     allempty1: 'Channel not subscribed',
     emptyDes1: 'Subscribe to view contents from this channel',
-    pinnedPost: 'Pinned Post'
+    pinnedPost: 'Pinned Post',
+    PinPostError: 'Pin Post failure',
+    UnPinPostError: 'UnPin Post failure'
   },
   NotificationPage: {
     allempty: 'Nothing to find here',
