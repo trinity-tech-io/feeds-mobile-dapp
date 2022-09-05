@@ -78,8 +78,25 @@ export class SearchPage implements OnInit {
   private chanCollectionSid: any = null;
   private handleDisplayNameMap: any = {};
   private channelCollectionsAvatarisLoad: any = {};
+  /**
+   * 1. feeds netWork
+   * 2. asralf
+   * 3. BEB domains
+   * 4. chenrong
+   * 5. EverlastingOS
+   * 6. MButcho
+   * 7. stiartsly
+   * 8. Sash
+   */
   private specificPublicChannels = [
-    "feeds://v3/did:elastos:iabbGwqUN18F6YxkndmZCiHpRPFsQF1imT/80ae2be9c9ba1a14ce08f457b9ba1411d9c22b60dccbcbbf8c3887919b3d4406"
+    "feeds://v3/did:elastos:iUiJQ5FFTeaUwG77PdihuASGSqQSqP7uWL/8e8fb3cdfe9dba6ab68c04f452e913d9e66974186e81297a8a40a1e669cda725",
+    "feeds://v3/did:elastos:icZdMxZe6U1Exs6TFsKTzj2pY2JLznPhjC/b6a9ee31c53d9087f3940d6b8db7c86f8fddad06633bcd0c2669d86feab781a8",
+    "feeds://v3/did:elastos:iYvskJWD2tB98aFeBwAfcCAJosv6uKbjsG/64768de77141e425c8a64e272bbc3fc31bfc6fa1744dfa9934714d6b3d03c1a6",
+    "feeds://v3/did:elastos:iabbGwqUN18F6YxkndmZCiHpRPFsQF1imT/80ae2be9c9ba1a14ce08f457b9ba1411d9c22b60dccbcbbf8c3887919b3d4406",
+    "feeds://v3/did:elastos:iV3RrXcQEmAqg1HyhDW8BgcaW2WUwmuQLC/dad840a91b6b1cd67a01acffcc5c74dbdf192d6a13b1e39b6d8afe952d2ef825",
+    "feeds://v3/did:elastos:iZM2HZhHnzWKbQWBcbvLk1nFa4EqUEJzrr/ab82eea90e5c20a095af93cf63e7c09a8776f834024954d3b208fa8ca058b98c",
+    "feeds://v3/did:elastos:inSeTvmVDj6to7dHSZgkRZuUJYc9yHJChN/d33a4b026b175886212f728fea3333658fa1c821e99e0782b073752c0bccd7d8",
+    "feeds://v3/did:elastos:ik9HwavTJhdo2ufc1K7Gz7pLF4yraaVcCR/e72e416508852f63fc0a8badd508f7ddc63c0d9a0d006cd33a57ff9699484f36",
   ]
   constructor(
     private nftContractControllerService: NFTContractControllerService,
@@ -264,6 +281,7 @@ export class SearchPage implements OnInit {
     this.channelCollectionPageList = await this.getChannels(event);
     this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
     this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+    this.removeObserveList();
     this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
     } catch (error) {
       event.target.complete();

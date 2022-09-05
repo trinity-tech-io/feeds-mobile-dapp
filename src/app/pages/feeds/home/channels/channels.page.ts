@@ -328,6 +328,7 @@ export class ChannelsPage implements OnInit {
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
+    this.removeObserveList();
     this.refreshImageV2(this.postList);
     // if (this.totalData.length - this.pageNumber > 0) {
     //   this.postList = this.totalData.slice(0, this.pageNumber);
