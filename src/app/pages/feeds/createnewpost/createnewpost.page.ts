@@ -179,8 +179,28 @@ export class CreatenewpostPage implements OnInit {
       }
     })
     try {
-      await this.redditService.subreddits()
-      this.clickReddit()
+      await this.redditService.subreddits();
+    } catch (error) {
+
+    }
+    try {
+      const userDid = (await this.dataHelper.getSigninData()).did;
+      const token = await this.redditService.checkRedditIsExpired();
+      if (token === null) {
+        this.isPostReddit = false;
+        localStorage.setItem(userDid + "isSyncToReddit", "false")
+        this.native.toastWarn("common.RedditNotLogin");
+        return;
+      }
+      const isSubscribeElastos = this.dataHelper.getRedditIsSubscribeElastos(userDid);
+      if (isSubscribeElastos === false) {
+        this.isPostReddit = false;
+        localStorage.setItem(userDid + "isSyncToReddit", "false")
+        this.native.toastWarn("common.SubscribeElastosCommunity");
+        return;
+      }
+      this.isPostReddit = true;
+      localStorage.setItem(userDid + "isSyncToReddit", "true")
     }
     catch (error) {
       // TODO:
@@ -626,7 +646,7 @@ export class CreatenewpostPage implements OnInit {
 
    inputTextarea() {
     this.curTextNum = this.getTwitterText();
-     this.extraNumber = 280 - 19 - this.curTextNum; //
+     this.extraNumber = 261 - this.curTextNum; //
    }
 
    getTwitterText() {
@@ -691,12 +711,14 @@ export class CreatenewpostPage implements OnInit {
     } else {
       const token = await this.redditService.checkRedditIsExpired();
       if (token === null) {
+        this.isPostReddit = false;
         localStorage.setItem(userDid + "isSyncToReddit", "false")
         this.native.toastWarn("common.RedditNotLogin");
         return;
       }
       const isSubscribeElastos = this.dataHelper.getRedditIsSubscribeElastos(userDid);
       if (isSubscribeElastos === false) {
+        this.isPostReddit = false;
         localStorage.setItem(userDid + "isSyncToReddit", "false")
         this.native.toastWarn("common.SubscribeElastosCommunity");
         return;
