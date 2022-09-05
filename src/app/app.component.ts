@@ -308,6 +308,7 @@ export class MyApp {
           this.dataHelper.setChannelCollectionPageList([]);
           return;
         }
+        console.log("========channelCollectionPageList=======",JSON.stringify(channelCollectionPageList))
         this.dataHelper.setChannelCollectionPageList(channelCollectionPageList);
       })
       .catch(err => { });

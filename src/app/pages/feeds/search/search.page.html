@@ -64,17 +64,17 @@
       <div class="displayName" *ngIf="handleDisplayNameMap[channelCollection.destDid] != '' && handleDisplayNameMap[channelCollection.destDid] != undefined">
         @{{ handleDisplayNameMap[channelCollection.destDid] }}
       </div>
-      <ion-row>
+      <!-- <ion-row>
         <br>
         <p>
           <span *ngIf="subscriptionV3NumMap[channelCollection.channelId] === '' || subscriptionV3NumMap[channelCollection.channelId] === undefined">...</span>
           <span *ngIf="subscriptionV3NumMap[channelCollection.channelId]=== 0 || subscriptionV3NumMap[channelCollection.channelId] != '' && subscriptionV3NumMap[channelCollection.channelId] != undefined">{{ subscriptionV3NumMap[channelCollection.channelId] }}</span> {{ 'common.followers' | translate }}
         </p>
-      </ion-row>
+      </ion-row> -->
       <ion-row>
           <div  class="des">{{ channelCollection.intro }}</div>
       </ion-row>
-      <div  class="btn-row-empty unsubscribed">
+      <div  class="btn-row-empty unsubscribed" (click)="subscribe(channelCollection.destDid, channelCollection.channelId, $event)">
         <span>{{ "SearchPage.follow" | translate }}</span>
       </div>
     </ion-col>

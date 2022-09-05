@@ -59,6 +59,7 @@ ion-searchbar {
   display:-webkit-box;
   -webkit-box-orient:vertical;
   -webkit-line-clamp:2;
+  padding-top:5px;
 }
 
 .channel-list ion-item .channel-row .middle-col p, .channel-list ion-item .channel-row .middle-col .ownerName{
@@ -125,6 +126,7 @@ ion-searchbar {
 }
 
 .unsubscribed {
+  z-index: 9999;
   right: 9px;
   position: absolute;
   width: 100px;

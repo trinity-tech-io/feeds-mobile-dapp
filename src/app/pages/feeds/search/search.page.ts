@@ -165,6 +165,7 @@ export class SearchPage implements OnInit {
     this.isLoading = true;
     this.events.subscribe(FeedsEvent.PublishType.search, () => {
       this.initTile();
+      this.removeObserveList();
       this.init();
     });
     this.initTile();
@@ -213,15 +214,37 @@ export class SearchPage implements OnInit {
   ionViewWillLeave() {
     this.removeObserveList();
     this.removeSubscribe();
-    this.curAddingItem = '';
+    this.handleDisplayNameMap = {};
     this.events.unsubscribe(FeedsEvent.PublishType.search);
   }
 
-  subscribe(destDid: string, id: string) {
+  async subscribe(destDid: string, channelId: string, event: any) {
+    event.stopPropagation();
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
+    }
+
+    await this.native.showLoading('common.waitMoment');
+    try {
+      await this.hiveVaultController.subscribeChannel( destDid,  channelId);
+      await this.hiveVaultController.syncPostFromChannel( destDid, channelId);
+      await this.hiveVaultController.syncCommentFromChannel( destDid, channelId);
+      await this.hiveVaultController.syncLikeDataFromChannel( destDid, channelId);
+
+      let channelIndex = _.findIndex(this.channelCollectionPageList,(item: FeedsData.ChannelV3)=>{
+               return item.channelId === channelId && item.destDid === destDid;
+      });
+
+      if(channelIndex > -1){
+        this.channelCollectionPageList.splice(channelIndex,1);
+        this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+        this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+      }
+      this.native.hideLoading();
+    } catch (error) {
+      this.native.hideLoading();
     }
 
     //TODO
@@ -587,15 +610,20 @@ export class SearchPage implements OnInit {
        }
        try {
          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-         channelCollectionPageList.push(channelInfo);
+         if(channelInfo != null){
+          channelCollectionPageList.push(channelInfo);
+         }
        } catch (error) {
         this.isLoading = false;
+        if(event != null){
+          event.target.complete();
+         }
        }
      }
      this.isLoading = false;
      if(event != null){
       event.target.complete();
-    }
+     }
      return channelCollectionPageList;
     } catch (error) {
       if(event != null){
