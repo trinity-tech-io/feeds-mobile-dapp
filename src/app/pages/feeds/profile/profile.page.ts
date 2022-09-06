@@ -191,6 +191,7 @@ export class ProfilePage implements OnInit {
   private myFeedsObserver: any = {};
   private myLikeObserver: any = {};
   private channelMap: any = {};
+  public userDid: string = "";
   constructor(
     private elmRef: ElementRef,
     public theme: ThemeService,
@@ -807,6 +808,7 @@ export class ProfilePage implements OnInit {
         break;
       case 'mylike':
         this.qrCodeString = await this.getQrCodeString(item);
+        this.userDid = (await this.dataHelper.getSigninData()).did || '';
         this.isShowTitle = false;
         this.isShowInfo = false;
         this.isPreferences = false;

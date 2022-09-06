@@ -60,17 +60,24 @@ export class MenuService {
     })
   }
 
-  async showChannelMenu(destDid: string, channelId: string) {
+  async showChannelMenu(destDid: string, channelId: string, userDid: string) {
     if (this.actionSheetMenuStatus != null) {
       return;
     }
     this.actionSheetMenuStatus = "opening";
-    const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
+    if(destDid != userDid){
+      const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
+      const cancelButton = this.createCancelButton();
+      await this.createActionSheetMenu({
+        cssClass: 'editPost',
+        buttons: [unsubscribeButton, cancelButton],
+      });
+      return;
+    }
     const cancelButton = this.createCancelButton();
-
     await this.createActionSheetMenu({
       cssClass: 'editPost',
-      buttons: [unsubscribeButton, cancelButton],
+      buttons: [ cancelButton ],
     });
   }
 
@@ -117,18 +124,29 @@ export class MenuService {
     });
   }
 
-  async showUnsubscribeMenuWithoutName(destDid: string, channelId: string): Promise<string> {
+  async showUnsubscribeMenuWithoutName(destDid: string, channelId: string, userDid: string): Promise<string> {
     if (this.actionSheetMenuStatus != null) {
       return;
     }
     this.actionSheetMenuStatus = "opening";
-    const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
+    if(destDid != userDid){
+      const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
+      const cancelButton = this.createCancelButton();
+
+      await this.createActionSheetMenu({
+        cssClass: 'editPost',
+        buttons: [unsubscribeButton, cancelButton],
+      });
+      return;
+    }
+
     const cancelButton = this.createCancelButton();
 
     await this.createActionSheetMenu({
       cssClass: 'editPost',
-      buttons: [unsubscribeButton, cancelButton],
+      buttons: [cancelButton],
     });
+
   }
 
   async showPostDetailMenu(destDid: string, channelId: string, channelName: string, postId: string) {
@@ -157,12 +175,13 @@ export class MenuService {
     const sharePostButton = this.createSharePostButton(destDid, postId);
     const editPostButton = this.createEditPostButton(destDid, channelId, channelName, postId);
     const removePostButton = this.createRemovePostButton(destDid, channelId, channelName, postId);
-    const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
+    // const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
     const cancenButton = this.createCancelButton();
 
     await this.createActionSheetMenu({
       cssClass: 'editPost',
-      buttons: [sharePostButton, editPostButton, removePostButton, unsubscribeButton, cancenButton],
+      buttons: [sharePostButton, editPostButton, removePostButton, cancenButton],
+      // buttons: [sharePostButton, editPostButton, removePostButton, unsubscribeButton, cancenButton],
     })
   }
 

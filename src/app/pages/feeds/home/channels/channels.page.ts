@@ -208,9 +208,9 @@ export class ChannelsPage implements OnInit {
     }
 
     try {
-      this.menuService.showChannelMenu(this.destDid, this.channelId);
+      const userDid = (await this.dataHelper.getSigninData()).did || '';
+      this.menuService.showChannelMenu(this.destDid, this.channelId, userDid);
       //this.followStatus = false;
-      this.initRefresh();
     } catch (error) {
       //TODO show unsubscribe error ui
     }
@@ -448,7 +448,8 @@ export class ChannelsPage implements OnInit {
       FeedsEvent.PublishType.unsubscribeFinish,
       () => {
         this.zone.run(() => {
-          this.followStatus = false
+          this.followStatus = false;
+          this.initRefresh();
           // this.doRefresh();
           // this.native.setRootRouter(['/tabs/home']);
         });

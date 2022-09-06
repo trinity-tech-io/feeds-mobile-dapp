@@ -36,7 +36,7 @@
       </ion-col>
       </ion-row> -->
 
-      <ion-row (click)="clickItem('unfollow')" class="share" *ngIf="isShowUnfollow">
+      <ion-row (click)="clickItem('unfollow')" class="share" *ngIf="isShowUnfollow && userDid != destDid">
         <ion-col
         size="12" style="margin-top: -2px;">
         <img src="./assets/images/person-remove.svg"><span class="unfollowColor">{{"common.unsubscribe"|translate}}</span>

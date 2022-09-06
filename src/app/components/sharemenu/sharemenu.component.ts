@@ -16,11 +16,14 @@ export class SharemenuComponent implements OnInit {
   @Input() isPreferences: boolean = false;
   @Input() channelName: string = null;
   @Input() qrCodeString: string = null;
+  @Input() userDid: string = '';
   @Output() hideShareMenu = new EventEmitter();
+  constructor(
+    public theme: ThemeService,
+    ) {}
 
-  constructor(public theme: ThemeService) {}
-
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   clickItem(buttonType: string) {
     this.hideShareMenu.emit({

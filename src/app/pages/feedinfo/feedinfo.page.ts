@@ -246,8 +246,16 @@ export class FeedinfoPage implements OnInit {
   }
 
   async unsubscribe() {
+
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
     try {
-      this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId,);
+      const userDid = (await this.dataHelper.getSigninData()).did || '';
+      this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId, userDid);
       //this.followStatus = true;
     } catch (error) {
       //TODO show unsubscribe error ui

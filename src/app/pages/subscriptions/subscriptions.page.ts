@@ -48,6 +48,7 @@ export class SubscriptionsPage implements OnInit {
   private refreshFollowingImageSid: any = null;
   private visibleareaItemIndex: number = 0;
   private follingObserver: any = {};
+  public userDid: string = "";
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -106,6 +107,7 @@ export class SubscriptionsPage implements OnInit {
     } else {
       this.isShowInfo = false;
     }
+    this.userDid = ownerDid;
     this.isShowQrcode = true;
     this.isPreferences = false;
     this.isShowUnfollow = true;
