@@ -178,13 +178,8 @@ export class CreatenewpostPage implements OnInit {
         localStorage.setItem(userDid + "isSyncToTwitter", "false");
       }
     })
-    try {
-      await this.redditService.subreddits();
-    } catch (error) {
 
-    }
     try {
-
       this.redditService.checkRedditIsExpired().then(async (token)=>{
         if (token === null) {
           const userDid = (await this.dataHelper.getSigninData()).did;
@@ -195,8 +190,19 @@ export class CreatenewpostPage implements OnInit {
         const userDid = (await this.dataHelper.getSigninData()).did;
         const isSubscribeElastos = this.dataHelper.getRedditIsSubscribeElastos(userDid);
         if (isSubscribeElastos === false) {
-          this.isPostReddit = false;
-          localStorage.setItem(userDid + "isSyncToReddit", "false")
+          try {
+            let isSubscribe = await this.redditService.subreddits();
+            if(isSubscribe){
+              this.isPostReddit = true;
+              localStorage.setItem(userDid + "isSyncToReddit", "true")
+            }else{
+              this.isPostReddit = false;
+              localStorage.setItem(userDid + "isSyncToReddit", "false")
+            }
+          } catch (error) {
+            this.isPostReddit = false;
+            localStorage.setItem(userDid + "isSyncToReddit", "false")
+          }
           return;
         }
 
