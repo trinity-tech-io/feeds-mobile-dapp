@@ -252,4 +252,16 @@ export class HiveVaultApi {
   queryPublicPostRangeOfTime(targetDid: string, channelId: string, start: number, end: number): Promise<any> {
     return this.hiveVaultHelper.queryPublicPostRangeOfTime(targetDid, channelId, start, end);
   }
+
+  reportRepostToOriginChannel(targetDid: string, channelId: string, postId: string, repostTargetDid: string, repostChannelId: string, repostPostId: string): Promise<{ repostId: string, createdAt: number }> {
+    return this.hiveVaultHelper.reportRepostToOriginChannel(targetDid, channelId, postId, repostTargetDid, repostChannelId, repostPostId);
+  }
+
+  removeRepostFromOriginChannel(targetDid: string, repostChannelId: string, repostPostId: string): Promise<any> {
+    return this.hiveVaultHelper.removeRepost(targetDid, repostChannelId, repostPostId);
+  }
+
+  queryRepostByIdFromOriginChannel(targetDid: string, channelId: string, postId: string): Promise<any> {
+    return this.hiveVaultHelper.queryRepostById(targetDid, channelId, postId);
+  }
 }

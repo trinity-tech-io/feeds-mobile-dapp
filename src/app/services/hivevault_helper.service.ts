@@ -70,9 +70,9 @@ export class HiveVaultHelper {
     public static readonly QUERY_PUBLIC_SOMETIME_POST = "query_public_sometime_post";
     public static readonly QUERY_PUBLIC_POST_BY_CHANNEL = "query_public_post_by_channel";
 
-    public static readonly SCRIPT_REPOST = "script_repost";
-    public static readonly SCRIPT_REMOVE_REPOST = "script_remove_repost";
-    public static readonly SCRIPT_QUERY_REPOST = "script_query_repost";
+    public static readonly SCRIPT_REPORT_REPOST_TO_ORIGIN = "script_report_repost_to_origin";
+    public static readonly SCRIPT_REMOVE_REPOST_FROM_ORIGIN = "script_remove_repost_from_origin";
+    public static readonly SCRIPT_QUERY_REPOST_FROM_ORIGIN = "script_query_repost_from_origin";
 
     private buyStorageSpaceDialog: any = null;
     constructor(
@@ -2281,8 +2281,9 @@ export class HiveVaultHelper {
             try {
                 let executablefilter = {
                     "repost_id": "$params.repost_id",
-                    "channel_id": "$params.channel_id",
-                    "post_id": "$params.post_id",
+                    "origin_channel_id": "$params.origin_channel_id",
+                    "origin_post_id": "$params.origin_post_id",
+                    "repost_target_did": "$params.repost_target_did",
                     "repost_channel_id": "$params.repost_channel_id",
                     "repost_post_id": "$params.repost_post_id",
                     "created_at": "$params.created_at",
@@ -2297,7 +2298,7 @@ export class HiveVaultHelper {
                 };
                 const executable = new InsertExecutable("database_update", HiveVaultHelper.TABLE_REPOST, executablefilter, options).setOutput(true)
 
-                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_REPOST, executable, null, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_REPORT_REPOST_TO_ORIGIN, executable, null, false);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "registerCreateComment error", error)
@@ -2306,18 +2307,19 @@ export class HiveVaultHelper {
         })
     }
 
-    private callRepost(targetDid: string, repostId: string, channelId: string, postId: string, repostChannelId: string, repostPostId: string, createdAt: number): Promise<any> {
+    private callRepost(targetDid: string, repostId: string, channelId: string, postId: string, repostTargetDid: string, repostChannelId: string, repostPostId: string, createdAt: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "repost_id": repostId,
-                    "channel_id": channelId,
-                    "post_id": postId,
+                    "origin_channel_id": channelId,
+                    "origin_post_id": postId,
+                    "repost_target_did": repostTargetDid,
                     "repost_channel_id": repostChannelId,
                     "repost_post_id": repostPostId,
                     "created_at": createdAt
                 }
-                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_REPOST, params);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_REPORT_REPOST_TO_ORIGIN, params);
                 console.log("Create repost from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -2327,12 +2329,12 @@ export class HiveVaultHelper {
         });
     }
 
-    repost(targetDid: string, channelId: string, postId: string, repostChannelId: string, repostPostId: string): Promise<{ repostId: string, createdAt: number }> {
+    reportRepostToOriginChannel(targetDid: string, channelId: string, postId: string, repostTargetDid: string, repostChannelId: string, repostPostId: string): Promise<{ repostId: string, createdAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
-                const repostId = UtilService.generateRepostId(channelId, postId, repostChannelId, repostPostId);
+                const repostId = UtilService.generateRepostId(channelId, postId, repostTargetDid, repostChannelId, repostPostId);
                 const createdAt = UtilService.getCurrentTimeNum();
-                const result = await this.callRepost(targetDid, repostId, channelId, postId, repostChannelId, repostPostId, createdAt);
+                const result = await this.callRepost(targetDid, repostId, channelId, postId, repostTargetDid, repostChannelId, repostPostId, createdAt);
 
                 resolve({ repostId: repostId, createdAt: createdAt });
             } catch (error) {
@@ -2348,13 +2350,14 @@ export class HiveVaultHelper {
         return new Promise(async (resolve, reject) => {
             try {
                 const filter = {
+                    "repostTargetDid": "$params.repost_target_did",
                     "repost_channel_id": "$params.repost_channel_id",
                     "repost_post_id": "$params.repost_post_id",
                     "operator_did": "$caller_did"
                 }
 
                 const executable = new DeleteExecutable("database_delete", HiveVaultHelper.TABLE_REPOST, filter);
-                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_REMOVE_REPOST, executable, null);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_REMOVE_REPOST_FROM_ORIGIN, executable, null);
                 resolve("SUCCESS")
             } catch (error) {
                 Logger.error(TAG, "Remove repost error", error)
@@ -2363,14 +2366,15 @@ export class HiveVaultHelper {
         })
     }
 
-    private callRemoveRepost(targetDid: string, repostChannelId: string, repostPostId: string) {
+    private callRemoveRepost(targetDid: string, repostTargetDid: string, repostChannelId: string, repostPostId: string) {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
+                    "repost_target_did": repostTargetDid,
                     "repost_channel_id": repostChannelId,
                     "repost_post_id": repostPostId,
                 }
-                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_REMOVE_REPOST, params);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_REMOVE_REPOST_FROM_ORIGIN, params);
                 console.log("Remove repost from scripting , result is", result);
                 resolve(result);
             } catch (error) {
@@ -2409,7 +2413,7 @@ export class HiveVaultHelper {
                 };
 
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_REPOST, executablefilter, options).setOutput(true)
-                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_REPOST, executable, null, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_REPOST_FROM_ORIGIN, executable, null, false);
                 resolve("SUCCESS");
             } catch (error) {
                 Logger.error(TAG, "registerCreateComment error", error)
@@ -2425,7 +2429,7 @@ export class HiveVaultHelper {
                     "channel_id": channelId,
                     "post_id": postId
                 }
-                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_REPOST, params);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_REPOST_FROM_ORIGIN, params);
                 console.log("Query repost from scripting , result is", result);
                 resolve(result);
             } catch (error) {

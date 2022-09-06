@@ -133,7 +133,7 @@ export class RepostComponent implements OnInit {
 
         const repostUrl = UtilService.generateFeedsPostLink(this.destDid, this.channelId, this.postId);
         const tag: string = '';
-        await this.hiveVaultController.repost(this.channelId, postText, repostUrl, tag);
+        await this.hiveVaultController.repost(this.destDid, this.channelId, postText, repostUrl, tag);
 
         this.native.hideLoading();
         this.clickButton = false;

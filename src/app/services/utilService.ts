@@ -785,8 +785,8 @@ export class UtilService {
     return UtilService.SHA256(postId + commentId + userDid);
   }
 
-  public static generateRepostId(channelId: string, postId: string, repostChannelId: string, repostPostId: string): string {
-    return UtilService.SHA256(channelId + postId + repostChannelId + repostPostId);
+  public static generateRepostId(channelId: string, postId: string, repostTargetDid: string, repostChannelId: string, repostPostId: string): string {
+    return UtilService.SHA256(channelId + postId + repostTargetDid + repostChannelId + repostPostId);
   }
 
   public static getKey(did: string, id: string): string {

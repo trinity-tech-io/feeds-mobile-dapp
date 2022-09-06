@@ -672,6 +672,7 @@ export class HiveVaultController {
           pinStatus: FeedsData.PinStatus.NOTPINNED
         }
         await this.dataHelper.addPost(postV3);
+
         resolve(postV3);
       } catch (error) {
         Logger.error(TAG, 'Publish post error', error);
@@ -2218,4 +2219,17 @@ export class HiveVaultController {
       }
     });
   }
+
+
+  reportRepostToOriginchannel(targetDid: string, channelId: string, postId: string, repostTargetDid: string, repostChannelId: string, repostPostId: string): Promise<{ repostId: string, createdAt: number }> {
+    return this.hiveVaultApi.reportRepostToOriginChannel(targetDid, channelId, postId, repostTargetDid, repostChannelId, repostPostId);
+  }
+
+  // removeRepost(targetDid: string, repostChannelId: string, repostPostId: string): Promise<any> {
+  //   return this.hiveVaultHelper.removeRepost(targetDid, repostChannelId, repostPostId);
+  // }
+
+  // queryRepostById(targetDid: string, channelId: string, postId: string): Promise<any> {
+  //   return this.hiveVaultHelper.queryRepostById(targetDid, channelId, postId);
+  // }
 }

@@ -121,8 +121,9 @@ export class FeedsSqliteHelper {
         const p6 = this.createLikeTable(dbUserDid);
         // const p7 = this.createPinPostTable(dbUserDid);
 
+        const p7 = this.createCachedPostTable(dbUserDid);
         Promise.all(
-          [p1, p2, p3, p4, p5, p6]
+          [p1, p2, p3, p4, p5, p6, p7]
         );
 
         resolve('SUCCESS');
@@ -1571,6 +1572,10 @@ export class FeedsSqliteHelper {
             await this.insertPostData(dbUserDid, post)
             await this.deleteOriginPostData(dbUserDid, post.postId);
           }
+        }
+
+        if (sqlversion < Config.SQL_VERSION320) {
+          await this.createCachedPostTable(dbUserDid);
         }
         resolve('FINISH');
       } catch (error) {
