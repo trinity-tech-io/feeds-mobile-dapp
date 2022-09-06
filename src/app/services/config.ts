@@ -44,7 +44,7 @@ export class Config {
     /** TestNet IPFS */
     public static IPFS_TEST_SERVER: string = 'https://ipfs-test.trinity-feeds.app/';
 
-    public static readonly scriptVersion = "1.0.2";
+    public static readonly scriptVersion = "3.2.0";
 
     //30101 update channel sql -> add display_name
     //30200 update post sql -> add pin_status
