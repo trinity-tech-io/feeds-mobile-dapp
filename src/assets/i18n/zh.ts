@@ -368,7 +368,7 @@ export const zh = {
     emptyDes1: '订阅以查看此频道的内容',
     pinnedPost: '置顶微说',
     PinPostError: '置顶微说失败',
-    UnPinPostError: '取消置顶微说'
+    UnPinPostError: '取消置顶微说失败'
   },
   NotificationPage: {
     allempty: '这里什么都找不到',
