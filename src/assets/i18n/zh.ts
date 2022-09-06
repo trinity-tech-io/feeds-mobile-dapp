@@ -217,7 +217,7 @@ export const zh = {
     twitterError401: 'Twitter 授权失效，请重新授权',
     pinPost: '置顶',
     unpinPost: '取消置顶',
-    RedditNotLogin: '您没有登录 Reddit',
+    RedditNotLogin: '您没有登录 Reddit，请返回设置页面登录。',
     RedditExpired: 'Reddit 登录已过期，请返回设置页面登录。',
     RedditAuthFailed: 'Reddit 授权失败',
     SubscribeElastosCommunity: '请先在Reddit中订阅Elastos社区',
