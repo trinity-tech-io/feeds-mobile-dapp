@@ -190,7 +190,6 @@ export class CreatenewpostPage implements OnInit {
           const userDid = (await this.dataHelper.getSigninData()).did;
           this.isPostReddit = false;
           localStorage.setItem(userDid + "isSyncToReddit", "false")
-          this.native.toastWarn("common.RedditNotLogin");
           return;
         }
         const userDid = (await this.dataHelper.getSigninData()).did;
@@ -198,7 +197,6 @@ export class CreatenewpostPage implements OnInit {
         if (isSubscribeElastos === false) {
           this.isPostReddit = false;
           localStorage.setItem(userDid + "isSyncToReddit", "false")
-          this.native.toastWarn("common.SubscribeElastosCommunity");
           return;
         }
 
