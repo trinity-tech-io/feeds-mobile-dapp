@@ -62,7 +62,7 @@ export const en = {
     videoloading: 'Uploading...',
     theFeedSource: 'Feeds Publisher Account',
     fulltext: 'Read more',
-    uploading: 'posting',
+    uploading: 'Posting',
     downloading: 'Downloading',
     mustUpdate: 'Your Feeds service is out-dated. Please upgrade to the latest version.',
     downDes: 'There is an instant file being downloaded, please wait for that download to complete and try again',
