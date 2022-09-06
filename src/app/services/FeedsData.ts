@@ -1090,4 +1090,18 @@ declare namespace FeedsData {
     scope: string, // follows.read offline.access tweet.write users.read tweet.read follows.write
     refresh_token: string
   }
+
+
+  type ReportedRepost = {
+    destDid: string,
+    repostId: string,
+
+    originChannelId: string,
+    originPostId: string,
+
+    repostTargetDid: string,
+    repostChannelId: string,
+    repostPostId: string,
+    createdAt: number
+  }
 }

@@ -328,4 +328,55 @@ export class HiveVaultResultParse {
     }
   }
   /** parse backup subscribed channel result end */
+
+
+  /** parse comment result start*/
+  public static parseReportedRepostResult(destDid: string, result: any): FeedsData.ReportedRepost[] {
+    try {
+      /**
+       * channel_id: "channelId01"
+       * comment_id: "c5bc7101e68ced5941ac87432176e2e2c20254d955e7b69f0d003e4d9a3d8b34"
+       * content: "test content"
+       * created: 1647326414.184314
+       * created_at: 1647326414404
+       * creater_did: "did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D"
+       * modified: 1647326414.184314
+       * post_id: "postId01"
+       * refcomment_id: "refcommentId01"
+       * status: 0
+       * updated_at: 1647326414404
+       */
+      const comments = result.find_message.items;
+      let parseResult = [];
+      console.log('result', comments);
+      if (comments) {
+        comments.forEach(comment => {
+          if (comment) {
+            const commentResult: FeedsData.CommentV3 = {
+              destDid: destDid,
+              commentId: comment.comment_id,
+
+              channelId: comment.channel_id,
+              postId: comment.post_id,
+              refcommentId: comment.refcomment_id,
+              content: comment.content,
+              status: comment.status,
+              updatedAt: comment.updated_at,
+              createdAt: comment.created_at,
+              proof: '',
+              memo: comment.memo,
+
+              createrDid: comment.creater_did
+            }
+            parseResult.push(commentResult);
+          }
+
+        });
+      }
+      return parseResult;
+    } catch (error) {
+      Logger.error(TAG, 'Parse comment result error', error);
+    }
+  }
+  /** parse comment result end*/
 }

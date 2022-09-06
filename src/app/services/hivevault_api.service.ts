@@ -257,11 +257,11 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.reportRepostToOriginChannel(targetDid, channelId, postId, repostTargetDid, repostChannelId, repostPostId);
   }
 
-  removeRepostFromOriginChannel(targetDid: string, repostChannelId: string, repostPostId: string): Promise<any> {
-    return this.hiveVaultHelper.removeRepost(targetDid, repostChannelId, repostPostId);
+  removeRepostFromOriginChannel(targetDid: string, repostTargetDid: string, repostChannelId: string, repostPostId: string): Promise<any> {
+    return this.hiveVaultHelper.removeRepostFromOriginChannel(targetDid, repostTargetDid, repostChannelId, repostPostId);
   }
 
   queryRepostByIdFromOriginChannel(targetDid: string, channelId: string, postId: string): Promise<any> {
-    return this.hiveVaultHelper.queryRepostById(targetDid, channelId, postId);
+    return this.hiveVaultHelper.queryRepostByIdFromOriginChannel(targetDid, channelId, postId);
   }
 }

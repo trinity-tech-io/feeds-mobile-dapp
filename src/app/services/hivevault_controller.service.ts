@@ -673,6 +673,7 @@ export class HiveVaultController {
         }
         await this.dataHelper.addPost(postV3);
 
+        this.reportRepostToOriginchannel();
         resolve(postV3);
       } catch (error) {
         Logger.error(TAG, 'Publish post error', error);
@@ -1566,6 +1567,28 @@ export class HiveVaultController {
     });
   }
 
+  handleReportedRepostResult(targetDid: string, result: any): Promise<FeedsData.ReportedRepost[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!result) {
+          resolve([]);
+          return;
+        }
+
+        const reportedRepostList = HiveVaultResultParse.parseReportedRepostResult(targetDid, result);
+        if (!reportedRepostList || reportedRepostList.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        resolve(reportedRepostList);
+      } catch (error) {
+        Logger.error(TAG, 'Handle repost result error', error);
+        reject(error);
+      }
+    });
+  }
+
   getLikeById(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2225,11 +2248,20 @@ export class HiveVaultController {
     return this.hiveVaultApi.reportRepostToOriginChannel(targetDid, channelId, postId, repostTargetDid, repostChannelId, repostPostId);
   }
 
-  // removeRepost(targetDid: string, repostChannelId: string, repostPostId: string): Promise<any> {
-  //   return this.hiveVaultHelper.removeRepost(targetDid, repostChannelId, repostPostId);
-  // }
+  removeRepostFromOriginChannel(targetDid: string, repostTargetDid: string, repostChannelId: string, repostPostId: string): Promise<any> {
+    return this.hiveVaultApi.removeRepostFromOriginChannel(targetDid, repostTargetDid, repostChannelId, repostPostId);
+  }
 
-  // queryRepostById(targetDid: string, channelId: string, postId: string): Promise<any> {
-  //   return this.hiveVaultHelper.queryRepostById(targetDid, channelId, postId);
-  // }
+  queryRepostById(targetDid: string, channelId: string, postId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryRepostByIdFromOriginChannel(targetDid, channelId, postId);
+        const repostList = this.handleReportedRepostResult(targetDid, result);
+        resolve(repostList);
+      } catch (error) {
+        reject(error);
+      }
+    });
+
+  }
 }
