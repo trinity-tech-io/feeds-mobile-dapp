@@ -640,7 +640,6 @@ export class HomePage implements OnInit {
       this.clearAssets();
     }
     this.postMap = {};
-    this.hannelNameMap = {};
     this.channelMap = {};
     this.removeObserveList();
   }
@@ -804,15 +803,15 @@ export class HomePage implements OnInit {
   }
 
   async getChannelName(destDid: string, channelId: string) {
-    let channelName = this.hannelNameMap[channelId] || "";
-    if(channelName != ""){
-      return channelName;
-    }
-    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-    if (channel === null) {
-      return '';
-    }
+
     let key = destDid + "-" + channelId;
+    let channel = this.channelMap[key] || null;
+    if (channel === null) {
+      channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+      this.channelMap[key] = channel;
+    }else{
+      channel = this.channelMap[key];
+    }
     this.channelMap[key] = channel;
     this.hannelNameMap[channelId] = channel.displayName || channel.name;
     return this.hannelNameMap[channelId];
@@ -924,7 +923,6 @@ export class HomePage implements OnInit {
       this.dataHelper.cleanCachedComment();
       this.dataHelper.cleanCacheLikeNum();
       this.dataHelper.cleanCachedLikeStatus();
-      this.hannelNameMap = {};
       this.handleDisplayNameMap = {};
       this.postMap = {};
       this.channelMap = {};
