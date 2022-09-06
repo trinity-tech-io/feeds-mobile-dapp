@@ -221,6 +221,7 @@ export const zh = {
     RedditExpired: 'Reddit 登录已过期，请返回设置页面登录。',
     RedditAuthFailed: 'Reddit 授权失败',
     SubscribeElastosCommunity: '请先在Reddit中订阅Elastos社区',
+    redditError: 'Reddit 请求超时',
   },
   app: {
     profileDetails: '档案详情',

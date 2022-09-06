@@ -184,23 +184,27 @@ export class CreatenewpostPage implements OnInit {
 
     }
     try {
-      const userDid = (await this.dataHelper.getSigninData()).did;
-      const token = await this.redditService.checkRedditIsExpired();
-      if (token === null) {
-        this.isPostReddit = false;
-        localStorage.setItem(userDid + "isSyncToReddit", "false")
-        this.native.toastWarn("common.RedditNotLogin");
-        return;
-      }
-      const isSubscribeElastos = this.dataHelper.getRedditIsSubscribeElastos(userDid);
-      if (isSubscribeElastos === false) {
-        this.isPostReddit = false;
-        localStorage.setItem(userDid + "isSyncToReddit", "false")
-        this.native.toastWarn("common.SubscribeElastosCommunity");
-        return;
-      }
-      this.isPostReddit = true;
-      localStorage.setItem(userDid + "isSyncToReddit", "true")
+
+      this.redditService.checkRedditIsExpired().then(async (token)=>{
+        if (token === null) {
+          const userDid = (await this.dataHelper.getSigninData()).did;
+          this.isPostReddit = false;
+          localStorage.setItem(userDid + "isSyncToReddit", "false")
+          this.native.toastWarn("common.RedditNotLogin");
+          return;
+        }
+        const userDid = (await this.dataHelper.getSigninData()).did;
+        const isSubscribeElastos = this.dataHelper.getRedditIsSubscribeElastos(userDid);
+        if (isSubscribeElastos === false) {
+          this.isPostReddit = false;
+          localStorage.setItem(userDid + "isSyncToReddit", "false")
+          this.native.toastWarn("common.SubscribeElastosCommunity");
+          return;
+        }
+
+        this.isPostReddit = true;
+        localStorage.setItem(userDid + "isSyncToReddit", "true")
+      });
     }
     catch (error) {
       // TODO:
@@ -279,18 +283,32 @@ export class CreatenewpostPage implements OnInit {
             return;
           }
 
-          if(error.status === -1 && this.isPostTwitter){
+          if(error.status === -1 ){
             this.native.toastWarn("common.connectionError");
             this.isLoading = false;
             this.isPublishing = false;
             return;
           }
 
-          if(error.status === -4 && this.isPostTwitter){
-            this.native.toastWarn("common.twitterError");
+          if(error.status === -4 ){
+            if(this.isPostTwitter){
+              this.native.toastWarn("common.twitterError");
+            }
+            if(this.isPostReddit){
+              this.native.toastWarn("common.redditError");
+            }
             this.isLoading = false;
             this.isPublishing = false;
             return;
+          }
+
+          if(error.status === -2){
+             if(this.isPostReddit){
+              this.native.toastWarn("common.redditError");
+             }
+             this.isLoading = false;
+             this.isPublishing = false;
+             return;
           }
 
           const emsg = "{\"detail\":\"You are not allowed to create a Tweet with duplicate content.\",\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403}"
