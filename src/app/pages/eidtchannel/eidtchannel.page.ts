@@ -203,7 +203,7 @@ export class EidtchannelPage implements OnInit {
         "public",
         '',
         '',
-      ).then((result) => {
+      ).then((result:  FeedsData.ChannelV3 ) => {
         let channelInfo = this.dataHelper.getChannelInfo();
         let tippingAddress = this.tippingAddress || '';
         channelInfo["name"] = this.channelName;
@@ -217,6 +217,10 @@ export class EidtchannelPage implements OnInit {
         if(currentFeed != null && currentFeed.destDid === this.destDid && currentFeed.channelId === this.channelId){
              currentFeed.displayName = this.displayName;
              currentFeed.intro = this.channelDes;
+             result = result || null;
+             if(result != null){
+              currentFeed.avatar = result.avatar;
+             }
              this.dataHelper.setCurrentChannel(currentFeed);
         }
 
