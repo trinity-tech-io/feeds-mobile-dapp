@@ -268,12 +268,14 @@ export class EditPostPage implements OnInit {
             this.posterImg = imgageData;
             let id = this.destDid + this.channelId + this.postId;
             let sid = setTimeout(() => {
-              let video = document.getElementById(id + 'videoeditpost');
-              video.setAttribute('poster', imgageData);
+              let video: any = document.getElementById(id + 'videoeditpost') || '';
+              if(video != ''){
+                video.setAttribute('poster', imgageData);
+              }
               this.setFullScreen(id);
               this.setOverPlay(id);
               clearTimeout(sid);
-            }, 0);
+            }, 10);
           });
         }
       });

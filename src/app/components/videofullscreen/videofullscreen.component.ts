@@ -37,8 +37,10 @@ export class VideofullscreenComponent implements OnInit {
   }
 
   palyVideo() {
-    let video: any = document.getElementById('fullscreenvideo');
-    video.setAttribute('poster', this.postImg);
+    let video: any = document.getElementById('fullscreenvideo') || '';
+    if( video != '' ){
+      video.setAttribute('poster', this.postImg);
+    }
     document
       .getElementById('fullscreensource')
       .setAttribute('src', this.videoSrc);

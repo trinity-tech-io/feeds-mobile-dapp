@@ -855,11 +855,13 @@ export class PostdetailPage implements OnInit {
             let sid = setTimeout(() => {
               let video: any =
                 document.getElementById(id + 'postdetailvideo') || '';
-              video.setAttribute('poster', this.posterImg);
+              if(video != ''){
+                video.setAttribute('poster', this.posterImg);
+              }
               this.setFullScreen();
               this.setOverPlay();
               clearTimeout(sid);
-            }, 0);
+            }, 10);
           });
         } else {
           this.videoisShow = false;

@@ -288,6 +288,18 @@ export class CreatenewpostPage implements OnInit {
             return;
           }
 
+          if(error.status === -3 ){
+
+            if(this.isPostTwitter){
+              this.native.toastWarn("common.twitterError3");
+            }
+
+            this.isLoading = false;
+            this.isPublishing = false;
+          }
+
+
+
           if(error.status === -1 ){
             this.native.toastWarn("common.connectionError");
             this.isLoading = false;
