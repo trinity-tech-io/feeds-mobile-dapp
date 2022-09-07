@@ -447,10 +447,12 @@ export class CreatenewpostPage implements OnInit {
     let sid = setTimeout(() => {
       this.setFullScreen();
       let video: any = document.getElementById('videocreatepost') || '';
-      video.setAttribute('poster', this.posterImg);
+      if(video != ''){
+        video.setAttribute('poster', this.posterImg);
+      }
       this.setOverPlay(this.flieUri);
       clearTimeout(sid);
-    }, 0);
+    }, 10);
 
     this.videoData = videoData;
   }
@@ -516,7 +518,9 @@ export class CreatenewpostPage implements OnInit {
   loadVideo(videoData: string) {
     let video: any = document.getElementById('videocreatepost') || '';
     let source: any = document.getElementById('sourcecreatepost') || '';
-    source.setAttribute('src', videoData);
+    if(source != ''){
+      source.setAttribute('src', videoData);
+    }
     let vgbuffering: any = document.getElementById('vgbufferingcreatepost');
     let vgoverlayplay: any = document.getElementById('vgoverlayplaycreatepost');
     let vgcontrol: any = document.getElementById('vgcontrolscreatepost');
