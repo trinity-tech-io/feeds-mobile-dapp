@@ -162,17 +162,18 @@ export class SubscriptionsPage implements OnInit {
       let promiseList: Promise<any>[] = [];
       for (let index = 0; index < subscribedChannels.length; index++) {
         const subscribedChannel = subscribedChannels[index];
-        const querySubscriptionPromise = this.hiveVaultController.querySubscriptionChannelById(subscribedChannel.destDid, subscribedChannel.channelId);
+        const querySubscriptionPromise = this.hiveVaultController.querySubscriptionChannelById(subscribedChannel.destDid, subscribedChannel.channelId).then(() => { }).catch(() => { });
         promiseList.push(querySubscriptionPromise);
       }
 
-      const syncSCPromise = this.hiveVaultController.syncSubscribedChannelFromBackup();
+      const syncSCPromise = this.hiveVaultController.syncSubscribedChannelFromBackup().then(() => { }).catch(() => { });
       promiseList.push(syncSCPromise);
 
-      const syncChannelInfoPromise = this.hiveVaultController.syncAllChannelInfo();
+      const syncChannelInfoPromise = this.hiveVaultController.syncAllChannelInfo().then(() => { }).catch(() => { });
       promiseList.push(syncChannelInfoPromise);
 
-      await Promise.all(promiseList)
+      await Promise.allSettled(promiseList)
+
       this.removeObserveList();
       this.subscriptionV3NumMap = {};
       this.visibleareaItemIndex = 0;
@@ -210,7 +211,7 @@ export class SubscriptionsPage implements OnInit {
           ).then(async (result) => {
 
             let newfollowingList = _.filter(this.followingList, (item) => {
-              return  item.channelId != channelId;
+              return item.channelId != channelId;
             });
             this.followingList = _.cloneDeep(newfollowingList);
             this.searchFollowingList = _.cloneDeep(newfollowingList);
@@ -322,8 +323,8 @@ export class SubscriptionsPage implements OnInit {
     //this.setFollowingVisibleareaImageV2();
   }
 
-  async handleFollingAvatarV2(destDid: string,channelId: string) {
-    let id = destDid+"-"+channelId;
+  async handleFollingAvatarV2(destDid: string, channelId: string) {
+    let id = destDid + "-" + channelId;
     let isload = this.followingIsLoadimage[id] || '';
     if (isload === "") {
       let arr = id.split("-");
@@ -473,10 +474,10 @@ export class SubscriptionsPage implements OnInit {
     this.isBorderGradient = true;
   }
 
-  removeFollingObserver(postGridId: string, observer: any){
+  removeFollingObserver(postGridId: string, observer: any) {
     let item = document.getElementById(postGridId) || null;
-    if(item != null){
-      if( observer != null ){
+    if (item != null) {
+      if (observer != null) {
         observer.unobserve(item);//解除观察器
         observer.disconnect();  // 关闭观察器
         this.follingObserver[postGridId] = null;
@@ -484,17 +485,17 @@ export class SubscriptionsPage implements OnInit {
     }
   }
 
-  getFollingObserverList(follingList = []){
+  getFollingObserverList(follingList = []) {
 
-    for(let index = 0; index < follingList.length; index++){
-      let postItem =  follingList[index] || null;
-      if(postItem === null){
+    for (let index = 0; index < follingList.length; index++) {
+      let postItem = follingList[index] || null;
+      if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid+"-"+postItem.channelId+'-subscriptions';
+      let postGridId = postItem.destDid + "-" + postItem.channelId + '-subscriptions';
       let exit = this.follingObserver[postGridId] || null;
-      if(exit != null){
-         continue;
+      if (exit != null) {
+        continue;
       }
       this.newFollingObserver(postGridId);
     }
@@ -502,63 +503,63 @@ export class SubscriptionsPage implements OnInit {
 
   newFollingObserver(postGridId: string) {
     let observer = this.follingObserver[postGridId] || null;
-    if(observer != null){
+    if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
-    if(item != null ){
-    this.follingObserver[postGridId] = new IntersectionObserver(async (changes:any)=>{
-    let container = changes[0].target;
-    let newId = container.getAttribute("id");
+    if (item != null) {
+      this.follingObserver[postGridId] = new IntersectionObserver(async (changes: any) => {
+        let container = changes[0].target;
+        let newId = container.getAttribute("id");
 
-    let intersectionRatio = changes[0].intersectionRatio;
+        let intersectionRatio = changes[0].intersectionRatio;
 
-    if(intersectionRatio === 0){
-      //console.log("======newId leave========", newId);
-      return;
-    }
-    let arr =  newId.split("-");
-    let destDid: string = arr[0];
-    let channelId: string = arr[1];
-    this.handleFollingAvatarV2(destDid,channelId);
-    this.getChannelFollower(destDid,channelId);
-    });
+        if (intersectionRatio === 0) {
+          //console.log("======newId leave========", newId);
+          return;
+        }
+        let arr = newId.split("-");
+        let destDid: string = arr[0];
+        let channelId: string = arr[1];
+        this.handleFollingAvatarV2(destDid, channelId);
+        this.getChannelFollower(destDid, channelId);
+      });
 
-    this.follingObserver[postGridId].observe(item);
+      this.follingObserver[postGridId].observe(item);
     }
   }
 
-  getChannelFollower(destDid: string,channelId: string) {
-     //关注数
-     let follower = this.subscriptionV3NumMap[channelId] || '';
-     if (follower === "") {
-       try {
-         this.subscriptionV3NumMap[channelId] = "...";
-         this.dataHelper.getSubscriptionV3NumByChannelId(
-           destDid, channelId).
-           then((result) => {
-             result = result || 0;
-             if (result == 0) {
-               this.hiveVaultController.querySubscriptionChannelById(destDid, channelId).then(() => {
-                 this.zone.run(async () => {
-                   this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(destDid, channelId);
-                 });
-               })
-             }
-             this.subscriptionV3NumMap[channelId] = result;
+  getChannelFollower(destDid: string, channelId: string) {
+    //关注数
+    let follower = this.subscriptionV3NumMap[channelId] || '';
+    if (follower === "") {
+      try {
+        this.subscriptionV3NumMap[channelId] = "...";
+        this.dataHelper.getSubscriptionV3NumByChannelId(
+          destDid, channelId).
+          then((result) => {
+            result = result || 0;
+            if (result == 0) {
+              this.hiveVaultController.querySubscriptionChannelById(destDid, channelId).then(() => {
+                this.zone.run(async () => {
+                  this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(destDid, channelId);
+                });
+              })
+            }
+            this.subscriptionV3NumMap[channelId] = result;
 
-           }).catch(() => {
-             this.subscriptionV3NumMap[channelId] = 0;
-           });
-       } catch (error) {
-       }
-     }
+          }).catch(() => {
+            this.subscriptionV3NumMap[channelId] = 0;
+          });
+      } catch (error) {
+      }
+    }
   }
 
   removeObserveList() {
-    for(let postGridId in this.follingObserver){
-        let observer = this.follingObserver[postGridId] || null;
-        this.removeFollingObserver(postGridId, observer)
+    for (let postGridId in this.follingObserver) {
+      let observer = this.follingObserver[postGridId] || null;
+      this.removeFollingObserver(postGridId, observer)
     }
     this.follingObserver = {};
   }

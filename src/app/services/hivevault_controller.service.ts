@@ -29,6 +29,7 @@ export class HiveVaultController {
   ) {
   }
 
+  //Test
   syncAllPostWithTime(endTime: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -187,19 +188,24 @@ export class HiveVaultController {
       try {
         const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
         let likeList = [];
+        let likePromiseList: Promise<any>[] = [];
         for (let index = 0; index < subscribedChannels.length; index++) {
           const subscribedChannel = subscribedChannels[index];
 
           const destDid = subscribedChannel.destDid;
           const channelId = subscribedChannel.channelId;
 
-          try {
-            const likes = await this.syncLikeDataFromChannel(destDid, channelId);
-            likeList.push(likes);
-          } catch (error) {
-          }
+          const promise = this.syncLikeDataFromChannel(destDid, channelId)
+            .then((likes) => {
+              likeList.push(likes);
+            })
+            .catch((error) => {
+            });
+
+          likePromiseList.push(promise);
         }
 
+        Promise.allSettled(likePromiseList);
         resolve(likeList);
       } catch (error) {
         Logger.error(TAG, 'Sync all like data error', error);
@@ -322,25 +328,26 @@ export class HiveVaultController {
     });
   }
 
-  syncAllChannelInfo(): Promise<FeedsData.ChannelV3[]> {
+  syncAllChannelInfo(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
         let channelList = [];
+        let promiseList: Promise<any>[] = [];
         for (let index = 0; index < subscribedChannels.length; index++) {
           const subscribedChannel = subscribedChannels[index];
           const destDid = subscribedChannel.destDid;
           const channelId = subscribedChannel.channelId;
 
-          const channel = await this.getChannelInfoById(destDid, channelId) || null;
-          if (channel != null) {
-            channelList.push(channel);
-          }
+          const channelPromise = this.getChannelInfoById(destDid, channelId) || null;
+
+          promiseList.push(channelPromise);
         }
 
-        resolve(channelList);
+        Promise.allSettled(promiseList);
+        resolve('FINISH');
       } catch (error) {
-        Logger.error(TAG, 'Sync all like data error', error);
+        Logger.error(TAG, 'Sync all channel info data error', error);
         reject(error);
       }
     });
@@ -377,22 +384,22 @@ export class HiveVaultController {
   refreshSubscription(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
-      let checkNumber = 0;
+      let subscribedPromise: Promise<any>[] = [];
       for (let index = 0; index < subscribedChannels.length; index++) {
         const subscribedChannel = subscribedChannels[index];
-        this.checkSubscriptionStatusFromRemote(subscribedChannel.destDid, subscribedChannel.channelId)
+        const promise = this.checkSubscriptionStatusFromRemote(subscribedChannel.destDid, subscribedChannel.channelId)
           .then((status) => {
-            checkNumber++;
             if (!status) {
               this.removeBackupSubscribedChannel(subscribedChannel.destDid, subscribedChannel.channelId);
-            }
-            if (checkNumber == subscribedChannels.length) {
-              resolve('FINISH');
             }
           })
           .catch(() => {
           });
+        subscribedPromise.push(promise);
       }
+
+      Promise.allSettled(subscribedPromise);
+      resolve('FINISH');
     });
   }
 
@@ -659,7 +666,6 @@ export class HiveVaultController {
   }
 
   public pinPost(originPost: FeedsData.PostV3, pinStatus: FeedsData.PinStatus): Promise<FeedsData.PostV3> {
-    console.log('===========>originPost', originPost, '===========>pinStatus', pinStatus);
     return this.updatePost(originPost, originPost.content, pinStatus, UtilService.getCurrentTimeNum(), originPost.type, originPost.tag, originPost.status, originPost.memo, originPost.proof);
   }
 

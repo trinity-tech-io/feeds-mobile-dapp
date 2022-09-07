@@ -722,7 +722,7 @@ export class ChannelsPage implements OnInit {
         const syncCommentsPromise = this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
         const syncLikesPromise = this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
 
-        await Promise.all([
+        await Promise.allSettled([
           syncChannelInfoPromise,
           syncSubscriptionPromise,
           syncPostsPromise,
@@ -730,7 +730,7 @@ export class ChannelsPage implements OnInit {
           syncLikesPromise
         ])
       } else {
-        await Promise.all([
+        await Promise.allSettled([
           syncChannelInfoPromise,
           syncSubscriptionPromise
         ]);
