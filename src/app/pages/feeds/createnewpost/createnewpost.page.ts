@@ -296,6 +296,7 @@ export class CreatenewpostPage implements OnInit {
 
             this.isLoading = false;
             this.isPublishing = false;
+            return;
           }
 
 
