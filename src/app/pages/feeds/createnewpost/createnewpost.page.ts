@@ -461,6 +461,7 @@ export class CreatenewpostPage implements OnInit {
     this.totalProgress = 0;
     this.posterImg = '';
     this.flieUri = '';
+    this.videoData = null;
     let video: any = document.getElementById('videocreatepost') || '';
     if (video != '') {
       video.removeAttribute('poster');
