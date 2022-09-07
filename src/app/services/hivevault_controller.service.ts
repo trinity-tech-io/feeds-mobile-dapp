@@ -607,8 +607,9 @@ export class HiveVaultController {
         await this.dataHelper.addPost(postV3);
 
         if (localStorage.getItem(userDid + "isSyncToReddit") === "true") {
-          let length = UtilService.getSize(postText)
-          let tittle = postText
+          let length = UtilService.getSize(postText);
+          const suffix = " via #elastos Feeds";
+          let tittle = postText + suffix;
           let content = ''
           if (length > 299) {
             tittle = postText.substring(0, 299) + '...'
