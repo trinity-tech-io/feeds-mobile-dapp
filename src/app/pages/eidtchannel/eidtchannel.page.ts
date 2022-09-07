@@ -211,6 +211,15 @@ export class EidtchannelPage implements OnInit {
         channelInfo["des"] = this.channelDes;
         channelInfo["tippingAddress"] = tippingAddress;
         this.dataHelper.setChannelInfo(channelInfo);
+
+        let currentFeed: FeedsData.ChannelV3 = this.dataHelper.getCurrentChannel() || null;
+
+        if(currentFeed != null && currentFeed.destDid === this.destDid && currentFeed.channelId === this.channelId){
+             currentFeed.displayName = this.displayName;
+             currentFeed.intro = this.channelDes;
+             this.dataHelper.setCurrentChannel(currentFeed);
+        }
+
         this.isClickConfirm = true;
         this.clickButton = false;
         this.native.hideLoading();
