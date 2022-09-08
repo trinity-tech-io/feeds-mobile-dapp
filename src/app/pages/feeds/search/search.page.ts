@@ -659,4 +659,47 @@ export class SearchPage implements OnInit {
       }
     }
   }
+
+  async getChannelsV2(event=null) {
+    try {
+     let channelCollectionPageList = [];
+     let channelsCount = 0;
+     try {
+       channelsCount = await this.nftContractControllerService.getChannel().totalSupply();
+     } catch (error) {
+      if(event != null){
+        event.target.complete();
+      }
+     }
+
+     console.log("====channelsCount=====",channelsCount);
+     for(let channelIndex = 0; channelIndex < channelsCount; channelIndex++){
+       console.log("=====feedsUrl======",channelIndex);
+       let channel = await this.nftContractControllerService.getChannel().channelByIndex(channelIndex);
+       let tokenURI = channel[1];
+       console.log("=====tokenURI======",tokenURI);
+       const scanResult = ScannerHelper.parseScannerResult(tokenURI);
+       const feedsUrl = scanResult.feedsUrl;
+       console.log("=====feedsUrl======",feedsUrl);
+       try {
+         const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+         console.log("=====channelInfo======",channelInfo);
+         channelCollectionPageList.push(channelInfo);
+       } catch (error) {
+        this.isLoading = false;
+       }
+     }
+     this.isLoading = false;
+     if(event != null){
+      event.target.complete();
+    }
+     return channelCollectionPageList;
+    } catch (error) {
+      if(event != null){
+        event.target.complete();
+      }
+      this.isLoading = false;
+    }
+
+   }
 }

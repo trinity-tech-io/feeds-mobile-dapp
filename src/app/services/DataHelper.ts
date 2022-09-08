@@ -16,6 +16,7 @@ declare let didManager: DIDPlugin.DIDManager;
 
 @Injectable()
 export class DataHelper {
+  private channelPublicStatusList: any = {};
   private channelCollectionPageList = [];
   private hiveAuthStatus: number = null;
   private syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" };
@@ -4464,5 +4465,15 @@ export class DataHelper {
         reject(error);
       }
     });
+  }
+
+  getChannelPublicStatusList() {
+    return this.channelPublicStatusList;
+  }
+
+  setChannelPublicStatusList(channelPublicStatusList: any) {
+    console.log("======channelPublicStatusList=====", channelPublicStatusList);
+    this.channelPublicStatusList = channelPublicStatusList;
+    this.saveData("feeds.channelPublicStatus.list", channelPublicStatusList);
   }
 }
