@@ -774,7 +774,7 @@ export class PostdetailPage implements OnInit {
       this.dataHelper.cleanCachedComment();
       this.dataHelper.cleanCacheLikeNum();
       this.dataHelper.cleanCachedLikeStatus();
-      await this.hiveVaultController.queryPostByPostId(this.destDid, this.channelId, this.postId);
+      await this.hiveVaultController.queryPostByPostId(this.destDid, this.channelId, this.postId, true);
       await this.hiveVaultController.syncCommentFromPost(this.destDid, this.channelId, this.postId);
       await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
       this.removeReplyCommentObserverList();
