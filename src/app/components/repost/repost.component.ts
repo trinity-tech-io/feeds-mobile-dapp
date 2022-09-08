@@ -24,9 +24,9 @@ import { UtilService } from 'src/app/services/utilService';
 export class RepostComponent implements OnInit {
   @ViewChild('comment', { static: false }) comment: IonTextarea;
   @Input() public repostChannelList: any = [];
-  @Input() public destDid: string = '';
-  @Input() public channelId: string = '';
-  @Input() public postId: string = '0';
+  @Input() public destDid: string = '';  //被repost destDid
+  @Input() public channelId: string = ''; //被repost channelId
+  @Input() public postId: string = '0'; //被repost postId
   @Input() public refcommentId: string = '0';
 
   @Output() hideComment: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -128,12 +128,13 @@ export class RepostComponent implements OnInit {
       .showLoading('common.waitMoment')
       .then(async () => {
         console.log("click========", this.repostChannel);
+        //repostChannel 选择要转推到那个频道
         let postText = this.native.iGetInnerText(this.newComment) || '';
-
-
-        const repostUrl = UtilService.generateFeedsPostLink(this.destDid, this.channelId, this.postId);
+        const repostDestDid = this.repostChannel.destDid;
+        const repostChannelId = this.repostChannel.channelId;
+        const repostUrl = UtilService.generateFeedsPostLink(repostDestDid, repostChannelId, this.postId);
         const tag: string = '';
-        await this.hiveVaultController.repost(this.destDid, this.channelId, postText, repostUrl, tag);
+        await this.hiveVaultController.repost(this.destDid, this.channelId, this.postId, repostChannelId,postText, repostUrl, tag);
 
         this.native.hideLoading();
         this.clickButton = false;

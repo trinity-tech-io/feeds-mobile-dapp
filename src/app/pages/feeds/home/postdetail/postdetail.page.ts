@@ -32,7 +32,6 @@ export class PostdetailPage implements OnInit {
   public postImage: string = 'assets/images/loading.png';
   public avatar: string = '';
 
-  public channelAvatar: string = '';
   public channelName: string = '';
   public commentAvatar: string = '';
   public commentName: string = '';
@@ -210,15 +209,6 @@ export class PostdetailPage implements OnInit {
     _.forEach(commentList, (item: FeedsData.CommentV3) => {
       this.checkCommentIsMine(item, ownerDid);
     });
-  }
-
-  handleChannelAvatar(channelAvatarUri: string) {
-    let fileName: string = channelAvatarUri.split("@")[0];
-    this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
-      .then((result) => {
-        this.channelAvatar = result;
-      }).catch((err) => {
-      })
   }
 
   async initRefresh() {
@@ -448,7 +438,6 @@ export class PostdetailPage implements OnInit {
     this.channelAvatarMap = {};
     this.hannelNameMap = {};
     this.isLoadAvatarImage = {};
-    this.channelAvatarMap = {};
     this.isLoadimage = {};
     this.postMap = {};
     this.postImgMap = {};

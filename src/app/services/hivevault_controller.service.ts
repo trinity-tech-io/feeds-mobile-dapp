@@ -638,7 +638,7 @@ export class HiveVaultController {
     });
   }
 
-  repost(channelId: string, postText: string, repostUrl: string, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
+  repost(destDid: string,channelId: string, postId: string ,repostChannelId: string, postText: string, repostUrl: string, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
         // const userDid = (await this.dataHelper.getSigninData()).did
@@ -647,7 +647,7 @@ export class HiveVaultController {
         // }
 
         const content = await this.progressMediaData(postText, null, null, repostUrl);
-        const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
+        const result = await this.hiveVaultApi.publishPost(repostChannelId, tag, JSON.stringify(content), type, status, memo, proof)
 
         Logger.log(TAG, "Repost new post , result is", result);
         if (!result) {
@@ -660,7 +660,7 @@ export class HiveVaultController {
         let postV3: FeedsData.PostV3 = {
           destDid: result.targetDid,
           postId: result.postId,
-          channelId: channelId,
+          channelId: repostChannelId,
           createdAt: result.createdAt,
           updatedAt: result.updatedAt,
           content: content,
@@ -673,7 +673,7 @@ export class HiveVaultController {
         }
         await this.dataHelper.addPost(postV3);
 
-        this.reportRepostToOriginchannel();
+        this.reportRepostToOriginchannel(destDid, channelId, postId, result.targetDid, repostChannelId, result.postId);
         resolve(postV3);
       } catch (error) {
         Logger.error(TAG, 'Publish post error', error);
