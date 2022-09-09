@@ -187,7 +187,7 @@ export class SearchPage implements OnInit {
 
   async filterChannelCollectionPageList(channelCollectionPageList = []) {
     let channelList = [];
-    let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+    let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
     for (let index = 0; index < channelCollectionPageList.length; index++) {
       let channel: FeedsData.ChannelV3 = channelCollectionPageList[index];
       let channelIndex = _.findIndex(subscribedChannel, (item) => {
@@ -205,7 +205,8 @@ export class SearchPage implements OnInit {
   async init() {
     let channelCollectionPageList = this.dataHelper.getChannelCollectionPageList() || [];
     if (channelCollectionPageList.length === 0) {
-      this.channelCollectionPageList = await this.getChannels();
+      console.log("===channelCollectionPageList===",channelCollectionPageList);
+      this.channelCollectionPageList = await this.getChannelsV2();
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
     } else {
@@ -308,7 +309,7 @@ export class SearchPage implements OnInit {
 
   async doRefresh(event) {
     try {
-      this.channelCollectionPageList = await this.getChannels(event);
+      this.channelCollectionPageList = await this.getChannelsV2(event);
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
       this.removeObserveList();
@@ -603,7 +604,7 @@ export class SearchPage implements OnInit {
   async getChannels(event = null) {
     try {
       let channelCollectionPageList = [];
-      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
       let channelsCount = this.specificPublicChannels.length;
       for (let channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
         let channelUrl = this.specificPublicChannels[channelIndex];
@@ -671,19 +672,20 @@ export class SearchPage implements OnInit {
         event.target.complete();
       }
      }
-
-     console.log("====channelsCount=====",channelsCount);
+     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
      for(let channelIndex = 0; channelIndex < channelsCount; channelIndex++){
-       console.log("=====feedsUrl======",channelIndex);
        let channel = await this.nftContractControllerService.getChannel().channelByIndex(channelIndex);
        let tokenURI = channel[1];
-       console.log("=====tokenURI======",tokenURI);
        const scanResult = ScannerHelper.parseScannerResult(tokenURI);
        const feedsUrl = scanResult.feedsUrl;
-       console.log("=====feedsUrl======",feedsUrl);
+       let subscribedChannelIndex = _.findIndex(subscribedChannel, (item) => {
+        return item.destDid === channel.destDid && item.channelId === channel.channelId;
+       });
+       if (subscribedChannelIndex > -1) {
+         continue;
+       }
        try {
          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-         console.log("=====channelInfo======",channelInfo);
          channelCollectionPageList.push(channelInfo);
        } catch (error) {
         this.isLoading = false;
@@ -700,6 +702,5 @@ export class SearchPage implements OnInit {
       }
       this.isLoading = false;
     }
-
    }
 }
