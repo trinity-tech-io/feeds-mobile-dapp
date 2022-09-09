@@ -638,16 +638,14 @@ export class HiveVaultController {
     });
   }
 
-  repost(destDid: string,channelId: string, postId: string ,repostChannelId: string, postText: string, repostUrl: string, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
+  repost(originPostTargetDid: string, originPostChannelId: string, originPostPostId: string, repostNewChannelId: string, repostText: string, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
+    // repost(destDid: string, channelId: string, postId: string, repostChannelId: string, postText: string, repostUrl: string, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        // const userDid = (await this.dataHelper.getSigninData()).did
-        // if (localStorage.getItem(userDid + "isSyncToTwitter") === "true") {
-        //   await this.twitterService.postTweet(postText);
-        // }
 
-        const content = await this.progressMediaData(postText, null, null, repostUrl);
-        const result = await this.hiveVaultApi.publishPost(repostChannelId, tag, JSON.stringify(content), type, status, memo, proof)
+        const repostUrl = UtilService.generateFeedsPostLink(originPostTargetDid, originPostChannelId, originPostPostId);
+        const content = await this.progressMediaData(repostText, null, null, repostUrl);
+        const result = await this.hiveVaultApi.publishPost(repostNewChannelId, tag, JSON.stringify(content), type, status, memo, proof);
 
         Logger.log(TAG, "Repost new post , result is", result);
         if (!result) {
@@ -660,7 +658,7 @@ export class HiveVaultController {
         let postV3: FeedsData.PostV3 = {
           destDid: result.targetDid,
           postId: result.postId,
-          channelId: repostChannelId,
+          channelId: repostNewChannelId,
           createdAt: result.createdAt,
           updatedAt: result.updatedAt,
           content: content,
@@ -673,7 +671,7 @@ export class HiveVaultController {
         }
         await this.dataHelper.addPost(postV3);
 
-        this.reportRepostToOriginchannel(destDid, channelId, postId, result.targetDid, repostChannelId, result.postId);
+        await this.reportRepostToOriginchannel(originPostTargetDid, originPostChannelId, originPostPostId, result.targetDid, repostNewChannelId, result.postId);
         resolve(postV3);
       } catch (error) {
         Logger.error(TAG, 'Publish post error', error);
@@ -2244,8 +2242,8 @@ export class HiveVaultController {
   }
 
 
-  reportRepostToOriginchannel(targetDid: string, channelId: string, postId: string, repostTargetDid: string, repostChannelId: string, repostPostId: string): Promise<{ repostId: string, createdAt: number }> {
-    return this.hiveVaultApi.reportRepostToOriginChannel(targetDid, channelId, postId, repostTargetDid, repostChannelId, repostPostId);
+  reportRepostToOriginchannel(originTargetDid: string, originChannelId: string, originPostId: string, repostNewTargetDid: string, repostNewChannelId: string, repostNewPostId: string): Promise<{ repostId: string, createdAt: number }> {
+    return this.hiveVaultApi.reportRepostToOriginChannel(originTargetDid, originChannelId, originPostId, repostNewTargetDid, repostNewChannelId, repostNewPostId);
   }
 
   removeRepostFromOriginChannel(targetDid: string, repostTargetDid: string, repostChannelId: string, repostPostId: string): Promise<any> {
@@ -2262,6 +2260,5 @@ export class HiveVaultController {
         reject(error);
       }
     });
-
   }
 }

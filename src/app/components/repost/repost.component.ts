@@ -110,7 +110,6 @@ export class RepostComponent implements OnInit {
   }
 
   sendRepost() {
-
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
@@ -130,11 +129,9 @@ export class RepostComponent implements OnInit {
         console.log("click========", this.repostChannel);
         //repostChannel 选择要转推到那个频道
         let postText = this.native.iGetInnerText(this.newComment) || '';
-        const repostDestDid = this.repostChannel.destDid;
         const repostChannelId = this.repostChannel.channelId;
-        const repostUrl = UtilService.generateFeedsPostLink(repostDestDid, repostChannelId, this.postId);
         const tag: string = '';
-        await this.hiveVaultController.repost(this.destDid, this.channelId, this.postId, repostChannelId,postText, repostUrl, tag);
+        await this.hiveVaultController.repost(this.destDid, this.channelId, this.postId, repostChannelId, postText, tag);
 
         this.native.hideLoading();
         this.clickButton = false;

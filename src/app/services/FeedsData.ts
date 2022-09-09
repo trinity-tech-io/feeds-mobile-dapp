@@ -1104,4 +1104,10 @@ declare namespace FeedsData {
     repostPostId: string,
     createdAt: number
   }
+
+  type FeedsUrl = {
+    targetDid: string,
+    channelId: string,
+    postId: string
+  }
 }
