@@ -187,7 +187,7 @@ export class SearchPage implements OnInit {
 
   async filterChannelCollectionPageList(channelCollectionPageList = []) {
     let channelList = [];
-    let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+    let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
     for (let index = 0; index < channelCollectionPageList.length; index++) {
       let channel: FeedsData.ChannelV3 = channelCollectionPageList[index];
       let channelIndex = _.findIndex(subscribedChannel, (item) => {
@@ -205,7 +205,6 @@ export class SearchPage implements OnInit {
   async init() {
     let channelCollectionPageList = this.dataHelper.getChannelCollectionPageList() || [];
     if (channelCollectionPageList.length === 0) {
-      console.log("===channelCollectionPageList===",channelCollectionPageList);
       this.channelCollectionPageList = await this.getChannelsV2();
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
@@ -604,7 +603,7 @@ export class SearchPage implements OnInit {
   async getChannels(event = null) {
     try {
       let channelCollectionPageList = [];
-      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
       let channelsCount = this.specificPublicChannels.length;
       for (let channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
         let channelUrl = this.specificPublicChannels[channelIndex];
@@ -672,7 +671,7 @@ export class SearchPage implements OnInit {
         event.target.complete();
       }
      }
-     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
      for(let channelIndex = 0; channelIndex < channelsCount; channelIndex++){
        let channel = await this.nftContractControllerService.getChannel().channelByIndex(channelIndex);
        let tokenURI = channel[1];
