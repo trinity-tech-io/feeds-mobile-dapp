@@ -179,6 +179,14 @@ export class GalleriachannelPage implements OnInit {
           let key = this.destDid +'-'+this.channelId;
           channelPublicStatusList[key] = "2";
           this.dataHelper.setChannelPublicStatusList(channelPublicStatusList);
+          let channelCollectionPageList = this.dataHelper.getChannelCollectionPageList() || [];
+          let channelIndex =_.findIndex(channelCollectionPageList,(channel: FeedsData.ChannelV3)=>{
+                return this.destDid === channel.destDid && this.channelId === channel.channelId;
+          })
+          if(channelIndex === -1 ){
+            channelCollectionPageList.push(this.channel);
+            this.dataHelper.setChannelCollectionPageList(channelCollectionPageList)
+          }
           this.showSuccessDialog();
           this.clearMintSid();
       })

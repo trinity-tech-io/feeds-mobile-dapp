@@ -186,11 +186,19 @@ export class FeedspreferencesPage implements OnInit {
         })
         that.isLoading = false;
         clearTimeout(sId);
+        let channelCollectionPageList = that.dataHelper.getChannelCollectionPageList() || [];
+        let channelIndex =_.findIndex(channelCollectionPageList,(channel: FeedsData.ChannelV3)=>{
+              return this.destDid === channel.destDid && this.channelId === channel.channelId;
+        })
+        if(channelIndex > -1 ){
+          channelCollectionPageList.splice(channelIndex,1);
+          that.dataHelper.setChannelCollectionPageList(channelCollectionPageList)
+        }
         that.native.toast("FeedspreferencesPage.burnNFTSSuccess");
-        let channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
-        let key = this.destDid +'-'+this.channelId;
+        let channelPublicStatusList = that.dataHelper.getChannelPublicStatusList();
+        let key = that.destDid +'-'+that.channelId;
         channelPublicStatusList[key] = "1";
-        this.dataHelper.setChannelPublicStatusList(channelPublicStatusList);
+        that.dataHelper.setChannelPublicStatusList(channelPublicStatusList);
       }).catch(() => {
         that.nftContractControllerService.getChannel().cancelBurnProcess();
         that.isLoading = false;
