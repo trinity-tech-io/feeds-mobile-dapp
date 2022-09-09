@@ -14,6 +14,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { UtilService } from 'src/app/services/utilService';
+import { MorenameComponent } from 'src/app/components/morename/morename.component';
 import _ from 'lodash';
 
 @Component({
@@ -27,7 +28,7 @@ export class CreatenewfeedPage implements OnInit {
   public len = 0;
   public channelAvatar = '';
   public avatar = '';
-  public curFeedPublicStatus: boolean = true;
+  public curChannelPublicStatus: boolean = true;
   public developerMode: boolean = false;
   public isHelp: boolean = false;
   public arrowBoxStyle: any = { top: '0px' };
@@ -69,7 +70,7 @@ export class CreatenewfeedPage implements OnInit {
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
   }
 
-  mintChannel(destDid: string, channelId: number) {
+  mintChannel(destDid: string, channelId: string) {
     this.native.navigateForward(['/galleriachannel'], { queryParams: { "destDid": destDid, "channelId": channelId } });
   }
 
@@ -202,9 +203,12 @@ export class CreatenewfeedPage implements OnInit {
       let tippingAddress = this.tippingAddress || '';
       const channelId = await this.hiveVaultController.createChannel(name, displayName, desc, this.avatar, tippingAddress)
       await this.hiveVaultController.subscribeChannel(userDid, channelId, userDisplayName);
-
       this.native.hideLoading();
-      this.native.pop()
+      if(this.curChannelPublicStatus){
+        this.publicChannel(userDid, channelId);
+      }else{
+        this.native.pop()
+      }
     } catch (error) {
 
       this.native.handleHiveError(error, 'common.createChannelFail');
@@ -218,46 +222,21 @@ export class CreatenewfeedPage implements OnInit {
     this.native.navigateForward(['/profileimage'], '');
   }
 
-  async createDialog(name: string, des: string) {
-    let popover = await this.popoverController.create({
-      mode: 'ios',
-      cssClass: 'genericPopup',
-      component: TipdialogComponent,
-      componentProps: {
-        // did: this.selectedServer.did,
-        name: name,
-        des: des,
-        feedPublicStatus: this.curFeedPublicStatus,
-        developerMode: this.developerMode,
-      },
-    });
-    popover.onWillDismiss().then(() => {
-      popover = null;
-    });
-
-    return await popover.present();
-  }
-
-  clickPublicFeeds() {
+  clickPublicChannel() {
     this.zone.run(() => {
-      this.curFeedPublicStatus = !this.curFeedPublicStatus;
+      this.curChannelPublicStatus = !this.curChannelPublicStatus;
     });
   }
 
-  publicFeeds(nodeId: string, feedId: number) {
-    if (!this.curFeedPublicStatus) {
+  publicChannel(destDid: string, channelId: string) {
+    if (!this.curChannelPublicStatus) {
       return;
     }
-
-    this.mintChannel(nodeId, feedId);
+    this.mintChannel(destDid, channelId);
   }
 
-  help(event: any) {
-    let e = event || window.event; //兼容IE8
-    let target = e.target || e.srcElement; //判断目标事件
-    let boundingClientRect = target.getBoundingClientRect();
-    this.arrowBoxStyle['top'] = boundingClientRect.top - 16.5 + 'px';
-    this.isHelp = !this.isHelp;
+  async help(event: any) {
+    await this.presentPopover(event);
   }
 
   handleAvatar() {
@@ -294,4 +273,24 @@ export class CreatenewfeedPage implements OnInit {
       this.tippingAddress = scannedContent;
     }
   }
+
+  async presentPopover(e: Event) {
+
+    let des = this.translate.instant('CreatenewfeedPage.des1');
+    this.infoPopover = await this.popoverController.create({
+      mode: 'ios',
+      component: MorenameComponent,
+      event: e,
+      componentProps: {
+        name: des,
+      },
+    });
+
+    this.infoPopover.onWillDismiss().then(() => {
+      this.infoPopover = null;
+    });
+
+    return await this.infoPopover.present();
+  }
+
 }

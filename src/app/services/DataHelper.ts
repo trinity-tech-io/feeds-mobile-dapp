@@ -4472,7 +4472,6 @@ export class DataHelper {
   }
 
   setChannelPublicStatusList(channelPublicStatusList: any) {
-    console.log("======channelPublicStatusList=====", channelPublicStatusList);
     this.channelPublicStatusList = channelPublicStatusList;
     this.saveData("feeds.channelPublicStatus.list", channelPublicStatusList);
   }

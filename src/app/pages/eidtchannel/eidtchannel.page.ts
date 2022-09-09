@@ -204,7 +204,7 @@ export class EidtchannelPage implements OnInit {
         "public",
         '',
         '',
-      ).then((result:  FeedsData.ChannelV3 ) => {
+      ).then((result: FeedsData.ChannelV3) => {
         let channelInfo = this.dataHelper.getChannelInfo();
         let tippingAddress = this.tippingAddress || '';
         channelInfo["name"] = this.channelName;
@@ -215,15 +215,15 @@ export class EidtchannelPage implements OnInit {
 
         let currentChannel: FeedsData.ChannelV3 = this.dataHelper.getCurrentChannel() || null;
 
-        if(currentChannel != null && currentChannel.destDid === this.destDid && currentChannel.channelId === this.channelId){
+        if (currentChannel != null && currentChannel.destDid === this.destDid && currentChannel.channelId === this.channelId) {
           currentChannel.displayName = this.displayName;
           currentChannel.intro = this.channelDes;
-             result = result || null;
-             if(result != null){
-              currentChannel.avatar = result.avatar;
-             }
-             this.dataHelper.setCurrentChannel(currentChannel);
-             this.storageService.set('feeds.currentChannel', JSON.stringify(currentChannel));
+          result = result || null;
+          if (result != null) {
+            currentChannel.avatar = result.avatar;
+          }
+          this.dataHelper.setCurrentChannel(currentChannel);
+          this.storageService.set('feeds.currentChannel', JSON.stringify(currentChannel));
         }
 
         this.isClickConfirm = true;
