@@ -71,7 +71,7 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   mintChannel(destDid: string, channelId: string) {
-    this.native.navigateForward(['/galleriachannel'], { queryParams: { "destDid": destDid, "channelId": channelId } });
+    this.native.navigateForward(['/galleriachannel'], { queryParams: { "destDid": destDid, "channelId": channelId }, replaceUrl: true});
   }
 
   ionViewDidEnter() { }
