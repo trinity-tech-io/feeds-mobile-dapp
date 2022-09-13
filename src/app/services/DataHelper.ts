@@ -3205,14 +3205,15 @@ export class DataHelper {
     })
   }
 
-  getSubscriptionV3DataByChannelId(destDid: string, channelId: string): Promise<FeedsData.SubscriptionV3> {
+  getSubscriptionV3DataByChannelId(channelId: string): Promise<FeedsData.SubscriptionV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
         const result = await this.sqliteHelper.querySubscriptionDataByChannelId(selfDid, channelId) || [];
 
+        console.log('result====>', result);
         if (result) {
-          resolve(result[0]);
+          resolve(result);
         } else {
           resolve(null);
         }

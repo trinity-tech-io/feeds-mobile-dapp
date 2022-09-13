@@ -34,7 +34,7 @@
       </ion-col>
 
       <ion-col size="12" class="channel-btns-row" style="padding: 0px;">
-        <span class="channelSubscribes">
+        <span class="channelSubscribes" (click)="navUserList()">
           <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'">
           {{ channelSubscribes }} {{ 'common.followers' | translate }} </span>
         <!-- <ion-button *ngIf="!followStatus" class="unsubscribed" fill="outline" (click)="subscribe()">

@@ -235,6 +235,10 @@ const routes: Routes = [
     path: 'connections',
     loadChildren: () => import('./pages/connections/connections.module').then( m => m.ConnectionsPageModule)
   },
+  {
+    path: 'userlist',
+    loadChildren: () => import('./pages/userlist/userlist.module').then( m => m.UserlistPageModule)
+  },
 ];
 
 @NgModule({

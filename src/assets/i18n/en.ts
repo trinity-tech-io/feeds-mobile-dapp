@@ -898,6 +898,9 @@ export const en = {
   WhitelistPage: {
     title: 'Verified Creators'
   },
+  UserListPage: {
+    title: 'User List'
+  },
   AssistpasarPage: {
     title: 'Assist Pasar API',
     assistProviderDes: 'Secondary assist pasar service for reading data'

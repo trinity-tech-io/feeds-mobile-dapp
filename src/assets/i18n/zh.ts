@@ -900,6 +900,9 @@ export const zh = {
   WhitelistPage: {
     title: '已验证原创者'
   },
+  UserListPage: {
+    title: '用户列表'
+  },
   AssistpasarPage: {
     title: 'Assist Pasar API',
     assistProviderDes: '用于读取数据的辅助 Assist Pasar 服务',
