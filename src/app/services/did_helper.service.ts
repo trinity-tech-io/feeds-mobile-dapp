@@ -155,4 +155,88 @@ export class DIDHelperService {
   getJWTHeader(jwt: JWT): JWTHeader {
     return jwt.getHeader();
   }
+
+  resolveNameFromDidDocument(didDocument: DIDDocument): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const emptyName = '';
+      try {
+        if (!didDocument) {
+          Logger.warn(TAG, 'Get DIDDocument from did error');
+          resolve(emptyName);
+          return;
+        }
+
+        const nameCredential = didDocument.getCredential("#name");
+        if (!nameCredential) {
+          Logger.warn(TAG, 'Get name credential from did error');
+          resolve(emptyName);
+          return;
+        }
+
+        const nameSubject = nameCredential.getSubject() || null;
+        if (!nameSubject) {
+          Logger.warn(TAG, 'Get name subject from did error');
+          resolve(emptyName);
+          return;
+        }
+        const name = nameSubject.getProperty('name');
+        resolve(name);
+      } catch (error) {
+        const errorMsg = 'Resolve DidDocument error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
+  }
+
+  resolveAvatarFromDidDocument(didDocument: DIDDocument): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const emptyAvatar = '';
+      try {
+        if (!didDocument) {
+          Logger.warn(TAG, 'Get DIDDocument from did error');
+          resolve(emptyAvatar);
+          return;
+        }
+
+        const avatarCredential = didDocument.getCredential("#avatar");
+        if (!avatarCredential) {
+          Logger.warn(TAG, 'Get avatar credential from did error');
+          resolve(emptyAvatar);
+          return;
+        }
+
+        const avatarSubject = avatarCredential.getSubject() || null;
+        if (!avatarSubject) {
+          Logger.warn(TAG, 'Get name subject from did error');
+          resolve(emptyAvatar);
+          return;
+        }
+        const avatar = avatarSubject.getProperty('avatar');
+        let resultObjcet = avatar.data;
+        resolve(resultObjcet);
+      } catch (error) {
+        const errorMsg = 'Resolve DidDocument error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
+  }
+
+  resolveNameAndAvatarFromDidDocument(userDid: string): Promise<{ name: string, avatar: string }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const didDocument = await this.resolveDidDocument(userDid);
+        const name = await this.resolveNameFromDidDocument(didDocument);
+        const avatar = await this.resolveAvatarFromDidDocument(didDocument);
+
+        const resultObj = { name: name, avatar: avatar };
+
+        resolve(resultObj);
+      } catch (error) {
+        Logger.error(TAG, 'Parse jwt error', error);
+        reject(error);
+      }
+    });
+  }
 }

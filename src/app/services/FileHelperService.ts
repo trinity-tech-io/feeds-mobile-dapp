@@ -80,7 +80,6 @@ export class FileHelperService {
           v3DataPath,
           true
         );
-
         let fileEntry = await this.fileService.getFile(orderDirEntry, fileName, true);
         resolve(fileEntry);
       } catch (error) {
@@ -208,11 +207,12 @@ export class FileHelperService {
     });
   }
 
-  getV3Data(fileName: string, type: string): Promise<string> {
+  getV3Data(fileName: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const fileEntry = await this.getV3Entry(fileName);
         const fileBlob = await this.getBlobFromCacheFile(fileEntry);
+
         if (fileBlob.size > 0) {
           const result = await this.transBlobToText(fileBlob);
           resolve(result);

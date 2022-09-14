@@ -134,8 +134,6 @@ export class HiveVaultController {
           const posts = await this.syncPostListByChannel(destDid, channelId);
           postList.push(posts);
         }
-
-        console.log('postList====>', postList);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'Sync post from channel error', error);
@@ -842,17 +840,11 @@ export class HiveVaultController {
         if (userDisplayName == '') {
           const signinData = await this.dataHelper.getSigninData();
           userName = signinData.name;
-          console.log('signinData====>', signinData);
         } else {
           userName = userDisplayName;
         }
 
         const updatedAt = UtilService.getCurrentTimeNum();
-        console.log('start====>');
-        console.log('subscribeChannel====>', targetDid);
-        console.log('channelId====>', channelId);
-        console.log('userName====>', userName);
-        console.log('updatedAt====>', updatedAt);
         const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userName, updatedAt);
         if (!result) {
           const errorMsg = 'Subscribe channel error, destDid is' + targetDid + 'channelId is' + channelId;
@@ -1017,6 +1009,25 @@ export class HiveVaultController {
     });
   }
 
+  downloadEssAvatarFromHiveUrl(hiveUrl: string, targetDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const rawImage = await this.hiveVaultApi.downloadEssAvatarFromHiveUrl(hiveUrl, targetDid);
+        if (!rawImage) {
+          resolve(null)
+          return
+        }
+        // const savekey = UtilService.getESSAvatarKey(tarDID);
+        // this.dataHelper.saveUserAvatar(savekey, rawImage)
+        resolve(rawImage);
+      }
+      catch (error) {
+        reject(error)
+        Logger.error(TAG, "Download Ess Avatar error: ", error);
+      }
+    });
+  }
+
   processDownloadEssAvatar(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const signinData = await this.dataHelper.getSigninData() || null;
@@ -1065,7 +1076,7 @@ export class HiveVaultController {
           return;
         }
         isDownload = isDownload || '';
-        const result = await this.fileHelperService.getV3Data(fileName, type);
+        const result = await this.fileHelperService.getV3Data(fileName);
         if (result && result != '') {
           resolve(result);
           return;
@@ -1079,6 +1090,39 @@ export class HiveVaultController {
         if (result == '' && isDownload === '') {
           try {
             const downloadResult = await this.hiveVaultApi.downloadScripting(destDid, remotePath);
+            await this.fileHelperService.saveV3Data(fileName, downloadResult);
+            resolve(downloadResult);
+          } catch (error) {
+            reject(error);
+          }
+          return;
+        }
+        resolve('')
+      } catch (error) {
+        Logger.error(TAG, 'Get data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  getV3HiveUrlData(destDid: string, hiveUrl: string, fileName: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!destDid || !fileName || !hiveUrl) {
+          resolve('');
+          return;
+        }
+
+        const result = await this.fileHelperService.getV3Data(fileName);
+        if (result && result != '') {
+          resolve(result);
+          return;
+        }
+
+
+        if (!result) {
+          try {
+            const downloadResult = await this.hiveVaultApi.downloadEssAvatarFromHiveUrl(hiveUrl, destDid);
             await this.fileHelperService.saveV3Data(fileName, downloadResult);
             resolve(downloadResult);
           } catch (error) {

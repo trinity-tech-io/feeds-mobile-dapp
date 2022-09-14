@@ -3210,8 +3210,6 @@ export class DataHelper {
       try {
         const selfDid = (await this.getSigninData()).did;
         const result = await this.sqliteHelper.querySubscriptionDataByChannelId(selfDid, channelId) || [];
-
-        console.log('result====>', result);
         if (result) {
           resolve(result);
         } else {

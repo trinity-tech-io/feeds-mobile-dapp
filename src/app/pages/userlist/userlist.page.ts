@@ -4,11 +4,10 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 import { ThemeService } from '../../services/theme.service';
 import { NativeService } from '../../services/NativeService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { HttpService } from 'src/app/services/HttpService';
-import { ApiUrl } from 'src/app/services/ApiUrl';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Params, ActivatedRoute } from '@angular/router';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 
 @Component({
   selector: 'app-userlist',
@@ -31,7 +30,8 @@ export class UserlistPage implements OnInit {
     private dataHelper: DataHelper,
     private native: NativeService,
     public theme: ThemeService,
-    private didHelper: DIDHelperService
+    private didHelper: DIDHelperService,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   ionViewWillEnter() {
@@ -54,12 +54,8 @@ export class UserlistPage implements OnInit {
   getWhiteList() {
   }
 
-  doRefresh(event: any) {
-  }
-
-  handleavatar() {
-    return "./assets/images/avatar.svg";
-  }
+  // doRefresh(event: any) {
+  // }
 
   clickItem(userItem: string) {
     this.native.toast(userItem);
@@ -77,32 +73,38 @@ export class UserlistPage implements OnInit {
           const element = subscriptionList[index];
           const userDid = element.userDid;
           const userDisplayName = element.displayName;
+          this.resolveData(userDid);
           this.userDidList.push(userDid);
-          this.handleAvatar(userDid);
-          this.handleUserName(userDid, userDisplayName);
+          this.setUserAvatar(userDid);
+          this.setUserName(userDid, userDisplayName);
         }
-
-
-        console.log(' userAvatarMap ===>', this.userAvatarMap);
-        console.log(' userNameMap ===>', this.userNameMap);
       });
     });
   }
 
   resolveData(userDid: string) {
-    this.didHelper.resolveDidObjectForName(userDid).then();//TODO
+    this.didHelper.resolveNameAndAvatarFromDidDocument(userDid).then((result: { name: string, avatar: string }) => {
+      if (result.name) {
+        this.setUserName(userDid, result.name);
+      }
+
+      const avatarUrl = result.avatar;
+      if (avatarUrl) {
+        let fileName: string = userDid.replace('did:elastos:', '');
+        this.hiveVaultController.getV3HiveUrlData(userDid, avatarUrl, fileName)
+          .then((image) => {
+            this.setUserAvatar(userDid, image);
+          }).catch((err) => {
+          })
+      }
+    });
   }
 
-  handleAvatar(userDid: string) {
-    this.userAvatarMap[userDid] = './assets/images/selectAvatar.svg';
+  setUserAvatar(userDid: string, avatar = './assets/images/default-contact.svg') {
+    this.userAvatarMap[userDid] = avatar;
   }
 
-  handleUserName(userDid: string, presetName: string) {
-    this.userNameMap[userDid] = presetName;
-  }
-
-  handleAvatarMap(data) {
-    console.log('ddddddd====>', data);
-    return data;
+  setUserName(userDid: string, userName: string) {
+    this.userNameMap[userDid] = userName;
   }
 }

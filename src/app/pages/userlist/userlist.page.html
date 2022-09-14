@@ -1,7 +1,7 @@
 
 <app-titlebar></app-titlebar>
 <ion-content>
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+  <!-- <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
       pullingText="{{'common.releaseToRefresh'|translate}}"
@@ -9,7 +9,7 @@
       refreshingSpinner="circles"
       refreshingText="{{'common.beingRefresh'|translate}}" >
     </ion-refresher-content>
-  </ion-refresher>
+  </ion-refresher> -->
 
 
 
@@ -18,7 +18,7 @@
     <ion-row class="channel-row ion-activatable ripple ionRowFollowing">
       <ion-col size="2.8" class="left-col" >
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-          <img [src] = "handleAvatarMap(userAvatarMap[userDid])">
+          <img [src] = "userAvatarMap[userDid]">
         </div>
       </ion-col>
       <ion-col size="9.2" class="middle-col" >

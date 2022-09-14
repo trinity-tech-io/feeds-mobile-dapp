@@ -1774,6 +1774,32 @@ export class HiveVaultHelper {
     }
     /** download essential avatar end */
 
+    /** download essential avatar from hiveurl start */
+    private downloadEssAvatarDataFromHiveUrl(hiveUrl: string, targetDid: string): Promise<string> {
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await this.hiveService.downloadFileByHiveUrl(hiveUrl, targetDid);
+                if (!result) {
+                    resolve(null);
+                    return;
+                }
+
+                const rawImage = await rawImageToBase64DataUrl(result);
+                resolve(rawImage);
+            }
+            catch (error) {
+                Logger.error(TAG, "Download Ess Avatar error: ", error);
+                reject(await this.handleError(error))
+            }
+        });
+    }
+
+    downloadEssAvatarFromHiveUrl(hiveUrl: string, targetDid: string): Promise<string> {
+        return this.downloadEssAvatarDataFromHiveUrl(hiveUrl, targetDid);
+    }
+    /** download essential avatar from hiveurl end */
+
     uploadMediaDataWithString(data: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {

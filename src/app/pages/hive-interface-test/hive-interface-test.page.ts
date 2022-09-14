@@ -248,7 +248,7 @@ export class HiveInterfaceTestPage implements OnInit {
   async readData() {
     const fileName = 'testFile';
     const type = '';
-    const result = await this.fileHelperService.getV3Data(fileName, type);
+    const result = await this.fileHelperService.getV3Data(fileName);
     if (result && result != '') {
       console.log('read from local fileName', fileName);
       console.log('read from local type', type);
