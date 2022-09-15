@@ -201,6 +201,9 @@ export class ProfilePage implements OnInit {
   public hideRepostComment = true;
   public repostChannelList: any = [];
 
+  public rePostMap: any = {};
+  private refreshRepostImageSid = null;
+
   constructor(
     private elmRef: ElementRef,
     public theme: ThemeService,
@@ -278,6 +281,7 @@ export class ProfilePage implements OnInit {
       this.infiniteScroll.disabled = false;
     }
     this.isLoadingLike = false;
+
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
     this.isLoadAvatarImage = {};
@@ -2378,61 +2382,122 @@ export class ProfilePage implements OnInit {
       if (exit != null) {
         continue;
       }
-      this.newLikeObserver(postGridId);
+      this.newLikeObserver(postItem, "like");
     }
   }
 
-  newLikeObserver(postGridId: string) {
+  newLikeObserver(postItem: any, elementsName: string) {
+
+    let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-' + elementsName;
     let observer = this.myLikeObserver[postGridId] || null;
+
     if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
 
     if (item != null) {
-      this.myLikeObserver[postGridId] = new IntersectionObserver(async (changes: any) => {
-        let container = changes[0].target;
-        let newId = container.getAttribute("id");
+      if (elementsName === "like") {
 
-        let intersectionRatio = changes[0].intersectionRatio;
+        this.myLikeObserver[postGridId] = new IntersectionObserver(async (changes: any) => {
+          let container = changes[0].target;
+          let newId = container.getAttribute("id");
 
-        if (intersectionRatio === 0) {
-          //console.log("======newId leave========", newId);
-          return;
-        }
-        let arr = newId.split("-");
-        let destDid: string = arr[0];
-        let channelId: string = arr[1];
-        let postId: string = arr[2];
-        let mediaType: string = arr[3];
-        await this.getChannelName(destDid, channelId);//获取频道name
-        this.getDisplayName(destDid, channelId, destDid);
-        this.handlePostAvatarV2(destDid, channelId);
-        if (mediaType === '1') {
-          this.handlePostImgV2(destDid, channelId, postId);
-        }
-        if (mediaType === '2') {
-          //video
-          this.handleVideoV2(destDid, channelId, postId);
-        }
-        let id = destDid + '-' + channelId + '-' + postId;
-        //post like status
-        CommonPageService.handlePostLikeStatusData(
-          destDid, channelId, postId, this.isInitLikeStatus, this.hiveVaultController,
-          this.likeMap, this.isLoadingLikeMap);
-        //处理post like number
-        CommonPageService.handlePostLikeNumData(
-          destDid, channelId, postId, this.hiveVaultController,
-          this.likeNumMap, this.isInitLikeNum);
-        //处理post comment
-        CommonPageService.handlePostCommentData(
-          destDid, channelId, postId, this.hiveVaultController,
-          this.isInitComment, this.commentNumMap);
-        //console.log("======intersectionRatio1========",typeof(changes[0]));
-        //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
-      });
+          let intersectionRatio = changes[0].intersectionRatio;
 
-      this.myLikeObserver[postGridId].observe(item);
+          if (intersectionRatio === 0) {
+            //console.log("======newId leave========", newId);
+            return;
+          }
+          let arr = newId.split("-");
+          let destDid: string = arr[0];
+          let channelId: string = arr[1];
+          let postId: string = arr[2];
+          let mediaType: string = arr[3];
+          if (mediaType === '3' || mediaType === '4') {
+            //获取repost
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            const repostUrl = post.content.mediaData[0].repostUrl;
+            const feedsUrlObj = UtilService.decodeFeedsUrl(repostUrl);
+            let loadedRepost: FeedsData.PostV3 = await this.dataHelper.getCachedPostV3ById(feedsUrlObj.postId) || null;//TODO replace with load repost later
+            if (!loadedRepost) {
+              loadedRepost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId, false);
+            }
+            this.rePostMap[postId] = _.cloneDeep(loadedRepost);
+            //this.rePostMap[postId] = _.cloneDeep(post);
+            this.refreshRepostImageV2(this.rePostMap[postId]);
+          }
+          await this.getChannelName(destDid, channelId);//获取频道name
+          this.getDisplayName(destDid, channelId, destDid);
+          this.handlePostAvatarV2(destDid, channelId);
+          if (mediaType === '1') {
+            this.handlePostImgV2(destDid, channelId, postId);
+          }
+          if (mediaType === '2') {
+            //video
+            this.handleVideoV2(destDid, channelId, postId);
+          }
+          let id = destDid + '-' + channelId + '-' + postId;
+          //post like status
+          CommonPageService.handlePostLikeStatusData(
+            destDid, channelId, postId, this.isInitLikeStatus, this.hiveVaultController,
+            this.likeMap, this.isLoadingLikeMap);
+          //处理post like number
+          CommonPageService.handlePostLikeNumData(
+            destDid, channelId, postId, this.hiveVaultController,
+            this.likeNumMap, this.isInitLikeNum);
+          //处理post comment
+          CommonPageService.handlePostCommentData(
+            destDid, channelId, postId, this.hiveVaultController,
+            this.isInitComment, this.commentNumMap);
+          //console.log("======intersectionRatio1========",typeof(changes[0]));
+          //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+        });
+
+        this.myLikeObserver[postGridId].observe(item);
+
+      }
+
+      if (elementsName === "like-repost") {
+
+        this.myLikeObserver[postGridId] = new IntersectionObserver(async (changes: any) => {
+          let container = changes[0].target;
+          let newId = container.getAttribute("id");
+          let intersectionRatio = changes[0].intersectionRatio;
+          if (intersectionRatio === 0) {
+            return;
+          }
+          let arr = newId.split("-");
+          let destDid: string = arr[0];
+          let channelId: string = arr[1];
+          let postId: string = arr[2];
+          let mediaType: string = arr[3];
+          if (mediaType === '3' || mediaType === '4') {
+            //获取repost
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            const repostUrl = post.content.mediaData[0].repostUrl;
+            const feedsUrlObj = UtilService.decodeFeedsUrl(repostUrl);
+            let loadedRepost: FeedsData.PostV3 = await this.dataHelper.getCachedPostV3ById(feedsUrlObj.postId) || null;//TODO replace with load repost later
+            if (!loadedRepost) {
+              loadedRepost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId, false);
+            }
+            this.rePostMap[postId] = loadedRepost;
+            this.rePostMap[postId] = _.cloneDeep(post);
+            this.refreshRepostImageV2(this.rePostMap[postId]);
+          }
+          await this.getChannelName(destDid, channelId);//获取频道name
+          this.getDisplayName(destDid, channelId, destDid);
+          this.handlePostAvatarV2(destDid, channelId);
+          if (mediaType === '1') {
+            this.handlePostImgV2(destDid, channelId, postId);
+          }
+          if (mediaType === '2') {
+            //video
+            this.handleVideoV2(destDid, channelId, postId);
+          }
+        });
+        this.myLikeObserver[postGridId].observe(item);
+      }
     }
   }
 
@@ -2580,6 +2645,21 @@ export class ProfilePage implements OnInit {
     this.channelId = "";
     this.destDid = "";
     this.hideRepostComment = true;
+  }
+
+  refreshRepostImageV2(post = null) {
+    this.clearRefreshRepostImageV2();
+    this.refreshRepostImageSid = setTimeout(() => {
+      this.newLikeObserver(post, "like-repost");
+      this.clearRefreshRepostImageV2();
+    }, 100);
+  }
+
+  clearRefreshRepostImageV2() {
+    if (this.refreshRepostImageSid != null) {
+      clearTimeout(this.refreshRepostImageSid);
+      this.refreshRepostImageSid = null;
+    }
   }
 
 }

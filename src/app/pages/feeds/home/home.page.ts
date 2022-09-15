@@ -2403,14 +2403,14 @@ export class HomePage implements OnInit {
           if (mediaType === '3' || mediaType === '4') {
             //获取repost
             let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(postId) || null;
-            // const repostUrl = post.content.mediaData[0].repostUrl;
-            // const feedsUrlObj = UtilService.decodeFeedsUrl(repostUrl);
-            // let loadedRepost: FeedsData.PostV3 = await this.dataHelper.getCachedPostV3ById(feedsUrlObj.postId) || null;//TODO replace with load repost later
-            // if (!loadedRepost) {
-            //   loadedRepost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId, false);
-            // }
-            // this.rePostMap[postId] = loadedRepost;
-            this.rePostMap[postId] = _.cloneDeep(post);
+            const repostUrl = post.content.mediaData[0].repostUrl;
+            const feedsUrlObj = UtilService.decodeFeedsUrl(repostUrl);
+            let loadedRepost: FeedsData.PostV3 = await this.dataHelper.getCachedPostV3ById(feedsUrlObj.postId) || null;//TODO replace with load repost later
+            if (!loadedRepost) {
+              loadedRepost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId, false);
+            }
+            this.rePostMap[postId] = _.cloneDeep(loadedRepost);
+            //this.rePostMap[postId] = _.cloneDeep(post);
             this.refreshRepostImageV2(this.rePostMap[postId]);
           }
           await this.getChannelName(destDid, channelId);//获取频道name

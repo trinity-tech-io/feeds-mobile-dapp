@@ -47,6 +47,7 @@ export class LikesComponent implements OnInit {
   @Input() postTime: any = {};
   @Input() isLoadingLike: boolean = true;
 
+  @Input() rePostMap: any = {};
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();
@@ -149,11 +150,11 @@ export class LikesComponent implements OnInit {
       let target = e.target || e.srcElement; //判断目标事件
       if (target.tagName.toLowerCase() == 'span') {
         let url = target.textContent || target.innerText;
-        let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+        let reg = /(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
         var urlExp = new RegExp(reg);
-        if(urlExp.test(url) === true){
+        if (urlExp.test(url) === true) {
           this.native.clickUrl(url, event);
-        }else{//handle #
+        } else {//handle #
           this.pauseVideo(destDid + '-' + channelId + '-' + postId);
           this.toPage.emit({
             destDid: destDid,
@@ -357,7 +358,7 @@ export class LikesComponent implements OnInit {
   }
 
   handlePostText(url: string, event: any) {
-      event.stopPropagation();
+    event.stopPropagation();
   }
 
   async clickRepost(post: FeedsData.PostV3) {
