@@ -40,6 +40,9 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { CommonPageService } from 'src/app/services/common.page.service';
 import { Config } from 'src/app/services/config';
+import { HTTP } from '@awesome-cordova-plugins/http/ngx';
+import { TwitterService } from 'src/app/services/TwitterService';
+import { RedditService } from 'src/app/services/RedditService';
 
 let TAG: string = 'Feeds-home';
 @Component({
@@ -188,6 +191,8 @@ export class HomePage implements OnInit {
   private scrollToTopSid: NodeJS.Timer = null;
   public hideRepostComment = true;
   public repostChannelList: any = [];
+  public rePostMap: any = {};
+  private refreshRepostImageSid = null;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -1332,7 +1337,6 @@ export class HomePage implements OnInit {
             let image = imagedata || '';
             if (image != '') {
               this.isLoadVideoiamge[id] = '13';
-              //video.setAttribute('poster', image);
               this.posterImgMap[id] = image;
               let video: any = document.getElementById(id + 'video') || '';
               if (video != '') {
@@ -1365,10 +1369,6 @@ export class HomePage implements OnInit {
   ionScroll() {
     this.native.throttle(this.handleScroll(), 200, this, true);
     // switch (this.tabType) {
-    //   case 'feeds':
-    //     // this.native.throttle(this.setVisibleareaImageV2(), 60, this, true);
-    //     this.setVisibleareaImageV2();
-    //     break;
     //   case 'pasar':
     //     if (this.styleType === 'grid') {
     //       this.native.throttle(this.setPasarGridVisibleareaImage(), 200, this, true);
@@ -1387,7 +1387,6 @@ export class HomePage implements OnInit {
       this.getObserveList(postList);
       this.clearRefreshImageSid();
     }, 100);
-    //this.newSectionObserver();
   }
 
   clearRefreshImageSid() {
@@ -2353,7 +2352,7 @@ export class HomePage implements OnInit {
       if (exit != null) {
         continue;
       }
-      this.newSectionObserver(postGridId);
+      this.newSectionObserver(postItem, "home");
     }
   }
 
@@ -2376,93 +2375,104 @@ export class HomePage implements OnInit {
     }
   }
 
-  newSectionObserver(postGridId: string) {
+  newSectionObserver(postItem: any, elementsName: string) {
+
+    let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-' + elementsName;
     let observer = this.observerList[postGridId] || null;
+
     if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
     if (item != null) {
-      this.observerList[postGridId] = new IntersectionObserver(async (changes: any) => {
-        let container = changes[0].target;
-        let newId = container.getAttribute("id");
-        let intersectionRatio = changes[0].intersectionRatio;
+      if (elementsName === "home") {
 
-        // let boundingClientRect = changes[0].boundingClientRect;
-        // console.log("======boundingClientRect========",boundingClientRect);
+        this.observerList[postGridId] = new IntersectionObserver(async (changes: any) => {
+          let container = changes[0].target;
+          let newId = container.getAttribute("id");
+          let intersectionRatio = changes[0].intersectionRatio;
 
-        // let rootBounds = changes[0].rootBounds;
-        // console.log("======rootBoundst========",rootBounds);
-
-        // let intersectionRect = changes[0].intersectionRect;
-        // console.log("======intersectionRect========",intersectionRect);
-
-        if (intersectionRatio === 0) {
-          //console.log("======newId leave========", newId);
-          return;
-        }
-        let arr = newId.split("-");
-        let destDid: string = arr[0];
-        let channelId: string = arr[1];
-        let postId: string = arr[2];
-        let mediaType: string = arr[3];
-
-        if (mediaType === '3' || mediaType == '4') {
-          const post = await this.dataHelper.getPostV3ById(postId);
-
-          if (!post || !post.content || !post.content.mediaData || post.content.mediaData.length == 0 || !post.content.mediaData[0] || !post.content.mediaData[0].repostUrl) {
-            console.log('Repost url null');
-            return '';
+          if (intersectionRatio === 0) {
+            return;
           }
-
-          const repostUrl = post.content.mediaData[0].repostUrl;
-          const feedsUrlObj = UtilService.decodeFeedsUrl(repostUrl);
-
-          const repostChannelName = await this.getChannelName(feedsUrlObj.targetDid, feedsUrlObj.channelId);//获取频道name
-          if (!repostChannelName) {
-            //本地没有，去远程拿
-            const remoteChannel = await this.hiveVaultController.getChannelInfoById(feedsUrlObj.targetDid, feedsUrlObj.channelId);
+          let arr = newId.split("-");
+          let destDid: string = arr[0];
+          let channelId: string = arr[1];
+          let postId: string = arr[2];
+          let mediaType: string = arr[3];
+          if (mediaType === '3' || mediaType === '4') {
+            //获取repost
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(postId) || null;
+            // const repostUrl = post.content.mediaData[0].repostUrl;
+            // const feedsUrlObj = UtilService.decodeFeedsUrl(repostUrl);
+            // let loadedRepost: FeedsData.PostV3 = await this.dataHelper.getCachedPostV3ById(feedsUrlObj.postId) || null;//TODO replace with load repost later
+            // if (!loadedRepost) {
+            //   loadedRepost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId, false);
+            // }
+            // this.rePostMap[postId] = loadedRepost;
+            this.rePostMap[postId] = _.cloneDeep(post);
+            this.refreshRepostImageV2(this.rePostMap[postId]);
           }
-
-          const remotePost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId, false);
-          this.handlePostAvatarV2(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId);//获取头像
-          this.getDisplayName(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.targetDid);
-          if (remotePost.content.mediaType === FeedsData.MediaType.containsImg) {
+          await this.getChannelName(destDid, channelId);//获取频道name
+          this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
+          this.getDisplayName(destDid, channelId, destDid);
+          if (mediaType === '1') {
             this.handlePostImgV2(destDid, channelId, postId);
           }
-          if (remotePost.content.mediaType === FeedsData.MediaType.containsVideo) {
+          if (mediaType === '2') {
             //video
             this.handleVideoV2(destDid, channelId, postId);
           }
-        }
-        await this.getChannelName(destDid, channelId);//获取频道name
-        this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
-        this.getDisplayName(destDid, channelId, destDid);
-        if (mediaType === '1') {
-          this.handlePostImgV2(destDid, channelId, postId);
-        }
-        if (mediaType === '2') {
-          //video
-          this.handleVideoV2(destDid, channelId, postId);
-        }
 
-        //post like status
-        CommonPageService.handlePostLikeStatusData(
-          destDid, channelId, postId, this.isInitLikeStatus, this.hiveVaultController,
-          this.likeMap, this.isLoadingLikeMap)
-        //处理post like number
-        CommonPageService.handlePostLikeNumData(
-          destDid, channelId, postId, this.hiveVaultController,
-          this.likeNumMap, this.isInitLikeNum);
-        //处理post comment
-        CommonPageService.handlePostCommentData(
-          destDid, channelId, postId, this.hiveVaultController,
-          this.isInitComment, this.commentNumMap);
-        //console.log("======intersectionRatio1========",typeof(changes[0]));
-        //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
-      });
+          //post like status
+          CommonPageService.handlePostLikeStatusData(
+            destDid, channelId, postId, this.isInitLikeStatus, this.hiveVaultController,
+            this.likeMap, this.isLoadingLikeMap)
+          //处理post like number
+          CommonPageService.handlePostLikeNumData(
+            destDid, channelId, postId, this.hiveVaultController,
+            this.likeNumMap, this.isInitLikeNum);
+          //处理post comment
+          CommonPageService.handlePostCommentData(
+            destDid, channelId, postId, this.hiveVaultController,
+            this.isInitComment, this.commentNumMap);
+          //console.log("======intersectionRatio1========",typeof(changes[0]));
+          //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+        });
 
-      this.observerList[postGridId].observe(item);
+        this.observerList[postGridId].observe(item);
+
+      }
+      // repost
+      if (elementsName === "home-repost") {
+        this.observerList[postGridId] = new IntersectionObserver(async (changes: any) => {
+          let container = changes[0].target;
+          let newId = container.getAttribute("id");
+          let intersectionRatio = changes[0].intersectionRatio;
+
+          if (intersectionRatio === 0) {
+            return;
+          }
+          let arr = newId.split("-");
+          let destDid: string = arr[0];
+          let channelId: string = arr[1];
+          let postId: string = arr[2];
+          let mediaType: string = arr[3];
+          await this.getChannelName(destDid, channelId);//获取频道name
+          this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
+          this.getDisplayName(destDid, channelId, destDid);
+          if (mediaType === '1') {
+            this.handlePostImgV2(destDid, channelId, postId);
+          }
+          if (mediaType === '2') {
+            //video
+            this.handleVideoV2(destDid, channelId, postId);
+          }
+        });
+
+        this.observerList[postGridId].observe(item);
+      }
+
     }
   }
 
@@ -2516,5 +2526,21 @@ export class HomePage implements OnInit {
     this.channelId = channelId;
     this.destDid = destDid;
     this.hideRepostComment = false;
+  }
+
+  refreshRepostImageV2(post = null) {
+    this.clearRefreshRepostImageV2();
+    this.refreshRepostImageSid = setTimeout(() => {
+      this.newSectionObserver(post, "home-repost");
+      this.clearRefreshRepostImageV2();
+    }, 100);
+    //this.newSectionObserver();
+  }
+
+  clearRefreshRepostImageV2() {
+    if (this.refreshRepostImageSid != null) {
+      clearTimeout(this.refreshRepostImageSid);
+      this.refreshRepostImageSid = null;
+    }
   }
 }
