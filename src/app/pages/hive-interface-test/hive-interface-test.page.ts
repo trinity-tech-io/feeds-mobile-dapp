@@ -405,6 +405,45 @@ export class HiveInterfaceTestPage implements OnInit {
     // this.tmpPostList = postList;
   }
 
+
+  async reportRepostToOriginchannel() {
+    const originTargetDid: string = 'did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR';
+    const originChannelId: string = 'originChannelId';
+    const originPostId: string = 'originPostId';
+    const repostNewTargetDid: string = 'repostNewTargetDid';
+    const repostNewChannelId: string = 'repostNewChannelId';
+    const repostNewPostId: string = 'repostNewPostId';
+
+    await this.hiveVaultController.reportRepostToOriginchannel(
+      originTargetDid,
+      originChannelId,
+      originPostId,
+      repostNewTargetDid,
+      repostNewChannelId,
+      repostNewPostId
+    );
+  }
+
+  async removeRepostFromOriginChannel() {
+    const targetDid: string = 'did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR';
+    const repostTargetDid: string = 'repostNewTargetDid';
+    const repostChannelId: string = 'repostNewChannelId';
+    const repostPostId: string = 'repostNewPostId';
+    await this.hiveVaultController.removeRepostFromOriginChannel(
+      targetDid,
+      repostTargetDid,
+      repostChannelId,
+      repostPostId
+    );
+  }
+
+  async queryRepostById() {
+    const targetDid: string = 'did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR';
+    const channelId: string = 'originChannelId';
+    const postId: string = 'originPostId';
+    const result = await this.hiveVaultController.queryRepostById(targetDid, channelId, postId);
+    console.log('queryRepostById result = ', result);
+  }
   // queryPublicPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
   //   return this.hiveVaultController.queryPublicPostById(targetDid, channelId, postId);
   // }
