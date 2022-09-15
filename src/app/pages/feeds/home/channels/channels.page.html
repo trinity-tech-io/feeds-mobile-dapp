@@ -199,6 +199,126 @@
       <ion-row (click)="navToPostDetail(post.destDid, post.channelId, post.postId)" class="noText">
 
       </ion-row>
+      <!--repost-->
+    <ion-grid style="padding-top:5px;border: none;" class="post-grid ion-activatable ripple channelgird" [class.darkPostGrid]="theme.darkMode"
+    id={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}-{{rePostMap[post.postId].content.mediaType}}-channel-repost  *ngIf="rePostMap[post.postId]">
+      <ion-row class="post-row">
+        <ion-col size="1" (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId)"></ion-col>
+        <ion-col class="img-col" size="2.5">
+          <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+            <img src={{channelAvatar}} *ngIf="channelAvatar != '' ">
+          </div>
+        </ion-col>
+        <ion-col class="content-col" size="8" (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId)">
+             <p *ngIf="rePostMap[post.postId].pinStatus==1 " class="pinnedPost"><img src="assets/images/darkmode/pinned.svg"> <span>{{ 'ChannelsPage.pinnedPost' | translate}}</span></p>
+              <ion-label [ngClass]="{'pinnedPostTop':rePostMap[post.postId].pinStatus==1}">
+                {{ channelName }}
+                <span> {{ handleDisplayTime(post.postId,post.createdAt) }}</span>
+              </ion-label>
+          <p *ngIf="channelOwner ==='' ">@......</p>
+          <p *ngIf="channelOwner !='' ">@{{channelOwner}}</p>
+        </ion-col>
+        <ion-col size="0.5" (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId)"></ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="rePostMap[post.postId].content.content===''" (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId)" class="noText">
+
+      </ion-row>
+      <!--text-->
+      <ion-row *ngIf="rePostMap[post.postId].content.content !='' ">
+        <ion-col size="1">
+
+        </ion-col>
+        <ion-col size="10.5" class="postText">
+          <h2 *ngIf="rePostMap[post.postId].status === 1"  (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId)">
+            <pre>{{'common.deleted' | translate}}</pre>
+          </h2>
+          <h2 *ngIf="rePostMap[post.postId].status != 1"  (press)="pressContent(rePostMap[post.postId].content.content)" [style.touch-action]="'pan-y'">
+            <div *ngIf=" getPostContentTextSize(rePostMap[post.postId].content.content)<=maxTextSize" (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId,$event)">
+              <pre  [innerHTML]="getContentText(rePostMap[post.postId].content.content) | html"></pre>
+            </div>
+            <div *ngIf="getPostContentTextSize(rePostMap[post.postId].content.content)>maxTextSize" (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId,$event)">
+              <pre  [innerHTML]="getContentShortText(rePostMap[post.postId]) | html"></pre>
+              <pre  style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
+            </div>
+          </h2>
+        </ion-col>
+        <ion-col size="0.5" (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId)">
+
+        </ion-col>
+      </ion-row>
+      <!--img video-->
+      <ion-row *ngIf="rePostMap[post.postId].content.mediaType ===1 || rePostMap[post.postId].content.mediaType ===2">
+        <ion-col size="12" style="padding: 0px;">
+          <div *ngIf="rePostMap[post.postId].status != 1&&rePostMap[post.postId].content.mediaType ===1"  id ={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}channelrow style="width: 100%">
+              <div style="position:relative;">
+                <app-percentageloading
+                *ngIf="isImgPercentageLoading[rePostMap[post.postId].destDid+'-'+rePostMap[post.postId].channelId+'-'+rePostMap[post.postId].postId]"
+                [ngStyle]="imgloadingStyleObj"
+                [percent]="imgPercent"
+                [rotateNum]="imgRotateNum"
+                >
+                </app-percentageloading>
+
+               <app-roundloading
+                *ngIf="isImgLoading[rePostMap[post.postId].destDid+'-'+rePostMap[post.postId].channelId+'-'+rePostMap[post.postId].postId]"
+                [ngStyle]="imgloadingStyleObj"
+               >
+               </app-roundloading>
+               <div class="noLoadImgStyle" id={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}postimgChannelKuang>
+                <img
+                  *ngIf = "postImgMap[rePostMap[post.postId].destDid+'-'+rePostMap[post.postId].channelId+'-'+rePostMap[post.postId].postId] !='' && postImgMap[rePostMap[post.postId].destDid+'-'+rePostMap[post.postId].channelId+'-'+rePostMap[post.postId].postId] != undefined"
+                  id ={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{rePostMap[post.postId].postId}}postimgchannel
+                  class="post-img postImgBgColor"
+                  [src] = "postImgMap[rePostMap[post.postId].destDid+'-'+rePostMap[post.postId].channelId+'-'+rePostMap[post.postId].postId]"
+                  style="width: 100%;"
+                  (click)="showBigImage(rePostMap[post.postId].destDid,rePostMap[post.postId].channelId,rePostMap[post.postId].postId)">
+              </div>
+              </div>
+           </div>
+          <!--video-->
+          <div *ngIf="rePostMap[post.postId].status!=1&&rePostMap[post.postId].content.mediaType ===2" id={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}vgplayerchannel style="width:100%;position:relative;">
+            <app-roundloading
+            *ngIf="isVideoLoading[rePostMap[post.postId].destDid+'-'+rePostMap[post.postId].channelId+'-'+rePostMap[post.postId].postId]"
+            [ngStyle]="videoloadingStyleObj"
+            >
+            </app-roundloading>
+
+            <app-percentageloading
+            *ngIf="isVideoPercentageLoading[rePostMap[post.postId].destDid+'-'+rePostMap[post.postId].channelId+'-'+rePostMap[post.postId].postId]"
+            [ngStyle]="videoloadingStyleObj"
+            [percent]="videoPercent"
+            [rotateNum]="videoRotateNum"
+            >
+            </app-percentageloading>
+
+              <div style="width: 100%;display:inline-block;height:200px;">
+                <div class="noLoadVideo" id={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}videoChannelKuang>
+               <vg-player>
+                 <vg-overlay-play id={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}vgoverlayplaychannel style="display:none"></vg-overlay-play>
+                 <vg-controls id={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}vgcontrolschannel style="display: none;">
+                     <img class="vgfullscreen" id={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}vgfullscreenchannel src="assets/images/fullscreen.svg"/>
+                 </vg-controls>
+             <video #media [vgMedia]="media" style="display:none;" id ={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}videochannel
+             [poster] = "posterImgMap[rePostMap[post.postId].destDid+'-'+rePostMap[post.postId].channelId+'-'+rePostMap[post.postId].postId]"
+             playsinline webkit-playsinline>
+             <source  type="video/mp4" id={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}sourcechannel>
+             </video>
+             </vg-player>
+             </div>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId)" class="noText">
+
+      </ion-row>
+
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-grid>
+
+
        <!--like comment tip-->
        <ion-row class="bottom-row">
         <ion-col size="0.5"></ion-col>
