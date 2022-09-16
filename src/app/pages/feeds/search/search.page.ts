@@ -83,17 +83,25 @@ export class SearchPage implements OnInit {
    * 2. chenrong
    * 3. asralf
    * 4. BEB domains
-   * 5. EverlastingOS
-   * 6. MButcho
-   * 7. stiartsly
-   * 8. Sash
+   * 5. Bigp
+   * 6. CyberRepublic Malaysia
+   * 7. Cyber Republic News Feeds
+   * 8. EverlastingOS
+   * 9. Elacity office
+   * 10. MButcho
+   * 11. stiartsly
+   * 12. Sash
    */
   private specificPublicChannels = [
     "feeds://v3/did:elastos:iUiJQ5FFTeaUwG77PdihuASGSqQSqP7uWL/8e8fb3cdfe9dba6ab68c04f452e913d9e66974186e81297a8a40a1e669cda725",
     "feeds://v3/did:elastos:iabbGwqUN18F6YxkndmZCiHpRPFsQF1imT/80ae2be9c9ba1a14ce08f457b9ba1411d9c22b60dccbcbbf8c3887919b3d4406",
     "feeds://v3/did:elastos:icZdMxZe6U1Exs6TFsKTzj2pY2JLznPhjC/b6a9ee31c53d9087f3940d6b8db7c86f8fddad06633bcd0c2669d86feab781a8",
     "feeds://v3/did:elastos:iYvskJWD2tB98aFeBwAfcCAJosv6uKbjsG/64768de77141e425c8a64e272bbc3fc31bfc6fa1744dfa9934714d6b3d03c1a6",
+    "feeds://v3/did:elastos:iY9881RDBj4CUzD92tJjYsBEbhan66bGgn/1190262f8fbf1a0e1d8016ddcf05f23496a464b3af0c1a67c726c71d69b774e1",
+    "feeds://v3/did:elastos:icomw2KPLwG9fKm3X71MVMuvZJsiNLp7TT/a90c0fff7e651e4545702613a64cfc5287bef1eb6076f85d554956183bab14de",
+    "feeds://v3/did:elastos:iY9881RDBj4CUzD92tJjYsBEbhan66bGgn/8788e6ea6cd18a119b5b50414026249bb1e4f7de2efd62308eb88ea55098c2e4",
     "feeds://v3/did:elastos:iV3RrXcQEmAqg1HyhDW8BgcaW2WUwmuQLC/dad840a91b6b1cd67a01acffcc5c74dbdf192d6a13b1e39b6d8afe952d2ef825",
+    "feeds://v3/did:elastos:inpCykPj1JMroJfjFvDAGnEGUCGGG3ptwQ/23c020a4bf958b07b2a965a5be0882278e4119d9fb9f0498c7c70d25dde4b97f",
     "feeds://v3/did:elastos:iZM2HZhHnzWKbQWBcbvLk1nFa4EqUEJzrr/ab82eea90e5c20a095af93cf63e7c09a8776f834024954d3b208fa8ca058b98c",
     "feeds://v3/did:elastos:inSeTvmVDj6to7dHSZgkRZuUJYc9yHJChN/d33a4b026b175886212f728fea3333658fa1c821e99e0782b073752c0bccd7d8",
     "feeds://v3/did:elastos:ik9HwavTJhdo2ufc1K7Gz7pLF4yraaVcCR/e72e416508852f63fc0a8badd508f7ddc63c0d9a0d006cd33a57ff9699484f36",

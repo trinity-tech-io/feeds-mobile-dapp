@@ -1833,7 +1833,7 @@ export class HiveVaultHelper {
                 const result = await this.hiveService.downloadFile(remotePath)
                 resolve(result)
             } catch (error) {
-                console.log("downloadFile error:", error)
+                Logger.error(TAG, "downloadFile error:", error);
                 reject(await this.handleError(error))
             }
         });
