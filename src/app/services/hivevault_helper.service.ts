@@ -1779,7 +1779,7 @@ export class HiveVaultHelper {
             }
             catch (error) {
                 Logger.error(TAG, "Download Ess Avatar error: ", error);
-                reject(await this.handleError(error))
+                reject(error)
             }
         });
     }
