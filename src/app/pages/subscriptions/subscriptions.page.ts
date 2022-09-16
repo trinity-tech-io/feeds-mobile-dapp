@@ -46,9 +46,10 @@ export class SubscriptionsPage implements OnInit {
   public isBorderGradient: boolean = false;
   private searchFollowingList: any = [];
   private refreshFollowingImageSid: any = null;
-  private visibleareaItemIndex: number = 0;
   private follingObserver: any = {};
   public userDid: string = "";
+  public isLoading: boolean = true;
+
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -132,10 +133,16 @@ export class SubscriptionsPage implements OnInit {
 
 
   async initFollowing() {
-    let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
-    this.followingList = await this.getFollowedChannelList(subscribedChannel);
-    this.searchFollowingList = _.cloneDeep(this.followingList);
-    this.refreshFollowingVisibleareaImageV2(this.followingList);
+    try {
+      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+      this.followingList = await this.getFollowedChannelList(subscribedChannel);
+      this.searchFollowingList = _.cloneDeep(this.followingList);
+      this.isLoading = false;
+      this.refreshFollowingVisibleareaImageV2(this.followingList);
+    } catch (error) {
+      this.isLoading = false;
+    }
+
   }
 
   async getFollowedChannelList(subscribedChannel: FeedsData.SubscribedChannelV3[]) {
@@ -176,7 +183,6 @@ export class SubscriptionsPage implements OnInit {
 
       this.removeObserveList();
       this.subscriptionV3NumMap = {};
-      this.visibleareaItemIndex = 0;
       this.initFollowing();
       event.target.complete();
     } catch (err) {
@@ -446,24 +452,6 @@ export class SubscriptionsPage implements OnInit {
     this.followingList = _.filter(this.searchFollowingList, (item) => {
       return item.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     });
-  }
-
-  getVisibleareaItemIndex(postgridList: any, postgridNum: any) {
-
-    for (let positionIndex = 0; positionIndex < postgridNum; positionIndex++) {
-      let postgrid = postgridList[positionIndex] || null;
-      if (
-        postgrid != null &&
-        postgrid.getBoundingClientRect().top >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom / 2
-      ) {
-        if (positionIndex === 0) {
-          this.visibleareaItemIndex = positionIndex;
-          return;
-        }
-        this.visibleareaItemIndex = positionIndex;
-      }
-    }
   }
 
   ionBlur() {

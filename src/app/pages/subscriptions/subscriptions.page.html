@@ -9,6 +9,7 @@
       refreshingText="{{'common.beingRefresh'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
+
   <div style="height: 58px;width: 100%;position: absolute;">
     <div class="search-container" [class.dark-search-container]="theme.darkMode" style="padding:0px;">
       <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
@@ -17,7 +18,20 @@
       </form>
     </div>
   </div>
+
+  <!-- first loading -->
+  <ion-row *ngIf="isLoading" style="margin-top:53px;">
+  <ion-col size="12" class="loading">
+  <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>
+  <img *ngIf="theme.darkMode" class="loadingIcon" src="./assets/images/darkmode/nftloading.gif"/>
+  </ion-col>
+  <ion-col size="12" class="loading">
+  <p>{{'common.beingRefresh'|translate}}</p>
+  </ion-col>
+  </ion-row>
+
    <app-following
+   *ngIf="!isLoading"
    [followingList] = "followingList"
    [subscriptionV3NumMap] = "subscriptionV3NumMap"
    [channelAvatarMap]="followAvatarMap"
