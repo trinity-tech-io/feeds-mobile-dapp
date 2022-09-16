@@ -18,6 +18,7 @@ import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { PopupProvider } from 'src/app/services/popup';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { StorageService } from 'src/app/services/StorageService';
 
 @Component({
   selector: 'app-eidtchannel',
@@ -46,7 +47,6 @@ export class EidtchannelPage implements OnInit {
   private popover: any = null;
   public lightThemeType: number = 3;
   public clickButton: boolean = false;
-  private infoPopover: any = null;
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -63,7 +63,8 @@ export class EidtchannelPage implements OnInit {
     private pasarAssistService: PasarAssistService,
     private popupProvider: PopupProvider,
     private feedsServiceApi: FeedsServiceApi,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private storageService: StorageService
   ) { }
 
   async ngOnInit() {
@@ -212,16 +213,17 @@ export class EidtchannelPage implements OnInit {
         channelInfo["tippingAddress"] = tippingAddress;
         this.dataHelper.setChannelInfo(channelInfo);
 
-        let currentFeed: FeedsData.ChannelV3 = this.dataHelper.getCurrentChannel() || null;
+        let currentChannel: FeedsData.ChannelV3 = this.dataHelper.getCurrentChannel() || null;
 
-        if(currentFeed != null && currentFeed.destDid === this.destDid && currentFeed.channelId === this.channelId){
-             currentFeed.displayName = this.displayName;
-             currentFeed.intro = this.channelDes;
+        if(currentChannel != null && currentChannel.destDid === this.destDid && currentChannel.channelId === this.channelId){
+          currentChannel.displayName = this.displayName;
+          currentChannel.intro = this.channelDes;
              result = result || null;
              if(result != null){
-              currentFeed.avatar = result.avatar;
+              currentChannel.avatar = result.avatar;
              }
-             this.dataHelper.setCurrentChannel(currentFeed);
+             this.dataHelper.setCurrentChannel(currentChannel);
+             this.storageService.set('feeds.currentChannel', JSON.stringify(currentChannel));
         }
 
         this.isClickConfirm = true;

@@ -316,12 +316,12 @@ export class MyApp {
   initCurrentChannel() {
     this.dataHelper
       .loadData('feeds.currentChannel')
-      .then(currentFeed => {
-        if (currentFeed === null) {
+      .then(currentChannel => {
+        if (currentChannel === null) {
           this.dataHelper.setCurrentChannel(null);
           return;
         }
-        this.dataHelper.setCurrentChannel(JSON.parse(currentFeed));
+        this.dataHelper.setCurrentChannel(JSON.parse(currentChannel));
       })
       .catch(err => { });
   }

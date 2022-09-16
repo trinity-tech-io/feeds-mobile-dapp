@@ -133,20 +133,21 @@ export class CreatenewpostPage implements OnInit {
   }
 
   async initFeed() {
-    let currentFeed: FeedsData.ChannelV3 = this.dataHelper.getCurrentChannel();
+    let currentChannel: FeedsData.ChannelV3 = this.dataHelper.getCurrentChannel();
 
-    if (currentFeed == null) {
+    if (currentChannel == null) {
       const selfChannelList = await this.dataHelper.getSelfChannelListV3();
-      currentFeed = await this.dataHelper.getChannelV3ById(selfChannelList[0].destDid, selfChannelList[0].channelId);
-      this.dataHelper.setCurrentChannel(currentFeed);
+      currentChannel = await this.dataHelper.getChannelV3ById(selfChannelList[0].destDid, selfChannelList[0].channelId);
+      this.dataHelper.setCurrentChannel(currentChannel);
+      this.storageService.set('feeds.currentChannel', JSON.stringify(currentChannel));
     }
 
-    this.channelIdV3 = currentFeed.channelId;
-    this.channelName = currentFeed['displayName'] || currentFeed['name'] || '';
-    this.subscribers = currentFeed['subscribers'] || '';
-    let channelAvatarUri = currentFeed['avatar'] || '';
+    this.channelIdV3 = currentChannel.channelId;
+    this.channelName = currentChannel['displayName'] || currentChannel['name'] || '';
+    this.subscribers = currentChannel['subscribers'] || '';
+    let channelAvatarUri = currentChannel['avatar'] || '';
     if (channelAvatarUri != '') {
-      let destDid: string = currentFeed.destDid;
+      let destDid: string = currentChannel.destDid;
       this.handleChannelAvatar(channelAvatarUri, destDid);
     }
   }

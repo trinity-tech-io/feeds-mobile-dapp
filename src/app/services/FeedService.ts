@@ -80,7 +80,6 @@ export class FeedService {
   private collectibleStatus: any = {};
   public bindPublisherAccountType: string = '';
   public discoverfeeds: any = [];
-  public currentFeed: any = null;
   public feedPublicStatus: any = {};
   public developerMode: boolean = false;
   public hideDeletedPosts: boolean = false;
@@ -5508,14 +5507,6 @@ export class FeedService {
   ): boolean {
     let ncpId = this.getPostId(nodeId, feedsId, postId);
     return this.dataHelper.isSyncCommnetFinish(ncpId);
-  }
-
-  getCurrentChannel() {
-    return this.currentFeed;
-  }
-
-  setCurrentChannel(currentFeed: any) {
-    this.currentFeed = currentFeed;
   }
 
   getDiscoverfeeds() {
