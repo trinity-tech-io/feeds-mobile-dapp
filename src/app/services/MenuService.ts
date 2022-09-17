@@ -65,7 +65,7 @@ export class MenuService {
       return;
     }
     this.actionSheetMenuStatus = "opening";
-    if(destDid != userDid){
+    if (destDid != userDid) {
       const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
       const cancelButton = this.createCancelButton();
       await this.createActionSheetMenu({
@@ -77,7 +77,7 @@ export class MenuService {
     const cancelButton = this.createCancelButton();
     await this.createActionSheetMenu({
       cssClass: 'editPost',
-      buttons: [ cancelButton ],
+      buttons: [cancelButton],
     });
   }
 
@@ -129,7 +129,7 @@ export class MenuService {
       return;
     }
     this.actionSheetMenuStatus = "opening";
-    if(destDid != userDid){
+    if (destDid != userDid) {
       const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
       const cancelButton = this.createCancelButton();
 
@@ -149,39 +149,56 @@ export class MenuService {
 
   }
 
-  async showPostDetailMenu(destDid: string, channelId: string, channelName: string, postId: string) {
+  async showPostDetailMenu(post: FeedsData.PostV3, channelName: string, needUnpinPost: FeedsData.PostV3) {
     if (this.actionSheetMenuStatus != null) {
       return;
     }
 
     this.actionSheetMenuStatus = "opening";
 
-    const sharePostButton = this.createSharePostButton(destDid, postId);
-    const editPostButton = this.createEditPostButton(destDid, channelId, channelName, postId);
-    const removePostButton = this.createRemovePostButton(destDid, channelId, channelName, postId);
+    const sharePostButton = this.createSharePostButton(post.destDid, post.postId);
+    const editPostButton = this.createEditPostButton(post.destDid, post.channelId, channelName, post.postId);
+    const removePostButton = this.createRemovePostButton(post.destDid, post.channelId, channelName, post.postId);
     const cancelButton = this.createCancelButton();
+
+    let buttons: ActionSheetButton[] = [sharePostButton, cancelButton];
+    if (post.pinStatus == FeedsData.PinStatus.NOTPINNED) {
+      const pinpostButton = this.createPinPostButton(post, needUnpinPost);
+      buttons = [sharePostButton, editPostButton, pinpostButton, removePostButton, cancelButton];
+    } else {
+      const unpinPostButton = this.createUnpinPostButton(post);
+      buttons = [sharePostButton, editPostButton, unpinPostButton, removePostButton, cancelButton];
+    }
 
     await this.createActionSheetMenu({
       cssClass: 'editPost',
-      buttons: [sharePostButton, editPostButton, removePostButton, cancelButton]
+      buttons: buttons
     })
   }
 
-  async showHomeMenu(destDid: string, channelId: string, channelName: string, postId: string) {
+  async showHomeMenu(post: FeedsData.PostV3, channelName: string, needUnpinPost: FeedsData.PostV3) {
     if (this.actionSheetMenuStatus != null) {
       return;
     }
     this.actionSheetMenuStatus = "opening";
-    const sharePostButton = this.createSharePostButton(destDid, postId);
-    const editPostButton = this.createEditPostButton(destDid, channelId, channelName, postId);
-    const removePostButton = this.createRemovePostButton(destDid, channelId, channelName, postId);
-    // const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
-    const cancenButton = this.createCancelButton();
+    const sharePostButton = this.createSharePostButton(post.destDid, post.postId);
+    const editPostButton = this.createEditPostButton(post.destDid, post.channelId, channelName, post.postId);
 
+    const removePostButton = this.createRemovePostButton(post.destDid, post.channelId, channelName, post.postId);
+    // const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
+    const cancelButton = this.createCancelButton();
+
+    let buttons: ActionSheetButton[] = [sharePostButton, cancelButton];
+    if (post.pinStatus == FeedsData.PinStatus.NOTPINNED) {
+      const pinpostButton = this.createPinPostButton(post, needUnpinPost);
+      buttons = [sharePostButton, editPostButton, pinpostButton, removePostButton, cancelButton];
+    } else {
+      const unpinPostButton = this.createUnpinPostButton(post);
+      buttons = [sharePostButton, editPostButton, unpinPostButton, removePostButton, cancelButton];
+    }
     await this.createActionSheetMenu({
       cssClass: 'editPost',
-      buttons: [sharePostButton, editPostButton, removePostButton, cancenButton],
-      // buttons: [sharePostButton, editPostButton, removePostButton, unsubscribeButton, cancenButton],
+      buttons: buttons,
     })
   }
 

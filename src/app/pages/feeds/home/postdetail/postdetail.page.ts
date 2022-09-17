@@ -181,7 +181,7 @@ export class PostdetailPage implements OnInit {
     }
 
     this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
-    this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMap(this.postId,this.hideDeletedComments);
+    this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMap(this.postId, this.hideDeletedComments);
     this.initRelyCommentExtradata();
   }
 
@@ -212,11 +212,11 @@ export class PostdetailPage implements OnInit {
   async initRefresh() {
     this.pageSize = 1;
     this.totalData = await this.sortCommentList();
-    let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
-    if(data.currentPage === data.totalPage){
+    let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+    if (data.currentPage === data.totalPage) {
       this.captainCommentList = data.items
       this.infiniteScroll.disabled = true;
-    }else{
+    } else {
       this.captainCommentList = data.items;
       this.infiniteScroll.disabled = false;
     }
@@ -600,12 +600,12 @@ export class PostdetailPage implements OnInit {
   async menuMore() {
     let isMine = await this.checkChannelIsMine();
     this.pauseVideo();
+    const needUnpinPost = await this.dataHelper.queryChannelPinPostData(this.channelId);
     if (isMine === 1 && this.postStatus != 1) {
       this.menuService.showPostDetailMenu(
-        this.destDid,
-        this.channelId,
+        this.post,
         this.channelName,
-        this.postId,
+        needUnpinPost
       );
     } else {
       this.menuService.showShareMenu(
@@ -755,20 +755,20 @@ export class PostdetailPage implements OnInit {
 
   loadData(event: any) {
 
-    let sid = setTimeout(()=>{
+    let sid = setTimeout(() => {
       this.pageSize++;
-      let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
-      if(data.currentPage === data.totalPage){
-        this.captainCommentList  = this.captainCommentList.concat(data.items);
+      let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+      if (data.currentPage === data.totalPage) {
+        this.captainCommentList = this.captainCommentList.concat(data.items);
         event.target.disabled = true;
-      }else{
-        this.captainCommentList  = this.captainCommentList.concat(data.items);
+      } else {
+        this.captainCommentList = this.captainCommentList.concat(data.items);
       }
       this.initOwnCommentObj();
       this.refreshLikeAndCommentV2(data.items);
       clearTimeout(sid);
       event.target.complete();
-    },500);
+    }, 500);
 
   }
 
@@ -855,7 +855,7 @@ export class PostdetailPage implements OnInit {
             let sid = setTimeout(() => {
               let video: any =
                 document.getElementById(id + 'postdetailvideo') || '';
-              if(video != ''){
+              if (video != '') {
                 video.setAttribute('poster', this.posterImg);
               }
               this.setFullScreen();
@@ -964,7 +964,7 @@ export class PostdetailPage implements OnInit {
       let id = this.destDid + this.channelId + this.postId;
       let video: any = document.getElementById(id + 'postdetailvideo') || '';
       let source: any = document.getElementById(id + 'postdetailsource') || '';
-      if (video !='' && source != '' && !video.paused) {
+      if (video != '' && source != '' && !video.paused) {
         //判断是否处于暂停状态
         video.pause(); //停止播放
       }
@@ -1001,7 +1001,7 @@ export class PostdetailPage implements OnInit {
         let videoSrc: string = document
           .getElementById(id + 'postdetailsource')
           .getAttribute('src');
-          await this.native.setVideoFullScreen(
+        await this.native.setVideoFullScreen(
           postImg,
           videoSrc,
         );
@@ -1020,7 +1020,7 @@ export class PostdetailPage implements OnInit {
 
           let source: any =
             document.getElementById(id + 'postdetailsource') || '';
-          if(source === ''){
+          if (source === '') {
             return;
           }
           let sourceSrc = source.getAttribute('src') || '';
@@ -1073,30 +1073,30 @@ export class PostdetailPage implements OnInit {
           return;
         }
         let url = target.textContent || target.innerText;
-        let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+        let reg = /(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
         var urlExp = new RegExp(reg);
-        if(urlExp.test(url) === true){
+        if (urlExp.test(url) === true) {
           this.native.clickUrl(url, event);
-        }else{//
-           this.handlePostText(url, event);
+        } else {//
+          this.handlePostText(url, event);
         }
       }
     }
   }
 
-  handleDisplayTime(commentId: string,createTime: number) {
-   let newCommentTime = this.commentTime[commentId] || null;
-   if( newCommentTime != null ){
+  handleDisplayTime(commentId: string, createTime: number) {
+    let newCommentTime = this.commentTime[commentId] || null;
+    if (newCommentTime != null) {
       return newCommentTime;
-   }
+    }
     let obj = UtilService.handleDisplayTime(createTime);
     if (obj.type === 's') {
-      this.commentTime[commentId] =  this.translate.instant('common.just');
+      this.commentTime[commentId] = this.translate.instant('common.just');
       return this.commentTime[commentId];
     }
     if (obj.type === 'm') {
       if (obj.content === 1) {
-        this.commentTime[commentId] =  obj.content + this.translate.instant('HomePage.oneminuteAgo');
+        this.commentTime[commentId] = obj.content + this.translate.instant('HomePage.oneminuteAgo');
         return this.commentTime[commentId];
       }
       this.commentTime[commentId] = obj.content + this.translate.instant('HomePage.minutesAgo');
@@ -1114,7 +1114,7 @@ export class PostdetailPage implements OnInit {
     if (obj.type === 'day') {
       if (obj.content === 1) {
         this.commentTime[commentId] = this.translate.instant('common.yesterday');
-        return  this.commentTime[commentId];
+        return this.commentTime[commentId];
       }
       this.commentTime[commentId] = obj.content + this.translate.instant('HomePage.daysAgo');
 
@@ -1155,12 +1155,12 @@ export class PostdetailPage implements OnInit {
       let target = e.target || e.srcElement; //判断目标事件
       if (target.tagName.toLowerCase() == 'span') {
         let url = target.textContent || target.innerText;
-        let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+        let reg = /(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
         var urlExp = new RegExp(reg);
-        if(urlExp.test(url) === true){
+        if (urlExp.test(url) === true) {
           this.native.clickUrl(url, event);
-        }else{//
-           this.handlePostText(url, event);
+        } else {//
+          this.handlePostText(url, event);
         }
         return;
       }
@@ -1232,53 +1232,53 @@ export class PostdetailPage implements OnInit {
   }
 
 
-  async handleLikeAndCommentV2(destDid: string, channelId: string, postId: string, commentId: string,userDid: string) {
+  async handleLikeAndCommentV2(destDid: string, channelId: string, postId: string, commentId: string, userDid: string) {
     let ownerDid = this.ownerDid || "";
-    if(ownerDid === ""){
+    if (ownerDid === "") {
       ownerDid = (await this.dataHelper.getSigninData()).did;
       this.ownerDid = ownerDid;
     }
 
-    let id = destDid + '-' + channelId + '-' + postId + '-' + commentId+"-"+userDid;
-        //处理Name
-        CommonPageService.handleDisplayUserName(
-          id,this.isInitUserNameMap,
-          this.userNameMap, this.hiveVaultController,
-          ownerDid,
-          this.channelName
-        );
-        //处理commnet like status
-        CommonPageService.
-          handleCommentLikeStatus(
-            id, this.hiveVaultController,
-            this.isInitLikeStatus, this.isloadingLikeMap,
-            this.likedCommentMap);
-        //处理commnet like num
-        CommonPageService.handleCommentLikeNum(
-          id,this.hiveVaultController,
-          this.isInitLikeNum, this.likedCommentNum);
-        //处理post comment
-        CommonPageService.handleCommentNum(
-          id, this.hiveVaultController,
-          this.isInitComment, this.commentNum
-        )
+    let id = destDid + '-' + channelId + '-' + postId + '-' + commentId + "-" + userDid;
+    //处理Name
+    CommonPageService.handleDisplayUserName(
+      id, this.isInitUserNameMap,
+      this.userNameMap, this.hiveVaultController,
+      ownerDid,
+      this.channelName
+    );
+    //处理commnet like status
+    CommonPageService.
+      handleCommentLikeStatus(
+        id, this.hiveVaultController,
+        this.isInitLikeStatus, this.isloadingLikeMap,
+        this.likedCommentMap);
+    //处理commnet like num
+    CommonPageService.handleCommentLikeNum(
+      id, this.hiveVaultController,
+      this.isInitLikeNum, this.likedCommentNum);
+    //处理post comment
+    CommonPageService.handleCommentNum(
+      id, this.hiveVaultController,
+      this.isInitComment, this.commentNum
+    )
 
   }
 
-  async handleUserNameV2(destDid: string, channelId: string,postId: string, commentId: string, userDid: string) {
+  async handleUserNameV2(destDid: string, channelId: string, postId: string, commentId: string, userDid: string) {
 
     let ownerDid = this.ownerDid || "";
-    if(ownerDid === ""){
+    if (ownerDid === "") {
       ownerDid = (await this.dataHelper.getSigninData()).did;
       this.ownerDid = ownerDid;
     }
 
-    let id = destDid + '-' + channelId + '-' + postId + '-' + commentId+"-"+userDid;
+    let id = destDid + '-' + channelId + '-' + postId + '-' + commentId + "-" + userDid;
     CommonPageService.handleDisplayUserName(
-    id,this.isInitUserNameMap,
-    this.userNameMap, this.hiveVaultController,
-    ownerDid,
-    this.userNameMap[userDid]
+      id, this.isInitUserNameMap,
+      this.userNameMap, this.hiveVaultController,
+      ownerDid,
+      this.userNameMap[userDid]
     );
   }
 
@@ -1286,14 +1286,14 @@ export class PostdetailPage implements OnInit {
     event.stopPropagation();
   }
 
-  getCaptainCommentObserveList(commentList = []){
-    for(let index = 0; index < commentList.length; index++){
-      let commentItem =  commentList[index];
-      let postGridId = commentItem.destDid+"-"+commentItem.channelId+"-"
-      +commentItem.postId+"-"+commentItem.commentId+"-"+commentItem.createrDid+'-captainComment';
+  getCaptainCommentObserveList(commentList = []) {
+    for (let index = 0; index < commentList.length; index++) {
+      let commentItem = commentList[index];
+      let postGridId = commentItem.destDid + "-" + commentItem.channelId + "-"
+        + commentItem.postId + "-" + commentItem.commentId + "-" + commentItem.createrDid + '-captainComment';
       let exit = this.captainObserverList[postGridId] || null;
-      if(exit != null){
-         continue;
+      if (exit != null) {
+        continue;
       }
       this.newCaptainCommentObserver(postGridId);
     }
@@ -1301,44 +1301,44 @@ export class PostdetailPage implements OnInit {
 
   newCaptainCommentObserver(postGridId: string) {
     let observer = this.captainObserverList[postGridId] || null;
-    if(observer != null){
+    if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
-    if(item != null ){
-    this.captainObserverList[postGridId] = new IntersectionObserver(async (changes:any)=>{
-    let container = changes[0].target;
-    let newId = container.getAttribute("id");
-    let intersectionRatio = changes[0].intersectionRatio;
+    if (item != null) {
+      this.captainObserverList[postGridId] = new IntersectionObserver(async (changes: any) => {
+        let container = changes[0].target;
+        let newId = container.getAttribute("id");
+        let intersectionRatio = changes[0].intersectionRatio;
 
-    if(intersectionRatio === 0){
-      //console.log("======newId leave========", newId);
-      return;
-    }
-    let arr =  newId.split("-");
-    let destDid: string = arr[0];
-    let channelId: string = arr[1];
-    let postId: string = arr[2];
-    let commentId: string = arr[3];
-    let createrDid: string = arr[4];
-    this.handleLikeAndCommentV2(destDid, channelId,postId, commentId, createrDid);
-    });
-    this.captainObserverList[postGridId].observe(item);
+        if (intersectionRatio === 0) {
+          //console.log("======newId leave========", newId);
+          return;
+        }
+        let arr = newId.split("-");
+        let destDid: string = arr[0];
+        let channelId: string = arr[1];
+        let postId: string = arr[2];
+        let commentId: string = arr[3];
+        let createrDid: string = arr[4];
+        this.handleLikeAndCommentV2(destDid, channelId, postId, commentId, createrDid);
+      });
+      this.captainObserverList[postGridId].observe(item);
     }
   }
 
   removeCaptainCommentObserverList() {
-    for(let postGridId in this.captainObserverList){
+    for (let postGridId in this.captainObserverList) {
       let observer = this.captainObserverList[postGridId] || null;
       this.removeCaptainCommentObserver(postGridId, observer)
     }
     this.captainObserverList = {};
   }
 
-  removeCaptainCommentObserver(postGridId: string, observer: any){
+  removeCaptainCommentObserver(postGridId: string, observer: any) {
     let item = document.getElementById(postGridId) || null;
-    if(item != null){
-      if( observer != null ){
+    if (item != null) {
+      if (observer != null) {
         observer.unobserve(item);//解除观察器
         observer.disconnect();  // 关闭观察器
         this.captainObserverList[postGridId] = null;
@@ -1346,14 +1346,14 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  getReplyCommentObserverList(replyCommentList = []){
-    for(let index = 0; index < replyCommentList.length; index++){
-      let commentItem =  replyCommentList[index];
-      let postGridId = commentItem.destDid+"-"+commentItem.channelId+"-"
-      +commentItem.postId+"-"+commentItem.commentId+"-"+commentItem.createrDid+'-replyComment';
+  getReplyCommentObserverList(replyCommentList = []) {
+    for (let index = 0; index < replyCommentList.length; index++) {
+      let commentItem = replyCommentList[index];
+      let postGridId = commentItem.destDid + "-" + commentItem.channelId + "-"
+        + commentItem.postId + "-" + commentItem.commentId + "-" + commentItem.createrDid + '-replyComment';
       let exit = this.replyObserverList[postGridId] || null;
-      if(exit != null){
-         continue;
+      if (exit != null) {
+        continue;
       }
       this.newReplyCommentObserver(postGridId);
     }
@@ -1361,36 +1361,36 @@ export class PostdetailPage implements OnInit {
 
   newReplyCommentObserver(postGridId: string) {
     let observer = this.replyObserverList[postGridId] || null;
-    if(observer != null){
+    if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
-    if(item != null ){
-    this.replyObserverList[postGridId] = new IntersectionObserver(async (changes:any)=>{
-    let container = changes[0].target;
-    let newId = container.getAttribute("id");
-    let intersectionRatio = changes[0].intersectionRatio;
+    if (item != null) {
+      this.replyObserverList[postGridId] = new IntersectionObserver(async (changes: any) => {
+        let container = changes[0].target;
+        let newId = container.getAttribute("id");
+        let intersectionRatio = changes[0].intersectionRatio;
 
-    if(intersectionRatio === 0){
-      //console.log("======newId leave========", newId);
-      return;
-    }
-    let arr =  newId.split("-");
-    let destDid: string = arr[0];
-    let channelId: string = arr[1];
-    let postId: string = arr[2];
-    let commentId: string = arr[3];
-    let createrDid: string = arr[4];
-    this,this.handleUserNameV2(destDid, channelId, postId, commentId, createrDid);
-    });
-    this.replyObserverList[postGridId].observe(item);
+        if (intersectionRatio === 0) {
+          //console.log("======newId leave========", newId);
+          return;
+        }
+        let arr = newId.split("-");
+        let destDid: string = arr[0];
+        let channelId: string = arr[1];
+        let postId: string = arr[2];
+        let commentId: string = arr[3];
+        let createrDid: string = arr[4];
+        this, this.handleUserNameV2(destDid, channelId, postId, commentId, createrDid);
+      });
+      this.replyObserverList[postGridId].observe(item);
     }
   }
 
-  removeReplyCommentObserver(postGridId: string, observer: any){
+  removeReplyCommentObserver(postGridId: string, observer: any) {
     let item = document.getElementById(postGridId) || null;
-    if(item != null){
-      if( observer != null ){
+    if (item != null) {
+      if (observer != null) {
         observer.unobserve(item);//解除观察器
         observer.disconnect();  // 关闭观察器
         this.replyObserverList[postGridId] = null;
@@ -1398,8 +1398,8 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  removeReplyCommentObserverList(){
-    for(let postGridId in this.replyObserverList){
+  removeReplyCommentObserverList() {
+    for (let postGridId in this.replyObserverList) {
       let observer = this.replyObserverList[postGridId] || null;
       this.removeReplyCommentObserver(postGridId, observer)
     }

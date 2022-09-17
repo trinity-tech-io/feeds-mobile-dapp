@@ -247,6 +247,24 @@ export class FeedsSqliteHelper {
     });
   }
 
+  queryChannelPinPostData(dbUserDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW + ' WHERE channel_id=? and pin_status=1';
+        const params = [channelId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        // const pinpostList = await this.queryPinPostDataByChannelId(dbUserDid, channelId);
+        const postList = this.parsePostData(result);
+
+        Logger.log(TAG, 'query channel pin post data by channel id result: ', postList)
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'query channel pin post table error', error);
+        reject(error);
+      }
+    });
+  }
+
   insertPostData(dbUserDid: string, postV3: FeedsData.PostV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {

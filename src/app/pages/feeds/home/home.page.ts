@@ -236,10 +236,10 @@ export class HomePage implements OnInit {
     this.pageSize = 1;
     if (scrollToTop) {
       this.totalData = await this.sortPostList();
-      let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
-      if(data.currentPage === data.totalPage){
+      let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+      if (data.currentPage === data.totalPage) {
         this.postList = data.items
-      }else{
+      } else {
         this.postList = data.items;
       }
       this.scrollToTop();
@@ -713,13 +713,13 @@ export class HomePage implements OnInit {
       let target = e.target || e.srcElement; //判断目标事件
       if (target.tagName.toLowerCase() == 'span') {
         let url = target.textContent || target.innerText;
-      let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
-      var urlExp = new RegExp(reg);
-      if(urlExp.test(url) === true){
-        this.native.clickUrl(url, event);
-      }else{//
-         this.handlePostText(url, event);
-      }
+        let reg = /(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+        var urlExp = new RegExp(reg);
+        if (urlExp.test(url) === true) {
+          this.native.clickUrl(url, event);
+        } else {//
+          this.handlePostText(url, event);
+        }
         return;
       }
     }
@@ -785,12 +785,12 @@ export class HomePage implements OnInit {
   async menuMore(post: FeedsData.PostV3) {
     let destDid = post.destDid;
     let channelName = await this.getChannelName(post.destDid, post.channelId);
+    const needUnpinPost = await this.dataHelper.queryChannelPinPostData(post.channelId);
     if (this.ownerDid != '' && this.ownerDid === destDid) {//自己的post
       this.menuService.showHomeMenu(
-        post.destDid,
-        post.channelId,
+        post,
         channelName,
-        post.postId,
+        needUnpinPost,
       );
     } else {//别人的post
       this.menuService.showOtherChannelMenu(
@@ -809,7 +809,7 @@ export class HomePage implements OnInit {
     if (channel === null) {
       channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
       this.channelMap[key] = channel;
-    }else{
+    } else {
       channel = this.channelMap[key];
     }
     this.channelMap[key] = channel;
@@ -836,19 +836,19 @@ export class HomePage implements OnInit {
         //     event.target.complete();
         //   });
         // });
-        let sid = setTimeout(()=>{
+        let sid = setTimeout(() => {
           this.pageSize++;
-          let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
-          if(data.currentPage === data.totalPage){
+          let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+          if (data.currentPage === data.totalPage) {
             this.postList = this.postList.concat(data.items);
             event.target.disabled = true;
-          }else{
+          } else {
             this.postList = this.postList.concat(data.items);
           }
           this.refreshImageV2(data.items);
           clearTimeout(sid);
           event.target.complete();
-        },500);
+        }, 500);
 
         break;
       case 'pasar':
@@ -972,8 +972,8 @@ export class HomePage implements OnInit {
     }, 10);
   }
 
-  clearScrollToTopSid(){
-    if(this.scrollToTopSid !=null){
+  clearScrollToTopSid() {
+    if (this.scrollToTopSid != null) {
       clearTimeout(this.scrollToTopSid);
       this.scrollToTopSid = null;
     }
@@ -1015,62 +1015,62 @@ export class HomePage implements OnInit {
     this.hideComment = true;
   }
 
-  async handlePostAvatarV2(destDid: string,channelId: string,postId: string) {
+  async handlePostAvatarV2(destDid: string, channelId: string, postId: string) {
     // 13 存在 12不存在
-    let id = destDid+"-"+channelId;
+    let id = destDid + "-" + channelId;
     let isload = this.isLoadAvatarImage[id] || '';
 
-        if (isload === '') {
-          this.isLoadAvatarImage[id] = '11';
-          let key = destDid + "-" + channelId;
-          let channel: FeedsData.ChannelV3 = this.channelMap[key] || null;
-          if (channel === null) {
-            channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-            this.channelMap[key] = channel;
+    if (isload === '') {
+      this.isLoadAvatarImage[id] = '11';
+      let key = destDid + "-" + channelId;
+      let channel: FeedsData.ChannelV3 = this.channelMap[key] || null;
+      if (channel === null) {
+        channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+        this.channelMap[key] = channel;
+      } else {
+        channel = this.channelMap[key];
+      }
+      let avatarUri = "";
+      if (channel === null) {
+        return;
+      }
+      avatarUri = channel.avatar || "";
+      if (avatarUri === "") {
+        return;
+      }
+      let fileName: string = avatarUri.split("@")[0];
+      //头像
+      this.hiveVaultController.
+        getV3Data(destDid, avatarUri, fileName, "0")
+        .then(imagedata => {
+          let realImage = imagedata || '';
+          if (realImage != '') {
+
+            this.channelAvatarMap[id] = realImage;
+            this.isLoadAvatarImage[id] = "13";
+
           } else {
-            channel = this.channelMap[key];
+            this.isLoadAvatarImage[id] = "13";
           }
-          let avatarUri = "";
-          if(channel === null){
-             return;
-          }
-          avatarUri = channel.avatar || "";
-          if(avatarUri === ""){
-             return;
-          }
-          let fileName: string = avatarUri.split("@")[0];
-          //头像
-          this.hiveVaultController.
-            getV3Data(destDid, avatarUri, fileName, "0")
-            .then(imagedata => {
-              let realImage = imagedata || '';
-              if (realImage != '') {
+        })
+        .catch(reason => {
+          // this.downPostAvatarMap[fileName] = "";
+          // for (let key in this.avatarImageMap) {
+          //   let uri = this.avatarImageMap[key] || "";
+          //   if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
+          //     this.isLoadAvatarImage[key] = '13';
+          //     delete this.avatarImageMap[key];
+          //   }
 
-                  this.channelAvatarMap[id] = realImage;
-                  this.isLoadAvatarImage[id] = "13";
+          // }
+          this.isLoadAvatarImage[id] = '';
 
-              } else {
-                this.isLoadAvatarImage[id] = "13";
-              }
-            })
-            .catch(reason => {
-              // this.downPostAvatarMap[fileName] = "";
-              // for (let key in this.avatarImageMap) {
-              //   let uri = this.avatarImageMap[key] || "";
-              //   if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
-              //     this.isLoadAvatarImage[key] = '13';
-              //     delete this.avatarImageMap[key];
-              //   }
-
-              // }
-              this.isLoadAvatarImage[id] = '';
-
-              Logger.error(TAG,
-                "Excute 'handlePostAvatarV2' in home page is error , get image data error, error msg is ",
-                reason
-              );
-            });
-        }
+          Logger.error(TAG,
+            "Excute 'handlePostAvatarV2' in home page is error , get image data error, error msg is ",
+            reason
+          );
+        });
+    }
   }
 
 
@@ -1179,81 +1179,81 @@ export class HomePage implements OnInit {
 
   async handlePostImgV2(destDid: string, channelId: string, postId: string) {
     // 13 存在 12不存在
-    let id = destDid+'-'+channelId+'-'+postId;
+    let id = destDid + '-' + channelId + '-' + postId;
     let isload = this.isLoadimage[id] || '';
     let rpostimg = document.getElementById(id + 'rpostimg');
     //let postImage = document.getElementById(id + 'postimg');
     try {
-        if (isload === '') {
-          this.isLoadimage[id] = '11';
-          let post = this.postMap[postId] || null;
-          if (post === null) {
-            post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-            this.postMap[postId] = post;
-          }
-          if (post === null) {
-            this.isLoadimage[id] = 13;
-            return;
-          }
-          let mediaDatas = post.content.mediaData;
-          const elements = mediaDatas[0];
-          //缩略图
-          let thumbnailKey = elements.thumbnailPath || '';
-          //原图
-          let imageKey = elements.originMediaPath || '';
-          let type = elements.type || '';
-          if (thumbnailKey === '' || imageKey === '') {
-            this.isLoadimage[id] = '13';
-            return;
-          }
-          //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-          let fileOriginName: string = imageKey.split("@")[0];
-          let fileThumbnaiName: string = thumbnailKey.split("@")[0];
-
-          //原图
-          this.hiveVaultController.
-            getV3Data(destDid, imageKey, fileOriginName, type, "false")
-            .then(imagedata => {
-              let realImage = imagedata || '';
-              if (realImage != '') {
-                this.isLoadimage[id] = '13';
-                //postImage.setAttribute('src', realImage);
-                this.postImgMap[id] = realImage;
-                rpostimg.style.display = 'block';
-              } else {
-                this.hiveVaultController.
-                  getV3Data(destDid, thumbnailKey, fileThumbnaiName, type).
-                  then((thumbImagedata) => {
-                    let thumbImage = thumbImagedata || "";
-                    if (thumbImage != '') {
-                      this.isLoadimage[id] = '13';
-                      this.postImgMap[id] = thumbImagedata;
-                      rpostimg.style.display = 'block';
-                    } else {
-                      this.isLoadimage[id] = '12';
-                      rpostimg.style.display = 'block';
-                    }
-                  }).catch(() => {
-                    rpostimg.style.display = 'none';
-                  })
-              }
-            })
-            .catch(reason => {
-              rpostimg.style.display = 'none';
-              Logger.error(TAG,
-                "Excute 'handlePostImg' in home page is error , get image data error, error msg is ",
-                reason
-              );
-            });
+      if (isload === '') {
+        this.isLoadimage[id] = '11';
+        let post = this.postMap[postId] || null;
+        if (post === null) {
+          post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+          this.postMap[postId] = post;
         }
-      } catch (error) {
+        if (post === null) {
+          this.isLoadimage[id] = 13;
+          return;
+        }
+        let mediaDatas = post.content.mediaData;
+        const elements = mediaDatas[0];
+        //缩略图
+        let thumbnailKey = elements.thumbnailPath || '';
+        //原图
+        let imageKey = elements.originMediaPath || '';
+        let type = elements.type || '';
+        if (thumbnailKey === '' || imageKey === '') {
+          this.isLoadimage[id] = '13';
+          return;
+        }
+        //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+        let fileOriginName: string = imageKey.split("@")[0];
+        let fileThumbnaiName: string = thumbnailKey.split("@")[0];
+
+        //原图
+        this.hiveVaultController.
+          getV3Data(destDid, imageKey, fileOriginName, type, "false")
+          .then(imagedata => {
+            let realImage = imagedata || '';
+            if (realImage != '') {
+              this.isLoadimage[id] = '13';
+              //postImage.setAttribute('src', realImage);
+              this.postImgMap[id] = realImage;
+              rpostimg.style.display = 'block';
+            } else {
+              this.hiveVaultController.
+                getV3Data(destDid, thumbnailKey, fileThumbnaiName, type).
+                then((thumbImagedata) => {
+                  let thumbImage = thumbImagedata || "";
+                  if (thumbImage != '') {
+                    this.isLoadimage[id] = '13';
+                    this.postImgMap[id] = thumbImagedata;
+                    rpostimg.style.display = 'block';
+                  } else {
+                    this.isLoadimage[id] = '12';
+                    rpostimg.style.display = 'block';
+                  }
+                }).catch(() => {
+                  rpostimg.style.display = 'none';
+                })
+            }
+          })
+          .catch(reason => {
+            rpostimg.style.display = 'none';
+            Logger.error(TAG,
+              "Excute 'handlePostImg' in home page is error , get image data error, error msg is ",
+              reason
+            );
+          });
+      }
+    } catch (error) {
       this.isLoadimage[id] = '';
       this.postImgMap[id] = '';
     }
   }
 
   async handleVideoV2(destDid: string, channelId: string, postId: string) {
-    let id = destDid+'-'+channelId+'-'+postId;
+    let id = destDid + '-' + channelId + '-' + postId;
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
     let source: any = document.getElementById(id + 'source') || '';
     let downStatus = this.videoDownStatus[id] || '';
@@ -1262,64 +1262,64 @@ export class HomePage implements OnInit {
     }
     try {
 
-        if (isloadVideoImg === '') {
-          this.isLoadVideoiamge[id] = '11';
-          let post = this.postMap[postId] || null;
+      if (isloadVideoImg === '') {
+        this.isLoadVideoiamge[id] = '11';
+        let post = this.postMap[postId] || null;
 
-          if (post === null) {
-            post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-            this.postMap[postId] = post;
-          }
-          if (post === null) {
-            this.isLoadVideoiamge[id] = '13';
-          }
+        if (post === null) {
+          post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+          this.postMap[postId] = post;
+        }
+        if (post === null) {
+          this.isLoadVideoiamge[id] = '13';
+        }
 
-          let mediaDatas = post.content.mediaData;
-          const elements = mediaDatas[0];
+        let mediaDatas = post.content.mediaData;
+        const elements = mediaDatas[0];
 
-          //缩略图
-          let videoThumbnailKey = elements.thumbnailPath || '';
-          if (videoThumbnailKey === '') {
-            this.isLoadimage[id] = '13';
-            return;
-          }
-          //原图
-          //let imageKey = elements.originMediaPath;
-          let type = elements.type;
-          //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
-          let fileName: string = videoThumbnailKey.split("@")[0];
-          this.hiveVaultController
-            .getV3Data(destDid, videoThumbnailKey, fileName, type)
-            .then(imagedata => {
-              let image = imagedata || '';
-              if (image != '') {
-                this.isLoadVideoiamge[id] = '13';
-                //video.setAttribute('poster', image);
-                this.posterImgMap[id] = image;
-                let video: any = document.getElementById(id + 'video') || '';
-                if(video != ''){
-                  video.style.display = "block";
-                    //video.
+        //缩略图
+        let videoThumbnailKey = elements.thumbnailPath || '';
+        if (videoThumbnailKey === '') {
+          this.isLoadimage[id] = '13';
+          return;
+        }
+        //原图
+        //let imageKey = elements.originMediaPath;
+        let type = elements.type;
+        //bf54ddadf517be3f1fd1ab264a24e86e@feeds/data/bf54ddadf517be3f1fd1ab264a24e86e
+        let fileName: string = videoThumbnailKey.split("@")[0];
+        this.hiveVaultController
+          .getV3Data(destDid, videoThumbnailKey, fileName, type)
+          .then(imagedata => {
+            let image = imagedata || '';
+            if (image != '') {
+              this.isLoadVideoiamge[id] = '13';
+              //video.setAttribute('poster', image);
+              this.posterImgMap[id] = image;
+              let video: any = document.getElementById(id + 'video') || '';
+              if (video != '') {
+                video.style.display = "block";
+                //video.
                 this.setFullScreen(id);
                 this.setOverPlay(id, id, post);
-                }
-
-              } else {
-                this.isLoadVideoiamge[id] = '13';
-                //vgplayer.style.display = 'none';
               }
-            })
-            .catch(reason => {
+
+            } else {
+              this.isLoadVideoiamge[id] = '13';
               //vgplayer.style.display = 'none';
-              this.isLoadVideoiamge[id] = '';
-              Logger.error(TAG,
-                "Excute 'hanldVideo' in home page is error , get image data error, error msg is ",
-                reason
-              );
-            });
-        }
-      } catch (error) {
-        console.log("=============video10");
+            }
+          })
+          .catch(reason => {
+            //vgplayer.style.display = 'none';
+            this.isLoadVideoiamge[id] = '';
+            Logger.error(TAG,
+              "Excute 'hanldVideo' in home page is error , get image data error, error msg is ",
+              reason
+            );
+          });
+      }
+    } catch (error) {
+      console.log("=============video10");
       this.isLoadVideoiamge[id] = '';
     }
   }
@@ -1410,7 +1410,7 @@ export class HomePage implements OnInit {
 
   setFullScreen(id: string) {
     let vgfullscreen = document.getElementById(id + 'vgfullscreenhome') || null;
-    if(vgfullscreen === null){
+    if (vgfullscreen === null) {
       return;
     }
     vgfullscreen.onclick = async () => {
@@ -1551,35 +1551,35 @@ export class HomePage implements OnInit {
     let vgcontrol: any = document.getElementById(id + 'vgcontrolshome') || '';
 
     let video: any = document.getElementById(id + 'video') || '';
-    if(video === ''){
+    if (video === '') {
       return;
     }
     video.addEventListener('ended', () => {
-      if(vgoverlayplay != ''){
+      if (vgoverlayplay != '') {
         vgoverlayplay.style.display = 'block';
       }
-      if(vgcontrol != ''){
+      if (vgcontrol != '') {
         vgcontrol.style.display = 'none';
       }
     });
 
     video.addEventListener('pause', () => {
-      if(vgoverlayplay != ''){
+      if (vgoverlayplay != '') {
         vgoverlayplay.style.display = 'block';
       }
-      if(vgcontrol != ''){
+      if (vgcontrol != '') {
         vgcontrol.style.display = 'none';
       }
     });
 
     video.addEventListener('play', () => {
-      if(vgoverlayplay != ''){
+      if (vgoverlayplay != '') {
         vgoverlayplay.style.display = 'block';
       }
     });
 
     video.addEventListener('canplay', () => {
-      if(video != ''){
+      if (video != '') {
         video.play();
       }
     });
@@ -2304,7 +2304,7 @@ export class HomePage implements OnInit {
   }
 
   clickClose() {
-    if(this.showPostSearch){
+    if (this.showPostSearch) {
       this.showPostSearch = false;
       this.handleRefresherInfinite(false);
       this.postList = _.cloneDeep(this.serachPostList);
@@ -2321,54 +2321,54 @@ export class HomePage implements OnInit {
   }
 
   async handlePostText(url: string, event: any) {
-      this.showPostSearch = true;
-      this.searchPostText = url;
-      this.handleRefresherInfinite(true);
-      event.stopPropagation();
-      let newList = await this.sortPostList();
-      this.serachPostList = _.cloneDeep(this.postList);
-      this.postList = _.filter(newList,(item: FeedsData.PostV3)=>{
-         let status = item.status;
-         if(status != 1){
-          let text =  item.content.content;
-          return (text.indexOf(url) > -1);
-         }
-      });
-      this.isLoadimage = {};
-      this.isLoadAvatarImage = {};
-      this.avatarImageMap = {};
-      this.downPostAvatarMap = {};
-      this.isLoadVideoiamge = {};
-      this.isInitLikeNum = {};
-      this.isInitLikeStatus = {};
-      this.isInitComment = {};
-      this.refreshImageV2(this.postList);
+    this.showPostSearch = true;
+    this.searchPostText = url;
+    this.handleRefresherInfinite(true);
+    event.stopPropagation();
+    let newList = await this.sortPostList();
+    this.serachPostList = _.cloneDeep(this.postList);
+    this.postList = _.filter(newList, (item: FeedsData.PostV3) => {
+      let status = item.status;
+      if (status != 1) {
+        let text = item.content.content;
+        return (text.indexOf(url) > -1);
+      }
+    });
+    this.isLoadimage = {};
+    this.isLoadAvatarImage = {};
+    this.avatarImageMap = {};
+    this.downPostAvatarMap = {};
+    this.isLoadVideoiamge = {};
+    this.isInitLikeNum = {};
+    this.isInitLikeStatus = {};
+    this.isInitComment = {};
+    this.refreshImageV2(this.postList);
   }
 
-  getObserveList(postList = []){
-    for(let index = 0; index < postList.length; index++){
-      let postItem =  postList[index];
-      let postGridId = postItem.destDid+"-"+postItem.channelId+"-"+postItem.postId+"-"+postItem.content.mediaType+'-home';
+  getObserveList(postList = []) {
+    for (let index = 0; index < postList.length; index++) {
+      let postItem = postList[index];
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-home';
       let exit = this.observerList[postGridId] || null;
-      if(exit != null){
-         continue;
+      if (exit != null) {
+        continue;
       }
       this.newSectionObserver(postGridId);
     }
   }
 
   removeObserveList() {
-    for(let postGridId in this.observerList){
-        let observer = this.observerList[postGridId] || null;
-        this.removeSectionObserver(postGridId, observer)
+    for (let postGridId in this.observerList) {
+      let observer = this.observerList[postGridId] || null;
+      this.removeSectionObserver(postGridId, observer)
     }
     this.observerList = {};
   }
 
-  removeSectionObserver(postGridId: string, observer: any){
+  removeSectionObserver(postGridId: string, observer: any) {
     let item = document.getElementById(postGridId) || null;
-    if(item != null){
-      if( observer != null ){
+    if (item != null) {
+      if (observer != null) {
         observer.unobserve(item);//解除观察器
         observer.disconnect();  // 关闭观察器
         this.observerList[postGridId] = null;
@@ -2378,83 +2378,83 @@ export class HomePage implements OnInit {
 
   newSectionObserver(postGridId: string) {
     let observer = this.observerList[postGridId] || null;
-    if(observer != null){
+    if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
-    if(item != null ){
-    this.observerList[postGridId] = new IntersectionObserver(async (changes:any)=>{
-    let container = changes[0].target;
-    let newId = container.getAttribute("id");
-    let intersectionRatio = changes[0].intersectionRatio;
+    if (item != null) {
+      this.observerList[postGridId] = new IntersectionObserver(async (changes: any) => {
+        let container = changes[0].target;
+        let newId = container.getAttribute("id");
+        let intersectionRatio = changes[0].intersectionRatio;
 
-    // let boundingClientRect = changes[0].boundingClientRect;
-    // console.log("======boundingClientRect========",boundingClientRect);
+        // let boundingClientRect = changes[0].boundingClientRect;
+        // console.log("======boundingClientRect========",boundingClientRect);
 
-    // let rootBounds = changes[0].rootBounds;
-    // console.log("======rootBoundst========",rootBounds);
+        // let rootBounds = changes[0].rootBounds;
+        // console.log("======rootBoundst========",rootBounds);
 
-    // let intersectionRect = changes[0].intersectionRect;
-    // console.log("======intersectionRect========",intersectionRect);
+        // let intersectionRect = changes[0].intersectionRect;
+        // console.log("======intersectionRect========",intersectionRect);
 
-    if(intersectionRatio === 0){
-      //console.log("======newId leave========", newId);
-      return;
-    }
-    let arr =  newId.split("-");
-    let destDid: string = arr[0];
-    let channelId: string = arr[1];
-    let postId: string = arr[2];
-    let mediaType: string = arr[3];
-    await this.getChannelName(destDid, channelId);//获取频道name
-    this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
-    this.getDisplayName(destDid, channelId, destDid);
-    if (mediaType === '1') {
-      this.handlePostImgV2(destDid, channelId, postId);
-    }
-    if (mediaType === '2') {
-    //video
-      this.handleVideoV2(destDid, channelId, postId);
-    }
+        if (intersectionRatio === 0) {
+          //console.log("======newId leave========", newId);
+          return;
+        }
+        let arr = newId.split("-");
+        let destDid: string = arr[0];
+        let channelId: string = arr[1];
+        let postId: string = arr[2];
+        let mediaType: string = arr[3];
+        await this.getChannelName(destDid, channelId);//获取频道name
+        this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
+        this.getDisplayName(destDid, channelId, destDid);
+        if (mediaType === '1') {
+          this.handlePostImgV2(destDid, channelId, postId);
+        }
+        if (mediaType === '2') {
+          //video
+          this.handleVideoV2(destDid, channelId, postId);
+        }
 
-    //post like status
-    CommonPageService.handlePostLikeStatusData(
-    destDid, channelId, postId,this.isInitLikeStatus, this.hiveVaultController,
-    this.likeMap, this.isLoadingLikeMap)
-    //处理post like number
-    CommonPageService.handlePostLikeNumData(
-      destDid, channelId, postId, this.hiveVaultController,
-    this.likeNumMap, this.isInitLikeNum);
-    //处理post comment
-    CommonPageService.handlePostCommentData(
-      destDid, channelId, postId, this.hiveVaultController,
-    this.isInitComment, this.commentNumMap);
-    //console.log("======intersectionRatio1========",typeof(changes[0]));
-    //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
-    });
+        //post like status
+        CommonPageService.handlePostLikeStatusData(
+          destDid, channelId, postId, this.isInitLikeStatus, this.hiveVaultController,
+          this.likeMap, this.isLoadingLikeMap)
+        //处理post like number
+        CommonPageService.handlePostLikeNumData(
+          destDid, channelId, postId, this.hiveVaultController,
+          this.likeNumMap, this.isInitLikeNum);
+        //处理post comment
+        CommonPageService.handlePostCommentData(
+          destDid, channelId, postId, this.hiveVaultController,
+          this.isInitComment, this.commentNumMap);
+        //console.log("======intersectionRatio1========",typeof(changes[0]));
+        //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+      });
 
-    this.observerList[postGridId].observe(item);
-    }
-  }
-
- getDisplayName(destDid: string,channelId: string, userDid: string) {
-  let displayNameMap = this.handleDisplayNameMap[userDid] || '';
-  if (displayNameMap === "") {
-    let text = destDid.replace('did:elastos:', '');
-    this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
-    try {
-      this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
-        then((result: string) => {
-          let name = result || "";
-          if (name != "") {
-            this.handleDisplayNameMap[userDid] = name;
-          }
-        }).catch(() => {
-        });
-    } catch (error) {
-
+      this.observerList[postGridId].observe(item);
     }
   }
- }
+
+  getDisplayName(destDid: string, channelId: string, userDid: string) {
+    let displayNameMap = this.handleDisplayNameMap[userDid] || '';
+    if (displayNameMap === "") {
+      let text = destDid.replace('did:elastos:', '');
+      this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+      try {
+        this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
+          then((result: string) => {
+            let name = result || "";
+            if (name != "") {
+              this.handleDisplayNameMap[userDid] = name;
+            }
+          }).catch(() => {
+          });
+      } catch (error) {
+
+      }
+    }
+  }
 
 }

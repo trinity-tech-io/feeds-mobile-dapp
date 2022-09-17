@@ -4357,10 +4357,22 @@ export class DataHelper {
 
   getChannelCollectionPageList() {
     return this.channelCollectionPageList;
- }
+  }
 
- setChannelCollectionPageList(channelCollectionPageList = []) {
+  setChannelCollectionPageList(channelCollectionPageList = []) {
     this.channelCollectionPageList = channelCollectionPageList;
-    this.saveData("feedsNetWork:specificChannelCollectionPageList",this.channelCollectionPageList);
- }
+    this.saveData("feedsNetWork:specificChannelCollectionPageList", this.channelCollectionPageList);
+  }
+
+  queryChannelPinPostData(channelId: string): Promise<FeedsData.PostV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        let queryList = await this.sqliteHelper.queryChannelPinPostData(selfDid, channelId)
+        resolve(queryList[0])
+      } catch (error) {
+        reject(error);
+      }
+    })
+  }
 }
