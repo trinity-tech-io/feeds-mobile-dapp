@@ -335,15 +335,17 @@ export class MenuService {
     return {
       text: this.translate.instant('common.share'),
       icon: 'ios-share1',
-      handler: async () => {
-        let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
-        await this.native.showLoading("common.generateSharingLink");
-        try {
-          const sharedLink = await this.intentService.createPostShareLink(post);
-          this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
-        } catch (error) {
-        }
-        this.native.hideLoading();
+      handler: () => {
+        this.native.showLoading("common.generateSharingLink").then(async ()=>{
+          try {
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            const sharedLink = await this.intentService.createPostShareLink(post);
+            this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
+            this.native.hideLoading();
+          } catch (error) {
+            this.native.hideLoading();
+          }
+        });
       },
     };
   }
@@ -356,32 +358,32 @@ export class MenuService {
       text: unsubscribeText,
       role: 'destructive',
       icon: 'ios-unsubscribe',
-      handler: async () => {
+      handler: () => {
         let connect = this.dataHelper.getNetworkStatus();
         if (connect === FeedsData.ConnState.disconnected) {
           this.native.toastWarn('common.connectionError');
           return;
         }
 
-        await this.native.showLoading("common.waitMoment");
-        try {
-          this.hiveVaultController.unSubscribeChannel(
-            destDid, channelId
-          ).then(async (result) => {
-            let channel: FeedsData.SubscribedChannelV3 = {
-              destDid: destDid,
-              channelId: channelId
-            };
-            //await this.hiveVaultController.removePostListByChannel(destDid, channelId);
-            this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
-            this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
+        this.native.showLoading("common.waitMoment").then(()=>{
+          try {
+            this.hiveVaultController.unSubscribeChannel(
+              destDid, channelId
+            ).then(async (result) => {
+              let channel: FeedsData.SubscribedChannelV3 = {
+                destDid: destDid,
+                channelId: channelId
+              };
+              this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+              this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
+              this.native.hideLoading();
+            }).catch(() => {
+              this.native.hideLoading();
+            });
+          } catch (error) {
             this.native.hideLoading();
-          }).catch(() => {
-            this.native.hideLoading();
-          });
-        } catch (error) {
-          this.native.hideLoading();
-        }
+          }
+        });
       },
     };
   }
@@ -645,17 +647,18 @@ export class MenuService {
     return {
       text: this.translate.instant('common.pinPost'),
       icon: 'ios-pin',
-      handler: async () => {
-        try {
-          await this.native.showLoading("common.waitMoment");
-          if (needUnpinPost) await this.hiveVaultController.pinPost(needUnpinPost, FeedsData.PinStatus.NOTPINNED);
-          await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.PINNED);
-          this.events.publish(FeedsEvent.PublishType.pinPostFinish);
-        } catch (error) {
-          this.native.toastWarn('ChannelsPage.PinPostError');
-        } finally {
-          this.native.hideLoading()
-        }
+      handler: () => {
+        this.native.showLoading("common.waitMoment").then(async ()=>{
+          try {
+            if (needUnpinPost) await this.hiveVaultController.pinPost(needUnpinPost, FeedsData.PinStatus.NOTPINNED);
+            await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.PINNED);
+            this.events.publish(FeedsEvent.PublishType.pinPostFinish);
+          } catch (error) {
+            this.native.toastWarn('ChannelsPage.PinPostError');
+          } finally {
+            this.native.hideLoading();
+          }
+        });
       }
     }
   }
@@ -665,15 +668,16 @@ export class MenuService {
       text: this.translate.instant('common.unpinPost'),
       icon: 'ios-pin',
       handler: async () => {
-        try {
-          await this.native.showLoading("common.waitMoment");
-          await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.NOTPINNED);
-          this.events.publish(FeedsEvent.PublishType.unpinPostFinish);
-        } catch (error) {
-          this.native.toastWarn('ChannelsPage.UnPinPostError');
-        } finally {
-          this.native.hideLoading()
-        }
+        this.native.showLoading("common.waitMoment").then(async ()=>{
+          try {
+            await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.NOTPINNED);
+            this.events.publish(FeedsEvent.PublishType.unpinPostFinish);
+          } catch (error) {
+            this.native.toastWarn('ChannelsPage.UnPinPostError');
+          } finally {
+            this.native.hideLoading()
+          }
+        });
       }
     }
   }
@@ -689,15 +693,17 @@ export class MenuService {
         });
         break;
       case 'sharepost':
-        let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
         //home share post
-        await this.native.showLoading("common.generateSharingLink");
-        try {
-          const sharedLink = await this.intentService.createPostShareLink(post);
-          this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
-        } catch (error) {
-        }
-        this.native.hideLoading();
+        this.native.showLoading("common.generateSharingLink").then(async ()=>{
+          try {
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            const sharedLink = await this.intentService.createPostShareLink(post);
+            this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
+            this.native.hideLoading();
+          } catch (error) {
+            this.native.hideLoading();
+          }
+        });
 
         break;
       case 'removePost':
@@ -854,15 +860,16 @@ export class MenuService {
   }
 
   async sharePasarLink(assItem: any) {
-    await this.native.showLoading("common.generateSharingLink");
-    try {
-      const saleOrderId = assItem.saleOrderId;
-      Logger.log('Share pasar orderId is', saleOrderId);
-      const sharedLink = await this.intentService.createSharePasarLink(saleOrderId);
-      this.intentService
-        .share(this.intentService.createSharePasarTitle(), sharedLink);
-    } catch (error) {
-    }
-    this.native.hideLoading();
+    this.native.showLoading("common.generateSharingLink").then(async ()=>{
+      try {
+        const saleOrderId = assItem.saleOrderId;
+        Logger.log('Share pasar orderId is', saleOrderId);
+        const sharedLink = await this.intentService.createSharePasarLink(saleOrderId);
+        this.intentService
+          .share(this.intentService.createSharePasarTitle(), sharedLink);
+      } catch (error) {
+      }
+      this.native.hideLoading();
+    });
   }
 }

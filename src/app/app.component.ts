@@ -570,10 +570,6 @@ export class MyApp {
     this.avatar = imgUri;
   }
 
-  handleImages() {
-
-  }
-
   settings() {
     this.native.navigateForward('settings', '');
   }
@@ -588,7 +584,6 @@ export class MyApp {
     this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
     this.events.unsubscribe(FeedsEvent.PublishType.nftLoadingUpdateText);
     this.events.unsubscribe(FeedsEvent.PublishType.openPayPrompt);
-    this.events.unsubscribe(FeedsEvent.PublishType.initHiveData);
     this.events.unsubscribe(FeedsEvent.PublishType.walletConnectedRefreshPage);
   }
 
