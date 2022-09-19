@@ -67,9 +67,9 @@ export class HiveService {
           getAuthorization(jwtToken: string): Promise<string> {
             return new Promise(async (resolve, reject) => {
               try {
-                console.log('Get authorization jwtToken is', jwtToken);
+                Logger.log(TAG, 'Get authorization jwtToken is', jwtToken);
                 const authToken = await self.standardAuthService.generateHiveAuthPresentationJWT(jwtToken)
-                console.log('Get authorization authToken is', authToken);
+                Logger.log(TAG, 'Get authorization authToken is', authToken);
                 resolve(authToken)
               } catch (error) {
                 Logger.error(TAG, "get Authorization Error: ", error)

@@ -136,7 +136,7 @@ export class RedditService {
         "api_type": "Json",
         "kind": "self",
         "title": tittle,
-        "text": text,       
+        "text": text,
         "sr": "Elastos" //Elastos //668899
       }
       const token = await this.checkRedditIsExpired()
@@ -174,7 +174,7 @@ export class RedditService {
       this.http.setDataSerializer('urlencoded')
       const result = await this.http.get(RedditApi.subreddits, {}, header)
       const jsonResult = JSON.parse(result.data)
-      console.log('get subReddit success result.data = >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result.data)
+      Logger.log(TAG, 'get subReddit success result.data = >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result.data)
       const children = jsonResult.data.children
       const userDid = (await this.dataHelper.getSigninData()).did
       let containsElastos = false

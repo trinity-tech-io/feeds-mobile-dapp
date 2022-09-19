@@ -173,7 +173,6 @@ export class HiveVaultResultParse {
        */
       const comments = result.find_message.items;
       let parseResult = [];
-      console.log('result', comments);
       if (comments) {
         comments.forEach(comment => {
           if (comment) {
@@ -219,7 +218,6 @@ export class HiveVaultResultParse {
        */
       const likes = result.find_message.items;
       let parseResult = [];
-      console.log('result', likes);
       if (likes) {
         likes.forEach(like => {
           if (like) {
@@ -262,7 +260,6 @@ export class HiveVaultResultParse {
        */
       const subscriptions = result.find_message.items;
       let parseResult = [];
-      console.log('result', subscriptions);
       if (subscriptions) {
         subscriptions.forEach(subscription => {
           const subscriptionResult: FeedsData.SubscriptionV3 = {
@@ -311,7 +308,6 @@ export class HiveVaultResultParse {
       */
       const subscribedChannels = result;
       let parseResult: FeedsData.SubscribedChannelV3[] = [];
-      console.log('result', subscribedChannels);
       if (!subscribedChannels || subscribedChannels.length == 0) {
         return [];
       }

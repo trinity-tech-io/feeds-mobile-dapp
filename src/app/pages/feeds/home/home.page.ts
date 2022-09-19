@@ -39,11 +39,7 @@ import { FileHelperService } from 'src/app/services/FileHelperService';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { CommonPageService } from 'src/app/services/common.page.service';
-import { HiveVaultHelper } from 'src/app/services/hivevault_helper.service';
 import { Config } from 'src/app/services/config';
-import { HTTP } from '@awesome-cordova-plugins/http/ngx';
-import { TwitterService } from 'src/app/services/TwitterService';
-import { RedditService } from 'src/app/services/RedditService';
 
 let TAG: string = 'Feeds-home';
 @Component({
@@ -174,7 +170,6 @@ export class HomePage implements OnInit {
   private avatarImageMap: any = {};
   private syncHiveDataStatus: number = null;
   private syncHiveDataDes: string = null;
-  private useRemoteData: boolean = false;
   private handleDisplayNameMap: any = {};
   public owerCreatChannelNum: Number = 0;
   public channelAvatarMap: any = {};
@@ -219,20 +214,14 @@ export class HomePage implements OnInit {
     private fileHelperService: FileHelperService,
     private feedsServiceApi: FeedsServiceApi,
     private hiveVaultController: HiveVaultController,
-    private http: HTTP,
-    private twitterService: TwitterService,
-    private redditService: RedditService,
 
   ) { }
 
   ngOnInit() {
-    // console.log("开始加载 reddit url >>>>>>>>>>>>>>>>>>>>>> 1")
-    // this.redditService.openRedditLoginPage("ios");
-    // console.log("结束加载 reddit url >>>>>>>>>>>>>>>>>>>>>> 1")
+
   }
 
   async initPostListData(scrollToTop: boolean) {
-    this.infiniteScroll.disabled = true;
     this.pageSize = 1;
     if (scrollToTop) {
       this.totalData = await this.sortPostList();
@@ -267,7 +256,13 @@ export class HomePage implements OnInit {
     this.refreshImageV2(this.postList);
     this.dataHelper.resetNewPost();
     this.isPostLoading = false;
-    this.infiniteScroll.disabled = false;
+    if(this.totalData.length < 5 ){
+      this.refresher.disabled = false;
+      this.infiniteScroll.disabled = true;
+    }else{
+      this.refresher.disabled = false;
+      this.infiniteScroll.disabled = false;
+    }
   }
 
   async sortPostList() {
@@ -320,7 +315,6 @@ export class HomePage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.useRemoteData = false;
     this.initTitleBar();
     let syncHiveData = this.dataHelper.getSyncHiveData();
     this.syncHiveDataStatus = syncHiveData.status;
@@ -886,7 +880,7 @@ export class HomePage implements OnInit {
   async doRefresh(event) {
     this.refreshEvent = event;
     this.isPostLoading = false;
-    this.useRemoteData = true;
+    this.newPostNumber = 0;
     switch (this.tabType) {
       case 'feeds':
         this.hiveVaultController.refreshHomeData((newPostNum) => {
@@ -894,12 +888,9 @@ export class HomePage implements OnInit {
         });
 
         try {
-          //this.removeObserveList();
           await this.refreshPage();
         } catch (error) {
         }
-
-        this.handleRefresherInfinite(false);
         if (event != null) event.target.complete();
         this.refreshEvent = null;
 
@@ -918,7 +909,7 @@ export class HomePage implements OnInit {
 
   async refreshPage() {
     this.newPostNumber = 0;
-    this.useRemoteData = true;
+    this.isPostLoading = false;
     try {
       this.dataHelper.cleanCachedComment();
       this.dataHelper.cleanCacheLikeNum();
@@ -1319,7 +1310,6 @@ export class HomePage implements OnInit {
           });
       }
     } catch (error) {
-      console.log("=============video10");
       this.isLoadVideoiamge[id] = '';
     }
   }
@@ -2268,40 +2258,6 @@ export class HomePage implements OnInit {
     this.native.navigateForward(['bid'], { queryParams: assetItem });
   }
 
-  // async tryButton() {
-  //   this.syncHiveDataStatus = 0;
-  //   this.syncHiveDataDes = "GalleriahivePage.preparingData";
-  //   try {
-  //     await this.hiveVaultController.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
-  //   } catch (error) {
-
-  //   }
-  //   const signinData = await this.dataHelper.getSigninData();
-  //   let userDid = signinData.did
-  //   localStorage.removeItem(userDid + "localScriptVersion");
-  //   this.dataHelper.setSyncHiveData({ status: this.syncHiveDataStatus, describe: this.syncHiveDataDes });
-  //   this.events.publish(FeedsEvent.PublishType.initHiveData);
-  // }
-
-
-  getVisibleareaItemIndex(postgridList: any, postgridNum: any) {
-
-    for (let positionIndex = 0; positionIndex < postgridNum; positionIndex++) {
-      let postgrid = postgridList[positionIndex] || null;
-      if (
-        postgrid != null &&
-        postgrid.getBoundingClientRect().top >= 0 &&
-        postgrid.getBoundingClientRect().bottom <= Config.rectBottom / 2
-      ) {
-        // if (positionIndex === 0) {
-        //   this.visibleareaItemIndex = positionIndex;
-        //   return;
-        // }
-        // this.visibleareaItemIndex = positionIndex;
-      }
-    }
-
-  }
 
   clickClose() {
     if (this.showPostSearch) {

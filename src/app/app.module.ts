@@ -129,7 +129,7 @@ export class SentryErrorHandler implements ErrorHandler {
       // Do not popop error dialog, but still send to sentry for debug.
       Logger.error("Sentry", 'This exception has been handled:', error);
     } else {
-      console.log("===22", error.toString().indexOf("(reading 'bufferDetected')"))
+
       if (error.toString().indexOf("(reading 'bufferDetected')") > -1) {
 
       } else {

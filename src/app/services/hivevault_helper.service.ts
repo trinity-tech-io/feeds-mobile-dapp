@@ -799,7 +799,6 @@ export class HiveVaultHelper {
                     "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UPDATE_SUBSCRIPTION, params);
-                console.log("update subscription , result is", result);
                 resolve({ updatedAt: updatedAt })
             } catch (error) {
                 Logger.error(TAG, 'update subscription error:', error);
@@ -882,7 +881,6 @@ export class HiveVaultHelper {
                     "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_CHANNELID, params);
-                console.log("Query subscription from scripting , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query subscription from scripting , error:', error);
@@ -922,7 +920,6 @@ export class HiveVaultHelper {
                     "user_did": userDid
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID, params);
-                console.log("Find subscription from scripting , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Find subscription from scripting , error:', error);
@@ -964,7 +961,6 @@ export class HiveVaultHelper {
                     "user_did": userDid
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIPTION_BY_USERDID_CHANNELID, params);
-                console.log("Find subscription from scripting , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Find subscription from scripting , error:', error);
@@ -1013,7 +1009,6 @@ export class HiveVaultHelper {
                     "post_id": postId
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_POSTID, params);
-                console.log("Get comment from scripting by post id , result is ", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Get comment from scripting by post id error:', error);
@@ -1064,7 +1059,6 @@ export class HiveVaultHelper {
                     "comment_id": commentId
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_COMMENTID, params);
-                console.log("Get comment from scripting by comment id , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Get comment from scripting by comment id error:', error);
@@ -1145,7 +1139,6 @@ export class HiveVaultHelper {
                     "channel_id": channelId
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_COMMENT_BY_CHANNELID, params);
-                console.log("Get comment from scripting by channel id , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Get comment from scripting by channel id error:', error);
@@ -1210,7 +1203,6 @@ export class HiveVaultHelper {
                     "created_at": createdAt
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_CREATE_COMMENT, params);
-                console.log("Create comment from scripting , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Create comment from scripting , error:', error);
@@ -1284,7 +1276,6 @@ export class HiveVaultHelper {
                     "updated_at": updatedAt
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UPDATE_COMMENT, params);
-                console.log("Get comment from scripting by comment id , result is", result);
                 resolve({ updatedAt: updatedAt });
             } catch (error) {
                 Logger.error(TAG, 'Get comment from scripting by comment id error:', error);
@@ -1341,7 +1332,6 @@ export class HiveVaultHelper {
                     "comment_id": commentId
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_DELETE_COMMENT, params);
-                console.log("Delete comment from scripting , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Delete comment from scripting , error:', error);
@@ -1492,7 +1482,6 @@ export class HiveVaultHelper {
                     "status": FeedsData.PostCommentStatus.available
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_CHANNEL, params);
-                console.log("Query like by channel from scripting , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query like by channel from scripting , error:', error);
@@ -1542,7 +1531,6 @@ export class HiveVaultHelper {
                     "status": FeedsData.PostCommentStatus.available
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_LIKE_BY_POST, params);
-                console.log("Query like by post from scripting , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query like by post from scripting , error:', error);
@@ -1641,7 +1629,6 @@ export class HiveVaultHelper {
                     "status": FeedsData.PostCommentStatus.available
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_CREATE_LIKE, params);
-                console.log("Add like from scripting , result is", result);
                 resolve({ createdAt: createdAt });
             } catch (error) {
                 Logger.error(TAG, 'Add like from scripting , error:', error);
@@ -1691,7 +1678,6 @@ export class HiveVaultHelper {
                     "comment_id": commentId
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_REMOVE_LIKE, params);
-                console.log("Remove like from scripting , result is", result);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Remove like from scripting , error:', error);
@@ -1744,7 +1730,6 @@ export class HiveVaultHelper {
                     "status": status
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_UPDATE_LIKE, params);
-                console.log("update subscription , result is", result);
                 resolve({ updatedAt: updatedAt });
             } catch (error) {
                 Logger.error(TAG, 'update subscription error:', error);
@@ -1802,7 +1787,6 @@ export class HiveVaultHelper {
                 Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
                 resolve(avatarHiveURL);
             } catch (error) {
-                console.log("uploadMediaData error:", error)
                 reject(await this.handleError(error))
             }
         });
@@ -1821,7 +1805,6 @@ export class HiveVaultHelper {
                 Logger.log(TAG, "Generated avatar url:", avatarHiveURL);
                 resolve(avatarHiveURL)
             } catch (error) {
-                console.log("uploadMediaData error:", error)
                 reject(await this.handleError(error))
             }
         });
