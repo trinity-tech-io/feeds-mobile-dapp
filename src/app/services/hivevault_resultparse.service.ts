@@ -350,15 +350,15 @@ export class HiveVaultResultParse {
           if (reported) {
             const repostResult: FeedsData.ReportedRepost = {
               destDid: destDid,
-              repostId: reportedReposts.repost_id,
+              repostId: reported.repost_id,
 
-              originChannelId: reportedReposts.origin_channel_id,
-              originPostId: reportedReposts.origin_post_id,
+              originChannelId: reported.origin_channel_id,
+              originPostId: reported.origin_post_id,
 
-              repostTargetDid: reportedReposts.repost_target_did,
-              repostChannelId: reportedReposts.repost_channel_id,
-              repostPostId: reportedReposts.repost_post_id,
-              createdAt: reportedReposts.created_at
+              repostTargetDid: reported.repost_target_did,
+              repostChannelId: reported.repost_channel_id,
+              repostPostId: reported.repost_post_id,
+              createdAt: reported.created_at
             }
             parseResult.push(repostResult);
           }

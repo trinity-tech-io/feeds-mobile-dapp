@@ -441,8 +441,17 @@ export class HiveInterfaceTestPage implements OnInit {
     const targetDid: string = 'did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR';
     const channelId: string = 'originChannelId';
     const postId: string = 'originPostId';
-    const result = await this.hiveVaultController.queryRepostById(targetDid, channelId, postId);
+    const start: number = 0;
+    const end: number = UtilService.getCurrentTimeNum();
+    const result = await this.hiveVaultController.queryRepostById(targetDid, channelId, postId, start, end);
     console.log('queryRepostById result = ', result);
+  }
+
+  async queryAllRepostByChannelId() {
+    const targetDid: string = 'did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR';
+    const channelId: string = 'originChannelId';
+    const result = await this.hiveVaultController.queryAllRepostByChannelId(targetDid, channelId);
+    console.log('queryAllRepostByChannelId result = ', result);
   }
   // queryPublicPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
   //   return this.hiveVaultController.queryPublicPostById(targetDid, channelId, postId);

@@ -139,7 +139,8 @@ export class HiveVaultHelper {
                 const p30 = this.registerRemoveRepostScripting();
                 const p31 = this.registerQueryRepostScripting();
 
-                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31] as const
+                const p32 = this.registerQueryRepostByChannelScripting();
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
                 }, reason => {
@@ -2405,14 +2406,14 @@ export class HiveVaultHelper {
             try {
                 let executablefilter = {
                     "origin_channel_id": "$params.origin_channel_id",
-                    "origin_post_id": "$params.origin_post_id"
-                }
+                    "origin_post_id": "$params.origin_post_id",
+                    "created_at": { $gt: "$params.start", $lt: "$params.end" }
+                };
 
                 let options = {
-                    "projection":
-                    {
-                        "_id": false
-                    }
+                    "projection": { "_id": false },
+                    "sort": { "created_at": -1 },
+                    "limit": 100
                 };
 
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_REPOST, executablefilter, options).setOutput(true)
@@ -2425,12 +2426,14 @@ export class HiveVaultHelper {
         })
     }
 
-    private callQueryRepost(targetDid: string, channelId: string, postId: string) {
+    private callQueryRepost(targetDid: string, channelId: string, postId: string, start: number, end: number) {
         return new Promise(async (resolve, reject) => {
             try {
                 const params = {
                     "origin_channel_id": channelId,
-                    "origin_post_id": postId
+                    "origin_post_id": postId,
+                    "start": start,
+                    "end": end
                 }
                 const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_REPOST_FROM_ORIGIN, params);
                 console.log("Query repost from scripting , result is", result);
@@ -2442,10 +2445,10 @@ export class HiveVaultHelper {
         });
     }
 
-    queryRepostByIdFromOriginChannel(targetDid: string, channelId: string, postId: string): Promise<any> {
+    queryRepostByIdFromOriginChannel(targetDid: string, channelId: string, postId: string, start: number, end: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await this.callQueryRepost(targetDid, channelId, postId);
+                const result = await this.callQueryRepost(targetDid, channelId, postId, start, end);
                 resolve(result);
             } catch (error) {
                 reject(await this.handleError(error));
@@ -2453,6 +2456,60 @@ export class HiveVaultHelper {
         });
     }
     /** query repost end */
+
+    /** Query repost by channel start */
+    private registerQueryRepostByChannelScripting(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let executablefilter = {
+                    "origin_channel_id": "$params.origin_channel_id"
+                }
+
+                let options = {
+                    "projection":
+                    {
+                        "_id": false
+                    },
+                    "limit": 100
+                };
+
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_REPOST, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_REPOST_FROM_ORIGIN, executable, null, false);
+                resolve("SUCCESS");
+            } catch (error) {
+                Logger.error(TAG, "registerCreateComment error", error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    private callQueryRepostByChannel(targetDid: string, channelId: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const params = {
+                    "origin_channel_id": channelId
+                }
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_REPOST_FROM_ORIGIN, params);
+                console.log("Query repost from scripting , result is", result);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query repost from scripting , error:', error);
+                reject(error)
+            }
+        });
+    }
+
+    queryRepostFromOriginChannelByChannelId(targetDid: string, channelId: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await this.callQueryRepostByChannel(targetDid, channelId);
+                resolve(result);
+            } catch (error) {
+                reject(await this.handleError(error));
+            }
+        });
+    }
+    /** query repost by channel end */
 
     /** Query repost count start */
     private registerQueryRepostCountScripting(): Promise<string> {

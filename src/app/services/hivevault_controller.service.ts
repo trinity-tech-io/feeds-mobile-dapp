@@ -2250,10 +2250,22 @@ export class HiveVaultController {
     return this.hiveVaultApi.removeRepostFromOriginChannel(targetDid, repostTargetDid, repostChannelId, repostPostId);
   }
 
-  queryRepostById(targetDid: string, channelId: string, postId: string): Promise<any> {
+  queryRepostById(targetDid: string, channelId: string, postId: string, start: number, end: number): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.queryRepostByIdFromOriginChannel(targetDid, channelId, postId);
+        const result = await this.hiveVaultApi.queryRepostByIdFromOriginChannel(targetDid, channelId, postId, start, end);
+        const repostList = this.handleReportedRepostResult(targetDid, result);
+        resolve(repostList);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  queryAllRepostByChannelId(targetDid: string, channelId: string,): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryRepostFromOriginChannelByChannelId(targetDid, channelId);
         const repostList = this.handleReportedRepostResult(targetDid, result);
         resolve(repostList);
       } catch (error) {
