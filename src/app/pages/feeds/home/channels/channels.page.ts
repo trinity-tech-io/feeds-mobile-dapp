@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { IonRefresher, ModalController, Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
@@ -31,7 +31,7 @@ export class ChannelsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonContent, { static: true }) content: IonContent;
   @ViewChild(IonInfiniteScroll, { static: true }) infiniteScroll: IonInfiniteScroll;
-
+  @ViewChild(IonRefresher, { static: false }) refresher: IonRefresher;
   public images = {};
   public isShowPrompt: boolean = false;
   public popover: any;
@@ -135,6 +135,9 @@ export class ChannelsPage implements OnInit {
   public pinnedPostMap: any = {};
   private isLoadPinnedPost: any = {};
   private currentPinPost: FeedsData.PostV3 = null;
+  private firstScrollTop = 0;
+  private lastScrollTop = 0;
+  public  isFullPost: boolean = false;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -755,7 +758,6 @@ export class ChannelsPage implements OnInit {
     let sId = setTimeout(() => {
       this.pageSize++;
       let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
-      console.log("====data===" + JSON.stringify(data));
       if (data.currentPage === data.totalPage) {
         this.postList = this.postList.concat(data.items);
         event.target.disabled = true;
@@ -1490,4 +1492,27 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-}
+  postListScroll(event:any) {
+    this.handlePostListScroll(event);
+  }
+
+  handlePostListScroll(event:any){
+    if(this.lastScrollTop < event.detail.scrollTop) {
+
+      if(this.firstScrollTop === 0){
+        this.firstScrollTop = event.detail.scrollTop;
+        this.isFullPost = true;
+        this.refresher.disabled = true;
+      }
+   } else {
+      //上滑逻辑
+      if(this.firstScrollTop >= 0 && this.lastScrollTop < 60){
+       this.firstScrollTop = 0;
+       this.isFullPost = false;
+       this.refresher.disabled = false;
+      }
+   }
+   this.lastScrollTop = event.detail.scrollTop;
+  }
+
+ }

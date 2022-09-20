@@ -12,7 +12,7 @@
   </ion-refresher>
 
   <!-- CHANNEL HEADER -->
-  <ion-grid class="channel-header">
+  <ion-grid class="channel-header"  *ngIf="!isFullPost">
     <ion-row>
       <ion-col size="12" style="padding:0px;">
         <div class="cardImg">
@@ -57,7 +57,7 @@
 
     <ion-ripple-effect></ion-ripple-effect>
   </ion-grid>
-  <div class="kuang">
+  <div [ngClass]="{'kuang': !isFullPost,'kuang1':isFullPost}">
   <!-- EMPTY CONTAINER -->
   <div class="border-radius-40">
   </div>
@@ -74,7 +74,7 @@
   </div> -->
 
   <!-- POSTS -->
-  <ion-content *ngIf="postList.length > 0"  [scrollEvents]="true">
+  <ion-content *ngIf="postList.length > 0"  [scrollEvents]="true" (ionScroll) = "postListScroll($event)">
     <div  *ngFor="let post of postList let i=index">
     <ion-grid style="padding-top:5px" class="post-grid ion-activatable ripple channelgird" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === postList[postList.length - 1]"
     id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-channel>

@@ -166,7 +166,7 @@ export class PostdetailPage implements OnInit {
     this.channelOwner = channel.destDid || '';
     this.channelOwnerName = this.indexText(channel.destDid);
     this.channelWName = channel['displayName'] || channel['name'] || '';
-    this.channelName = UtilService.moreNanme(channel['displayName'] || channel['name']);
+    this.channelName = channel['displayName'] || channel['name'];
     this.userNameMap[this.channelOwner] = this.channelName;
     let channelAvatarUri = channel['avatar'] || '';
     if (channelAvatarUri != '') {
