@@ -260,11 +260,11 @@ export class ProfilePage implements OnInit {
   async initRefresh() {
     this.totalLikeList = await this.sortLikeList();
     this.likeSum = this.totalLikeList.length;
-    let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalLikeList);
-    if(data.currentPage === data.totalPage){
+    let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalLikeList);
+    if (data.currentPage === data.totalPage) {
       this.likeList = data.items;
       this.infiniteScroll.disabled = true;
-    }else{
+    } else {
       this.likeList = data.items;
       this.infiniteScroll.disabled = false;
     }
@@ -311,7 +311,7 @@ export class ProfilePage implements OnInit {
       for (let likeIndex = 0; likeIndex < likes.length; likeIndex++) {
         let item = likes[likeIndex];
         if (item.commentId === '0' && item.status === FeedsData.PostCommentStatus.available) {
-          let post = await this.dataHelper.getPostV3ById(item.destDid, item.postId) || null;
+          let post = await this.dataHelper.getPostV3ById(item.postId) || null;
           if (post != null) {
             likeList.push(post);
           }
@@ -461,7 +461,7 @@ export class ProfilePage implements OnInit {
     // let userDid = signInData['did'] || '';
     this.updateUserAvatar();
     let avatar = this.avatar || null;
-    if(avatar === null){
+    if (avatar === null) {
       this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
     }
 
@@ -492,7 +492,7 @@ export class ProfilePage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid, deletePostEventData.postId);
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
             this.refreshLikeList();
             this.native.hideLoading();
@@ -733,7 +733,7 @@ export class ProfilePage implements OnInit {
         try {
           await this.hiveVaultController.syncAllLikeData();
           this.removeLikeObserveList();
-          this.pageSize= 1;
+          this.pageSize = 1;
           this.likeList = [];
           this.handleDisplayNameMap = {};
           this.postImgMap = {};
@@ -764,19 +764,19 @@ export class ProfilePage implements OnInit {
         });
         break;
       case 'ProfilePage.myLikes':
-        let sid = setTimeout(()=>{
+        let sid = setTimeout(() => {
           this.pageSize++;
-          let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalLikeList);
-          if(data.currentPage === data.totalPage){
+          let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalLikeList);
+          if (data.currentPage === data.totalPage) {
             this.likeList = this.likeList.concat(data.items);
             event.target.disabled = true;
-          }else{
+          } else {
             this.likeList = this.likeList.concat(data.items);
           }
           this.refreshImageV2(data.items);
           clearTimeout(sid);
           event.target.complete();
-        },500);
+        }, 500);
         break;
     }
   }
@@ -850,7 +850,7 @@ export class ProfilePage implements OnInit {
   }
 
   async handleMyFeedsAvatarV2(destDid: string, channelId: string) {
-    let id = destDid+"-"+channelId;
+    let id = destDid + "-" + channelId;
     let isload = this.myFeedsIsLoadimage[id] || '';
     if (isload === "") {
       let arr = id.split("-");
@@ -868,8 +868,8 @@ export class ProfilePage implements OnInit {
         this.zone.run(() => {
           let srcData = data || "";
           if (srcData != "") {
-                this.myFeedsIsLoadimage[id] = '13';
-                this.myFeedAvatarMap[id] = data;
+            this.myFeedsIsLoadimage[id] = '13';
+            this.myFeedAvatarMap[id] = data;
           } else {
             this.myFeedsIsLoadimage[id] = '13';
           }
@@ -1032,14 +1032,14 @@ export class ProfilePage implements OnInit {
 
   async handlePostImgV2(destDid: string, channelId: string, postId: string) {
     // 13 存在 12不存在 postImgMap
-    let id = destDid+"-"+channelId+'-'+postId;
+    let id = destDid + "-" + channelId + '-' + postId;
     let isload = this.isLoadimage[id] || '';
     let rpostImage = document.getElementById(id + 'likerow');
     if (isload === '') {
       this.isLoadimage[id] = '11';
       let post = this.postMap[postId] || null;
       if (post === null) {
-        post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+        post = await this.dataHelper.getPostV3ById(postId) || null;
         this.postMap[postId] = post;
       }
       if (post === null) {
@@ -1099,7 +1099,7 @@ export class ProfilePage implements OnInit {
 
   async handlePostAvatarV2(destDid: string, channelId: string) {
     // 13 存在 12不存在
-    let id = destDid+"-"+channelId;
+    let id = destDid + "-" + channelId;
     let isload = this.isLoadAvatarImage[id] || '';
     if (isload === '') {
       this.isLoadAvatarImage[id] = '11';
@@ -1140,7 +1140,7 @@ export class ProfilePage implements OnInit {
   }
 
   async handleVideoV2(destDid: string, channelId: string, postId: string) {
-    let id = destDid+"-"+channelId+"-"+postId;
+    let id = destDid + "-" + channelId + "-" + postId;
     let isloadVideoImg = this.isLoadVideoiamge[id] || '';
     let video: any = document.getElementById(id + 'videolike');
     let source: any = document.getElementById(id + 'sourcelike') || '';
@@ -1153,7 +1153,7 @@ export class ProfilePage implements OnInit {
       this.isLoadVideoiamge[id] = '11';
       let post = this.postMap[postId] || null;
       if (post === null) {
-        post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+        post = await this.dataHelper.getPostV3ById(postId) || null;
         this.postMap[postId] = post;
       }
       if (post === null) {
@@ -1422,7 +1422,7 @@ export class ProfilePage implements OnInit {
       this.imgCurKey = item.nodeId + '-' + item.channelId + '-' + item.postId;
       this.isImgLoading[this.imgCurKey] = true;
 
-      let post = await this.dataHelper.getPostV3ById(item.destDid, item.postId);
+      let post = await this.dataHelper.getPostV3ById(item.postId);
       let mediaDatas = post.content.mediaData;
       const elements = mediaDatas[0];
       //原图
@@ -1631,7 +1631,7 @@ export class ProfilePage implements OnInit {
           destDid = this.curItem['destDid'];
           channelId = this.curItem['channelId'];
           let postId = this.curItem['postId'];
-          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(postId) || null;
           let postContent = '';
           if (post != null) {
             postContent = post.content.content || "";
@@ -2260,10 +2260,10 @@ export class ProfilePage implements OnInit {
     this.avatar = imgUri;
   }
 
-  removeMyFeedsObserver(postGridId: string, observer: any){
+  removeMyFeedsObserver(postGridId: string, observer: any) {
     let item = document.getElementById(postGridId) || null;
-    if(item != null){
-      if( observer != null ){
+    if (item != null) {
+      if (observer != null) {
         observer.unobserve(item);//解除观察器
         observer.disconnect();  // 关闭观察器
         this.myFeedsObserver[postGridId] = null;
@@ -2271,16 +2271,16 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  getMyFeedsObserverList(myFeedslist = []){
-    for(let index = 0; index < myFeedslist.length; index++){
-      let postItem =  myFeedslist[index] || null;
-      if(postItem === null){
+  getMyFeedsObserverList(myFeedslist = []) {
+    for (let index = 0; index < myFeedslist.length; index++) {
+      let postItem = myFeedslist[index] || null;
+      if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid+"-"+postItem.channelId+"-myFeeds";
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-myFeeds";
       let exit = this.myFeedsObserver[postGridId] || null;
-      if(exit != null){
-         continue;
+      if (exit != null) {
+        continue;
       }
       this.newMyFeedsObserver(postGridId);
     }
@@ -2288,79 +2288,79 @@ export class ProfilePage implements OnInit {
 
   newMyFeedsObserver(postGridId: string) {
     let observer = this.myFeedsObserver[postGridId] || null;
-    if(observer != null){
+    if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
-    if(item != null ){
-    this.myFeedsObserver[postGridId] = new IntersectionObserver(async (changes:any)=>{
-    let container = changes[0].target;
-    let newId = container.getAttribute("id");
+    if (item != null) {
+      this.myFeedsObserver[postGridId] = new IntersectionObserver(async (changes: any) => {
+        let container = changes[0].target;
+        let newId = container.getAttribute("id");
 
-    let intersectionRatio = changes[0].intersectionRatio;
+        let intersectionRatio = changes[0].intersectionRatio;
 
-    if(intersectionRatio === 0){
-      //console.log("======newId leave========", newId);
-      return;
-    }
-    let arr =  newId.split("-");
-    let destDid: string = arr[0];
-    let channelId: string = arr[1];
-    this.handleMyFeedsAvatarV2(destDid,channelId);
-    this.getChannelFollower(destDid,channelId);
-    //console.log("======intersectionRatio1========",typeof(changes[0]));
-    //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
-    });
+        if (intersectionRatio === 0) {
+          //console.log("======newId leave========", newId);
+          return;
+        }
+        let arr = newId.split("-");
+        let destDid: string = arr[0];
+        let channelId: string = arr[1];
+        this.handleMyFeedsAvatarV2(destDid, channelId);
+        this.getChannelFollower(destDid, channelId);
+        //console.log("======intersectionRatio1========",typeof(changes[0]));
+        //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+      });
 
-    this.myFeedsObserver[postGridId].observe(item);
+      this.myFeedsObserver[postGridId].observe(item);
     }
   }
 
-  getChannelFollower(destDid: string,channelId: string) {
-     //关注数
-     let follower = this.subscriptionV3NumMap[channelId] || '';
-     if (follower === "") {
-       try {
-         this.subscriptionV3NumMap[channelId] = "...";
-         this.dataHelper.getSubscriptionV3NumByChannelId(
-           destDid, channelId).
-           then((result) => {
-             result = result || 0;
-             if (result == 0) {
-               this.hiveVaultController.querySubscriptionChannelById(destDid,channelId).then(() => {
-                 this.zone.run(async () => {
-                   this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(destDid, channelId);
-                 });
-               })
-             }
-             this.subscriptionV3NumMap[channelId] = result;
-           }).catch(() => {
-             this.subscriptionV3NumMap[channelId] = 0;
+  getChannelFollower(destDid: string, channelId: string) {
+    //关注数
+    let follower = this.subscriptionV3NumMap[channelId] || '';
+    if (follower === "") {
+      try {
+        this.subscriptionV3NumMap[channelId] = "...";
+        this.dataHelper.getSubscriptionV3NumByChannelId(
+          destDid, channelId).
+          then((result) => {
+            result = result || 0;
+            if (result == 0) {
+              this.hiveVaultController.querySubscriptionChannelById(destDid, channelId).then(() => {
+                this.zone.run(async () => {
+                  this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(destDid, channelId);
+                });
+              })
+            }
+            this.subscriptionV3NumMap[channelId] = result;
+          }).catch(() => {
+            this.subscriptionV3NumMap[channelId] = 0;
 
-           });
-       } catch (error) {
-       }
-     }
+          });
+      } catch (error) {
+      }
+    }
   }
 
   removeMyFeedsObserveList() {
-    for(let postGridId in this.myFeedsObserver){
-        let observer = this.myFeedsObserver[postGridId] || null;
-        this.removeMyFeedsObserver(postGridId, observer)
+    for (let postGridId in this.myFeedsObserver) {
+      let observer = this.myFeedsObserver[postGridId] || null;
+      this.removeMyFeedsObserver(postGridId, observer)
     }
     this.myFeedsObserver = {};
   }
 
-  getLikeObserverList(likeList = []){
-    for(let index = 0; index < likeList.length; index++){
-      let postItem =  likeList[index] || null;
-      if(postItem === null){
+  getLikeObserverList(likeList = []) {
+    for (let index = 0; index < likeList.length; index++) {
+      let postItem = likeList[index] || null;
+      if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid+"-"+postItem.channelId+"-"+postItem.postId+"-"+postItem.content.mediaType+'-like';
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-like';
       let exit = this.myLikeObserver[postGridId] || null;
-      if(exit != null){
-         continue;
+      if (exit != null) {
+        continue;
       }
       this.newLikeObserver(postGridId);
     }
@@ -2368,61 +2368,61 @@ export class ProfilePage implements OnInit {
 
   newLikeObserver(postGridId: string) {
     let observer = this.myLikeObserver[postGridId] || null;
-    if(observer != null){
+    if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
 
-    if(item != null ){
-    this.myLikeObserver[postGridId] = new IntersectionObserver(async (changes:any)=>{
-    let container = changes[0].target;
-    let newId = container.getAttribute("id");
+    if (item != null) {
+      this.myLikeObserver[postGridId] = new IntersectionObserver(async (changes: any) => {
+        let container = changes[0].target;
+        let newId = container.getAttribute("id");
 
-    let intersectionRatio = changes[0].intersectionRatio;
+        let intersectionRatio = changes[0].intersectionRatio;
 
-    if(intersectionRatio === 0){
-      //console.log("======newId leave========", newId);
-      return;
-    }
-    let arr =  newId.split("-");
-    let destDid: string = arr[0];
-    let channelId: string = arr[1];
-    let postId: string = arr[2];
-    let mediaType: string = arr[3];
-    await this.getChannelName(destDid, channelId);//获取频道name
-    this.getDisplayName(destDid,channelId,destDid);
-    this.handlePostAvatarV2(destDid, channelId);
-    if (mediaType === '1') {
-      this.handlePostImgV2(destDid, channelId, postId);
-    }
-    if (mediaType === '2') {
-      //video
-      this.handleVideoV2(destDid, channelId, postId);
-    }
-    let id = destDid + '-' + channelId + '-' + postId;
-    //post like status
-    CommonPageService.handlePostLikeStatusData(
-      destDid, channelId,  postId, this.isInitLikeStatus, this.hiveVaultController,
-      this.likeMap, this.isLoadingLikeMap);
-    //处理post like number
-    CommonPageService.handlePostLikeNumData(
-      destDid, channelId, postId, this.hiveVaultController,
-      this.likeNumMap, this.isInitLikeNum);
-    //处理post comment
-    CommonPageService.handlePostCommentData(
-      destDid, channelId, postId, this.hiveVaultController,
-      this.isInitComment, this.commentNumMap);
-    //console.log("======intersectionRatio1========",typeof(changes[0]));
-    //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
-    });
+        if (intersectionRatio === 0) {
+          //console.log("======newId leave========", newId);
+          return;
+        }
+        let arr = newId.split("-");
+        let destDid: string = arr[0];
+        let channelId: string = arr[1];
+        let postId: string = arr[2];
+        let mediaType: string = arr[3];
+        await this.getChannelName(destDid, channelId);//获取频道name
+        this.getDisplayName(destDid, channelId, destDid);
+        this.handlePostAvatarV2(destDid, channelId);
+        if (mediaType === '1') {
+          this.handlePostImgV2(destDid, channelId, postId);
+        }
+        if (mediaType === '2') {
+          //video
+          this.handleVideoV2(destDid, channelId, postId);
+        }
+        let id = destDid + '-' + channelId + '-' + postId;
+        //post like status
+        CommonPageService.handlePostLikeStatusData(
+          destDid, channelId, postId, this.isInitLikeStatus, this.hiveVaultController,
+          this.likeMap, this.isLoadingLikeMap);
+        //处理post like number
+        CommonPageService.handlePostLikeNumData(
+          destDid, channelId, postId, this.hiveVaultController,
+          this.likeNumMap, this.isInitLikeNum);
+        //处理post comment
+        CommonPageService.handlePostCommentData(
+          destDid, channelId, postId, this.hiveVaultController,
+          this.isInitComment, this.commentNumMap);
+        //console.log("======intersectionRatio1========",typeof(changes[0]));
+        //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+      });
 
-    this.myLikeObserver[postGridId].observe(item);
+      this.myLikeObserver[postGridId].observe(item);
     }
   }
 
   async getChannelName(destDid: string, channelId: string) {
     let channelName = this.channelNameMap[channelId] || "";
-    if(channelName != ""){
+    if (channelName != "") {
       return channelName;
     }
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
@@ -2435,39 +2435,39 @@ export class ProfilePage implements OnInit {
     return this.channelNameMap[channelId];
   }
 
-  getDisplayName(destDid: string,channelId: string, userDid: string) {
-      //dispalyName
-      let displayNameMap = this.handleDisplayNameMap[userDid] || '';
-      if (displayNameMap === "") {
-        let text = userDid.replace('did:elastos:', '');
-        this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
-        try {
-          this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
-            then((result: string) => {
-              let name = result || "";
-              if (name != "") {
-                this.handleDisplayNameMap[userDid] = name;
-              }
-            }).catch(() => {
-            });
-        } catch (error) {
+  getDisplayName(destDid: string, channelId: string, userDid: string) {
+    //dispalyName
+    let displayNameMap = this.handleDisplayNameMap[userDid] || '';
+    if (displayNameMap === "") {
+      let text = userDid.replace('did:elastos:', '');
+      this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+      try {
+        this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
+          then((result: string) => {
+            let name = result || "";
+            if (name != "") {
+              this.handleDisplayNameMap[userDid] = name;
+            }
+          }).catch(() => {
+          });
+      } catch (error) {
 
-        }
       }
+    }
   }
 
   removeLikeObserveList() {
-    for(let postGridId in this.myLikeObserver){
-        let observer = this.myLikeObserver[postGridId] || null;
-        this.removeMyLikeObserver(postGridId, observer)
+    for (let postGridId in this.myLikeObserver) {
+      let observer = this.myLikeObserver[postGridId] || null;
+      this.removeMyLikeObserver(postGridId, observer)
     }
     this.myLikeObserver = {};
   }
 
-  removeMyLikeObserver(postGridId: string, observer: any){
+  removeMyLikeObserver(postGridId: string, observer: any) {
     let item = document.getElementById(postGridId) || null;
-    if(item != null){
-      if( observer != null ){
+    if (item != null) {
+      if (observer != null) {
         observer.unobserve(item);//解除观察器
         observer.disconnect();  // 关闭观察器
         this.myLikeObserver[postGridId] = null;

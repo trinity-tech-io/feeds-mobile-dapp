@@ -212,13 +212,13 @@ export class EditPostPage implements OnInit {
 
   async initData() {
     let channel: any = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId);
-    this.channelName = channel['displayName'] ||  channel['name'] || '';
+    this.channelName = channel['displayName'] || channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
     let channelAvatarUri = channel['avatar'] || '';
     if (channelAvatarUri != '') {
       this.handleChannelAvatar(channelAvatarUri);
     }
-    let post: any = await this.dataHelper.getPostV3ById(this.destDid, this.postId);
+    let post: any = await this.dataHelper.getPostV3ById(this.postId);
     this.postData = post;
     this.originPostData = _.cloneDeep(this.postData);
     this.mediaType = post.content.mediaType;
@@ -269,7 +269,7 @@ export class EditPostPage implements OnInit {
             let id = this.destDid + this.channelId + this.postId;
             let sid = setTimeout(() => {
               let video: any = document.getElementById(id + 'videoeditpost') || '';
-              if(video != ''){
+              if (video != '') {
                 video.setAttribute('poster', imgageData);
               }
               this.setFullScreen(id);
@@ -374,30 +374,30 @@ export class EditPostPage implements OnInit {
   }
 
   updatePost() {
-      let content = _.cloneDeep(this.postData.content);
-      content.content = this.editContent;
-      const updateAt = UtilService.getCurrentTimeNum();
-      const pinStatus = FeedsData.PinStatus.NOTPINNED;//TODO
-      this.hiveVaultController.updatePost(
-        this.originPostData,
-        content,
-        pinStatus,
-        updateAt,
-        "public",
-        '',
-      ).then((result) => {
-        this.zone.run(async () => {
-          this.isUpdateTab = true;
-          this.clickButton = false;
-          this.native.hideLoading();
-          this.native.pop();
-        });
-      }).catch((error) => {
-        this.native.handleHiveError(error,'common.editPostFail');
+    let content = _.cloneDeep(this.postData.content);
+    content.content = this.editContent;
+    const updateAt = UtilService.getCurrentTimeNum();
+    const pinStatus = FeedsData.PinStatus.NOTPINNED;//TODO
+    this.hiveVaultController.updatePost(
+      this.originPostData,
+      content,
+      pinStatus,
+      updateAt,
+      "public",
+      '',
+    ).then((result) => {
+      this.zone.run(async () => {
+        this.isUpdateTab = true;
         this.clickButton = false;
-        this.pauseVideo();
         this.native.hideLoading();
+        this.native.pop();
       });
+    }).catch((error) => {
+      this.native.handleHiveError(error, 'common.editPostFail');
+      this.clickButton = false;
+      this.pauseVideo();
+      this.native.hideLoading();
+    });
   }
 
   ionBlur() {

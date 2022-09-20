@@ -3374,7 +3374,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         let isNewPost: boolean = false;
-        let originPost: FeedsData.PostV3 = await this.getPostV3ById(newPost.destDid, newPost.postId) || null;
+        let originPost: FeedsData.PostV3 = await this.getPostV3ById(newPost.postId) || null;
         if (!originPost) {
           try {
             await this.addPostV3(newPost);
@@ -3509,7 +3509,7 @@ export class DataHelper {
     });
   }
 
-  getPostV3ById(destDid: string, postId: string): Promise<FeedsData.PostV3> {
+  getPostV3ById(postId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;

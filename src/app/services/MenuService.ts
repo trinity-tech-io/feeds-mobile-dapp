@@ -180,6 +180,7 @@ export class MenuService {
     if (this.actionSheetMenuStatus != null) {
       return;
     }
+
     this.actionSheetMenuStatus = "opening";
     const sharePostButton = this.createSharePostButton(post.destDid, post.postId);
     const editPostButton = this.createEditPostButton(post.destDid, post.channelId, channelName, post.postId);
@@ -336,9 +337,9 @@ export class MenuService {
       text: this.translate.instant('common.share'),
       icon: 'ios-share1',
       handler: () => {
-        this.native.showLoading("common.generateSharingLink").then(async ()=>{
+        this.native.showLoading("common.generateSharingLink").then(async () => {
           try {
-            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(postId) || null;
             const sharedLink = await this.intentService.createPostShareLink(post);
             this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
             this.native.hideLoading();
@@ -365,7 +366,7 @@ export class MenuService {
           return;
         }
 
-        this.native.showLoading("common.waitMoment").then(()=>{
+        this.native.showLoading("common.waitMoment").then(() => {
           try {
             this.hiveVaultController.unSubscribeChannel(
               destDid, channelId
@@ -648,11 +649,17 @@ export class MenuService {
       text: this.translate.instant('common.pinPost'),
       icon: 'ios-pin',
       handler: () => {
-        this.native.showLoading("common.waitMoment").then(async ()=>{
+        this.native.showLoading("common.waitMoment").then(async () => {
           try {
-            if (needUnpinPost) await this.hiveVaultController.pinPost(needUnpinPost, FeedsData.PinStatus.NOTPINNED);
+            let needUnpinPostId = null;
+            const originPostId = originPost.postId;
+            if (needUnpinPost) {
+              await this.hiveVaultController.pinPost(needUnpinPost, FeedsData.PinStatus.NOTPINNED);
+              needUnpinPostId = needUnpinPost.postId;
+            }
+
             await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.PINNED);
-            this.events.publish(FeedsEvent.PublishType.pinPostFinish);
+            this.events.publish(FeedsEvent.PublishType.pinPostFinish, ({ originPostId: originPostId, needUnpinPostId: needUnpinPostId }));
           } catch (error) {
             this.native.toastWarn('ChannelsPage.PinPostError');
           } finally {
@@ -668,10 +675,10 @@ export class MenuService {
       text: this.translate.instant('common.unpinPost'),
       icon: 'ios-pin',
       handler: async () => {
-        this.native.showLoading("common.waitMoment").then(async ()=>{
+        this.native.showLoading("common.waitMoment").then(async () => {
           try {
             await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.NOTPINNED);
-            this.events.publish(FeedsEvent.PublishType.unpinPostFinish);
+            this.events.publish(FeedsEvent.PublishType.unpinPostFinish, originPost.postId);
           } catch (error) {
             this.native.toastWarn('ChannelsPage.UnPinPostError');
           } finally {
@@ -694,9 +701,9 @@ export class MenuService {
         break;
       case 'sharepost':
         //home share post
-        this.native.showLoading("common.generateSharingLink").then(async ()=>{
+        this.native.showLoading("common.generateSharingLink").then(async () => {
           try {
-            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(postId) || null;
             const sharedLink = await this.intentService.createPostShareLink(post);
             this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
             this.native.hideLoading();
@@ -860,7 +867,7 @@ export class MenuService {
   }
 
   async sharePasarLink(assItem: any) {
-    this.native.showLoading("common.generateSharingLink").then(async ()=>{
+    this.native.showLoading("common.generateSharingLink").then(async () => {
       try {
         const saleOrderId = assItem.saleOrderId;
         Logger.log('Share pasar orderId is', saleOrderId);

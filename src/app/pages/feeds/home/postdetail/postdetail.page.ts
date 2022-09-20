@@ -268,10 +268,7 @@ export class PostdetailPage implements OnInit {
     } catch (error) {
 
     }
-    let post: any = await this.dataHelper.getPostV3ById(
-      this.destDid,
-      this.postId,
-    ) || null;
+    let post: any = await this.dataHelper.getPostV3ById(this.postId) || null;
     this.getCommentsNum(post);
     captainCommentList = this.postCommentList;
     captainCommentList = _.filter(captainCommentList, (item: FeedsData.CommentV3) => {
@@ -302,7 +299,7 @@ export class PostdetailPage implements OnInit {
   }
 
   async initPostContent() {
-    let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.destDid, this.postId);
+    let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId);
     this.post = post;
     this.postStatus = post.status || 0;
     this.mediaType = post.content.mediaType;
@@ -363,7 +360,7 @@ export class PostdetailPage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid, deletePostEventData.postId);
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
             await this.initData(true);
             this.native.hideLoading();
@@ -408,6 +405,23 @@ export class PostdetailPage implements OnInit {
       }
 
     });
+
+    this.events.subscribe(FeedsEvent.PublishType.pinPostFinish, async (pinPostFinishData) => {
+      if (!pinPostFinishData) {
+        return;
+      }
+      const originPostId = pinPostFinishData.originPostId || null;
+      if (originPostId) {
+        this.post.pinStatus = FeedsData.PinStatus.PINNED;
+      }
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.unpinPostFinish, async (needUnpinPostId) => {
+      if (!needUnpinPostId) {
+        return;
+      }
+      this.post.pinStatus = FeedsData.PinStatus.NOTPINNED;
+    });
   }
 
   ionViewWillLeave() {
@@ -421,6 +435,8 @@ export class PostdetailPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.pinPostFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.unpinPostFinish);
     this.removeCaptainCommentObserverList();
     this.removeReplyCommentObserverList();
     this.native.handleTabsEvents();
@@ -640,7 +656,7 @@ export class PostdetailPage implements OnInit {
         (imagesHeight - this.roundWidth) / 2 + 8 + 'px';
       this.isImgLoading = true;
 
-      let post = await this.dataHelper.getPostV3ById(destDid, postId);
+      let post = await this.dataHelper.getPostV3ById(postId);
       let mediaDatas = post.content.mediaData;
       const elements = mediaDatas[0];
       //原图

@@ -470,7 +470,7 @@ export class ChannelsPage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid, deletePostEventData.postId);
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
             await this.refreshChannelList();
             this.native.hideLoading();
@@ -892,7 +892,7 @@ export class ChannelsPage implements OnInit {
       let post = this.postMap[postId] || null;
       console.log('postMap postId====>', post);
       if (post === null) {
-        post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+        post = await this.dataHelper.getPostV3ById(postId) || null;
         console.log('new get post ====>', post);
         this.postMap[postId] = post;
       }
@@ -970,7 +970,7 @@ export class ChannelsPage implements OnInit {
       this.imgCurKey = destDid + '-' + channelId + '-' + postId;
       this.isImgLoading[this.imgCurKey] = true;
 
-      let post = await this.dataHelper.getPostV3ById(destDid, postId);
+      let post = await this.dataHelper.getPostV3ById(postId);
       let mediaDatas = post.content.mediaData;
       const elements = mediaDatas[0];
       //原图

@@ -256,10 +256,10 @@ export class HomePage implements OnInit {
     this.refreshImageV2(this.postList);
     this.dataHelper.resetNewPost();
     this.isPostLoading = false;
-    if(this.totalData.length < 5 ){
+    if (this.totalData.length < 5) {
       this.refresher.disabled = false;
       this.infiniteScroll.disabled = true;
-    }else{
+    } else {
       this.refresher.disabled = false;
       this.infiniteScroll.disabled = false;
     }
@@ -451,7 +451,6 @@ export class HomePage implements OnInit {
     });
 
     this.addCommonEvents();
-
   }
 
   addCommonEvents() {
@@ -527,7 +526,7 @@ export class HomePage implements OnInit {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
         try {
-          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.destDid, deletePostEventData.postId);
+          let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then((result: any) => {
             this.refreshPostList();
             this.native.hideLoading();
@@ -553,6 +552,39 @@ export class HomePage implements OnInit {
 
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.pinPostFinish, async (pinPostFinishData) => {
+      if (!pinPostFinishData) {
+        return;
+      }
+
+      const originPostId = pinPostFinishData.originPostId || null;
+      const needUnpinPostId = pinPostFinishData.needUnpinPostId || null;
+
+      if (originPostId) {
+        const pinIndex = _.findIndex(this.postList, (post: FeedsData.PostV3) => {
+          return post.postId == originPostId
+        })
+        this.postList[pinIndex].pinStatus = FeedsData.PinStatus.PINNED;
+      }
+
+      if (needUnpinPostId) {
+        const unpinIndex = _.findIndex(this.postList, (post: FeedsData.PostV3) => {
+          return post.postId == needUnpinPostId
+        })
+        this.postList[unpinIndex].pinStatus = FeedsData.PinStatus.NOTPINNED;
+      }
+    });
+
+    this.events.subscribe(FeedsEvent.PublishType.unpinPostFinish, async (needUnpinPostId) => {
+      if (!needUnpinPostId) {
+        return;
+      }
+
+      const unpinIndex = _.findIndex(this.postList, (post: FeedsData.PostV3) => {
+        return post.postId == needUnpinPostId
+      })
+      this.postList[unpinIndex].pinStatus = FeedsData.PinStatus.NOTPINNED;
+    });
   }
 
   ionViewWillLeave() {
@@ -562,6 +594,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.hideAdult);
     this.events.unsubscribe(FeedsEvent.PublishType.pasarListGrid);
     this.events.unsubscribe(FeedsEvent.PublishType.unfollowFeedsFinish);
+
     this.clearData();
   }
 
@@ -602,6 +635,8 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.clickHome);
 
+    this.events.unsubscribe(FeedsEvent.PublishType.pinPostFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.unpinPostFinish);
 
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
@@ -1097,7 +1132,7 @@ export class HomePage implements OnInit {
       this.imgCurKey = destDid + '-' + channelId + '-' + postId;
       this.isImgLoading[this.imgCurKey] = true;
 
-      let post = await this.dataHelper.getPostV3ById(destDid, postId);
+      let post = await this.dataHelper.getPostV3ById(postId);
       let mediaDatas = post.content.mediaData;
       const elements = mediaDatas[0];
       //原图
@@ -1179,7 +1214,7 @@ export class HomePage implements OnInit {
         this.isLoadimage[id] = '11';
         let post = this.postMap[postId] || null;
         if (post === null) {
-          post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+          post = await this.dataHelper.getPostV3ById(postId) || null;
           this.postMap[postId] = post;
         }
         if (post === null) {
@@ -1258,7 +1293,7 @@ export class HomePage implements OnInit {
         let post = this.postMap[postId] || null;
 
         if (post === null) {
-          post = await this.dataHelper.getPostV3ById(destDid, postId) || null;
+          post = await this.dataHelper.getPostV3ById(postId) || null;
           this.postMap[postId] = post;
         }
         if (post === null) {
