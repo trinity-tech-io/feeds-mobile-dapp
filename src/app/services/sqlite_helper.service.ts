@@ -18,6 +18,7 @@ export class FeedsSqliteHelper {
   private readonly TABLE_CHANNEL_NEW: string = 'channelnew';
   private readonly TABLE_POST_NEW: string = 'postsnew';
   private readonly TABLE_CACHED_POST: string = 'cachedpost';
+  private readonly TABLE_REPORTED_REPOST: string = 'reportedrepost';
   // private readonly TABLE_PINPOST: string = 'pinpost';
 
   public isOpen: boolean = false;
@@ -119,11 +120,11 @@ export class FeedsSqliteHelper {
         const p4 = this.createSubscriptionTable(dbUserDid);
         const p5 = this.createCommentTable(dbUserDid);
         const p6 = this.createLikeTable(dbUserDid);
-        // const p7 = this.createPinPostTable(dbUserDid);
 
         const p7 = this.createCachedPostTable(dbUserDid);
+        const p8 = this.createReportedRepostTable(dbUserDid);
         Promise.all(
-          [p1, p2, p3, p4, p5, p6, p7]
+          [p1, p2, p3, p4, p5, p6, p7, p8]
         );
 
         resolve('SUCCESS');
@@ -1194,136 +1195,136 @@ export class FeedsSqliteHelper {
     });
   }
 
-  //pinpost
-  // private createPinPostTable(dbUserDid: string): Promise<any> {
+  // reported repost
+  private createReportedRepostTable(dbUserDid: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'create table if not exists ' + this.TABLE_REPORTED_REPOST
+          + '('
+          + 'dest_did VARCHAR(64) UNIQUE, repost_id VARCHAR(64), origin_channel_id VARCHAR(64), origin_post_id VARCHAR(64), repost_target_did VARCHAR(64), repost_channel_id VARCHAR(64), repost_post_id VARCHAR(64),created_at REAL(64)'
+          + ')';
+        const result = await this.executeSql(dbUserDid, statement);
+        Logger.log(TAG, 'create reported repost table result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Create reported repost table error', error);
+        reject(error);
+      }
+    });
+  }
+
+  insertReportedRepost(dbUserDid: string, reportedRepost: FeedsData.ReportedRepost): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'INSERT INTO ' + this.TABLE_REPORTED_REPOST
+          + '(dest_did, repost_id, origin_channel_id, origin_post_id, repost_target_did, repost_channel_id, repost_post_id, created_at) VALUES'
+          + '(?,?,?,?,?,?,?,?)';
+        const params = [reportedRepost.destDid, reportedRepost.repostId, reportedRepost.originChannelId, reportedRepost.originPostId, reportedRepost.repostTargetDid, reportedRepost.repostChannelId, reportedRepost.repostPostId, reportedRepost.createdAt];
+
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Insert reported repost result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Insert reported repost date error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryReportedRepostData(dbUserDid: string): Promise<FeedsData.ReportedRepost[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_REPORTED_REPOST;
+        const result = await this.executeSql(dbUserDid, statement);
+        const reportedRepostList = this.parseReportedRepostData(result);
+        resolve(reportedRepostList);
+      } catch (error) {
+        Logger.error(TAG, 'Query reported repost Data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryReportedRepostDataById(dbUserDid: string, originTargetDid: string, originChannelId: string, originPostId: string): Promise<FeedsData.ReportedRepost[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE dest_did=? and origin_channel_id=? and origin_post_id=?'
+        const params = [originTargetDid, originChannelId, originPostId];
+
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const reportedRepost = this.parseReportedRepostData(result);
+        resolve(reportedRepost);
+      } catch (error) {
+        Logger.error(TAG, 'Query reported repost Data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryReportedRepostNum(dbUserDid: string, originTargetDid: string, originChannelId: string, originPostId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE dest_did=? and origin_channel_id=? and origin_post_id=?'
+        const params = [originTargetDid, originChannelId, originPostId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const num = this.parseNum(result);
+        resolve(num);
+      } catch (error) {
+        Logger.error(TAG, 'Query reported repost num error', error);
+        reject(error);
+      }
+    });
+  }
+
+  deleteReportedRepost(dbUserDid: string, reportedRepost: FeedsData.ReportedRepost): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE repost_id=?'
+        const params = [reportedRepost.repostId];
+
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'delete reported repost result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'delete reported repost error', error);
+        reject(error);
+      }
+    });
+  }
+
+  // updateReportedRepost(dbUserDid: string, likeV3: FeedsData.LikeV3): Promise<string> {
   //   return new Promise(async (resolve, reject) => {
   //     try {
-  //       const statement = 'create table if not exists ' + this.TABLE_PINPOST
-  //         + '('
-  //         + 'dest_did VARCHAR(64), channel_id VARCHAR(64), post_id VARCHAR(64)'
-  //         + ')';
+  //       const statement = 'UPDATE ' + this.TABLE_LIKE
+  //         + ' SET proof=?, memo=?, updated_at=?, status=? WHERE like_id=?';
+  //       const params = [likeV3.proof, likeV3.memo, likeV3.updatedAt, likeV3.status, likeV3.likeId];
 
-  //       const result = await this.executeSql(dbUserDid, statement);
-  //       Logger.log(TAG, 'Create pin post  table result is', result);
+  //       const result = await this.executeSql(dbUserDid, statement, params);
+  //       Logger.log(TAG, 'update comment data result is', result);
   //       resolve('SUCCESS');
-  //     } catch (error) {
-  //       Logger.error(TAG, 'Create subscription table error', error);
-  //       reject(error);
+  //     }
+  //     catch (error) {
+  //       Logger.error(TAG, 'update like error', error);
+  //       reject(error)
   //     }
   //   });
   // }
 
-  // insertPinPostData(dbUserDid: string, destDid: string, channelId: string, postId: string): Promise<string> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const statement = 'INSERT INTO ' + this.TABLE_PINPOST
-  //         + '(dest_did, channel_id, post_id) VALUES'
-  //         + '(?,?,?)';
 
-  //       const params = [destDid, channelId, postId];
-
-  //       const result = await this.executeSql(dbUserDid, statement, params);
-  //       Logger.log(TAG, 'Insert pin post Data result is', result);
-  //       resolve('SUCCESS');
-  //     } catch (error) {
-  //       Logger.error(TAG, 'Insert pin post table date error', error);
-  //       reject(error);
-  //     }
-  //   });
-  // }
-
-  // queryPinPostList(dbUserDid: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const statement = 'SELECT * FROM ' + this.TABLE_PINPOST;
-  //       const result = await this.executeSql(dbUserDid, statement);
-  //       const pinPostList = this.parsePinPostData(result);
-  //       resolve(pinPostList);
-  //     } catch (error) {
-  //       Logger.error(TAG, 'query pin post Data error', error);
-  //       reject(error);
-  //     }
-  //   });
-  // }
-
-  // queryPinPostDataByChannelId(dbUserDid: string, channelId: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const statement = 'SELECT * FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=?';
-  //       const params = [channelId];
-  //       const result = await this.executeSql(dbUserDid, statement, params);
-  //       const pinPostList = this.parsePinPostData(result);
-
-  //       Logger.log(TAG, 'query pin post data by channel id result is', result);
-  //       resolve(pinPostList);
-  //     } catch (error) {
-  //       Logger.error(TAG, 'query pin post Data By ID  error', error);
-  //       reject(error);
-  //     }
-  //   });
-  // }
-
-  // queryPinPostData(dbUserDid: string, channelId: string, postId: string): Promise<{ destDid: string, channelId: string, postId: string }[]> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const statement = 'SELECT * FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=? and post_id=?';
-  //       const params = [channelId];
-  //       const result = await this.executeSql(dbUserDid, statement, params);
-  //       const pinPostList = this.parsePinPostData(result);
-
-  //       Logger.log(TAG, 'query pin post data by channel id result is', result);
-  //       resolve(pinPostList);
-  //     } catch (error) {
-  //       Logger.error(TAG, 'query pin post Data By ID  error', error);
-  //       reject(error);
-  //     }
-  //   });
-  // }
-
-  // deletePinPostData(dbUserDid: string, channelId: string): Promise<string> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const statement = 'DELETE FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=?'
-  //       const params = [channelId];
-  //       const result = await this.executeSql(dbUserDid, statement, params);
-  //       Logger.log(TAG, 'remove pin post result is', result);
-  //       resolve('SUCCESS');
-  //     } catch (error) {
-  //       Logger.error(TAG, 'delete pin post data error', error);
-  //       reject(error);
-  //     }
-  //   });
-  // }
-
-  // deletePinPostDataByChannelId(dbUserDid: string, channelId: string): Promise<string> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const statement = 'DELETE FROM ' + this.TABLE_PINPOST + ' WHERE channel_id=?'
-  //       const params = [channelId];
-  //       const result = await this.executeSql(dbUserDid, statement, params);
-  //       Logger.log(TAG, 'remove pin post result is', result);
-  //       resolve('SUCCESS');
-  //     } catch (error) {
-  //       Logger.error(TAG, 'delete pin post data error', error);
-  //       reject(error);
-  //     }
-  //   });
-  // }
-
-  // cleanPinPostData(dbUserDid: string): Promise<string> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const statement = 'DELETE FROM ' + this.TABLE_PINPOST;
-  //       const params = [];
-  //       const result = await this.executeSql(dbUserDid, statement, params);
-  //       Logger.log(TAG, 'clean pin post result is', result);
-  //       resolve('SUCCESS');
-  //     } catch (error) {
-  //       Logger.error(TAG, 'clean subscription data error', error);
-  //       reject(error);
-  //     }
-  //   });
-  // }
+  cleanReportedRepostData(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_REPORTED_REPOST;
+        const params = [];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'clean reported repost result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'clean reported repost data error', error);
+        reject(error);
+      }
+    });
+  }
 
   parsePostData(result: any): FeedsData.PostV3[] {
     Logger.log(TAG, 'Parse post result from sql, result is', result);
@@ -1604,6 +1605,33 @@ export class FeedsSqliteHelper {
     Logger.log(TAG, 'Parse subscription list from sql, list is', list);
     return list;
   }
+
+  parseReportedRepostData(result: any): FeedsData.ReportedRepost[] {
+    Logger.log(TAG, 'Parse reported repost result from sql, result is', result);
+    if (!result) {
+      return [];
+    }
+    let list = [];
+    for (let index = 0; index < result.rows.length; index++) {
+      const element = result.rows.item(index);
+      let reportedRepost: FeedsData.ReportedRepost = {
+        destDid: element['dest_did'],
+        repostId: element['repost_id'],
+
+        originChannelId: element['origin_channel_id'],
+        originPostId: element['origin_post_id'],
+
+        repostTargetDid: element['repost_target_did'],
+        repostChannelId: element['repost_channel_id'],
+        repostPostId: element['repost_post_id'],
+        createdAt: element['created_at']
+      }
+      list.push(reportedRepost);
+    }
+    Logger.log(TAG, 'Parse reported repost list from sql, list is', list);
+    return list;
+  }
+
 
   dropAllData(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
