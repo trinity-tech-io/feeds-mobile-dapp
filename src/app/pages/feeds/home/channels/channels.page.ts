@@ -20,7 +20,8 @@ import { Logger } from 'src/app/services/logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { CommonPageService } from 'src/app/services/common.page.service';
-import { Config } from 'src/app/services/config';
+import { MorenameComponent } from 'src/app/components/morename/morename.component';
+
 let TAG: string = 'Feeds-feeds';
 @Component({
   selector: 'app-channels',
@@ -138,6 +139,7 @@ export class ChannelsPage implements OnInit {
   private firstScrollTop = 0;
   private lastScrollTop = 0;
   public  isFullPost: boolean = false;
+  private infoPopover: any = null;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -1513,6 +1515,25 @@ export class ChannelsPage implements OnInit {
       }
    }
    this.lastScrollTop = event.detail.scrollTop;
+  }
+
+
+  async presentPopover(e: Event) {
+
+    this.infoPopover = await this.popoverController.create({
+      mode: 'ios',
+      component: MorenameComponent,
+      event: e,
+      componentProps: {
+        name: this.channelDesc,
+      },
+    });
+
+    this.infoPopover.onWillDismiss().then(() => {
+      this.infoPopover = null;
+    });
+
+    return await this.infoPopover.present();
   }
 
  }

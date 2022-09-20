@@ -20,6 +20,7 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import _ from 'lodash';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { PopupProvider } from 'src/app/services/popup';
+import { MorenameComponent } from 'src/app/components/morename/morename.component';
 
 @Component({
   selector: 'app-feedinfo',
@@ -56,6 +57,7 @@ export class FeedinfoPage implements OnInit {
   private confirmdialog: any = null;
   public lightThemeType: number = 3;
   public clickButton: boolean = false;
+  private infoPopover: any = null;
   constructor(
     private popoverController: PopoverController,
     private feedService: FeedService,
@@ -316,5 +318,24 @@ export class FeedinfoPage implements OnInit {
   }
 
   preventDefault(e: any) { e.preventDefault(); };
+
+
+  async presentPopover(e: Event) {
+
+    this.infoPopover = await this.popoverController.create({
+      mode: 'ios',
+      component: MorenameComponent,
+      event: e,
+      componentProps: {
+        name: this.des,
+      },
+    });
+
+    this.infoPopover.onWillDismiss().then(() => {
+      this.infoPopover = null;
+    });
+
+    return await this.infoPopover.present();
+  }
 
 }

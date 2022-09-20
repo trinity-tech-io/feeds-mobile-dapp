@@ -16,8 +16,8 @@
             <span *ngIf="channelOwner !='' ">@{{channelOwner}}</span>
           </div>
 
-          <div class="channeldes">
-            <span>{{des}}</span>
+          <div class="channeldes" (click) = "presentPopover($event)">
+             {{des}}
           </div>
         </ion-col>
 
