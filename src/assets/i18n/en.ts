@@ -222,7 +222,8 @@ export const en = {
     RedditAuthFailed: 'Reddit auth Failed',
     SubscribeElastosCommunity: 'Please subscribe to the Elastos community on Reddit first',
     redditError: 'Reddit request timed out',
-    twitterError3: 'Unable to resolve the Twitter host, please check the network and try again'
+    twitterError3: 'Unable to resolve the Twitter host, please check the network and try again',
+    unableUnsubscribe: 'Unable to unsubscribe to your own channel'
   },
   app: {
     profileDetails: 'Profile Details',

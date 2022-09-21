@@ -222,7 +222,8 @@ export const zh = {
     RedditAuthFailed: 'Reddit 授权失败',
     SubscribeElastosCommunity: '请先在Reddit中订阅Elastos社区',
     redditError: 'Reddit 请求超时',
-    twitterError3: '无法解析twitter服务地址，请检查网络后重试'
+    twitterError3: '无法解析twitter服务地址，请检查网络后重试',
+    unableUnsubscribe: '无法取消订阅自己的频道'
   },
   app: {
     profileDetails: '档案详情',

@@ -257,7 +257,11 @@ export class FeedinfoPage implements OnInit {
 
     try {
       const userDid = (await this.dataHelper.getSigninData()).did || '';
-      this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId, userDid);
+      if (this.destDid != userDid) {
+        this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId, userDid);
+      } else {
+        this.native.toast_trans('common.unableUnsubscribe');
+      }
       //this.followStatus = true;
     } catch (error) {
       //TODO show unsubscribe error ui

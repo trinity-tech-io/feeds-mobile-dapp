@@ -138,7 +138,7 @@ export class ChannelsPage implements OnInit {
   private currentPinPost: FeedsData.PostV3 = null;
   private firstScrollTop = 0;
   private lastScrollTop = 0;
-  public  isFullPost: boolean = false;
+  public isFullPost: boolean = false;
   private infoPopover: any = null;
   constructor(
     private platform: Platform,
@@ -214,7 +214,12 @@ export class ChannelsPage implements OnInit {
 
     try {
       const userDid = (await this.dataHelper.getSigninData()).did || '';
-      this.menuService.showChannelMenu(this.destDid, this.channelId, userDid);
+
+      if (this.destDid != userDid) {
+        this.menuService.showChannelMenu(this.destDid, this.channelId, userDid);
+      } else {
+        this.native.toast_trans('common.unableUnsubscribe');
+      }
       //this.followStatus = false;
     } catch (error) {
       //TODO show unsubscribe error ui
@@ -1494,28 +1499,28 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  postListScroll(event:any) {
+  postListScroll(event: any) {
     this.handlePostListScroll(event);
   }
 
-  handlePostListScroll(event:any){
+  handlePostListScroll(event: any) {
 
-  if (event.detail.deltaY > 0) {
+    if (event.detail.deltaY > 0) {
 
-    if(this.firstScrollTop === 0){
-      this.firstScrollTop = 1;
-      this.isFullPost = true;
-      this.refresher.disabled = true;
-    }
-  } else if(event.detail.deltaY < 0) {
+      if (this.firstScrollTop === 0) {
+        this.firstScrollTop = 1;
+        this.isFullPost = true;
+        this.refresher.disabled = true;
+      }
+    } else if (event.detail.deltaY < 0) {
 
-    if(this.totalData.length > 4 && this.firstScrollTop > 0 && event.detail.scrollTop === 0){
-      this.firstScrollTop = 0;
-      this.isFullPost = false;
-      this.refresher.disabled = false;
-    }
+      if (this.totalData.length > 4 && this.firstScrollTop > 0 && event.detail.scrollTop === 0) {
+        this.firstScrollTop = 0;
+        this.isFullPost = false;
+        this.refresher.disabled = false;
+      }
 
-  };
+    };
   }
 
 
@@ -1538,11 +1543,11 @@ export class ChannelsPage implements OnInit {
   }
 
   closeFullSrceenPost() {
-    if(this.isFullPost){
+    if (this.isFullPost) {
       this.firstScrollTop = 0;
       this.isFullPost = false;
       this.refresher.disabled = false;
     }
   }
 
- }
+}
