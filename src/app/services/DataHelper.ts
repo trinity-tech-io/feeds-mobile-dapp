@@ -4405,6 +4405,113 @@ export class DataHelper {
     });
   }
 
+
+  //reported repost
+  private addReportedRePost(repost: FeedsData.ReportedRepost): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.insertReportedRepost(selfDid, repost);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Add reported repost error,', error);
+        reject(error);
+      }
+    });
+  }
+
+  private addReportedRepost(reportedReposts: FeedsData.ReportedRepost[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!reportedReposts) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < reportedReposts.length; index++) {
+          const repost = reportedReposts[index];
+          try {
+            await this.addReportedRePost(repost);
+          } catch (error) {
+          }
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Add reported reposts error', error);
+        reject(error)
+      }
+    });
+  }
+
+  private updateReportedRepost(repost: FeedsData.ReportedRepost): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = this.sqliteHelper.updateReportedRepost(selfDid, repost);
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'Update reported repost error', error);
+        reject(error);
+      }
+    });
+  }
+
+  private updateReportedReposts(reposts: FeedsData.ReportedRepost[]) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!reposts) {
+          resolve('FINISH');
+          return;
+        }
+
+        for (let index = 0; index < reposts.length; index++) {
+          const repost = reposts[index];
+          await this.updateReportedRepost(repost);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Update reported reposts error', error);
+        reject(error)
+      }
+    });
+  }
+
+  deleteReportedRePost(reposts: FeedsData.ReportedRepost): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        await this.sqliteHelper.deleteReportedRepost(selfDid, reposts);
+        resolve('FINISH');
+      } catch (error) {
+        resolve('FINISH');
+      }
+    });
+  }
+
+  getReportedRePostById(originPostId: string): Promise<FeedsData.ReportedRepost[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const list = await this.sqliteHelper.queryReportedRepostDataById(selfDid, originPostId);
+        resolve(list);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getReportedRePostNumById(originPostId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const num = await this.sqliteHelper.queryReportedRepostNum(selfDid, originPostId);
+        resolve(num);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   getChannelCollectionPageList() {
     return this.channelCollectionPageList;
   }

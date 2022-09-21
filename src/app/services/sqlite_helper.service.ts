@@ -1245,11 +1245,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryReportedRepostDataById(dbUserDid: string, originTargetDid: string, originChannelId: string, originPostId: string): Promise<FeedsData.ReportedRepost[]> {
+  queryReportedRepostDataById(dbUserDid: string, originPostId: string): Promise<FeedsData.ReportedRepost[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE dest_did=? and origin_channel_id=? and origin_post_id=?'
-        const params = [originTargetDid, originChannelId, originPostId];
+        const statement = 'SELECT * FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE origin_post_id=?'
+        const params = [originPostId];
 
         const result = await this.executeSql(dbUserDid, statement, params);
         const reportedRepost = this.parseReportedRepostData(result);
@@ -1261,11 +1261,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryReportedRepostNum(dbUserDid: string, originTargetDid: string, originChannelId: string, originPostId: string): Promise<number> {
+  queryReportedRepostNum(dbUserDid: string, originPostId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE dest_did=? and origin_channel_id=? and origin_post_id=?'
-        const params = [originTargetDid, originChannelId, originPostId];
+        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE origin_post_id=?'
+        const params = [originPostId];
         const result = await this.executeSql(dbUserDid, statement, params);
         const num = this.parseNum(result);
         resolve(num);
@@ -1292,23 +1292,23 @@ export class FeedsSqliteHelper {
     });
   }
 
-  // updateReportedRepost(dbUserDid: string, likeV3: FeedsData.LikeV3): Promise<string> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const statement = 'UPDATE ' + this.TABLE_LIKE
-  //         + ' SET proof=?, memo=?, updated_at=?, status=? WHERE like_id=?';
-  //       const params = [likeV3.proof, likeV3.memo, likeV3.updatedAt, likeV3.status, likeV3.likeId];
+  updateReportedRepost(dbUserDid: string, reportedRepost: FeedsData.ReportedRepost): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'UPDATE ' + this.TABLE_REPORTED_REPOST
+          + ' SET dest_did=?, origin_channel_id=?, origin_post_id=?, repost_target_did=?, repost_channel_id=?, repost_post_id=?, created_at=? WHERE repost_id=?';
+        const params = [reportedRepost.destDid, reportedRepost.originChannelId, reportedRepost.originPostId, reportedRepost.repostTargetDid, reportedRepost.repostChannelId, reportedRepost.repostPostId, reportedRepost.createdAt, reportedRepost.repostId];
 
-  //       const result = await this.executeSql(dbUserDid, statement, params);
-  //       Logger.log(TAG, 'update comment data result is', result);
-  //       resolve('SUCCESS');
-  //     }
-  //     catch (error) {
-  //       Logger.error(TAG, 'update like error', error);
-  //       reject(error)
-  //     }
-  //   });
-  // }
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'update reported repost data result is', result);
+        resolve('SUCCESS');
+      }
+      catch (error) {
+        Logger.error(TAG, 'update reported repost data error', error);
+        reject(error)
+      }
+    });
+  }
 
 
   cleanReportedRepostData(dbUserDid: string): Promise<string> {
