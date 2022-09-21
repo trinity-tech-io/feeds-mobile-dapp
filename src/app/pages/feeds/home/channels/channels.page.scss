@@ -255,3 +255,43 @@
 .post-grid .post-row .content-col .pinnedPostTop{
   margin-top: 2px;
 }
+
+.closeFullSrceenPost {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 60px;
+    width: 50px;
+    height: 50px;
+    background-color: #161C24;
+    border: 2px solid transparent;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+    position: absolute;
+    bottom: 115px;
+    right: 10px;
+
+    img {
+      object-fit: cover;
+      overflow: hidden;
+      height: 30px;
+      width: 30px;
+    }
+
+    .offline {
+      width: 10px;
+      height: 10px;
+      position: absolute;
+      bottom: 0.5px;
+      right: 0.5px;
+      background-color: #cdcde6;
+      border: 2px solid #f8f8ff;
+      border-radius: 100%;
+    }
+
+    .online {
+      background: #2dd36f;
+    }
+  }

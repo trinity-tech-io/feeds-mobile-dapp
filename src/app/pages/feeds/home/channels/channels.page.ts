@@ -1499,22 +1499,23 @@ export class ChannelsPage implements OnInit {
   }
 
   handlePostListScroll(event:any){
-    if(this.lastScrollTop < event.detail.scrollTop) {
 
-      if(this.firstScrollTop === 0){
-        this.firstScrollTop = event.detail.scrollTop;
-        this.isFullPost = true;
-        this.refresher.disabled = true;
-      }
-   } else {
-      //上滑逻辑
-      if(this.firstScrollTop >= 0 && this.lastScrollTop < 60){
-       this.firstScrollTop = 0;
-       this.isFullPost = false;
-       this.refresher.disabled = false;
-      }
-   }
-   this.lastScrollTop = event.detail.scrollTop;
+  if (event.detail.deltaY > 0) {
+
+    if(this.firstScrollTop === 0){
+      this.firstScrollTop = 1;
+      this.isFullPost = true;
+      this.refresher.disabled = true;
+    }
+  } else if(event.detail.deltaY < 0) {
+
+    if(this.totalData.length > 4 && this.firstScrollTop > 0 && event.detail.scrollTop === 0){
+      this.firstScrollTop = 0;
+      this.isFullPost = false;
+      this.refresher.disabled = false;
+    }
+
+  };
   }
 
 
@@ -1534,6 +1535,14 @@ export class ChannelsPage implements OnInit {
     });
 
     return await this.infoPopover.present();
+  }
+
+  closeFullSrceenPost() {
+    if(this.isFullPost){
+      this.firstScrollTop = 0;
+      this.isFullPost = false;
+      this.refresher.disabled = false;
+    }
   }
 
  }

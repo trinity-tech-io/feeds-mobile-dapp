@@ -231,6 +231,10 @@
    </ion-content>
   </div>
 </ion-content>
+<div class="closeFullSrceenPost"  (click)="closeFullSrceenPost()" *ngIf="isFullPost && totalData.length < 5">
+      <img src="/assets/images/fanhuidingbu.svg"/>
+</div>
+
 
 <!---------------- ADD COMMENT FOOTER ---------------->
 <app-comment
