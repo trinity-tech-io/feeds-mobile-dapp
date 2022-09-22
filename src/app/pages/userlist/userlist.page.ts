@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { ThemeService } from '../../services/theme.service';
@@ -8,6 +8,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { Params, ActivatedRoute } from '@angular/router';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { UtilService } from 'src/app/services/utilService';
 
 @Component({
   selector: 'app-userlist',
@@ -16,17 +17,20 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 })
 export class UserlistPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  // public userList: string[] = [];//did list
   public userAvatarMap: { [userDid: string]: string } = {};
   public userNameMap: { [userDid: string]: string } = {};
-  public userDidList = [];
   private channelId = '';
+  public totalData: any = [];
+  public subscriptionList:any = [];
+  public pageSize = 1;
+  public pageNumber = 10;
+  public userAvatarisLoad:any = {};
+  private userAvatarSid: NodeJS.Timer = null;
+  private userObserver: any= {};
   constructor(
     private translate: TranslateService,
     private titleBarService: TitleBarService,
     private activatedRoute: ActivatedRoute,
-    // private HttpService: HttpService,
-    private zone: NgZone,
     private dataHelper: DataHelper,
     private native: NativeService,
     public theme: ThemeService,
@@ -36,7 +40,7 @@ export class UserlistPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.getWhiteList();
+    this.getUserList();
   }
 
   initTitle() {
@@ -45,13 +49,24 @@ export class UserlistPage implements OnInit {
       this.translate.instant('UserListPage.title'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
-    this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
   ionViewWillLeave() {
   }
 
-  getWhiteList() {
+  async getUserList() {
+    this.pageSize = 1;
+    this.totalData = await this.dataHelper.getSubscriptionV3DataByChannelId(this.channelId);
+    let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
+    if(data.currentPage === data.totalPage){
+      this.subscriptionList = data.items
+    }else{
+      this.subscriptionList = data.items;
+    }
+    this.removeObserveList();
+    this.userAvatarMap = {};
+    this.userNameMap = {};
+    this.refreshUserAvatar(this.subscriptionList);
   }
 
   // doRefresh(event: any) {
@@ -62,23 +77,9 @@ export class UserlistPage implements OnInit {
   }
 
   ngOnInit() {
-    this.userDidList = [];
-    this.userAvatarMap = {};
-    this.userNameMap = {};
+
     this.activatedRoute.queryParams.subscribe((params: Params) => {
       this.channelId = params.channelId;
-      this.zone.run(async () => {
-        const subscriptionList = await this.dataHelper.getSubscriptionV3DataByChannelId(this.channelId);
-        for (let index = 0; index < subscriptionList.length; index++) {
-          const element = subscriptionList[index];
-          const userDid = element.userDid;
-          const userDisplayName = element.displayName;
-          this.resolveData(userDid);
-          this.userDidList.push(userDid);
-          this.setUserAvatar(userDid);
-          this.setUserName(userDid, userDisplayName);
-        }
-      });
     });
   }
 
@@ -86,6 +87,8 @@ export class UserlistPage implements OnInit {
     this.didHelper.resolveNameAndAvatarFromDidDocument(userDid).then((result: { name: string, avatar: string }) => {
       if (result.name) {
         this.setUserName(userDid, result.name);
+      }else{
+       this.userNameMap[userDid] = "common.unknown";
       }
 
       const avatarUrl = result.avatar;
@@ -96,6 +99,8 @@ export class UserlistPage implements OnInit {
             this.setUserAvatar(userDid, image);
           }).catch((err) => {
           })
+      }else{
+        this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
       }
     });
   }
@@ -107,4 +112,110 @@ export class UserlistPage implements OnInit {
   setUserName(userDid: string, userName: string) {
     this.userNameMap[userDid] = userName;
   }
+
+  clickSubscription(subscription:any) {
+
+  }
+
+  refreshUserAvatar(list = []) {
+    this.clearUserAvatarSid();
+    this.userAvatarSid = setTimeout(() => {
+     this.userAvatarisLoad = {};
+     this.userNameMap = {};
+     this.getUserObserverList(list);
+     this.clearUserAvatarSid();
+   }, 100);
+ }
+
+
+ getUserObserverList(follingList = []){
+
+  for(let index = 0; index < follingList.length; index++){
+    let item =  follingList[index] || null;
+    if(item === null){
+      return;
+    }
+    let postGridId =  item.destDid+"-"+item.channelId+"-"+item.userDid+'-userList';
+    let exit = this.userObserver[postGridId] || null;
+    if(exit != null){
+       continue;
+    }
+    this.newUserObserver(postGridId);
+  }
+}
+
+newUserObserver(postGridId: string) {
+  let observer = this.userObserver[postGridId] || null;
+  if(observer != null){
+    return;
+  }
+  let item = document.getElementById(postGridId) || null;
+  if(item != null ){
+  this.userObserver[postGridId] = new IntersectionObserver(async (changes:any)=>{
+  let container = changes[0].target;
+  let newId = container.getAttribute("id");
+
+  let intersectionRatio = changes[0].intersectionRatio;
+
+  if(intersectionRatio === 0){
+    //console.log("======newId leave========", newId);
+    return;
+  }
+  let arr =  newId.split("-");
+  let destDid: string = arr[0];
+  let channelId: string = arr[1];
+  let userDid: string = arr[2];
+  await this.handleUserAvatar(userDid);
+  });
+
+  this.userObserver[postGridId].observe(item);
+  }
+}
+
+getDisplayName(userDid: string) {
+  let displayNameMap = this.userNameMap[userDid] || '';
+  if(displayNameMap === "") {
+    let text = userDid.replace('did:elastos:', '');
+    this.userNameMap[userDid] = UtilService.resolveAddress(text);
+   }
+}
+
+ clearUserAvatarSid() {
+  if(this.userAvatarSid != null){
+   clearTimeout(this.userAvatarSid);
+   this.userAvatarSid  = null;
+  }
+}
+async handleUserAvatar(userDid: string) {
+
+  let isload = this.userAvatarisLoad[userDid] || '';
+  if (isload === "") {
+     this.userAvatarisLoad[userDid] = '11';
+     this.getDisplayName(userDid);
+     this.resolveData(userDid);
+  }
+ }
+
+ removeObserveList() {
+  for(let postGridId in  this.userObserver){
+      let observer =  this.userObserver[postGridId] || null;
+      this.removeUserObserver(postGridId, observer)
+  }
+  this.userObserver = {};
+ }
+
+ removeUserObserver(postGridId: string, observer: any){
+  let item = document.getElementById(postGridId) || null;
+  if(item != null){
+    if( observer != null ){
+      observer.unobserve(item);//解除观察器
+      observer.disconnect();  // 关闭观察器
+      this.userObserver[postGridId] = null;
+    }
+  }
+ }
+
+ doRefresh(event: any) {
+
+ }
 }

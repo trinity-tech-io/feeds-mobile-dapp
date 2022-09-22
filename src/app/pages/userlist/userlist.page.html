@@ -1,7 +1,7 @@
 
 <app-titlebar></app-titlebar>
 <ion-content>
-  <!-- <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
       pullingText="{{'common.releaseToRefresh'|translate}}"
@@ -9,31 +9,44 @@
       refreshingSpinner="circles"
       refreshingText="{{'common.beingRefresh'|translate}}" >
     </ion-refresher-content>
-  </ion-refresher> -->
+  </ion-refresher>
 
+<ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="subscriptionList.length > 0">
+  <ion-item
+  *ngFor="let subscription of subscriptionList"
+  class="channelCollectionFeeds"
+  lines="none">
+  <ion-row class="channel-row ion-activatable ripple"   id = {{subscription.destDid}}-{{subscription.channelId}}-{{subscription.userDid}}-userList
+  >
+    <ion-col
+      size="2.8"
+      class="left-col"
+      (click)="clickSubscription(subscription)"
+    >
+      <div  class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+      <img [src] = "userAvatarMap[subscription.userDid]" *ngIf="userAvatarMap[subscription.userDid]  != null && userAvatarMap[subscription.userDid] != undefined">
+    </div>
+    </ion-col>
+    <ion-col
+      size="9.2"
+      class="middle-col"
+      (click)="clickSubscription(subscription)"
+    >
 
-
-<ion-list class="channel-list" [class.darkChannelList]="theme.darkMode" style="padding-top:5px;">
-  <ion-item *ngFor="let userDid of userDidList" lines="none">
-    <ion-row class="channel-row ion-activatable ripple ionRowFollowing">
-      <ion-col size="2.8" class="left-col" >
-        <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-          <img [src] = "userAvatarMap[userDid]">
-        </div>
-      </ion-col>
-      <ion-col size="9.2" class="middle-col" >
-        <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0px;">{{ userNameMap[userDid] }}</ion-label>
-        <ion-row>
-          <br>
-          <p>
-            <span >@{{ userDid }}</span>
-          </p>
-        </ion-row>
-      </ion-col>
-      <ion-ripple-effect></ion-ripple-effect>
-    </ion-row>
+    <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="userNameMap[subscription.userDid] === '' || userNameMap[subscription.userDid] === undefined">
+      ......
+    </ion-label>
+    <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="userNameMap[subscription.userDid] != '' && userNameMap[subscription.userDid] != undefined">
+      {{ userNameMap[subscription.userDid] | translate }}
+    </ion-label>
+    <div class="displayName" *ngIf="userNameMap[subscription.userDid] != '' && userNameMap[subscription.userDid] != undefined">
+      {{  subscription.userDid.replace('did:elastos:', '').substring(0, 20) }}...{{  subscription.userDid.replace('did:elastos:', '').substring(subscription.userDid.replace('did:elastos:', '').length - 4, subscription.userDid.replace('did:elastos:', '').length) }}
+    </div>
+    </ion-col>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-row>
   </ion-item>
-</ion-list>
+  </ion-list>
 
 
 </ion-content>

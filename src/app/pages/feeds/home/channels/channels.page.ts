@@ -1559,7 +1559,6 @@ export class ChannelsPage implements OnInit {
   }
 
   navUserList() {
-    this.native.getNavCtrl().navigateForward(['/userlist'], { queryParams: { "channelId": this.channelId } });
-    this.native.toast('userList')
+    this.native.navigateForward(['/userlist'], { queryParams: { "channelId": this.channelId } });
   }
 }
