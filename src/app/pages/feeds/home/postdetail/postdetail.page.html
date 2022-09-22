@@ -236,7 +236,7 @@
         <ion-col  size="1.75" (click)="repost(post)">
           <img src="/assets/images/repost.svg" *ngIf="!theme.darkMode">
           <img src="/assets/images/darkmode/repost.svg" *ngIf="theme.darkMode">
-          <ion-label>{{ 0 }}</ion-label>
+          <ion-label>{{ repostNum }}</ion-label>
         </ion-col>
 
         <ion-col size="1.75" (click)="showComment(null)">

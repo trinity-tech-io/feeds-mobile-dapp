@@ -146,6 +146,7 @@ export class ChannelsPage implements OnInit {
   public rePostMap: any = {};
   private refreshRepostImageSid = null;
 
+  public repostNumMap: { [postId: string]: number } = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,

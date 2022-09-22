@@ -4407,7 +4407,8 @@ export class DataHelper {
 
 
   //reported repost
-  private addReportedRePost(repost: FeedsData.ReportedRepost): Promise<string> {
+
+  private doAddReportedRePost(repost: FeedsData.ReportedRepost): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -4420,7 +4421,34 @@ export class DataHelper {
     });
   }
 
-  private addReportedRepost(reportedReposts: FeedsData.ReportedRepost[]): Promise<string> {
+  private addReportedRePost(repost: FeedsData.ReportedRepost): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let isNew: boolean = false;
+        let reportedRepost: FeedsData.ReportedRepost = await this.getReportedRePostById(repost.repostId) || null;
+        if (!reportedRepost) {
+          try {
+            await this.doAddReportedRePost(reportedRepost);
+            isNew = true;
+          } catch (error) {
+          }
+        } else {
+          const isEqual = _.isEqual(repost, reportedRepost);
+          if (isEqual) {
+            resolve(isNew);
+            return;
+          }
+          await this.updateReportedRepost(repost);
+        }
+        resolve(isNew);
+      } catch (error) {
+        Logger.error(TAG, 'Add reported repost error', error);
+        reject(error);
+      }
+    });
+  }
+
+  addReportedReposts(reportedReposts: FeedsData.ReportedRepost[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!reportedReposts) {
@@ -4488,12 +4516,24 @@ export class DataHelper {
     });
   }
 
-  getReportedRePostById(originPostId: string): Promise<FeedsData.ReportedRepost[]> {
+  getReportedRePostByPostId(originPostId: string): Promise<FeedsData.ReportedRepost[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const list = await this.sqliteHelper.queryReportedRepostDataById(selfDid, originPostId);
+        const list = await this.sqliteHelper.queryReportedRepostDataByPostId(selfDid, originPostId);
         resolve(list);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getReportedRePostById(repostId: string): Promise<FeedsData.ReportedRepost> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const reportedRepost = await this.sqliteHelper.queryReportedRepostDataById(selfDid, repostId);
+        resolve(reportedRepost);
       } catch (error) {
         reject(error);
       }

@@ -193,6 +193,8 @@ export class HomePage implements OnInit {
   public repostChannelList: any = [];
   public rePostMap: any = {};
   private refreshRepostImageSid = null;
+
+  public repostNumMap: { [postId: string]: number } = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,

@@ -1245,7 +1245,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryReportedRepostDataById(dbUserDid: string, originPostId: string): Promise<FeedsData.ReportedRepost[]> {
+  queryReportedRepostDataByPostId(dbUserDid: string, originPostId: string): Promise<FeedsData.ReportedRepost[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE origin_post_id=?'
@@ -1254,6 +1254,22 @@ export class FeedsSqliteHelper {
         const result = await this.executeSql(dbUserDid, statement, params);
         const reportedRepost = this.parseReportedRepostData(result);
         resolve(reportedRepost);
+      } catch (error) {
+        Logger.error(TAG, 'Query reported repost Data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryReportedRepostDataById(dbUserDid: string, repostId: string): Promise<FeedsData.ReportedRepost> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE repost_id=?'
+        const params = [repostId];
+
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const reportedRepost = this.parseReportedRepostData(result);
+        resolve(reportedRepost[0]);
       } catch (error) {
         Logger.error(TAG, 'Query reported repost Data error', error);
         reject(error);

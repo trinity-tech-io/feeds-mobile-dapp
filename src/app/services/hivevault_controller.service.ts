@@ -1579,6 +1579,7 @@ export class HiveVaultController {
           return;
         }
 
+        await this.dataHelper.addReportedReposts(reportedRepostList);
         resolve(reportedRepostList);
       } catch (error) {
         Logger.error(TAG, 'Handle repost result error', error);
@@ -2250,7 +2251,7 @@ export class HiveVaultController {
     return this.hiveVaultApi.removeRepostFromOriginChannel(targetDid, repostTargetDid, repostChannelId, repostPostId);
   }
 
-  queryRepostById(targetDid: string, channelId: string, postId: string, start: number, end: number): Promise<any> {
+  queryRepostById(targetDid: string, channelId: string, postId: string, start: number, end: number): Promise<FeedsData.ReportedRepost[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryRepostByIdFromOriginChannel(targetDid, channelId, postId, start, end);

@@ -42,6 +42,7 @@ export class PostdetailPage implements OnInit {
   public updatedTime: number = 0;
   public likesNum: number = 0;
   public commentsNum: number = 0;
+  public repostNum: number = 0;
 
   public captainCommentList: any = [];
 
@@ -194,6 +195,7 @@ export class PostdetailPage implements OnInit {
     this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
     this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMap(this.postId, this.hideDeletedComments);
     this.initRelyCommentExtradata();
+    this.initRepostData();
   }
 
   async initRelyCommentExtradata() {
@@ -771,6 +773,9 @@ export class PostdetailPage implements OnInit {
       this.removeObserveList();
       this.clearPageMap();
       this.initData(true);
+      this.hiveVaultController.queryRepostById(this.destDid, this.channelId, this.postId, 0, UtilService.getCurrentTimeNum()).then((reportedRepostList: FeedsData.ReportedRepost[]) => {
+        this.repostNum = reportedRepostList.length;
+      });
       event.target.complete();
     } catch (error) {
       event.target.complete();
@@ -1836,6 +1841,12 @@ export class PostdetailPage implements OnInit {
     this.channelId = "";
     this.destDid = "";
     this.hideRepostComment = true;
+  }
+
+  initRepostData() {
+    this.dataHelper.getReportedRePostNumById(this.postId).then((num: number) => {
+      this.repostNum = num;
+    });
   }
 }
 
