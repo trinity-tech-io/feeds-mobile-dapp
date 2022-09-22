@@ -101,6 +101,9 @@ export class UserlistPage implements OnInit {
       }else{
         this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
       }
+    }).catch((err)=>{
+      this.userNameMap[userDid] = "common.unknown";
+      this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
     });
   }
 
@@ -246,4 +249,13 @@ async handleUserAvatar(userDid: string) {
     clearTimeout(sId);
   }, 500);
  }
+
+ copyText(text: string) {
+  this.native
+    .copyClipboard(text)
+    .then(() => {
+      this.native.toast_trans('common.textcopied');
+    })
+    .catch(() => { });
+}
 }
