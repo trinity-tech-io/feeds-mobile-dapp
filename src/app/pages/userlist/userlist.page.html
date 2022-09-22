@@ -11,6 +11,12 @@
     </ion-refresher-content>
   </ion-refresher>
 
+  <div *ngIf="subscriptionList.length === 0" class="new-empty-container">
+    <img src="./assets/images/profile-no-channel.svg">
+    <h1 style="margin-top: 20px;">{{ 'FollowingComponent.allempty' | translate }}</h1>
+    <p>{{ 'UserlistPage.emptyDes' | translate }}</p>
+  </div>
+
 <ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="subscriptionList.length > 0">
   <ion-item
   *ngFor="let subscription of subscriptionList"
@@ -47,6 +53,12 @@
   </ion-row>
   </ion-item>
   </ion-list>
-
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content
+      class="ion-padding-top"
+      loadingSpinner="circles"
+    >
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 
 </ion-content>

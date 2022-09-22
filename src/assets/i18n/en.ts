@@ -951,5 +951,8 @@ export const en = {
     connected: 'Connected',
     disconnect: 'disconnect',
     reddit: 'Reddit'
+  },
+  UserlistPage: {
+    emptyDes: "No one has followed your channel yet"
   }
 };

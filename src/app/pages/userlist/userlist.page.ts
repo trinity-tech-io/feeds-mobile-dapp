@@ -19,12 +19,13 @@ export class UserlistPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public userAvatarMap: { [userDid: string]: string } = {};
   public userNameMap: { [userDid: string]: string } = {};
+  private userAvatarisLoad: { [userDid: string]: string } = {};
+  private userNameisLoad: { [userDid: string]: string } = {};
   private channelId = '';
   public totalData: any = [];
   public subscriptionList:any = [];
   public pageSize = 1;
   public pageNumber = 10;
-  public userAvatarisLoad:any = {};
   private userAvatarSid: NodeJS.Timer = null;
   private userObserver: any= {};
   constructor(
@@ -64,13 +65,10 @@ export class UserlistPage implements OnInit {
       this.subscriptionList = data.items;
     }
     this.removeObserveList();
-    this.userAvatarMap = {};
-    this.userNameMap = {};
+    this.userAvatarisLoad = {};
+    this.userNameisLoad = {};
     this.refreshUserAvatar(this.subscriptionList);
   }
-
-  // doRefresh(event: any) {
-  // }
 
   clickItem(userItem: string) {
     this.native.toast(userItem);
@@ -98,6 +96,7 @@ export class UserlistPage implements OnInit {
           .then((image) => {
             this.setUserAvatar(userDid, image);
           }).catch((err) => {
+            this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
           })
       }else{
         this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
@@ -120,8 +119,6 @@ export class UserlistPage implements OnInit {
   refreshUserAvatar(list = []) {
     this.clearUserAvatarSid();
     this.userAvatarSid = setTimeout(() => {
-     this.userAvatarisLoad = {};
-     this.userNameMap = {};
      this.getUserObserverList(list);
      this.clearUserAvatarSid();
    }, 100);
@@ -162,8 +159,6 @@ newUserObserver(postGridId: string) {
     return;
   }
   let arr =  newId.split("-");
-  let destDid: string = arr[0];
-  let channelId: string = arr[1];
   let userDid: string = arr[2];
   await this.handleUserAvatar(userDid);
   });
@@ -173,8 +168,9 @@ newUserObserver(postGridId: string) {
 }
 
 getDisplayName(userDid: string) {
-  let displayNameMap = this.userNameMap[userDid] || '';
-  if(displayNameMap === "") {
+  let isLoad = this.userNameisLoad[userDid] || '';
+  if(isLoad === "") {
+    this.userNameisLoad[userDid] = "11";
     let text = userDid.replace('did:elastos:', '');
     this.userNameMap[userDid] = UtilService.resolveAddress(text);
    }
@@ -216,6 +212,38 @@ async handleUserAvatar(userDid: string) {
  }
 
  doRefresh(event: any) {
+  let sId = setTimeout(async () => {
+    this.pageSize = 1;
+    this.totalData = await this.dataHelper.getSubscriptionV3DataByChannelId(this.channelId);
+    let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
+    if(data.currentPage === data.totalPage){
+      this.subscriptionList = data.items
+    }else{
+      this.subscriptionList = data.items;
+    }
+    this.removeObserveList();
+    this.userAvatarisLoad = {};
+    this.userNameisLoad = {};
+    this.refreshUserAvatar(this.subscriptionList);
+    event.target.complete();
+    clearTimeout(sId);
+  }, 200)
 
+ }
+
+ loadData(event: any) {
+  let sId = setTimeout(() => {
+    this.pageSize++;
+    let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+    if (data.currentPage === data.totalPage) {
+      this.subscriptionList = this.subscriptionList.concat(data.items);
+      event.target.disabled = true;
+    } else {
+      this.subscriptionList = this.subscriptionList.concat(data.items);
+    }
+    this.refreshUserAvatar(data.items);
+    event.target.complete();
+    clearTimeout(sId);
+  }, 500);
  }
 }

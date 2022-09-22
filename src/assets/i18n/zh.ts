@@ -953,5 +953,8 @@ export const zh = {
     connected: '已连接',
     disconnect: '断开',
     reddit: 'Reddit'
+  },
+  UserlistPage: {
+    emptyDes: "还没有关注你的频道"
   }
 };
