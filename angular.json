@@ -69,7 +69,15 @@
               "src/app/services/nftcontract_diamond.service",
               "src/app/services/nftcontract_galleria.service",
               "@walletconnect/web3-provider",
-              "typedarray-to-buffer"
+              "typedarray-to-buffer",
+              "libsodium-wrappers",
+              "axios",
+              "create-hash",
+              "bs58",
+              "js-crypto-key-utils",
+              "bip39",
+              "elliptic",
+              "crypto-browserify"
             ]
           },
           "configurations": {
