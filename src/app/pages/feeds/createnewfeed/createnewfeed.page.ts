@@ -36,7 +36,7 @@ export class CreatenewfeedPage implements OnInit {
   public lightThemeType: number = 3;
   public clickButton: boolean = false;
   private infoPopover: any = null;
-  public displayName: string = "";
+  //public displayName: string = "";
   public channelName: string = "";
   public channelDes: string = "";
   constructor(
@@ -118,24 +118,24 @@ export class CreatenewfeedPage implements OnInit {
       return;
     }
 
-    let dispalyNameValue = this.displayName || '';
-    dispalyNameValue = this.native.iGetInnerText(dispalyNameValue);
+    // let dispalyNameValue = this.displayName || '';
+    // dispalyNameValue = this.native.iGetInnerText(dispalyNameValue);
 
-    if (dispalyNameValue == '') {
-      this.native.toastWarn('CreatenewfeedPage.inputDisplayName');
-      return;
-    }
+    // if (dispalyNameValue == '') {
+    //   this.native.toastWarn('CreatenewfeedPage.inputDisplayName');
+    //   return;
+    // }
 
-    if (dispalyNameValue.length > 32) {
-      this.native.toastWarn('CreatenewfeedPage.tipMsgLength2');
-      return;
-    }
+    // if (dispalyNameValue.length > 32) {
+    //   this.native.toastWarn('CreatenewfeedPage.tipMsgLength2');
+    //   return;
+    // }
 
-    let checkDisplayNameRes = this.feedService.checkValueValid(dispalyNameValue);
-    if (checkDisplayNameRes) {
-      this.native.toastWarn('CreatenewfeedPage.displaynameContainInvalidChars');
-      return;
-    }
+    // let checkDisplayNameRes = this.feedService.checkValueValid(dispalyNameValue);
+    // if (checkDisplayNameRes) {
+    //   this.native.toastWarn('CreatenewfeedPage.displaynameContainInvalidChars');
+    //   return;
+    // }
 
     let descValue = this.channelDes || '';
     descValue = this.native.iGetInnerText(descValue);
@@ -183,7 +183,7 @@ export class CreatenewfeedPage implements OnInit {
         this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
         return;
       }
-      await this.uploadChannel( nameValue, dispalyNameValue, descValue);
+      await this.uploadChannel( nameValue, nameValue, descValue);
     } catch (error) {
 
       this.native.handleHiveError(error, 'common.createChannelFail');

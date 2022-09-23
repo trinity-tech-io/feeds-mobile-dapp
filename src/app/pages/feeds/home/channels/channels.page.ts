@@ -477,6 +477,14 @@ export class ChannelsPage implements OnInit {
         try {
           let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
+            let newList = await this.dataHelper.getPostListV3FromChannel(this.destDid, this.channelId);
+            let deletePostIndex = _.findIndex( newList,(item: any)=>{
+                  return item.postId === result.postId;
+            })
+            if(deletePostIndex > -1){
+              newList[deletePostIndex].status = 1;
+            }
+            this.removeObserveList();
             await this.refreshChannelList();
             this.native.hideLoading();
           }).catch((err: any) => {

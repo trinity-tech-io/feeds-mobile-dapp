@@ -527,7 +527,15 @@ export class HomePage implements OnInit {
         await this.native.showLoading('common.waitMoment');
         try {
           let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.postId);
-          this.hiveVaultController.deletePost(post).then((result: any) => {
+          this.hiveVaultController.deletePost(post).then(async (result: FeedsData.PostV3) => {
+            let newList = await this.sortPostList();
+            let deletePostIndex = _.findIndex( newList,(item: any)=>{
+                  return item.postId === result.postId;
+            })
+            if(deletePostIndex > -1){
+              newList[deletePostIndex].status = 1;
+            }
+            this.removeObserveList();
             this.refreshPostList();
             this.native.hideLoading();
           }).catch((err: any) => {
