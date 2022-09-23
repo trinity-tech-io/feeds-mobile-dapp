@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component,  OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { ThemeService } from '../../services/theme.service';
@@ -215,7 +215,20 @@ async handleUserAvatar(userDid: string) {
  }
 
  doRefresh(event: any) {
-  let sId = setTimeout(async () => {
+
+  let sId = setTimeout(() => {
+    try {
+      this.handleRefesh();
+    } catch (error) {
+
+    }
+    event.target.complete();
+    clearTimeout(sId);
+  }, 200)
+
+ }
+
+ async handleRefesh() {
     this.pageSize = 1;
     this.totalData = await this.dataHelper.getSubscriptionV3DataByChannelId(this.channelId);
     let data = UtilService.getPostformatPageData(this.pageSize,this.pageNumber,this.totalData);
@@ -228,19 +241,19 @@ async handleUserAvatar(userDid: string) {
     this.userAvatarisLoad = {};
     this.userNameisLoad = {};
     this.refreshUserAvatar(this.subscriptionList);
-    event.target.complete();
-    clearTimeout(sId);
-  }, 200)
-
  }
 
  loadData(event: any) {
   let sId = setTimeout(() => {
+    if(this.subscriptionList.length === this.totalData.length){
+      event.target.complete();
+      clearTimeout(sId);
+      return;
+    }
     this.pageSize++;
     let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
     if (data.currentPage === data.totalPage) {
       this.subscriptionList = this.subscriptionList.concat(data.items);
-      event.target.disabled = true;
     } else {
       this.subscriptionList = this.subscriptionList.concat(data.items);
     }
