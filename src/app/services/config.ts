@@ -44,13 +44,13 @@ export class Config {
     /** TestNet IPFS */
     public static IPFS_TEST_SERVER: string = 'https://ipfs-test.trinity-feeds.app/';
 
-    public static readonly scriptVersion = "3.2.1";
+    public static readonly scriptVersion = "3.2.2";
 
     //30101 update channel sql -> add display_name
     //30200 update post sql -> add pin_status
     public static readonly SQL_VERSION311: number = 30101;
     public static readonly SQL_VERSION320: number = 30200;
-    public static readonly SQL_VERSION: number = 30201;
+    public static readonly SQL_VERSION: number = 30202;
 
     public static changeApi(api: string) {
         if (api == 'elastos.io') {
