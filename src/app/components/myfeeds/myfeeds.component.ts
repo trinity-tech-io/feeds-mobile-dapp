@@ -15,6 +15,7 @@ import { FeedsPage } from 'src/app/pages/feeds/feeds.page';
 export class MyfeedsComponent implements OnInit {
   @Output() fromChild = new EventEmitter();
   @Input() channels: any = [];
+  @Input() isLoadingMyFeeds: boolean = true;
   @Input() followers= 0;
   @Input() subscriptionV3NumMap: any = {};
   @Input() channelAvatarMap:any = {};

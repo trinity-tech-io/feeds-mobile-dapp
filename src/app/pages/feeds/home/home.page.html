@@ -7,7 +7,8 @@
   <ion-col size="4.75" class="des colBorder"  [ngClass]="{'select-colBorder':tabType==='pasar','select-color':tabType==='pasar','no-select-color':tabType!='pasar'}" (click)="clickTab('pasar')">{{'ExplorefeedsPage.pasar'|translate}}</ion-col>
   <ion-col size="1" class="des"></ion-col>
 </ion-row> -->
-<div (click)="refreshPage()" *ngIf="newPostNumber!=0"><p style="text-align: center; color: blueviolet; margin: 0px;padding: 0px;">{{"HomePage.show" | translate}} {{newPostNumber}} {{"HomePage.posts" | translate}}</p></div>
+<div (click)="refreshPage()" *ngIf="newPostNumber!=0"><span style="display: flex;
+  justify-content: center;color: blueviolet;">{{"HomePage.show" | translate}} {{newPostNumber}} {{"HomePage.posts" | translate}}</span></div>
 <ion-row *ngIf="tabType==='pasar'" style="margin-top: 28px;">
   <ion-col size="1">
 
@@ -109,7 +110,7 @@
     <ion-grid style="padding-top: 0px;" class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode"
       [class.removeBorder]="post === postList[postList.length - 1]" [class.blur]="!hideComment"
       id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-home>
-      <ion-row class="post-row">
+      <ion-row class="post-row" [ngStyle]="{'padding-top': newPostNumber!=0 && i === 0 ? '0px' : '14px' }">
         <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')"></ion-col>
         <ion-col class="img-col" size="2.5" (click)="navTo(post.destDid,post.channelId,post.postId)">
           <div  id="{{post.destDid}}-{{post.channelId}}-{{post.postId}}-homeChannelAvatarKuang" class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">

@@ -137,7 +137,6 @@ export class ChannelsPage implements OnInit {
   private isLoadPinnedPost: any = {};
   private currentPinPost: FeedsData.PostV3 = null;
   private firstScrollTop = 0;
-  private lastScrollTop = 0;
   public isFullPost: boolean = false;
   private infoPopover: any = null;
   constructor(

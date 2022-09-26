@@ -1,5 +1,5 @@
 <app-titlebar [lightThemeType]="lightThemeType"></app-titlebar>
-<ion-content class="bg">
+<ion-content class="bg" [scrollEvents]="true" (ionScroll) = "postListScroll($event)">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
@@ -9,7 +9,7 @@
       refreshingText="{{'common.beingRefresh'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
-  <ion-row class="card">
+  <ion-row class="card" *ngIf="!isFullPost">
     <div class="cardImg">
       <div class="avatar" (click) = "editProfile()">
        <img   *ngIf="avatar === ''" src="./assets/images/selectAvatar.svg" />
@@ -24,7 +24,7 @@
     </div>
   </ion-row>
 
-  <ion-grid class="container" [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment">
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode" [class.blur]="!hideComment" [ngClass]="{'containerHeight': !isFullPost,'containerHeight1':isFullPost}">
     <ion-row [class.darkExploreTabs]="theme.darkMode" [class.exploreTabs]="!theme.darkMode">
       <ion-col size="1.25" class="des"></ion-col>
       <ion-col size="4.5" class="des colBorder" [ngClass]="{'select-colBorder':selectType === 'ProfilePage.myFeeds','select-color':selectType === 'ProfilePage.myFeeds','no-select-color':selectType != 'ProfilePage.myFeeds'}" (click)="changeType('ProfilePage.myFeeds')">
@@ -52,7 +52,8 @@
     (fromChild)="showMenuMore($event)"
     [followers] = "followers"
     [subscriptionV3NumMap]= "subscriptionV3NumMap"
-    [channelAvatarMap] = "myFeedAvatarMap">
+    [channelAvatarMap] = "myFeedAvatarMap"
+    [isLoadingMyFeeds] = "isLoadingMyFeeds">
   </app-myfeeds>
     <!-- <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum===0">
       <ion-col size="12">
@@ -117,6 +118,7 @@
        [handleDisplayNameMap] = "handleDisplayNameMap"
        [postImgMap] = "postImgMap"
        [postTime] = "postTime"
+       [isLoadingLike] = "isLoadingLike"
        (fromChild)="showMenuMore($event)"
        (commentParams)="showComment($event)"
        (clickImage)="showBigImage($event)"
@@ -133,7 +135,9 @@
   </ion-content>
   </ion-grid>
 </ion-content>
-
+<div class="closeFullSrceenPost"  (click)="closeFullSrceenPost()" *ngIf="isFullPost && totalLikeList.length < 5 && this.selectType === 'ProfilePage.myLikes'">
+  <img src="/assets/images/fanhuidingbu.svg"/>
+</div>
 <!---------------- ADD share menu---------------->
 <app-sharemenu
  *ngIf="hideSharMenuComponent"
@@ -150,7 +154,7 @@
  (hideShareMenu)="hideShareMenu($event)"
 >
 </app-sharemenu>
-<div class="add-tab" *ngIf="selectType!='ProfilePage.collectibles'" (click)="createPost()">
+<div class="add-tab" *ngIf="selectType!='ProfilePage.collectibles' && !isFullPost" (click)="createPost()">
   <img src="/assets/images/createPost.svg"/>
 </div>
 <div class="add-nft" *ngIf="selectType==='ProfilePage.collectibles'" (click)="createNft()">

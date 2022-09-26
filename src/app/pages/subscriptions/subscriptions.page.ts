@@ -9,7 +9,6 @@ import { IntentService } from 'src/app/services/IntentService';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import _ from 'lodash';
-import { Config } from 'src/app/services/config';
 import { ThemeService } from 'src/app/services/theme.service';
 import { Logger } from 'src/app/services/logger';
 import { PopupProvider } from 'src/app/services/popup';
@@ -42,6 +41,7 @@ export class SubscriptionsPage implements OnInit {
   public isSearch: string = '';
   public scanServiceStyle = { right: '' };
   public subscriptionV3NumMap: any = {};
+  private isLoadSubscriptionV3Num: any = {};
   public followAvatarMap: any = {};
   public isBorderGradient: boolean = false;
   private searchFollowingList: any = [];
@@ -182,7 +182,7 @@ export class SubscriptionsPage implements OnInit {
       await Promise.allSettled(promiseList)
 
       this.removeObserveList();
-      this.subscriptionV3NumMap = {};
+      this.isLoadSubscriptionV3Num = {};
       this.initFollowing();
       event.target.complete();
     } catch (err) {
@@ -519,10 +519,13 @@ export class SubscriptionsPage implements OnInit {
 
   getChannelFollower(destDid: string, channelId: string) {
     //关注数
-    let follower = this.subscriptionV3NumMap[channelId] || '';
+    let follower = this.isLoadSubscriptionV3Num[channelId] || '';
     if (follower === "") {
       try {
-        this.subscriptionV3NumMap[channelId] = "...";
+        let subscriptionV3Num = this.subscriptionV3NumMap[channelId] || "";
+        if(subscriptionV3Num === ""){
+          this.subscriptionV3NumMap[channelId] = "...";
+        }
         this.dataHelper.getSubscriptionV3NumByChannelId(
           destDid, channelId).
           then((result) => {

@@ -166,16 +166,16 @@ export class HomePage implements OnInit {
   public isPostLoading: boolean = false;
   private hannelNameMap: any = {};
   private isLoadingLikeMap: any = {};
-  private downPostAvatarMap: any = {};
-  private avatarImageMap: any = {};
   private syncHiveDataStatus: number = null;
   private syncHiveDataDes: string = null;
   private handleDisplayNameMap: any = {};
+  private isLoadHandleDisplayNameMap: any = {};
   public owerCreatChannelNum: Number = 0;
   public channelAvatarMap: any = {};
   public postImgMap: any = {};
   public posterImgMap: any = {};
   private channelMap: any = {};
+  private isLoaChannelMap: any = {};
   private ownerDid: string = "";
   private postMap: any = {};
   private postTime: any = {};
@@ -247,8 +247,6 @@ export class HomePage implements OnInit {
 
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
-    this.avatarImageMap = {};
-    this.downPostAvatarMap = {};
     this.isLoadVideoiamge = {};
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
@@ -295,8 +293,6 @@ export class HomePage implements OnInit {
     });
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
-    this.avatarImageMap = {};
-    this.downPostAvatarMap = {};
     this.isLoadVideoiamge = {};
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
@@ -612,8 +608,6 @@ export class HomePage implements OnInit {
     CommonPageService.removeAllAvatar(this.isLoadAvatarImage, 'homeChannelAvatar');
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
-    this.avatarImageMap = {};
-    this.downPostAvatarMap = {};
     this.isLoadVideoiamge = {};
     this.videoDownStatus = {};
   }
@@ -677,7 +671,7 @@ export class HomePage implements OnInit {
       this.clearAssets();
     }
     this.postMap = {};
-    this.channelMap = {};
+    this.isLoaChannelMap = {};
     this.removeObserveList();
   }
 
@@ -840,8 +834,13 @@ export class HomePage implements OnInit {
   }
 
   async getChannelName(destDid: string, channelId: string) {
-
     let key = destDid + "-" + channelId;
+    let isLoad = this.isLoaChannelMap[key] || "";
+    if(isLoad === "") {
+      this.isLoaChannelMap[key] = "11";
+      let channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+      this.channelMap[key] = channel;
+    }
     let channel = this.channelMap[key] || null;
     if (channel === null) {
       channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
@@ -957,7 +956,7 @@ export class HomePage implements OnInit {
       this.dataHelper.cleanCachedComment();
       this.dataHelper.cleanCacheLikeNum();
       this.dataHelper.cleanCachedLikeStatus();
-      this.handleDisplayNameMap = {};
+      this.isLoadHandleDisplayNameMap = {};
       this.postMap = {};
       this.channelMap = {};
       this.removeObserveList();
@@ -2309,8 +2308,6 @@ export class HomePage implements OnInit {
       this.postList = _.cloneDeep(this.serachPostList);
       this.isLoadimage = {};
       this.isLoadAvatarImage = {};
-      this.avatarImageMap = {};
-      this.downPostAvatarMap = {};
       this.isLoadVideoiamge = {};
       this.isInitLikeNum = {};
       this.isInitLikeStatus = {};
@@ -2335,8 +2332,6 @@ export class HomePage implements OnInit {
     });
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
-    this.avatarImageMap = {};
-    this.downPostAvatarMap = {};
     this.isLoadVideoiamge = {};
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
@@ -2437,10 +2432,14 @@ export class HomePage implements OnInit {
   }
 
   getDisplayName(destDid: string, channelId: string, userDid: string) {
-    let displayNameMap = this.handleDisplayNameMap[userDid] || '';
+    let displayNameMap = this.isLoadHandleDisplayNameMap[userDid] || '';
     if (displayNameMap === "") {
-      let text = destDid.replace('did:elastos:', '');
-      this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+      this.isLoadHandleDisplayNameMap[userDid] = "11";
+      let displayName = this.handleDisplayNameMap[userDid] || "";
+      if(displayName === ""){
+        let text = destDid.replace('did:elastos:', '');
+        this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+      }
       try {
         this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
           then((result: string) => {

@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild, ElementRef } from '@angular/core';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { IonRefresher, ModalController, PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll } from '@ionic/angular';
@@ -42,6 +42,7 @@ export class ProfilePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
+  @ViewChild(IonRefresher, { static: false }) refresher: IonRefresher;
 
   public channels = []; //myFeeds page
 
@@ -173,14 +174,14 @@ export class ProfilePage implements OnInit {
   private likeNumMap: any = {};
   private commentNumMap: any = {};
   private channelNameMap: any = {};
+  private isLoadChannelNameMap :any = {};
   public isLoadingLikeMap: any = {};
-  private downPostAvatarMap: any = {};
-  private avatarImageMap: any = {};
   private downMyFeedsAvatarMap: any = {};
-  private myFeedsAvatarImageMap: any = {};
   public lightThemeType: number = 3;
   private handleDisplayNameMap: any = {};
+  private isLoadHandleDisplayNameMap: any = {};
   public subscriptionV3NumMap: any = {};
+  private isLoadSubscriptionV3Num: any = {};
   public likeAvatarMap: any = {};
   public myFeedAvatarMap: any = {};
   public postImgMap: any = {};
@@ -192,6 +193,11 @@ export class ProfilePage implements OnInit {
   private myLikeObserver: any = {};
   private channelMap: any = {};
   public userDid: string = "";
+
+  private firstScrollTop = 0;
+  public isFullPost: boolean = false;
+  public isLoadingLike: boolean = true;
+  public isLoadingMyFeeds: boolean = true;
   constructor(
     private elmRef: ElementRef,
     public theme: ThemeService,
@@ -242,13 +248,13 @@ export class ProfilePage implements OnInit {
         });
         this.channels = _.uniqWith(newSelfChannels, _.isEqual) || [];
       }
-
+      this.isLoadingMyFeeds = false;
       this.myFeedsSum = this.channels.length;
       this.refreshMyFeedsVisibleareaImageV2(this.channels);
       let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
       this.followers = followedList.length;
     } catch (error) {
-
+      this.isLoadingMyFeeds = false;
     }
   }
 
@@ -268,11 +274,10 @@ export class ProfilePage implements OnInit {
       this.likeList = data.items;
       this.infiniteScroll.disabled = false;
     }
+    this.isLoadingLike = false;
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
     this.isLoadAvatarImage = {};
-    this.avatarImageMap = {};
-    this.downPostAvatarMap = {};
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
@@ -296,8 +301,6 @@ export class ProfilePage implements OnInit {
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
     this.isLoadAvatarImage = {};
-    this.avatarImageMap = {};
-    this.downPostAvatarMap = {};
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
@@ -606,12 +609,9 @@ export class ProfilePage implements OnInit {
     this.myFeedsIsLoadimage = {};
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
-    this.avatarImageMap = {};
     this.isLoadVideoiamge = {};
-    this.downPostAvatarMap = {};
     this.myFeedsIsLoadimage = {};
     this.downMyFeedsAvatarMap = {};
-    this.myFeedsAvatarImageMap = {};
   }
 
   clearData(isClearAssets: boolean = true) {
@@ -658,7 +658,7 @@ export class ProfilePage implements OnInit {
     this.isInitComment = {};
     this.curItem = {};
     this.curPostId = '';
-    this.channelMap = {};
+    this.isLoadChannelNameMap = {};
     this.removeMyFeedsObserveList();
     this.removeLikeObserveList();
   }
@@ -684,6 +684,7 @@ export class ProfilePage implements OnInit {
     document.getElementById("feedstab").style.display = "block";
     switch (type) {
       case 'ProfilePage.myFeeds':
+        this.closeFullSrceenPost();
         this.removeMyFeedsObserveList();
         this.clearRefreshImageSid();
         this.initMyFeeds();
@@ -718,8 +719,8 @@ export class ProfilePage implements OnInit {
             await this.hiveVaultController.querySubscriptionChannelById(selfchannel.destDid, selfchannel.channelId);
           }
           await this.hiveVaultController.syncSubscribedChannelFromBackup();
-          this.subscriptionV3NumMap = {};
-          this.channelMap = {};
+          this.isLoadSubscriptionV3Num = {};
+          this.isLoadChannelNameMap = {};
           this.removeMyFeedsObserveList();
           await this.initMyFeeds(selfchannels);
           event.target.complete();
@@ -742,8 +743,7 @@ export class ProfilePage implements OnInit {
           await this.hiveVaultController.syncAllLikeData();
           this.removeLikeObserveList();
           this.pageSize = 1;
-          this.likeList = [];
-          this.handleDisplayNameMap = {};
+          this.isLoadHandleDisplayNameMap = {};
           this.postImgMap = {};
           this.initLike();
           event.target.complete();
@@ -2326,10 +2326,14 @@ export class ProfilePage implements OnInit {
 
   getChannelFollower(destDid: string, channelId: string) {
     //关注数
-    let follower = this.subscriptionV3NumMap[channelId] || '';
+    let follower = this.isLoadSubscriptionV3Num[channelId] || '';
     if (follower === "") {
       try {
-        this.subscriptionV3NumMap[channelId] = "...";
+        this.isLoadSubscriptionV3Num[channelId] = "11";
+        let subscriptionV3Num = this.subscriptionV3NumMap[channelId] || "";
+        if(subscriptionV3Num === ""){
+          this.subscriptionV3NumMap[channelId] = "...";
+        }
         this.dataHelper.getSubscriptionV3NumByChannelId(
           destDid, channelId).
           then((result) => {
@@ -2344,7 +2348,6 @@ export class ProfilePage implements OnInit {
             this.subscriptionV3NumMap[channelId] = result;
           }).catch(() => {
             this.subscriptionV3NumMap[channelId] = 0;
-
           });
       } catch (error) {
       }
@@ -2429,7 +2432,16 @@ export class ProfilePage implements OnInit {
   }
 
   async getChannelName(destDid: string, channelId: string) {
+
+    let isLoad = this.isLoadChannelNameMap[channelId] || "";
+    if(isLoad === "") {
+      this.isLoadChannelNameMap[channelId] = "11";
+      let channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
+      this.channelMap[channelId] = channel;
+    }
+
     let channelName = this.channelNameMap[channelId] || "";
+
     if (channelName != "") {
       return channelName;
     }
@@ -2445,10 +2457,15 @@ export class ProfilePage implements OnInit {
 
   getDisplayName(destDid: string, channelId: string, userDid: string) {
     //dispalyName
-    let displayNameMap = this.handleDisplayNameMap[userDid] || '';
+    let displayNameMap = this.isLoadHandleDisplayNameMap[userDid] || '';
     if (displayNameMap === "") {
-      let text = userDid.replace('did:elastos:', '');
-      this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+      this.isLoadHandleDisplayNameMap[userDid] = "11";
+      let displayName = this.handleDisplayNameMap[userDid] || "";
+      if(displayName === ""){
+        let text = userDid.replace('did:elastos:', '');
+        this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+      }
+
       try {
         this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
           then((result: string) => {
@@ -2480,6 +2497,40 @@ export class ProfilePage implements OnInit {
         observer.disconnect();  // 关闭观察器
         this.myLikeObserver[postGridId] = null;
       }
+    }
+  }
+
+  postListScroll(event: any) {
+    if(this.selectType === "ProfilePage.myLikes"){
+      this.handlePostListScroll(event);
+    }
+  }
+
+  handlePostListScroll(event: any) {
+
+    if (event.detail.deltaY > 0) {
+
+      if (this.firstScrollTop === 0) {
+        this.firstScrollTop = 1;
+        this.isFullPost = true;
+        this.refresher.disabled = true;
+      }
+    } else if (event.detail.deltaY < 0) {
+
+      if (this.totalLikeList.length > 4 && this.firstScrollTop > 0 && event.detail.scrollTop === 0) {
+        this.firstScrollTop = 0;
+        this.isFullPost = false;
+        this.refresher.disabled = false;
+      }
+
+    };
+  }
+
+  closeFullSrceenPost() {
+    if (this.isFullPost) {
+      this.firstScrollTop = 0;
+      this.isFullPost = false;
+      this.refresher.disabled = false;
     }
   }
 

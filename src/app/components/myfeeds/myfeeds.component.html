@@ -1,4 +1,4 @@
-<div *ngIf="channels.length === 0 && followers === 0" class="new-empty-container">
+<div *ngIf="channels.length === 0 && followers === 0 && !isLoadingMyFeeds" class="new-empty-container">
   <img src="./assets/images/profile-no-channel.svg">
   <h1 style="margin-top: 20px;">{{ 'MyfeedsComponent.allempty' | translate }}</h1>
   <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
@@ -12,7 +12,18 @@
   </div>
 </div>
 
-<ion-list *ngIf="channels.length > 0 || followers > 0" class="channel-list" [class.darkChannelList]="theme.darkMode"
+ <!-- first loading -->
+ <ion-row *ngIf="isLoadingMyFeeds" style="margin-top:13px;">
+  <ion-col size="12" class="loading">
+  <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>
+  <img *ngIf="theme.darkMode" class="loadingIcon" src="./assets/images/darkmode/nftloading.gif"/>
+  </ion-col>
+  <ion-col size="12" class="loading">
+  <p>{{'common.beingRefresh'|translate}}</p>
+  </ion-col>
+</ion-row>
+
+<ion-list *ngIf="channels.length > 0 || followers > 0 && !isLoadingMyFeeds" class="channel-list" [class.darkChannelList]="theme.darkMode"
   >
   <ion-item
     *ngFor="let channel of channels let num=index"

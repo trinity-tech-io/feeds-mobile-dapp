@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { FeedService } from '../../services/FeedService';
 import { ThemeService } from '../../services/theme.service';
 import { UtilService } from '../../services/utilService';
 import { NativeService } from '../../services/NativeService';
@@ -46,6 +45,8 @@ export class LikesComponent implements OnInit {
   @Input() channelAvatarMap: any = {};
   @Input() postImgMap: any = {};
   @Input() postTime: any = {};
+  @Input() isLoadingLike: boolean = true;
+
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();
@@ -57,7 +58,6 @@ export class LikesComponent implements OnInit {
 
   constructor(
     private platform: Platform,
-    private feedService: FeedService,
     public theme: ThemeService,
     private translate: TranslateService,
     private native: NativeService,
@@ -85,10 +85,6 @@ export class LikesComponent implements OnInit {
     }
     const channelName = channel.displayName || channel.name;
     return channelName;
-  }
-
-  checkServerStatus(destDid: string) {
-    return this.feedService.getServerStatusFromId(destDid);
   }
 
   like(destDid: string, channelId: string, postId: string) {

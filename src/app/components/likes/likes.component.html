@@ -1,4 +1,4 @@
-<div *ngIf="likeList.length === 0" class="new-empty-container">
+<div *ngIf="likeList.length === 0 && !isLoadingLike" class="new-empty-container">
   <img src="./assets/images/no-Likes.svg">
   <h1  style="margin-top: 20px;">{{ 'LikesComponent.allempty' | translate }}</h1>
   <p>{{ 'LikesComponent.emptyLikeDes' | translate }}</p>
@@ -10,7 +10,18 @@
   </div>
 </div>
 
-<div *ngIf="likeList.length > 0">
+  <!-- first loading -->
+  <ion-row *ngIf="isLoadingLike" style="margin-top:13px;">
+    <ion-col size="12" class="loading">
+    <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>
+    <img *ngIf="theme.darkMode" class="loadingIcon" src="./assets/images/darkmode/nftloading.gif"/>
+    </ion-col>
+    <ion-col size="12" class="loading">
+    <p>{{'common.beingRefresh'|translate}}</p>
+    </ion-col>
+  </ion-row>
+
+<div *ngIf="likeList.length > 0 && !isLoadingLike">
   <div *ngFor="let post of likeList let i=index">
   <ion-grid  class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-like>
     <ion-row class="post-row">
