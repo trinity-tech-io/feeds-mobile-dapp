@@ -933,8 +933,12 @@ export class HomePage implements OnInit {
           await this.refreshPage();
         } catch (error) {
         }
-        if (event != null) event.target.complete();
-        this.refreshEvent = null;
+
+        let sid = setTimeout(()=>{
+          event.target.complete();
+          this.refreshEvent = null;
+          clearTimeout(sid);
+        },500);
 
         break;
       case 'pasar':
