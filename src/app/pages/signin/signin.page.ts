@@ -151,7 +151,9 @@ export class SigninPage implements OnInit {
         }
       }).catch((err) => {
         this.authorizationStatus = null;
-        this.native.toastWarn(err);
+        if(err != "common.didSigninError1"){
+          this.native.toastWarn(err);
+        }
       });
     } catch (error) {
       this.authorizationStatus = null;
