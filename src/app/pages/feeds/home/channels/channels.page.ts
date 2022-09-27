@@ -770,11 +770,15 @@ export class ChannelsPage implements OnInit {
 
   loadData(event: any) {
     let sId = setTimeout(() => {
+      if(this.postList.length === this.totalData.length){
+        event.target.complete();
+        clearTimeout(sId);
+        return;
+      }
       this.pageSize++;
       let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
       if (data.currentPage === data.totalPage) {
         this.postList = this.postList.concat(data.items);
-        event.target.disabled = true;
       } else {
         this.postList = this.postList.concat(data.items);
       }
@@ -1512,7 +1516,7 @@ export class ChannelsPage implements OnInit {
 
     if (event.detail.deltaY > 0) {
 
-      if (this.firstScrollTop === 0) {
+      if (this.firstScrollTop === 0 && event.detail.scrollTop > 0) {
         this.firstScrollTop = 1;
         this.isFullPost = true;
         this.refresher.disabled = true;

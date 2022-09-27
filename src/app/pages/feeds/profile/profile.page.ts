@@ -2502,6 +2502,7 @@ export class ProfilePage implements OnInit {
 
   postListScroll(event: any) {
     if(this.selectType === "ProfilePage.myLikes"){
+      //this.native.throttle(this.handlePostListScroll(event), 200, this, true);
       this.handlePostListScroll(event);
     }
   }
@@ -2510,7 +2511,7 @@ export class ProfilePage implements OnInit {
 
     if (event.detail.deltaY > 0) {
 
-      if (this.firstScrollTop === 0) {
+      if (this.firstScrollTop === 0 && event.detail.scrollTop > 0) {
         this.firstScrollTop = 1;
         this.isFullPost = true;
         this.refresher.disabled = true;
