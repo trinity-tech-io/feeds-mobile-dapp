@@ -2517,7 +2517,7 @@ export class ProfilePage implements OnInit {
       }
     } else if (event.detail.deltaY < 0) {
 
-      if (this.totalLikeList.length > 4 && this.firstScrollTop > 0 && event.detail.scrollTop === 0) {
+      if (this.totalLikeList.length > 4 && this.firstScrollTop > 0 && event.detail.scrollTop <= 0) {
         this.firstScrollTop = 0;
         this.isFullPost = false;
         this.refresher.disabled = false;

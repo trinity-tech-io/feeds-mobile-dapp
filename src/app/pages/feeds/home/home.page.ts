@@ -925,6 +925,7 @@ export class HomePage implements OnInit {
     this.newPostNumber = 0;
     switch (this.tabType) {
       case 'feeds':
+        this.infiniteScroll.disabled = true;
         this.hiveVaultController.refreshHomeData((newPostNum) => {
           this.newPostNumber += newPostNum;
         });
@@ -2386,8 +2387,8 @@ export class HomePage implements OnInit {
         let newId = container.getAttribute("id");
         let intersectionRatio = changes[0].intersectionRatio;
 
-        // let boundingClientRect = changes[0].boundingClientRect;
-        // console.log("======boundingClientRect========",boundingClientRect);
+        let boundingClientRect = changes[0].boundingClientRect;
+        console.log("======boundingClientRect========",boundingClientRect);
 
         // let rootBounds = changes[0].rootBounds;
         // console.log("======rootBoundst========",rootBounds);

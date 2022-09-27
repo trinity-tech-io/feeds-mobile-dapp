@@ -902,10 +902,8 @@ export class ChannelsPage implements OnInit {
     if (isloadVideoImg === '') {
       this.isLoadVideoiamge[id] = '11';
       let post = this.postMap[postId] || null;
-      console.log('postMap postId====>', post);
       if (post === null) {
         post = await this.dataHelper.getPostV3ById(postId) || null;
-        console.log('new get post ====>', post);
         this.postMap[postId] = post;
       }
       if (post === null) {
@@ -1520,8 +1518,7 @@ export class ChannelsPage implements OnInit {
         this.refresher.disabled = true;
       }
     } else if (event.detail.deltaY < 0) {
-
-      if (this.totalData.length > 4 && this.firstScrollTop > 0 && event.detail.scrollTop === 0) {
+      if (this.totalData.length > 4 && this.firstScrollTop > 0 && event.detail.scrollTop <= 0) {
         this.firstScrollTop = 0;
         this.isFullPost = false;
         this.refresher.disabled = false;
