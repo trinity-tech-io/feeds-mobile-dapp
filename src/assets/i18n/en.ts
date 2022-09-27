@@ -223,7 +223,7 @@ export const en = {
     SubscribeElastosCommunity: 'Please subscribe to the Elastos community on Reddit first',
     redditError: 'Reddit request timed out',
     twitterError3: 'Unable to resolve the Twitter host, please check the network and try again',
-    unableUnsubscribe: 'Unable to unsubscribe to your own channel'
+    unableUnsubscribe: 'Unable to unsubscribe from your own channel'
   },
   app: {
     profileDetails: 'Profile Details',
