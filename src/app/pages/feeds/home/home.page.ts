@@ -252,6 +252,7 @@ export class HomePage implements OnInit {
         }
       });
     }
+    this.refreshRepostData(this.postList);
 
     this.isLoadimage = {};
     this.isLoadAvatarImage = {};
@@ -889,6 +890,8 @@ export class HomePage implements OnInit {
           } else {
             this.postList = this.postList.concat(data.items);
           }
+
+          this.refreshRepostData(data.items);
           this.refreshImageV2(data.items);
           clearTimeout(sid);
           event.target.complete();
@@ -948,6 +951,7 @@ export class HomePage implements OnInit {
           this.refreshEvent = null;
           clearTimeout(sid);
         }, 500);
+
 
         break;
       case 'pasar':
@@ -2545,4 +2549,29 @@ export class HomePage implements OnInit {
       this.refreshRepostImageSid = null;
     }
   }
+
+  // initRepostData() {
+  //   for (let index = 0; index < this.postList.length; index++) {
+  //     const post = this.postList[index];
+  //     this.setRepostData(post.postId);
+  //   }
+  // }
+
+  refreshRepostData(list: FeedsData.PostV3[]) {
+    for (let index = 0; index < list.length; index++) {
+      const post = list[index];
+      this.setRepostData(post.postId);
+      this.hiveVaultController.queryRepostById(post.destDid, post.channelId, post.postId, 0, UtilService.getCurrentTimeNum()).then(() => {
+        this.setRepostData(post.postId);
+      }
+      )
+    }
+  }
+
+  setRepostData(key: string) {
+    this.dataHelper.getReportedRePostNumById(this.postId).then((count: number) => {
+      this.repostNumMap[key] = count;
+    });
+  }
+
 }

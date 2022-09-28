@@ -435,6 +435,8 @@ export class ChannelsPage implements OnInit {
     this.channelAvatarUri = channelAvatarUri;
     this.displayName = channel.displayName;
     this.handleChannelAvatar(channelAvatarUri);
+
+    this.initRepostData();
   }
 
   handleChannelAvatar(channelAvatarUri: string) {
@@ -738,6 +740,10 @@ export class ChannelsPage implements OnInit {
     try {
       const syncChannelInfoPromise = this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
       const syncSubscriptionPromise = this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId);
+
+      this.hiveVaultController.queryAllRepostByChannelId(this.destDid, this.channelId).then(() => {
+        this.initRepostData();
+      });
       if (this.followStatus) {
         this.dataHelper.cleanCachedComment();
         this.dataHelper.cleanCacheLikeNum();
@@ -1648,4 +1654,13 @@ export class ChannelsPage implements OnInit {
     }
   }
 
+  initRepostData() {
+    for (let index = 0; index < this.postList.length; index++) {
+      const post = this.postList[index];
+
+      this.dataHelper.getReportedRePostNumById(this.postId).then((count: number) => {
+        this.repostNumMap[post.postId] = count;
+      });
+    }
+  }
 }

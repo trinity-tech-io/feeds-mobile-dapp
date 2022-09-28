@@ -2263,7 +2263,7 @@ export class HiveVaultController {
     });
   }
 
-  queryAllRepostByChannelId(targetDid: string, channelId: string,): Promise<any> {
+  queryAllRepostByChannelId(targetDid: string, channelId: string): Promise<FeedsData.ReportedRepost[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryRepostFromOriginChannelByChannelId(targetDid, channelId);
