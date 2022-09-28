@@ -678,7 +678,7 @@ export class SearchPage implements OnInit {
        const scanResult = ScannerHelper.parseScannerResult(tokenURI);
        const feedsUrl = scanResult.feedsUrl;
        let subscribedChannelIndex = _.findIndex(subscribedChannel, (item) => {
-        return item.destDid === channel.destDid && item.channelId === channel.channelId;
+        return item.destDid === feedsUrl.destDid && item.channelId === feedsUrl.channelId;
        });
        if (subscribedChannelIndex > -1) {
          continue;

@@ -49,13 +49,13 @@ export class GalleriachannelPage implements OnInit {
   public channel: FeedsData.ChannelV3 = null;
   public channelAvatar: string = null;
   private avatarObj: any = {};
-  private tippingAddress: any = {};
   private channelAvatarUri: string = null;
   private tokenUri: string = null;
   private channelEntry: string = null;
   private receiptAddr: string = null;
   private ownerAddr: string = null;
   private mintSid: NodeJS.Timer = null;
+  public tippingAddress: string = "";
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -81,8 +81,13 @@ export class GalleriachannelPage implements OnInit {
   async ionViewWillEnter() {
     this.initTile();
     this.addEvent();
-    if (this.walletConnectControllerService.getAccountAddress() == '')
-    this.walletConnectControllerService.connect();
+    this.tippingAddress = this.walletConnectControllerService.getAccountAddress() || "";
+    console.log("=======this.tippingAddress========",this.tippingAddress);
+    if (this.tippingAddress == ''){
+        this.walletConnectControllerService.connect().then(()=>{
+          this.tippingAddress = this.walletConnectControllerService.getAccountAddress();
+        });
+    }
     this.channel = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
     this.nftName = this.channel.name || '';
     this.nftDescription = this.channel.intro || '';
@@ -167,7 +172,12 @@ export class GalleriachannelPage implements OnInit {
     this.channelEntry = UtilService.generateFeedsQrCodeString(this.destDid,this.channelId);
     this.tokenUri = this.channelEntry;
     this.ownerAddr = this.nftContractControllerService.getAccountAddress();
-    this.receiptAddr = this.ownerAddr;
+    let tippingAddress = this.tippingAddress || '';
+    if(tippingAddress === ""){
+      this.receiptAddr = this.ownerAddr;
+    }else{
+      this.receiptAddr = tippingAddress;
+    }
     this.loadingCurNumber = "1";
     this.loadingText = "GalleriachannelPage.mintingData";
     this.mintContract(tokenId,this.tokenUri,this.channelEntry,this.receiptAddr,'0x0000000000000000000000000000000000000000','0')
@@ -220,6 +230,19 @@ export class GalleriachannelPage implements OnInit {
     if (this.nftDescription === '') {
       this.native.toastWarn('MintnftPage.nftDescriptionPlaceholder');
       return false;
+    }
+
+    let tippingAddress = this.tippingAddress || "";
+    if(tippingAddress === ""){
+      this.native.toastWarn('CreatenewfeedPage.tippingAddressDes');
+      return false;
+    }
+    if(tippingAddress != ""){
+      let isVailAddress = this.nftContractControllerService.isAddress(tippingAddress);
+      if(!isVailAddress){
+        this.native.toastWarn("common.addressinvalid");
+        return false;
+      }
     }
 
     return true;
@@ -320,4 +343,30 @@ export class GalleriachannelPage implements OnInit {
       })
   }
 
+  async scanWalletAddress() {
+    let scanObj = await this.popupProvider.scan() || {};
+    let scanData = scanObj["data"] || {};
+    let scannedContent = scanData["scannedText"] || "";
+    if (scannedContent === '') {
+      this.tippingAddress = "";
+      return;
+    }
+    let tippingAddress = "";
+    if (scannedContent.indexOf('ethereum:') > -1) {
+        tippingAddress = scannedContent.replace('ethereum:', '');
+    } else if (scannedContent.indexOf('elastos:') > -1) {
+      tippingAddress = scannedContent.replace('elastos:', '');
+    } else {
+      tippingAddress = scannedContent;
+    }
+
+    if(tippingAddress != ""){
+     let isVailAddress = this.nftContractControllerService.isAddress(tippingAddress);
+     if(isVailAddress){
+       this.tippingAddress = tippingAddress;
+     }else{
+       this.native.toastWarn("common.addressinvalid");
+     }
+    }
+  }
 }
