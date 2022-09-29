@@ -120,8 +120,8 @@
       </ion-row>
       <!-- repost -->
       <!-- id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-postdetail -->
-      <ion-grid class="postDetail-grid ion-activatable ripple" [class.dark-postDetail-grid]="theme.darkMode" *ngIf="rePost != null"
-      id={{rePost.destDid}}-{{rePost.channelId}}-{{rePost.postId}}-{{rePost.content.mediaType}}-postdetail-repost style="border: none;">
+      <ion-grid class="postDetail-grid ion-activatable ripple repostBorder" [class.dark-postDetail-grid]="theme.darkMode" *ngIf="rePost != null"
+      id={{rePost.destDid}}-{{rePost.channelId}}-{{rePost.postId}}-{{rePost.content.mediaType}}-postdetail-repost>
       <ion-row class="top-row">
         <ion-col size="1"></ion-col>
         <ion-col class="left-col" size="2.5">

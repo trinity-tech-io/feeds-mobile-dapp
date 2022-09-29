@@ -161,7 +161,7 @@
     <ion-grid
     *ngIf="rePostMap[post.postId]"
     style="border: none;"
-    class="post-grid ion-activatable ripple postgridlike"
+    class="post-grid postgridlike repostBorder"
     [class.darkPostGrid]="theme.darkMode" id={{rePostMap[post.postId].destDid}}-{{rePostMap[post.postId].channelId}}-{{rePostMap[post.postId].postId}}-{{rePostMap[post.postId].content.mediaType}}-like-repost>
       <ion-row class="post-row">
         <ion-col size="1" (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId)">
@@ -288,7 +288,6 @@
 
       <ion-row  (click)="navToPostDetail(rePostMap[post.postId].destDid, rePostMap[post.postId].channelId, rePostMap[post.postId].postId)" class="noText">
       </ion-row>
-      <ion-ripple-effect></ion-ripple-effect>
     </ion-grid>
 
 
