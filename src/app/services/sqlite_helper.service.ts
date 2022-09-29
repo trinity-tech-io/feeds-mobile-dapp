@@ -1591,8 +1591,9 @@ export class FeedsSqliteHelper {
           }
         }
 
-        if (sqlversion < Config.SQL_VERSION320) {
+        if (sqlversion < Config.SQL_VERSION322) {
           await this.createCachedPostTable(dbUserDid);
+          await this.createReportedRepostTable(dbUserDid);
         }
         resolve('FINISH');
       } catch (error) {
