@@ -178,7 +178,8 @@ export class PostdetailPage implements OnInit {
     this.channelOwner = channel.destDid || '';
     this.channelOwnerName = this.indexText(channel.destDid);
     this.channelWName = channel['displayName'] || channel['name'] || '';
-    this.channelName = channel['displayName'] || channel['name'];
+    this.channelName = channel['displayName'] || channel['name'] || "";
+    this.hannelNameMap[this.channelId] = this.channelName;
     this.userNameMap[this.channelOwner] = this.channelName;
     let channelAvatarUri = channel['avatar'] || '';
     if (channelAvatarUri != '') {
@@ -1465,20 +1466,24 @@ export class PostdetailPage implements OnInit {
           let channelId: string = arr[1];
           let postId: string = arr[2];
           let mediaType: string = arr[3];
-
           if (mediaType === '3' || mediaType == '4') {
             //获取repost
-            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId) || null;
-            const repostUrl = post.content.mediaData[0].repostUrl;
-            const feedsUrlObj = UtilService.decodeFeedsUrl(repostUrl);
-            let loadedRepost: FeedsData.PostV3 = await this.dataHelper.getCachedPostV3ById(feedsUrlObj.postId) || null;//TODO replace with load repost later
-            if (!loadedRepost) {
-              loadedRepost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId, false);
+            try {
+              let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId) || null;
+              const repostUrl = post.content.mediaData[0].repostUrl;
+              const feedsUrlObj = UtilService.decodeFeedsUrl(repostUrl);
+              let loadedRepost: FeedsData.PostV3 = await this.dataHelper.getCachedPostV3ById(feedsUrlObj.postId) || null;//TODO replace with load repost later
+              if (!loadedRepost) {
+                loadedRepost = await this.hiveVaultController.queryPostByPostId(feedsUrlObj.targetDid, feedsUrlObj.channelId, feedsUrlObj.postId, false);
+              }
+              this.rePost = loadedRepost;
+              let updatedTime = loadedRepost.updatedAt || 0;
+              this.repostUpdatedTimeStr = this.handleUpdateDate(updatedTime);
+              this.refreshRepostImageV2(this.rePost)
+            } catch (error) {
+
             }
-            this.rePost = loadedRepost;
-            let updatedTime = loadedRepost.updatedAt || 0;
-            this.repostUpdatedTimeStr = this.handleUpdateDate(updatedTime);
-            this.refreshRepostImageV2(this.rePost)
+
           }
 
           await this.getChannelName(destDid, channelId, null);//获取频道name
