@@ -15,6 +15,8 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import _ from 'lodash';
 import { Params, ActivatedRoute } from '@angular/router';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
+import { FeedService } from 'src/app/services/FeedService';
 
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
@@ -31,9 +33,6 @@ export class GalleriachannelPage implements OnInit {
     FeedsData.TransDataChannel.MESSAGE;
   public nftName: string = '';
   public nftDescription: string = '';
-  /**single  multiple*/
-  public nftRoyalties: string = '';
-  public nftQuantity: string = '1';
 
   public fileName: string = '';
   public thumbnail: string = '';
@@ -48,7 +47,7 @@ export class GalleriachannelPage implements OnInit {
   private channelId: string = null;
   public channel: FeedsData.ChannelV3 = null;
   public channelAvatar: string = null;
-  private avatarObj: any = {};
+  private avatar: string = "";
   private channelAvatarUri: string = null;
   private tokenUri: string = null;
   private channelEntry: string = null;
@@ -56,6 +55,8 @@ export class GalleriachannelPage implements OnInit {
   private ownerAddr: string = null;
   private mintSid: NodeJS.Timer = null;
   public tippingAddress: string = "";
+  private realFile: string = null;
+  private displayName: string = "";
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -67,7 +68,9 @@ export class GalleriachannelPage implements OnInit {
     private popupProvider: PopupProvider,
     private activatedRoute: ActivatedRoute,
     private dataHelper: DataHelper,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private ipfsService: IPFSService,
+    private feedService: FeedService
   ) { }
 
   ngOnInit() {
@@ -82,7 +85,6 @@ export class GalleriachannelPage implements OnInit {
     this.initTile();
     this.addEvent();
     this.tippingAddress = this.walletConnectControllerService.getAccountAddress() || "";
-    console.log("=======this.tippingAddress========",this.tippingAddress);
     if (this.tippingAddress == ''){
         this.walletConnectControllerService.connect().then(()=>{
           this.tippingAddress = this.walletConnectControllerService.getAccountAddress();
@@ -91,7 +93,7 @@ export class GalleriachannelPage implements OnInit {
     this.channel = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
     this.nftName = this.channel.name || '';
     this.nftDescription = this.channel.intro || '';
-
+    this.displayName = this.channel.displayName || this.channel.name || '';
     this.channelAvatarUri = this.channel.avatar || '';
     if(this.channelAvatarUri != ''){
       this.handleChannelAvatar(this.channelAvatarUri);
@@ -152,6 +154,7 @@ export class GalleriachannelPage implements OnInit {
   }
 
   async doMint() {
+
     //Start loading
     this.clearMintSid();
     this.mintSid = setTimeout(() => {
@@ -165,12 +168,12 @@ export class GalleriachannelPage implements OnInit {
     }, Config.WAIT_TIME_MINT);
 
     this.loadingCurNumber = "1";
-    this.loadingMaxNumber = "2";
+    this.loadingMaxNumber = "3";
 
+    this.loadingText = "common.uploadingData"
     this.isLoading = true;
     let tokenId = this.getTokenId();
     this.channelEntry = UtilService.generateFeedsQrCodeString(this.destDid,this.channelId);
-    this.tokenUri = this.channelEntry;
     this.ownerAddr = this.nftContractControllerService.getAccountAddress();
     let tippingAddress = this.tippingAddress || '';
     if(tippingAddress === ""){
@@ -178,11 +181,20 @@ export class GalleriachannelPage implements OnInit {
     }else{
       this.receiptAddr = tippingAddress;
     }
-    this.loadingCurNumber = "1";
-    this.loadingText = "GalleriachannelPage.mintingData";
-    this.mintContract(tokenId,this.tokenUri,this.channelEntry,this.receiptAddr,'0x0000000000000000000000000000000000000000','0')
-      .then(mintResult => {
-          this.loadingCurNumber = "2";
+
+    this.uploadData()
+    .then(async (result) => {
+      Logger.log(TAG, 'Upload Result', result);
+      this.loadingCurNumber = "1";
+      this.loadingText = "common.uploadDataSuccess";
+
+      this.tokenUri = result.jsonHash;
+      this.loadingCurNumber = "2";
+      this.loadingText = "GalleriachannelPage.mintingData";
+      return this.mintContract(tokenId,this.tokenUri,this.channelEntry,this.receiptAddr,'0x0000000000000000000000000000000000000000','0')
+
+    }).then(mintResult => {
+          this.loadingCurNumber = "3";
           this.loadingText = "GalleriachannelPage.checkingCollectibleResult";
           this.isLoading = false;
           let channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
@@ -369,4 +381,138 @@ export class GalleriachannelPage implements OnInit {
      }
     }
   }
+
+  uploadData(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      this.realFile = await this.handleIpfsChannelAvatar();
+      if (this.realFile == null) {
+        reject('upload file error');
+        return;
+      }
+      this.sendIpfsImage(this.realFile).then((realFileObj: any) => {
+        this.avatar = realFileObj["cid"];
+        return this.sendIpfsJSON();
+        }).then((jsonHash) => {
+          resolve({ jsonHash: jsonHash });
+        })
+        .catch((error) => {
+          reject('upload file error');
+        });
+    });
+  }
+
+  sendIpfsImage(file: any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      let blob = UtilService.dataURLtoBlob(file);
+      let formData = new FormData();
+      formData.append('', blob);
+      Logger.log(TAG, 'Send img, formdata length is', formData.getAll('').length);
+      this.ipfsService
+        .nftPost(formData)
+        .then(result => {
+          let hash = result['Hash'] || null;
+          if (!hash) {
+            reject("Upload Image error, hash is null")
+            return;
+          }
+          let kind = blob.type.replace("image/", "");
+          let size = blob.size;
+          let cid = 'feeds:image:' + hash;
+          resolve({ "cid": cid, "size": size, "kind": kind });
+        })
+        .catch(err => {
+          reject('Upload image error, error is ' + JSON.stringify(err));
+        });
+    });
+  }
+
+  sendIpfsThumbnail(thumbnailBase64: string) {
+    return new Promise(async (resolve, reject) => {
+      let thumbnailBlob = UtilService.dataURLtoBlob(thumbnailBase64);
+      let formData = new FormData();
+      formData.append('', thumbnailBlob);
+      Logger.log(TAG, 'Send thumbnail, formdata length is', formData.getAll('').length);
+
+      this.ipfsService
+        .nftPost(formData)
+        .then(result => {
+          let hash = result['Hash'] || null;
+          if (!hash) {
+            reject("Send thumbnail error, hash is null");
+            return;
+          }
+
+          this.thumbnail = thumbnailBase64;
+          this.avatar = 'feeds:image:' + hash;
+          resolve('');
+        })
+        .catch(err => {
+          reject("Send thumbnail error, error is " + JSON.stringify(err));
+        });
+    });
+  }
+
+  sendIpfsJSON(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+
+      let ipfsJSON = {
+        "version": "2",
+        "type": "FeedsChannel",
+        "name": this.nftName,
+        "description": this.nftDescription,
+        "creator": {
+            "did": this.ownerAddr
+        },
+        "data": {
+            "cname": this.displayName,//channel displayName
+            "avatar": this.avatar,//feeds:image:QmUVpumZzH9ECm43nyrQ14wwYHDWf3aRMDmGmHxkM1ufEJ
+            "banner": "",
+            "ownerDid": this.ownerAddr,
+            "channelEntry": this.channelEntry,
+            "signature": ""
+        }
+        }
+
+      let formData = new FormData();
+      formData.append('', JSON.stringify(ipfsJSON));
+      Logger.log(TAG, 'Send json, formdata length is', formData.getAll('').length);
+      this.ipfsService
+        .nftPost(formData)
+        .then(result => {
+          //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
+          Logger.log(TAG, 'Json data is', JSON.stringify(result));
+          let hash = result['Hash'] || null;
+          if (hash != null) {
+            let jsonHash = 'feeds:json:' + hash;
+            resolve(jsonHash);
+          }
+        })
+        .catch(err => {
+          Logger.error(TAG, 'Send Json data error', err);
+          reject('upload json error');
+        });
+    });
+  }
+
+  async handleIpfsChannelAvatar() {
+
+    let channelAvatar: string = this.feedService.parseChannelAvatar(this.channelAvatar);
+    if (channelAvatar.startsWith("data:image")) {
+      return channelAvatar;
+    }
+
+    if (channelAvatar.startsWith("assets/images/profile")) {
+      let fileName = channelAvatar.replace("assets/images/", "");
+      let avatarBase64 = UtilService.getDefaultAvatar(fileName);
+      return avatarBase64;
+    }
+
+    if (channelAvatar.startsWith("https://")) {
+      let avatar = await UtilService.downloadFileFromUrl(channelAvatar);
+      let avatarBase64 = await UtilService.blobToDataURL(avatar);
+      return avatarBase64;
+    }
+  }
+
+
 }
