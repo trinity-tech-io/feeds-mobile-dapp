@@ -2421,7 +2421,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS");
             } catch (error) {
                 Logger.error(TAG, "registerCreateComment error", error)
-                reject(await this.handleError(error))
+                reject(error)
             }
         })
     }
@@ -2478,7 +2478,7 @@ export class HiveVaultHelper {
                 resolve("SUCCESS");
             } catch (error) {
                 Logger.error(TAG, "registerCreateComment error", error)
-                reject(await this.handleError(error))
+                reject(error)
             }
         })
     }
