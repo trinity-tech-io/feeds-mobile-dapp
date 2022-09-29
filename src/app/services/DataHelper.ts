@@ -4428,7 +4428,7 @@ export class DataHelper {
         let reportedRepost: FeedsData.ReportedRepost = await this.getReportedRePostById(repost.repostId) || null;
         if (!reportedRepost) {
           try {
-            await this.doAddReportedRePost(reportedRepost);
+            await this.doAddReportedRePost(repost);
             isNew = true;
           } catch (error) {
           }

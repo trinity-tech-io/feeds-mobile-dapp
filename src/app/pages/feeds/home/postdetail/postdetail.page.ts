@@ -1680,8 +1680,7 @@ export class PostdetailPage implements OnInit {
           this.isLoadimage[id] = 13;
           return;
         }
-        console.log('post ====>', post.content);
-        console.log('content ====>', post.content);
+
         let mediaDatas = post.content.mediaData;
         const elements = mediaDatas[0];
         //缩略图

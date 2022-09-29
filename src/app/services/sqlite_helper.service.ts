@@ -1201,7 +1201,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'create table if not exists ' + this.TABLE_REPORTED_REPOST
           + '('
-          + 'dest_did VARCHAR(64) UNIQUE, repost_id VARCHAR(64), origin_channel_id VARCHAR(64), origin_post_id VARCHAR(64), repost_target_did VARCHAR(64), repost_channel_id VARCHAR(64), repost_post_id VARCHAR(64),created_at REAL(64)'
+          + 'dest_did VARCHAR(64) , repost_id VARCHAR(64) UNIQUE, origin_channel_id VARCHAR(64), origin_post_id VARCHAR(64), repost_target_did VARCHAR(64), repost_channel_id VARCHAR(64), repost_post_id VARCHAR(64),created_at REAL(64)'
           + ')';
         const result = await this.executeSql(dbUserDid, statement);
         Logger.log(TAG, 'create reported repost table result is', result);
@@ -1250,7 +1250,6 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE origin_post_id=?'
         const params = [originPostId];
-
         const result = await this.executeSql(dbUserDid, statement, params);
         const reportedRepost = this.parseReportedRepostData(result);
         resolve(reportedRepost);
@@ -1283,6 +1282,7 @@ export class FeedsSqliteHelper {
         const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_REPORTED_REPOST + ' WHERE origin_post_id=?'
         const params = [originPostId];
         const result = await this.executeSql(dbUserDid, statement, params);
+
         const num = this.parseNum(result);
         resolve(num);
       } catch (error) {

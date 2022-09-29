@@ -135,7 +135,6 @@ export class HiveVaultController {
           postList.push(posts);
         }
 
-        console.log('postList====>', postList);
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'Sync post from channel error', error);
@@ -897,17 +896,12 @@ export class HiveVaultController {
         if (userDisplayName == '') {
           const signinData = await this.dataHelper.getSigninData();
           userName = signinData.name;
-          console.log('signinData====>', signinData);
         } else {
           userName = userDisplayName;
         }
 
         const updatedAt = UtilService.getCurrentTimeNum();
-        console.log('start====>');
-        console.log('subscribeChannel====>', targetDid);
-        console.log('channelId====>', channelId);
-        console.log('userName====>', userName);
-        console.log('updatedAt====>', updatedAt);
+
         const result = await this.hiveVaultApi.subscribeChannel(targetDid, channelId, userName, updatedAt);
         if (!result) {
           const errorMsg = 'Subscribe channel error, destDid is' + targetDid + 'channelId is' + channelId;

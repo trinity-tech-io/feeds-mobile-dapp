@@ -75,6 +75,7 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_QUERY_REPOST_FROM_ORIGIN = "script_query_repost_from_origin";
     public static readonly SCRIPT_QUERY_REPOST_COUNT = "script_query_repost_count";
 
+    public static readonly SCRIPT_QUERY_CHANNEL_REPOST = "script_query_channel_repost";
 
 
     private buyStorageSpaceDialog: any = null;
@@ -2474,7 +2475,7 @@ export class HiveVaultHelper {
                 };
 
                 const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_REPOST, executablefilter, options).setOutput(true)
-                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_REPOST_FROM_ORIGIN, executable, null, false);
+                await this.hiveService.registerScript(false, HiveVaultHelper.SCRIPT_QUERY_CHANNEL_REPOST, executable, null, false);
                 resolve("SUCCESS");
             } catch (error) {
                 Logger.error(TAG, "registerCreateComment error", error)
@@ -2489,7 +2490,7 @@ export class HiveVaultHelper {
                 const params = {
                     "origin_channel_id": channelId
                 }
-                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_REPOST_FROM_ORIGIN, params);
+                const result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_CHANNEL_REPOST, params);
                 console.log("Query repost from scripting , result is", result);
                 resolve(result);
             } catch (error) {
