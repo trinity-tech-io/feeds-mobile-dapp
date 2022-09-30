@@ -64,31 +64,29 @@
       <div class="displayName" *ngIf="handleDisplayNameMap[channelCollection.destDid] != '' && handleDisplayNameMap[channelCollection.destDid] != undefined">
         @{{ handleDisplayNameMap[channelCollection.destDid] }}
       </div>
-      <!-- <ion-row>
-        <br>
-        <p>
-          <span *ngIf="subscriptionV3NumMap[channelCollection.channelId] === '' || subscriptionV3NumMap[channelCollection.channelId] === undefined">...</span>
-          <span *ngIf="subscriptionV3NumMap[channelCollection.channelId]=== 0 || subscriptionV3NumMap[channelCollection.channelId] != '' && subscriptionV3NumMap[channelCollection.channelId] != undefined">{{ subscriptionV3NumMap[channelCollection.channelId] }}</span> {{ 'common.followers' | translate }}
-        </p>
-      </ion-row> -->
+
       <ion-row>
           <div  class="des">{{ channelCollection.intro }}</div>
       </ion-row>
-      <div  class="btn-row-empty unsubscribed" (click)="subscribe(channelCollection.destDid, channelCollection.channelId, $event)">
+      <div  class="btn-row-empty unsubscribed" (click)="subscribe(channelCollection.destDid, channelCollection.channelId, $event)" *ngIf="subscribedChannelMap[channelCollection.channelId] === undefined">
         <span>{{ "SearchPage.follow" | translate }}</span>
       </div>
-    </ion-col>
-    <!-- <ion-col size="0.2" class="right-col" (click)="subscribeChannelCollection(channelCollection)">
 
+      <ion-button class="subscribed" *ngIf="subscribedChannelMap[channelCollection.channelId] != undefined">
+        <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
+      </ion-button>
     </ion-col>
-    <ion-col size="3.3" class="right-col" (click)="subscribeChannelCollection(channelCollection)">
-      <div  class="btn-row-empty unsubscribed">
-        <span>{{ "SearchPage.follow" | translate }}</span>
-      </div>
-    </ion-col> -->
-
     <ion-ripple-effect></ion-ripple-effect>
   </ion-row>
-  </ion-item>
-  </ion-list>
+</ion-item>
+</ion-list>
+
+<!-- <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+  <ion-infinite-scroll-content
+    class="ion-padding-top"
+    loadingSpinner="circles"
+  >
+  </ion-infinite-scroll-content>
+</ion-infinite-scroll> -->
+
 </ion-content>

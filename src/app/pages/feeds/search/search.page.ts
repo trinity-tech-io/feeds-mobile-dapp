@@ -48,8 +48,6 @@ export class SearchPage implements OnInit {
   public searchfeedsList = [];
   public discoverSquareList = [];
   public pageNum: number = 1;
-  public pageSize: number = 9;
-  public totalNum: number = 0;
   public isLoading: boolean = true;
   public developerMode: boolean = false;
   public searchSquareList = [];
@@ -106,6 +104,11 @@ export class SearchPage implements OnInit {
     "feeds://v3/did:elastos:inSeTvmVDj6to7dHSZgkRZuUJYc9yHJChN/d33a4b026b175886212f728fea3333658fa1c821e99e0782b073752c0bccd7d8",
     "feeds://v3/did:elastos:ik9HwavTJhdo2ufc1K7Gz7pLF4yraaVcCR/e72e416508852f63fc0a8badd508f7ddc63c0d9a0d006cd33a57ff9699484f36",
   ]
+  public subscribedChannelMap: any = {};
+  private totalNum: number = 0;
+  private startIndex: number = 0;
+  private endIndex: number = 0;
+  private pageSize: number = 15;
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private feedService: FeedService,
@@ -190,12 +193,12 @@ export class SearchPage implements OnInit {
     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
     for (let index = 0; index < channelCollectionPageList.length; index++) {
       let channel: FeedsData.ChannelV3 = channelCollectionPageList[index];
-      let channelIndex = _.findIndex(subscribedChannel, (item) => {
-        return item.destDid === channel.destDid && item.channelId === channel.channelId;
-      });
-      if (channelIndex > -1) {
-        continue;
-      }
+      // let channelIndex = _.findIndex(subscribedChannel, (item) => {
+      //   return item.destDid === channel.destDid && item.channelId === channel.channelId;
+      // });
+      // if (channelIndex > -1) {
+      //   continue;
+      // }
       channelList.push(channel);
     }
 
@@ -203,8 +206,21 @@ export class SearchPage implements OnInit {
   }
 
   async init() {
+    try {
+      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+      this.subscribedChannelMap =  _.keyBy(subscribedChannel, (item: FeedsData.ChannelV3)=> {
+       return item.channelId;
+      });
+    } catch (error) {
+
+    }
     let channelCollectionPageList = this.dataHelper.getChannelCollectionPageList() || [];
     if (channelCollectionPageList.length === 0) {
+      try {
+       this.totalNum = await this.nftContractControllerService.getChannel().totalSupply();
+      } catch (error) {
+
+      }
       this.channelCollectionPageList = await this.getChannelsV2();
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
@@ -245,9 +261,7 @@ export class SearchPage implements OnInit {
       });
 
       if (channelIndex > -1) {
-        this.channelCollectionPageList.splice(channelIndex, 1);
-        this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
-        this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+        this.subscribedChannelMap[channelId] = this.channelCollectionPageList[channelIndex];
       }
       this.native.hideLoading();
     } catch (error) {
@@ -308,6 +322,7 @@ export class SearchPage implements OnInit {
 
   async doRefresh(event) {
     try {
+      this.totalNum = await this.nftContractControllerService.getChannel().totalSupply();
       this.channelCollectionPageList = await this.getChannelsV2(event);
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
@@ -662,27 +677,24 @@ export class SearchPage implements OnInit {
 
   async getChannelsV2(event=null) {
     try {
-     let channelCollectionPageList = [];
-     let channelsCount = 0;
-     try {
-       channelsCount = await this.nftContractControllerService.getChannel().totalSupply();
-     } catch (error) {
-      if(event != null){
-        event.target.complete();
-      }
-     }
-     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-     for(let channelIndex = 0; channelIndex < channelsCount; channelIndex++){
-       let channel = await this.nftContractControllerService.getChannel().channelByIndex(channelIndex);
-       let tokenURI = channel[1];
+    let channelCollectionPageList = [];
+    if(this.totalNum <= this.pageSize){
+      this.endIndex = this.totalNum - 1;
+      this.startIndex = 0;
+    }else{
+      this.endIndex = this.totalNum - 1;
+      this.startIndex = this.endIndex - this.pageSize;
+    }
+    for(let channelIndex = this.endIndex; channelIndex >= this.startIndex; channelIndex--){
+      let channel = [];
+       try {
+        channel = await this.nftContractControllerService.getChannel().channelByIndex(channelIndex);
+       } catch (error) {
+        continue;
+       }
+       let tokenURI = channel[2];
        const scanResult = ScannerHelper.parseScannerResult(tokenURI);
        const feedsUrl = scanResult.feedsUrl;
-       let subscribedChannelIndex = _.findIndex(subscribedChannel, (item) => {
-        return item.destDid === feedsUrl.destDid && item.channelId === feedsUrl.channelId;
-       });
-       if (subscribedChannelIndex > -1) {
-         continue;
-       }
        try {
          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
          channelCollectionPageList.push(channelInfo);
