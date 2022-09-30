@@ -11,15 +11,15 @@
     </ion-refresher-content>
   </ion-refresher>
 
-  <div *ngIf="subscriptionList.length === 0" class="new-empty-container">
+  <div *ngIf="userList.length === 0" class="new-empty-container">
     <img src="./assets/images/profile-no-channel.svg">
     <h1 style="margin-top: 20px;">{{ 'FollowingComponent.allempty' | translate }}</h1>
     <p>{{ 'UserlistPage.emptyDes' | translate }}</p>
   </div>
 
-<ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="subscriptionList.length > 0">
+<ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="userList.length > 0">
   <ion-item
-  *ngFor="let subscription of subscriptionList"
+  *ngFor="let subscription of userList"
   class="channelCollectionFeeds"
   lines="none">
   <ion-row class="channel-row ion-activatable ripple"   id = {{subscription.userDid}}-userList

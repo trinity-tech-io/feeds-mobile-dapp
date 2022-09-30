@@ -225,6 +225,7 @@ declare namespace FeedsData {
     imgThumbKey: string;
     imgSize: number;
   };
+
   type VideoThumb = {
     videoThumb: string;
     duration: number;
