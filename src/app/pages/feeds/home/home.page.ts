@@ -2554,13 +2554,6 @@ export class HomePage implements OnInit {
     }
   }
 
-  // initRepostData() {
-  //   for (let index = 0; index < this.postList.length; index++) {
-  //     const post = this.postList[index];
-  //     this.setRepostData(post.postId);
-  //   }
-  // }
-
   refreshRepostData(list: FeedsData.PostV3[]) {
     for (let index = 0; index < list.length; index++) {
       const post = list[index];
@@ -2572,9 +2565,9 @@ export class HomePage implements OnInit {
     }
   }
 
-  setRepostData(key: string) {
-    this.dataHelper.getReportedRePostNumById(this.postId).then((count: number) => {
-      this.repostNumMap[key] = count;
+  setRepostData(postId: string) {
+    this.dataHelper.getReportedRePostNumById(postId).then((count: number) => {
+      this.repostNumMap[postId] = count;
     });
   }
 

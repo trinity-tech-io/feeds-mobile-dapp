@@ -340,6 +340,7 @@ export class ChannelsPage implements OnInit {
       this.postList = data.items;
     }
 
+    this.refreshRepostData(data.items);
     this.isLoadimage = {};
     this.isLoadVideoiamge = {};
     this.isInitLikeNum = {};
@@ -435,8 +436,6 @@ export class ChannelsPage implements OnInit {
     this.channelAvatarUri = channelAvatarUri;
     this.displayName = channel.displayName;
     this.handleChannelAvatar(channelAvatarUri);
-
-    this.initRepostData();
   }
 
   handleChannelAvatar(channelAvatarUri: string) {
@@ -741,9 +740,9 @@ export class ChannelsPage implements OnInit {
       const syncChannelInfoPromise = this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
       const syncSubscriptionPromise = this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId);
 
-      this.hiveVaultController.queryAllRepostByChannelId(this.destDid, this.channelId).then(() => {
-        this.initRepostData();
-      });
+      // this.hiveVaultController.queryAllRepostByChannelId(this.destDid, this.channelId).then(() => {
+      //   this.initRepostData();
+      // });
       if (this.followStatus) {
         this.dataHelper.cleanCachedComment();
         this.dataHelper.cleanCacheLikeNum();
@@ -796,6 +795,8 @@ export class ChannelsPage implements OnInit {
       } else {
         this.postList = this.postList.concat(data.items);
       }
+
+      this.refreshRepostData(data.items);
       this.refreshImageV2(data.items);
       event.target.complete();
       clearTimeout(sId);
@@ -803,7 +804,6 @@ export class ChannelsPage implements OnInit {
   }
 
   async checkChannelIsMine() {
-
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     if (this.destDid != ownerDid) {
       return 0;
@@ -1658,13 +1658,32 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  initRepostData() {
-    for (let index = 0; index < this.postList.length; index++) {
-      const post = this.postList[index];
+  // initRepostData() {
+  //   for (let index = 0; index < this.postList.length; index++) {
+  //     const post = this.postList[index];
 
-      this.dataHelper.getReportedRePostNumById(this.postId).then((count: number) => {
-        this.repostNumMap[post.postId] = count;
-      });
+  //     console.log('post====>', post);
+  //     this.dataHelper.getReportedRePostNumById(post.postId).then((count: number) => {
+  //       console.log('getReportedRePostNumById====>', post.postId, count);
+  //       this.repostNumMap[post.postId] = count;
+  //     });
+  //   }
+  // }
+
+  refreshRepostData(list: FeedsData.PostV3[]) {
+    for (let index = 0; index < list.length; index++) {
+      const post = list[index];
+      this.setRepostData(post.postId);
+      this.hiveVaultController.queryRepostById(post.destDid, post.channelId, post.postId, 0, UtilService.getCurrentTimeNum()).then(() => {
+        this.setRepostData(post.postId);
+      }
+      )
     }
+  }
+
+  setRepostData(postId: string) {
+    this.dataHelper.getReportedRePostNumById(postId).then((count: number) => {
+      this.repostNumMap[postId] = count;
+    });
   }
 }
