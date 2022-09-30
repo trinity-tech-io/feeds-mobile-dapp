@@ -683,7 +683,7 @@ export class SearchPage implements OnInit {
       this.startIndex = 0;
     }else{
       this.endIndex = this.totalNum - 1;
-      this.startIndex = this.endIndex - this.pageSize;
+      this.startIndex = this.totalNum - this.pageSize;
     }
     for(let channelIndex = this.endIndex; channelIndex >= this.startIndex; channelIndex--){
       let channel = [];
@@ -714,4 +714,46 @@ export class SearchPage implements OnInit {
       this.isLoading = false;
     }
    }
+
+  async loadData(event:any){
+    try {
+      if(this.startIndex === 0){
+        event.target.complete();
+        return;
+      }
+     let channelCollectionPageList = [];
+      this.endIndex = this.startIndex - 1;
+      if(this.startIndex - this.pageSize < 0){
+        this.startIndex = 0;
+      }else{
+        this.startIndex = this.startIndex - this.pageSize;
+      }
+
+      for(let channelIndex = this.endIndex; channelIndex >= this.startIndex; channelIndex--){
+        let channel = [];
+         try {
+          channel = await this.nftContractControllerService.getChannel().channelByIndex(channelIndex);
+         } catch (error) {
+          continue;
+         }
+         let tokenURI = channel[2];
+         const scanResult = ScannerHelper.parseScannerResult(tokenURI);
+         const feedsUrl = scanResult.feedsUrl;
+         try {
+           const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+           channelCollectionPageList.push(channelInfo);
+         } catch (error) {
+          this.isLoading = false;
+         }
+      }
+      this.channelCollectionPageList = this.channelCollectionPageList.concat(channelCollectionPageList);
+      this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+      this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+      this.refreshChannelCollectionAvatar(channelCollectionPageList);
+      event.target.complete();
+  }catch(error){
+    event.target.complete();
+  }
+}
+
 }
