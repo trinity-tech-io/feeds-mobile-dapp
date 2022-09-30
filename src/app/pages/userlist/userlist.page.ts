@@ -135,7 +135,7 @@ export class UserlistPage implements OnInit {
     if(item === null){
       return;
     }
-    let postGridId =  item.destDid+"-"+item.channelId+"-"+item.userDid+'-userList';
+    let postGridId = item.userDid+'-userList';
     let exit = this.userObserver[postGridId] || null;
     if(exit != null){
        continue;
@@ -162,7 +162,7 @@ newUserObserver(postGridId: string) {
     return;
   }
   let arr =  newId.split("-");
-  let userDid: string = arr[2];
+  let userDid: string = arr[0];
   await this.handleUserAvatar(userDid);
   });
 
