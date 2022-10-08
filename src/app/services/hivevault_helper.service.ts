@@ -456,7 +456,7 @@ export class HiveVaultHelper {
     /** query channel info end*/
 
     /** publish post start */
-    private insertDataToPostDB(postId: string, channelId: string, type: string, tag: string, content: string, memo: string, createdAt: number, updateAt: number, status: number, proof: string = ''): Promise<InsertResult> {
+    private insertDataToPostDB(postId: string, channelId: string, type: string, tag: string, content: string, memo: string, createdAt: number, updateAt: number, status: number, proof: string = '', from: number): Promise<InsertResult> {
         return new Promise(async (resolve, reject) => {
             const doc =
             {
@@ -470,6 +470,7 @@ export class HiveVaultHelper {
                 "type": type,
                 "tag": tag,
                 "proof": proof,
+                "from": from,
                 "pin_status": FeedsData.PinStatus.NOTPINNED
             }
 
@@ -484,7 +485,7 @@ export class HiveVaultHelper {
         })
     }
 
-    private insertPostData(channelId: string, tag: string, content: string, type: string, status: number, memo: string, proof: string): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
+    private insertPostData(channelId: string, tag: string, content: string, type: string, status: number, memo: string, proof: string, from: number): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const signinDid = (await this.dataHelper.getSigninData()).did;
@@ -493,7 +494,7 @@ export class HiveVaultHelper {
                 const updatedAt = UtilService.getCurrentTimeNum();
                 const postId = UtilService.generatePostId(signinDid, channelId, content);
 
-                await this.insertDataToPostDB(postId, channelId, type, tag, content, memo, createdAt, updatedAt, status, proof);
+                await this.insertDataToPostDB(postId, channelId, type, tag, content, memo, createdAt, updatedAt, status, proof, from);
 
                 resolve({ targetDid: signinDid, postId: postId, createdAt: createdAt, updatedAt: updatedAt });
             } catch (error) {
@@ -503,13 +504,13 @@ export class HiveVaultHelper {
         });
     }
 
-    async publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
-        return await this.insertPostData(channelId, tag, content, type, status, memo, proof);
+    async publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string, from: number = FeedsData.Device.UNKNOW): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
+        return await this.insertPostData(channelId, tag, content, type, status, memo, proof, from);
     }
     /** publish post end */
 
     /** update post start */
-    private updateDataToPostDB(postId: string, channelId: string, updatedAt: number, newType: string, newTag: string, newContent: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string, newProof: string, pinstatus: FeedsData.PinStatus): Promise<UpdateResult> {
+    private updateDataToPostDB(postId: string, channelId: string, updatedAt: number, newType: string, newTag: string, newContent: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string, newProof: string, pinstatus: FeedsData.PinStatus, from: number): Promise<UpdateResult> {
         return new Promise(async (resolve, reject) => {
             const doc =
             {
@@ -520,7 +521,8 @@ export class HiveVaultHelper {
                 "type": newType,
                 "tag": newTag,
                 "proof": newProof,
-                "pin_status": pinstatus
+                "pin_status": pinstatus,
+                "from": from
             }
             const option = new UpdateOptions(false, true)
             let filter = { "channel_id": channelId, "post_id": postId };
@@ -536,10 +538,10 @@ export class HiveVaultHelper {
         });
     }
 
-    private updatePostData(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string, pinStatus: FeedsData.PinStatus): Promise<any> {
+    private updatePostData(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string, pinStatus: FeedsData.PinStatus, from: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await this.updateDataToPostDB(postId, channelId, newUpdateAt, newType, newTag, newContent, newStatus, newMemo, newProof, pinStatus)
+                const result = await this.updateDataToPostDB(postId, channelId, newUpdateAt, newType, newTag, newContent, newStatus, newMemo, newProof, pinStatus, from)
                 Logger.log(TAG, 'update post result', result)
                 resolve(result)
             } catch (error) {
@@ -549,8 +551,8 @@ export class HiveVaultHelper {
         })
     }
 
-    updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string, pinStatus: FeedsData.PinStatus): Promise<any> {
-        return this.updatePostData(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof, pinStatus);
+    updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string, pinStatus: FeedsData.PinStatus, from: number): Promise<any> {
+        return this.updatePostData(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof, pinStatus, from);
     }
     /** update post end */
 

@@ -60,12 +60,12 @@ export class HiveVaultApi {
   }
 
   /** Post */
-  async publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
-    return await this.hiveVaultHelper.publishPost(channelId, tag, content, type, status, memo, proof);
+  async publishPost(channelId: string, tag: string, content: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string, proof: string, from: number): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
+    return await this.hiveVaultHelper.publishPost(channelId, tag, content, type, status, memo, proof, from);
   }
 
-  updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string, pinStatus: FeedsData.PinStatus) {
-    return this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof, pinStatus);
+  updatePost(postId: string, channelId: string, newType: string, newTag: string, newContent: string, newStatus: number, newUpdateAt: number, newMemo: string, newProof: string, pinStatus: FeedsData.PinStatus, from: number) {
+    return this.hiveVaultHelper.updatePost(postId, channelId, newType, newTag, newContent, newStatus, newUpdateAt, newMemo, newProof, pinStatus, from);
   }
 
   deletePost(postId: string, channelId: string): Promise<{ updatedAt: number, status: number }> {

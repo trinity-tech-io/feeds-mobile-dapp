@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
-import { NavController, ModalController, Platform, IonTextarea, PopoverController, } from '@ionic/angular';
+import { NavController, ModalController, Platform, IonTextarea, PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { FeedService } from '../../../services/FeedService';
 import { NativeService } from '../../../services/NativeService';
@@ -67,7 +67,7 @@ export class CreatenewpostPage implements OnInit {
   public isBorderGradient: boolean = false;
   public isPostTwitter: boolean = false;
   public curTextNum: number = 0;
-  public extraNumber:number = 0;
+  public extraNumber: number = 0;
   private infoPopover: any = null;
   public isPostReddit: boolean = false;
 
@@ -173,7 +173,7 @@ export class CreatenewpostPage implements OnInit {
         this.isPostTwitter = true
         const userDid = (await this.dataHelper.getSigninData()).did
         localStorage.setItem(userDid + "isSyncToTwitter", "true");
-      }else{
+      } else {
         this.isPostTwitter = false
         const userDid = (await this.dataHelper.getSigninData()).did
         localStorage.setItem(userDid + "isSyncToTwitter", "false");
@@ -181,7 +181,7 @@ export class CreatenewpostPage implements OnInit {
     })
 
     try {
-      this.redditService.checkRedditIsExpired().then(async (token)=>{
+      this.redditService.checkRedditIsExpired().then(async (token) => {
         if (token === null) {
           const userDid = (await this.dataHelper.getSigninData()).did;
           this.isPostReddit = false;
@@ -193,10 +193,10 @@ export class CreatenewpostPage implements OnInit {
         if (isSubscribeElastos === false) {
           try {
             let isSubscribe = await this.redditService.subreddits();
-            if(isSubscribe){
+            if (isSubscribe) {
               this.isPostReddit = true;
               localStorage.setItem(userDid + "isSyncToReddit", "true")
-            }else{
+            } else {
               this.isPostReddit = false;
               localStorage.setItem(userDid + "isSyncToReddit", "false")
             }
@@ -229,7 +229,7 @@ export class CreatenewpostPage implements OnInit {
 
     if (this.isUpdateHomePage) {
       this.native.handleTabsEvents("update");
-    }else{
+    } else {
       this.native.handleTabsEvents();
     }
 
@@ -245,7 +245,7 @@ export class CreatenewpostPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
 
- async post() {
+  async post() {
     this.zone.run(async () => {
       let newPost = this.native.iGetInnerText(this.newPost);
 
@@ -275,23 +275,23 @@ export class CreatenewpostPage implements OnInit {
         } catch (error) {
           const emsg = "{\"detail\":\"You are not allowed to create a Tweet with duplicate content.\",\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403}"
 
-          if(error.status === 403 && emsg != error.error && this.isPostTwitter){
+          if (error.status === 403 && emsg != error.error && this.isPostTwitter) {
             this.native.toastWarn("common.twitterError401");
             this.isLoading = false;
             this.isPublishing = false;
             return;
           }
 
-          if(error.status === 401 && this.isPostTwitter){
+          if (error.status === 401 && this.isPostTwitter) {
             this.native.toastWarn("common.twitterError401");
             this.isLoading = false;
             this.isPublishing = false;
             return;
           }
 
-          if(error.status === -3 ){
+          if (error.status === -3) {
 
-            if(this.isPostTwitter){
+            if (this.isPostTwitter) {
               this.native.toastWarn("common.twitterError3");
             }
 
@@ -302,18 +302,18 @@ export class CreatenewpostPage implements OnInit {
 
 
 
-          if(error.status === -1 ){
+          if (error.status === -1) {
             this.native.toastWarn("common.connectionError");
             this.isLoading = false;
             this.isPublishing = false;
             return;
           }
 
-          if(error.status === -4 ){
-            if(this.isPostTwitter){
+          if (error.status === -4) {
+            if (this.isPostTwitter) {
               this.native.toastWarn("common.twitterError");
             }
-            if(this.isPostReddit){
+            if (this.isPostReddit) {
               this.native.toastWarn("common.redditError");
             }
             this.isLoading = false;
@@ -321,13 +321,13 @@ export class CreatenewpostPage implements OnInit {
             return;
           }
 
-          if(error.status === -2){
-             if(this.isPostReddit){
+          if (error.status === -2) {
+            if (this.isPostReddit) {
               this.native.toastWarn("common.redditError");
-             }
-             this.isLoading = false;
-             this.isPublishing = false;
-             return;
+            }
+            this.isLoading = false;
+            this.isPublishing = false;
+            return;
           }
 
           if (emsg === error.error && this.isPostTwitter) {
@@ -337,16 +337,17 @@ export class CreatenewpostPage implements OnInit {
             return;
           }
 
-          this.native.handleHiveError(error,'common.sendFail');
+          this.native.handleHiveError(error, 'common.sendFail');
           this.isLoading = false;
           this.isPublishing = false;
         }
       }
-     });
+    });
   }
 
   async sendPost() {
-    await this.hiveVaultController.publishPost(this.channelIdV3, this.newPost, [this.imgUrl], this.videoData, '')
+    const device = UtilService.getDeviceType(this.platform);
+    await this.hiveVaultController.publishPost(this.channelIdV3, this.newPost, [this.imgUrl], this.videoData, device, '')
   }
 
   addImg(type: number) {
@@ -398,7 +399,7 @@ export class CreatenewpostPage implements OnInit {
         });
       });
     } catch (error) {
-      Logger.error(TAG,"recordAVideo error",error);
+      Logger.error(TAG, "recordAVideo error", error);
     }
     this.handleVideoData(videoData);
   }
@@ -417,14 +418,14 @@ export class CreatenewpostPage implements OnInit {
     this.uploadProgress = 0;
     this.totalProgress = 0;
     let path = "";
-    try{
+    try {
       const videoData = await this.postHelperService.selectvideo((progress: number) => {
         this.zone.run(() => {
           this.totalProgress = progress;
         });
       });
       this.handleVideoData(videoData);
-    }catch(err){
+    } catch (err) {
 
     }
   }
@@ -441,7 +442,7 @@ export class CreatenewpostPage implements OnInit {
       return;
     }
 
-    if(videoData.duration === null){
+    if (videoData.duration === null) {
       this.flieUri = '';
       this.posterImg = '';
       this.imgUrl = '';
@@ -461,7 +462,7 @@ export class CreatenewpostPage implements OnInit {
     let sid = setTimeout(() => {
       this.setFullScreen();
       let video: any = document.getElementById('videocreatepost') || '';
-      if(video != ''){
+      if (video != '') {
         video.setAttribute('poster', this.posterImg);
       }
       this.setOverPlay(this.flieUri);
@@ -509,7 +510,7 @@ export class CreatenewpostPage implements OnInit {
       let videoSrc: string = document
         .getElementById('sourcecreatepost')
         .getAttribute('src');
-       await this.native.setVideoFullScreen(postImg, videoSrc);
+      await this.native.setVideoFullScreen(postImg, videoSrc);
     };
   }
 
@@ -532,7 +533,7 @@ export class CreatenewpostPage implements OnInit {
   loadVideo(videoData: string) {
     let video: any = document.getElementById('videocreatepost') || '';
     let source: any = document.getElementById('sourcecreatepost') || '';
-    if(source != ''){
+    if (source != '') {
       source.setAttribute('src', videoData);
     }
     let vgbuffering: any = document.getElementById('vgbufferingcreatepost');
@@ -570,7 +571,7 @@ export class CreatenewpostPage implements OnInit {
     let video: any = document.getElementById('videocreatepost') || '';
     let source: any = document.getElementById('sourcecreatepost') || '';
 
-    if (video !='' && source != '' && !video.paused) {
+    if (video != '' && source != '' && !video.paused) {
       //判断是否处于暂停状态
       video.pause(); //停止播放
     }
@@ -619,15 +620,15 @@ export class CreatenewpostPage implements OnInit {
   }
 
   clickImageMenu() {
-     this.hidePictureMenuComponent = true;
+    this.hidePictureMenuComponent = true;
   }
 
   openNft(that: any) {
     that.native.navigateForward(['profilenftimage'], { queryParams: { type: 'postImages' } });
   }
 
-  clickNFT(){
-   this.openNft(this);
+  clickNFT() {
+    this.openNft(this);
   }
 
 
@@ -660,7 +661,7 @@ export class CreatenewpostPage implements OnInit {
 
   hidePictureMenu(data: any) {
     let buttonType = data['buttonType'];
-    switch(buttonType) {
+    switch (buttonType) {
       case 'photolibary':
         this.hidePictureMenuComponent = false;
         break;
@@ -672,42 +673,42 @@ export class CreatenewpostPage implements OnInit {
 
   openGallery(data: any) {
     this.hidePictureMenuComponent = false;
-    let fileBase64  = data["fileBase64"] || "";
+    let fileBase64 = data["fileBase64"] || "";
     this.imgUrl = fileBase64;
     this.dataHelper.setSelsectNftImage(fileBase64);
   }
 
   ionBlur() {
     this.isBorderGradient = false;
-   }
+  }
 
-   ionFocus() {
-     this.isBorderGradient = true;
-   }
+  ionFocus() {
+    this.isBorderGradient = true;
+  }
 
-   inputTextarea() {
+  inputTextarea() {
     this.curTextNum = this.getTwitterText();
-     this.extraNumber = 261 - this.curTextNum; //
-   }
+    this.extraNumber = 261 - this.curTextNum; //
+  }
 
-   getTwitterText() {
+  getTwitterText() {
     let size = UtilService.getSize(this.newPost);
     return size;
-   }
+  }
 
-   async twitterInfo(event: any) {
+  async twitterInfo(event: any) {
     let e = event || window.event; //兼容IE8
     let target = e.target || e.srcElement; //判断目标事件
     if (target.tagName.toLowerCase() == 'span' || target.tagName.toLowerCase() == 'img') {
       event.stopPropagation();
-      if(this.infoPopover === null){
+      if (this.infoPopover === null) {
         this.infoPopover = "1";
         await this.presentPopover(e);
       }
     }
-   }
+  }
 
-   async presentPopover(e: Event) {
+  async presentPopover(e: Event) {
 
     let des = this.translate.instant('CreatenewpostPage.twitterDes1');
     this.infoPopover = await this.popoverController.create({
@@ -729,10 +730,10 @@ export class CreatenewpostPage implements OnInit {
   async clickTwitter() {
 
     const userDid = (await this.dataHelper.getSigninData()).did
-    if(this.isPostTwitter){
+    if (this.isPostTwitter) {
       this.isPostTwitter = false;
       localStorage.setItem(userDid + "isSyncToTwitter", "false");
-    }else{
+    } else {
       const token = await this.twitterService.checkTwitterIsExpired();
       if (token === null) {
         this.native.toastWarn("common.twitterNotLogin");

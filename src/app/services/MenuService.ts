@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActionSheetController, ActionSheetButton, ActionSheetOptions } from '@ionic/angular';
+import { ActionSheetController, ActionSheetButton, ActionSheetOptions, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { NativeService } from './NativeService';
 import { PopupProvider } from 'src/app/services/popup';
@@ -11,6 +11,7 @@ import { Config } from './config';
 import { Logger } from './logger';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from './hivevault_controller.service';
+import { UtilService } from './utilService';
 
 @Injectable()
 export class MenuService {
@@ -31,7 +32,8 @@ export class MenuService {
     private nftContractControllerService: NFTContractControllerService,
     private events: Events,
     private dataHelper: DataHelper,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private platform: Platform
   ) { }
 
   async showChannelItemMenu(post: FeedsData.PostV3, channelName: string, isMineAndCanEdit: boolean, needUnpinPost: FeedsData.PostV3) {
@@ -653,12 +655,13 @@ export class MenuService {
           try {
             let needUnpinPostId = null;
             const originPostId = originPost.postId;
+            const device = UtilService.getDeviceType(this.platform);
             if (needUnpinPost) {
-              await this.hiveVaultController.pinPost(needUnpinPost, FeedsData.PinStatus.NOTPINNED);
+              await this.hiveVaultController.pinPost(needUnpinPost, FeedsData.PinStatus.NOTPINNED, device);
               needUnpinPostId = needUnpinPost.postId;
             }
 
-            await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.PINNED);
+            await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.PINNED, device);
             this.events.publish(FeedsEvent.PublishType.pinPostFinish, ({ originPostId: originPostId, needUnpinPostId: needUnpinPostId }));
           } catch (error) {
             this.native.toastWarn('ChannelsPage.PinPostError');
@@ -677,7 +680,8 @@ export class MenuService {
       handler: async () => {
         this.native.showLoading("common.waitMoment").then(async () => {
           try {
-            await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.NOTPINNED);
+            const device = UtilService.getDeviceType(this.platform);
+            await this.hiveVaultController.pinPost(originPost, FeedsData.PinStatus.NOTPINNED, device);
             this.events.publish(FeedsEvent.PublishType.unpinPostFinish, originPost.postId);
           } catch (error) {
             this.native.toastWarn('ChannelsPage.UnPinPostError');

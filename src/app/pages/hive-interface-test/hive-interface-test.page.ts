@@ -1,4 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { NativeService } from 'src/app/services/NativeService';
 import { TranslateService } from '@ngx-translate/core';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -38,7 +39,8 @@ export class HiveInterfaceTestPage implements OnInit {
     private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController,
     private fileHelperService: FileHelperService,
-    private sqliteHelper: FeedsSqliteHelper
+    private sqliteHelper: FeedsSqliteHelper,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
@@ -89,7 +91,8 @@ export class HiveInterfaceTestPage implements OnInit {
   // post
   publishPost() {
     // this.hiveVaultApi.publishPost('channelId01', 'tag01', 'testContent');
-    this.hiveVaultController.publishPost('channelId01', 'haha', [], null, 'test');
+    const device = UtilService.getDeviceType(this.platform);
+    this.hiveVaultController.publishPost('channelId01', 'haha', [], null, device, 'test');
   }
 
   updatePost() {

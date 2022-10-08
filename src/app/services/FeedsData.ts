@@ -1,4 +1,12 @@
 declare namespace FeedsData {
+  const enum Device {
+    UNKNOW = 0,
+    ANDROID = 1,
+    IOS = 2,
+    WEB = 3,
+    OTHER = 4
+  }
+
   const enum SubscribedChannelType {
     ALL_CHANNEL,
     OTHER_CHANNEL,
@@ -1088,4 +1096,5 @@ declare namespace FeedsData {
     scope: string, // follows.read offline.access tweet.write users.read tweet.read follows.write
     refresh_token: string
   }
+
 }

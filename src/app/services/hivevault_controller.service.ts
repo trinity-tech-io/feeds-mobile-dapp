@@ -576,7 +576,7 @@ export class HiveVaultController {
     });
   }
 
-  publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
+  publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, from: number, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const userDid = (await this.dataHelper.getSigninData()).did
@@ -586,7 +586,7 @@ export class HiveVaultController {
         }
 
         const content = await this.progressMediaData(postText, imagesBase64, videoData)
-        const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof)
+        const result = await this.hiveVaultApi.publishPost(channelId, tag, JSON.stringify(content), type, status, memo, proof, from)
 
         Logger.log(TAG, "Publish new post , result is", result);
         if (!result) {
@@ -631,10 +631,10 @@ export class HiveVaultController {
     });
   }
 
-  public updatePost(originPost: FeedsData.PostV3, newContent: FeedsData.postContentV3, pinStatus: FeedsData.PinStatus, updateAt: number, newType: string = 'public', newTag: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string = '', newProof: string = ''): Promise<FeedsData.PostV3> {
+  public updatePost(originPost: FeedsData.PostV3, newContent: FeedsData.postContentV3, pinStatus: FeedsData.PinStatus, updateAt: number, newType: string = 'public', newTag: string, newStatus: number = FeedsData.PostCommentStatus.edited, newMemo: string = '', newProof: string = '', from: number): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.updatePost(originPost.postId, originPost.channelId, newType, newTag, JSON.stringify(newContent), newStatus, updateAt, newMemo, newProof, pinStatus);
+        const result = await this.hiveVaultApi.updatePost(originPost.postId, originPost.channelId, newType, newTag, JSON.stringify(newContent), newStatus, updateAt, newMemo, newProof, pinStatus, from);
         if (!result) {
           const errorMsg = 'Update post error';
           Logger.error(TAG, errorMsg);
@@ -663,8 +663,8 @@ export class HiveVaultController {
     })
   }
 
-  public pinPost(originPost: FeedsData.PostV3, pinStatus: FeedsData.PinStatus): Promise<FeedsData.PostV3> {
-    return this.updatePost(originPost, originPost.content, pinStatus, UtilService.getCurrentTimeNum(), originPost.type, originPost.tag, originPost.status, originPost.memo, originPost.proof);
+  public pinPost(originPost: FeedsData.PostV3, pinStatus: FeedsData.PinStatus, from: number): Promise<FeedsData.PostV3> {
+    return this.updatePost(originPost, originPost.content, pinStatus, UtilService.getCurrentTimeNum(), originPost.type, originPost.tag, originPost.status, originPost.memo, originPost.proof, from);
   }
 
   private async progressMediaData(newPostText: string, newImagesBase64: string[], newVideoData: FeedsData.videoData) {

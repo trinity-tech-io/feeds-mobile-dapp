@@ -1,11 +1,5 @@
-import {
-  Component,
-  OnInit,
-  NgZone,
-  ElementRef,
-  ViewChild,
-} from '@angular/core';
-import { ModalController, IonTextarea } from '@ionic/angular';
+import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
+import { ModalController, IonTextarea, Platform } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from '../../services/NativeService';
@@ -72,7 +66,8 @@ export class EditPostPage implements OnInit {
     private titleBarService: TitleBarService,
     private viewHelper: ViewHelper,
     private dataHelper: DataHelper,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
@@ -378,26 +373,21 @@ export class EditPostPage implements OnInit {
     content.content = this.editContent;
     const updateAt = UtilService.getCurrentTimeNum();
     const pinStatus = FeedsData.PinStatus.NOTPINNED;//TODO
-    this.hiveVaultController.updatePost(
-      this.originPostData,
-      content,
-      pinStatus,
-      updateAt,
-      "public",
-      '',
-    ).then((result) => {
-      this.zone.run(async () => {
-        this.isUpdateTab = true;
+    const device = UtilService.getDeviceType(this.platform);
+    this.hiveVaultController.updatePost(this.originPostData, content, pinStatus, updateAt, "public", '',
+      FeedsData.PostCommentStatus.edited, '', '', device).then((result) => {
+        this.zone.run(async () => {
+          this.isUpdateTab = true;
+          this.clickButton = false;
+          this.native.hideLoading();
+          this.native.pop();
+        });
+      }).catch((error) => {
+        this.native.handleHiveError(error, 'common.editPostFail');
         this.clickButton = false;
+        this.pauseVideo();
         this.native.hideLoading();
-        this.native.pop();
       });
-    }).catch((error) => {
-      this.native.handleHiveError(error, 'common.editPostFail');
-      this.clickButton = false;
-      this.pauseVideo();
-      this.native.hideLoading();
-    });
   }
 
   ionBlur() {

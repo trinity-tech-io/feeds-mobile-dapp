@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
 import { conformsTo } from 'lodash';
 import { Logger } from './logger';
@@ -541,7 +542,7 @@ export class UtilService {
     return (r1 / r2) * Math.pow(10, t2 - t1);
   }
 
-  public static resolveAddress(address: string, start: number = 6, end:number = 4) {
+  public static resolveAddress(address: string, start: number = 6, end: number = 4) {
     if (!address) return '';
     let len = address.length;
     return address.substring(0, start) + '...' + address.substring(len - end, len);
@@ -848,38 +849,51 @@ export class UtilService {
     return userDid + 'localScriptVersion';
   }
 
-  public static getPostformatPageData(currentPage: number,pageSize: number,data = []){
-    let pageData = {"pageSize": pageSize,
-                      "currentPage": currentPage,
-                      "totalPage": 0,
-                      "items": []};
-      let num = data.length;//数据的长度
-      let totalPage = 0;
-      if(num/pageSize > parseInt((num/pageSize).toString())){
-      totalPage = parseInt((num/pageSize).toString())+1;
-      }else{
-      totalPage = parseInt((num/pageSize).toString());
+  public static getPostformatPageData(currentPage: number, pageSize: number, data = []) {
+    let pageData = {
+      "pageSize": pageSize,
+      "currentPage": currentPage,
+      "totalPage": 0,
+      "items": []
+    };
+    let num = data.length;//数据的长度
+    let totalPage = 0;
+    if (num / pageSize > parseInt((num / pageSize).toString())) {
+      totalPage = parseInt((num / pageSize).toString()) + 1;
+    } else {
+      totalPage = parseInt((num / pageSize).toString());
     }
 
     pageData.totalPage = totalPage;
     let maxLength = currentPage * pageSize - 1;
     let minLength = currentPage * pageSize - pageSize;
     for (let i = minLength; i < data.length; i++) {
-          if (maxLength < i) {
-            break;
-          } else {
-          let item = data[i] || "";
-          if(item != ""){
-            pageData.items.push(data[i]);
-          }
-          }
+      if (maxLength < i) {
+        break;
+      } else {
+        let item = data[i] || "";
+        if (item != "") {
+          pageData.items.push(data[i]);
+        }
+      }
     }
     return pageData;
-    }
-
-  public static checkChannelName(channelName: string){
-       let channelNameReg = /^[a-zA-Z][a-zA-Z0-9]*$/;
-       let isValid = channelNameReg.test(channelName);
-       return isValid;
   }
+
+  public static checkChannelName(channelName: string) {
+    let channelNameReg = /^[a-zA-Z][a-zA-Z0-9]*$/;
+    let isValid = channelNameReg.test(channelName);
+    return isValid;
+  }
+
+  public static getDeviceType(platform: Platform) {
+    let device = FeedsData.Device.UNKNOW;
+    if (platform.is('ios')) {
+      device = FeedsData.Device.IOS;
+    } else {
+      device = FeedsData.Device.ANDROID;
+    }
+    return device;
+  }
+
 }
