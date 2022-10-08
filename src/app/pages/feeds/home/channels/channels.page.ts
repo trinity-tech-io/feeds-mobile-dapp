@@ -21,6 +21,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { CommonPageService } from 'src/app/services/common.page.service';
 import { MorenameComponent } from 'src/app/components/morename/morename.component';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 
 let TAG: string = 'Feeds-feeds';
 @Component({
@@ -157,7 +158,8 @@ export class ChannelsPage implements OnInit {
     private viewHelper: ViewHelper,
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private nftContractControllerService: NFTContractControllerService
   ) { }
 
   async subscribe() {
@@ -434,7 +436,7 @@ export class ChannelsPage implements OnInit {
 
       }
     }
-    this.tippingAddress = channel.tipping_address || '';
+    //this.tippingAddress = channel.tipping_address || '';
     let channelAvatarUri = channel.avatar || '';
     this.channelAvatarUri = channelAvatarUri;
     this.displayName = channel.displayName;
@@ -520,6 +522,18 @@ export class ChannelsPage implements OnInit {
       this.isRefresh = true;
       this.initRefresh();
     })
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    //if(this.destDid === ownerDid){
+    try {
+      let channelInfo = await this.getChannelInfo(this.channelId) || null;
+      if (channelInfo != null) {
+        this.tippingAddress = channelInfo[3] || '';
+      }
+    } catch (error) {
+
+    }
+    // }
+
   }
 
   ionViewWillLeave() {
@@ -1574,4 +1588,22 @@ export class ChannelsPage implements OnInit {
     this.dataHelper.setUserDidList(this.userDidList);
     this.native.navigateForward(['/userlist'], { queryParams: { "channelId": this.channelId } });
   }
+
+  async getChannelInfo(channelId: string) {
+    try {
+      let tokenId: string = "0x" + channelId;
+      Logger.log(TAG, "tokenId:", tokenId);
+      tokenId = UtilService.hex2dec(tokenId);
+      Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      Logger.log(TAG, "tokenInfo:", tokenInfo);
+      if (tokenInfo[0] != '0') {
+        return tokenInfo;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
 }

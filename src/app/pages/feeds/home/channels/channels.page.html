@@ -37,10 +37,6 @@
         <span class="channelSubscribes" (click)="navUserList()">
           <img [src]="!theme.darkMode ? './assets/images/bubble2.svg' : './assets/images/darkmode/bubble2.svg'">
           {{ channelSubscribes }} {{ 'common.followers' | translate }} </span>
-        <!-- <ion-button *ngIf="!followStatus" class="unsubscribed" fill="outline" (click)="subscribe()">
-          <ion-label>{{'SearchPage.follow' | translate}}</ion-label>
-          <ion-ripple-effect></ion-ripple-effect>
-        </ion-button> -->
 
         <div *ngIf="!followStatus" class="btn-row-empty unsubscribed" (click)="subscribe()">
           <span *ngIf="!clickButton">{{ "SearchPage.follow" | translate }}</span>
@@ -52,6 +48,15 @@
           <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
           <ion-ripple-effect></ion-ripple-effect>
         </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="tippingAddress!=''" class="elaAdressRow">
+      <ion-col size="1.5" style="text-align: right;">
+        <img [src]="!theme.darkMode ? './assets/images/dashang.svg' : './assets/images/darkmode/tip.svg'">
+      </ion-col>
+      <ion-col size="10.5" class="elaAdress" style="text-align: left;">
+        {{tippingAddress}}
       </ion-col>
     </ion-row>
 

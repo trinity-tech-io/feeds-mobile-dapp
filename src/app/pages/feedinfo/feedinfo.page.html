@@ -38,14 +38,14 @@
           </ion-button>
         </ion-col>
     </ion-row>
-    <!-- <ion-row *ngIf="tippingAddress!=''" class="elaAdressRow">
+    <ion-row *ngIf="destDid === ownerDid && tippingAddress!=''" class="elaAdressRow">
       <ion-col size="1.5" style="text-align: right;">
         <img [src]="!theme.darkMode ? './assets/images/dashang.svg' : './assets/images/darkmode/tip.svg'">
       </ion-col>
       <ion-col size="10.5" class="elaAdress" style="text-align: left;">
         {{tippingAddress}}
       </ion-col>
-    </ion-row> -->
+    </ion-row>
 
     <ion-ripple-effect></ion-ripple-effect>
   </ion-grid>

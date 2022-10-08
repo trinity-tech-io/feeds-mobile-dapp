@@ -27,6 +27,26 @@
     top: -30px;
 }
 .container{
+    .elaAdressRow{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #f5f4f8;
+        border-radius: 20px;
+        margin-top: 5px;
+        margin-bottom: 35px;
+        width: 95%;
+      }
+      .elaAdress{
+        font-size: 14px;
+        font-weight: 700;
+        font-stretch: normal;
+        font-style: normal;
+        letter-spacing: normal;
+        text-align: center;
+        color: #9ca0a4;
+        display: inline-block;
+    }
     .subscribeChannel{
         text-align: center;
         margin-top: 5px;
@@ -44,7 +64,6 @@
         }
 
     }
-
 
     .empty-container {
         height: 50%;
@@ -216,6 +235,9 @@
     }
 
      .darkContainer{
+        .elaAdressRow{
+            border: 1px solid #c4c4c4;
+        }
        .channel-header{
         .feedName{
             color:#fff;

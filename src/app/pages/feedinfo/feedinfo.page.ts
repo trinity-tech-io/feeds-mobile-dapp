@@ -21,6 +21,9 @@ import _ from 'lodash';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { PopupProvider } from 'src/app/services/popup';
 import { MorenameComponent } from 'src/app/components/morename/morename.component';
+import { Logger } from 'src/app/services/logger';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+const TAG: string = 'GalleriachannelPage';
 
 @Component({
   selector: 'app-feedinfo',
@@ -31,7 +34,7 @@ import { MorenameComponent } from 'src/app/components/morename/morename.componen
 export class FeedinfoPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public destDid: string = '';
-  private ownerDid: string = '';
+  public ownerDid: string = '';
   public channelId: string = '';
   public name: string = '';
   public des: string = '';
@@ -74,7 +77,8 @@ export class FeedinfoPage implements OnInit {
     private intentService: IntentService,
     private popupProvider: PopupProvider,
     private hiveVaultController: HiveVaultController,
-    private dataHelper: DataHelper
+    private dataHelper: DataHelper,
+    private nftContractControllerService: NFTContractControllerService
   ) { }
 
   ngOnInit() {
@@ -89,7 +93,6 @@ export class FeedinfoPage implements OnInit {
     this.updatedTime = channelInfo['updatedTime'] || 0;
     this.destDid = channelInfo['destDid'] || '';
     this.channelId = channelInfo['channelId'] || '';
-    this.tippingAddress = channelInfo['tippingAddress'] || '';
     this.name = channelInfo['displayName'] || channelInfo['name'] || '';
     this.des = channelInfo['des'] || '';
     this.ownerDid = channelInfo["ownerDid"] || "";
@@ -117,7 +120,7 @@ export class FeedinfoPage implements OnInit {
     }
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
     this.theme.setTheme1();
     this.developerMode = this.feedService.getDeveloperMode();
@@ -127,6 +130,16 @@ export class FeedinfoPage implements OnInit {
     let avatar = this.dataHelper.getProfileIamge();
     this.channelAvatar = this.feedService.parseChannelAvatar(avatar);
     this.addEvents();
+    if(this.destDid === this.ownerDid){
+      try {
+        let channelInfo = await this.getChannelInfo(this.channelId) || null;
+        if(channelInfo != null){
+         this.tippingAddress = channelInfo[3] || '';
+        }
+       } catch (error) {
+
+       }
+    }
   }
 
   addEvents() {
@@ -340,6 +353,24 @@ export class FeedinfoPage implements OnInit {
     });
 
     return await this.infoPopover.present();
+  }
+
+  async getChannelInfo(channelId: string) {
+
+    try {
+      let tokenId: string = "0x" + channelId;
+      Logger.log(TAG, "tokenId:", tokenId);
+      tokenId = UtilService.hex2dec(tokenId);
+      Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      Logger.log(TAG, "tokenInfo:", tokenInfo);
+      if (tokenInfo[0] != '0') {
+        return tokenInfo;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
   }
 
 }
