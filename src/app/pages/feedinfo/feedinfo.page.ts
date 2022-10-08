@@ -130,16 +130,16 @@ export class FeedinfoPage implements OnInit {
     let avatar = this.dataHelper.getProfileIamge();
     this.channelAvatar = this.feedService.parseChannelAvatar(avatar);
     this.addEvents();
-    if(this.destDid === this.ownerDid){
-      try {
-        let channelInfo = await this.getChannelInfo(this.channelId) || null;
-        if(channelInfo != null){
-         this.tippingAddress = channelInfo[3] || '';
-        }
-       } catch (error) {
+    // if(this.destDid === this.ownerDid){
+    //   try {
+    //     let channelInfo = await this.getChannelInfo(this.channelId) || null;
+    //     if(channelInfo != null){
+    //      this.tippingAddress = channelInfo[3] || '';
+    //     }
+    //    } catch (error) {
 
-       }
-    }
+    //    }
+    // }
   }
 
   addEvents() {

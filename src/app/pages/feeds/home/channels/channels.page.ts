@@ -522,7 +522,7 @@ export class ChannelsPage implements OnInit {
       this.isRefresh = true;
       this.initRefresh();
     })
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    //let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     //if(this.destDid === ownerDid){
     try {
       let channelInfo = await this.getChannelInfo(this.channelId) || null;

@@ -221,10 +221,10 @@ export class GalleriachannelPage implements OnInit {
         //this.native.hideLoading();
         this.isLoading = false;
         if (error == 'EstimateGasError') {
-          this.native.toast_trans('common.publishSameDataFailed');
+          this.native.toastWarn('GalleriachannelPage.publishSameDataFailed');
           return;
         }
-        this.native.toast_trans('GalleriachannelPage.publicGallericaFailed');
+        this.native.toastWarn('GalleriachannelPage.publicGallericaFailed');
       });
   }
 
