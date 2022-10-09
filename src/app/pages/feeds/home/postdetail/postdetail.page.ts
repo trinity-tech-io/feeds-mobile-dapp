@@ -212,7 +212,7 @@ export class PostdetailPage implements OnInit {
   async initRefresh() {
     this.pageSize = 1;
     this.totalData = await this.sortCommentList();
-    let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+    let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
     if (data.currentPage === data.totalPage) {
       this.captainCommentList = data.items
       this.infiniteScroll.disabled = true;
@@ -774,7 +774,7 @@ export class PostdetailPage implements OnInit {
 
     let sid = setTimeout(() => {
       this.pageSize++;
-      let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+      let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
       if (data.currentPage === data.totalPage) {
         this.captainCommentList = this.captainCommentList.concat(data.items);
         event.target.disabled = true;

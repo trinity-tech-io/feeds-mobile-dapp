@@ -174,7 +174,7 @@ export class ProfilePage implements OnInit {
   private likeNumMap: any = {};
   private commentNumMap: any = {};
   private channelNameMap: any = {};
-  private isLoadChannelNameMap :any = {};
+  private isLoadChannelNameMap: any = {};
   public isLoadingLikeMap: any = {};
   private downMyFeedsAvatarMap: any = {};
   public lightThemeType: number = 3;
@@ -266,7 +266,7 @@ export class ProfilePage implements OnInit {
   async initRefresh() {
     this.totalLikeList = await this.sortLikeList();
     this.likeSum = this.totalLikeList.length;
-    let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalLikeList);
+    let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalLikeList);
     if (data.currentPage === data.totalPage) {
       this.likeList = data.items;
       this.infiniteScroll.disabled = true;
@@ -498,10 +498,10 @@ export class ProfilePage implements OnInit {
           let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: any) => {
             let newList = await this.sortLikeList();
-            let deletePostIndex = _.findIndex( newList,(item: any)=>{
-                  return item.postId === result.postId;
+            let deletePostIndex = _.findIndex(newList, (item: any) => {
+              return item.postId === result.postId;
             })
-            if(deletePostIndex > -1){
+            if (deletePostIndex > -1) {
               newList[deletePostIndex].status = 1;
             }
             this.removeLikeObserveList();
@@ -774,7 +774,7 @@ export class ProfilePage implements OnInit {
       case 'ProfilePage.myLikes':
         let sid = setTimeout(() => {
           this.pageSize++;
-          let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalLikeList);
+          let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalLikeList);
           if (data.currentPage === data.totalPage) {
             this.likeList = this.likeList.concat(data.items);
             event.target.disabled = true;
@@ -2331,7 +2331,7 @@ export class ProfilePage implements OnInit {
       try {
         this.isLoadSubscriptionV3Num[channelId] = "11";
         let subscriptionV3Num = this.subscriptionV3NumMap[channelId] || "";
-        if(subscriptionV3Num === ""){
+        if (subscriptionV3Num === "") {
           this.subscriptionV3NumMap[channelId] = "...";
         }
         this.dataHelper.getSubscriptionV3NumByChannelId(
@@ -2434,7 +2434,7 @@ export class ProfilePage implements OnInit {
   async getChannelName(destDid: string, channelId: string) {
 
     let isLoad = this.isLoadChannelNameMap[channelId] || "";
-    if(isLoad === "") {
+    if (isLoad === "") {
       this.isLoadChannelNameMap[channelId] = "11";
       let channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
       this.channelMap[channelId] = channel;
@@ -2461,7 +2461,7 @@ export class ProfilePage implements OnInit {
     if (displayNameMap === "") {
       this.isLoadHandleDisplayNameMap[userDid] = "11";
       let displayName = this.handleDisplayNameMap[userDid] || "";
-      if(displayName === ""){
+      if (displayName === "") {
         let text = userDid.replace('did:elastos:', '');
         this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
       }
@@ -2501,7 +2501,7 @@ export class ProfilePage implements OnInit {
   }
 
   postListScroll(event: any) {
-    if(this.selectType === "ProfilePage.myLikes"){
+    if (this.selectType === "ProfilePage.myLikes") {
       //this.native.throttle(this.handlePostListScroll(event), 200, this, true);
       this.handlePostListScroll(event);
     }

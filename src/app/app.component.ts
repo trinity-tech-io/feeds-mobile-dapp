@@ -282,9 +282,13 @@ export class MyApp {
       }).then(async () => {
         const signinData = await this.dataHelper.getSigninData()
         if (signinData) {
-          this.native.showLoading('common.waitMoment');
-          await this.dataHelper.restoreSqlData(signinData.did)
-          this.native.hideLoading();
+          await this.native.showLoading('common.waitMoment');
+          try {
+            await this.dataHelper.restoreSqlData(signinData.did)
+            this.native.hideLoading();
+          } catch (error) {
+            this.native.hideLoading();
+          }
         }
 
         this.hiveVaultController.refreshAvatar().catch(() => { });

@@ -159,6 +159,7 @@ export class DataHelper {
   private cachedLikeNumMap: { [postId_commentId: string]: number } = {};
 
   private lastPostMap: { [destDid_channel: string]: FeedsData.PostV3 } = {};
+  private userList: string[] = [];
   constructor(
     private storageService: StorageService,
     private events: Events,
@@ -4373,5 +4374,25 @@ export class DataHelper {
         reject(error);
       }
     })
+  }
+
+  setUserDidList(userList: string[]) {
+    this.userList = userList;
+  }
+
+  getUserDidList(): string[] {
+    return this.userList
+  }
+
+  addUserData() {
+
+  }
+
+  updateUserData() {
+
+  }
+
+  getUserData(userDid: string): FeedsData.User {
+    return null;
   }
 }

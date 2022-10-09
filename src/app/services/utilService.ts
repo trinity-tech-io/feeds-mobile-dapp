@@ -849,7 +849,7 @@ export class UtilService {
     return userDid + 'localScriptVersion';
   }
 
-  public static getPostformatPageData(currentPage: number, pageSize: number, data = []) {
+  public static getPageData(currentPage: number, pageSize: number, data = []) {
     let pageData = {
       "pageSize": pageSize,
       "currentPage": currentPage,

@@ -139,6 +139,7 @@ export class ChannelsPage implements OnInit {
   private firstScrollTop = 0;
   public isFullPost: boolean = false;
   private infoPopover: any = null;
+  private userDidList: string[] = []; //userdid list
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -235,6 +236,17 @@ export class ChannelsPage implements OnInit {
   async init() {
     await this.initChannelData();
     await this.initRefresh();
+    this.initUserList();
+  }
+
+  initUserList() {
+    this.dataHelper.getSubscriptionV3DataByChannelId(this.channelId).then((subscriptionList: FeedsData.SubscriptionV3[]) => {
+      this.userDidList = [];
+      subscriptionList.forEach((subscription: FeedsData.SubscriptionV3) => {
+        if (subscription && subscription.userDid)
+          this.userDidList.push(subscription.userDid);
+      });
+    });
   }
 
   async filterDeletedPostList(postList: FeedsData.PostV3[]) {
@@ -325,7 +337,7 @@ export class ChannelsPage implements OnInit {
     }
     this.isRefresh = false;
     this.pageSize = 1;
-    let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+    let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
     if (data.currentPage === data.totalPage) {
       this.postList = data.items;
     } else {
@@ -776,7 +788,7 @@ export class ChannelsPage implements OnInit {
         return;
       }
       this.pageSize++;
-      let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+      let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
       if (data.currentPage === data.totalPage) {
         this.postList = this.postList.concat(data.items);
       } else {
@@ -1559,6 +1571,7 @@ export class ChannelsPage implements OnInit {
   }
 
   navUserList() {
+    this.dataHelper.setUserDidList(this.userDidList);
     this.native.navigateForward(['/userlist'], { queryParams: { "channelId": this.channelId } });
   }
 }

@@ -57,8 +57,13 @@ export class UserlistPage implements OnInit {
 
   async getUserList() {
     this.pageSize = 1;
-    this.totalData = await this.dataHelper.getSubscriptionV3DataByChannelId(this.channelId);
-    let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+    const userList = this.dataHelper.getUserDidList();
+    for (let index = 0; index < userList.length; index++) {
+      const userdid = userList[index];
+      this.handleUserAvatar(userdid);
+    }
+    this.totalData = userList;
+    let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
     if (data.currentPage === data.totalPage) {
       this.userList = data.items
     } else {
@@ -228,8 +233,8 @@ export class UserlistPage implements OnInit {
 
   async handleRefesh() {
     this.pageSize = 1;
-    this.totalData = await this.dataHelper.getSubscriptionV3DataByChannelId(this.channelId);
-    let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+    // refresh total data todo
+    let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
     if (data.currentPage === data.totalPage) {
       this.userList = data.items
     } else {
@@ -249,7 +254,7 @@ export class UserlistPage implements OnInit {
         return;
       }
       this.pageSize++;
-      let data = UtilService.getPostformatPageData(this.pageSize, this.pageNumber, this.totalData);
+      let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
       if (data.currentPage === data.totalPage) {
         this.userList = this.userList.concat(data.items);
       } else {

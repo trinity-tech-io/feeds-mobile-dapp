@@ -19,31 +19,31 @@
 
 <ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="userList.length > 0">
   <ion-item
-  *ngFor="let subscription of userList"
+  *ngFor="let user of userList"
   class="channelCollectionFeeds"
   lines="none">
-  <ion-row class="channel-row ion-activatable ripple"   id = {{subscription.userDid}}-userList
+  <ion-row class="channel-row ion-activatable ripple"   id = {{user.userDid}}-userList
   >
     <ion-col
       size="2.8"
       class="left-col"
-      (click)="clickSubscription(subscription)"
+      (click)="clickSubscription(user)"
     >
       <div  class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-      <img [src] = "userAvatarMap[subscription.userDid]" *ngIf="userAvatarMap[subscription.userDid]  != null && userAvatarMap[subscription.userDid] != undefined">
+      <img [src] = "userAvatarMap[user.userDid]" *ngIf="userAvatarMap[user.userDid]  != null && userAvatarMap[user.userDid] != undefined">
     </div>
     </ion-col>
     <ion-col
       size="9.2"
       class="middle-col"
-      (click)="clickSubscription(subscription)"
+      (click)="clickSubscription(user)"
     >
 
-    <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="userNameMap[subscription.userDid] === '' || userNameMap[subscription.userDid] === undefined">
+    <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="userNameMap[user.userDid] === '' || userNameMap[user.userDid] === undefined">
       ......
     </ion-label>
-    <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="userNameMap[subscription.userDid] != '' && userNameMap[subscription.userDid] != undefined">
-      {{ userNameMap[subscription.userDid] | translate }}
+    <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="userNameMap[user.userDid] != '' && userNameMap[user.userDid] != undefined">
+      {{ userNameMap[user.userDid] | translate }}
     </ion-label>
     <!-- <div class="displayName" *ngIf="userNameMap[subscription.userDid] != '' && userNameMap[subscription.userDid] != undefined" (click)="copyText(subscription.userDid)">
       {{  subscription.userDid.replace('did:elastos:', '').substring(0, 20) }}...{{  subscription.userDid.replace('did:elastos:', '').substring(subscription.userDid.replace('did:elastos:', '').length - 4, subscription.userDid.replace('did:elastos:', '').length) }}<img class="copy" src="./assets/images/darkmode/copy.svg">
