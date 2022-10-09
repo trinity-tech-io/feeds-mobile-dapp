@@ -17,6 +17,7 @@ export class FeedsSqliteHelper {
   private readonly TABLE_SUBSCRIPTION: string = 'subscription';
   private readonly TABLE_CHANNEL_NEW: string = 'channelnew';
   private readonly TABLE_POST_NEW: string = 'postsnew';
+  private readonly TABLE_POST_NEW330: string = 'postsnew330';
   // private readonly TABLE_PINPOST: string = 'pinpost';
 
   public isOpen: boolean = false;
@@ -136,10 +137,10 @@ export class FeedsSqliteHelper {
   private createPostTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'create table if not exists ' + this.TABLE_POST_NEW
+        const statement = 'create table if not exists ' + this.TABLE_POST_NEW330
           + '('
           + 'post_id VARCHAR(64) UNIQUE, dest_did VARCHAR(64), channel_id VARCHAR(64), created_at REAL(64), updated_at REAL(64),'
-          + 'content TEXT, status INTEGER, type VARCHAR(64), tag VARCHAR(64), proof VARCHAR(64), memo TEXT, pin_status INTEGER'
+          + 'content TEXT, status INTEGER, type VARCHAR(64), tag VARCHAR(64), proof VARCHAR(64), memo TEXT, pin_status INTEGER, device INTEGER'
           + ')';
 
         const result = await this.executeSql(dbUserDid, statement);
@@ -155,7 +156,7 @@ export class FeedsSqliteHelper {
   queryPostData(dbUserDid: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW;
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW330;
         const result = await this.executeSql(dbUserDid, statement);
         // const pinpostList = await this.queryPinPostList(dbUserDid);
         const postList = this.parsePostData(result);
@@ -182,10 +183,25 @@ export class FeedsSqliteHelper {
     });
   }
 
+  queryNewOriginPostData(dbUserDid: string): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW;
+        const result = await this.executeSql(dbUserDid, statement);
+        // const pinpostList = await this.queryPinPostList(dbUserDid);
+        const postList = this.parsePostData(result);
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'query post data error', error);
+        reject(error);
+      }
+    });
+  }
+
   queryPostDataByTime(dbUserDid: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW + ' WHERE updated_at>=? and updated_at<=?  ORDER BY updated_at Desc limit ' + this.limitNum;
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW330 + ' WHERE updated_at>=? and updated_at<=?  ORDER BY updated_at Desc limit ' + this.limitNum;
         const result = await this.executeSql(dbUserDid, statement, [start, end]);
         // const pinpostList = await this.queryPinPostList(dbUserDid);
         const postList = this.parsePostData(result);
@@ -200,7 +216,7 @@ export class FeedsSqliteHelper {
   queryChannelPostDataByTime(dbUserDid: string, channelId: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW + ' WHERE channel_id=? and updated_at>=? and updated_at<=?  ORDER BY updated_at Desc limit ' + this.limitNum;
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW330 + ' WHERE channel_id=? and updated_at>=? and updated_at<=?  ORDER BY updated_at Desc limit ' + this.limitNum;
         const result = await this.executeSql(dbUserDid, statement, [channelId, start, end]);
         // const pinpostList = await this.queryPinPostDataByChannelId(dbUserDid, channelId);
         const postList = this.parsePostData(result);
@@ -215,7 +231,7 @@ export class FeedsSqliteHelper {
   queryPostDataByID(dbUserDid: string, postId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW + ' WHERE post_id=?';
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW330 + ' WHERE post_id=?';
         const params = [postId];
         const result = await this.executeSql(dbUserDid, statement, params);
         // const pinpostList = await this.queryPinPostList(dbUserDid);
@@ -232,7 +248,7 @@ export class FeedsSqliteHelper {
   queryPostDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW + ' WHERE channel_id=?';
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW330 + ' WHERE channel_id=?';
         const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
         // const pinpostList = await this.queryPinPostDataByChannelId(dbUserDid, channelId);
@@ -250,7 +266,7 @@ export class FeedsSqliteHelper {
   queryChannelPinPostData(dbUserDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW + ' WHERE channel_id=? and pin_status=1';
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW330 + ' WHERE channel_id=? and pin_status=1';
         const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
         // const pinpostList = await this.queryPinPostDataByChannelId(dbUserDid, channelId);
@@ -268,12 +284,13 @@ export class FeedsSqliteHelper {
   insertPostData(dbUserDid: string, postV3: FeedsData.PostV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'INSERT INTO ' + this.TABLE_POST_NEW
-          + '(post_id, dest_did, channel_id, created_at, updated_at, content, status, type, tag, proof, memo, pin_status) VALUES'
-          + '(?,?,?,?,?,?,?,?,?,?,?,?)';
+        const statement = 'INSERT INTO ' + this.TABLE_POST_NEW330
+          + '(post_id, dest_did, channel_id, created_at, updated_at, content, status, type, tag, proof, memo, pin_status, device) VALUES'
+          + '(?,?,?,?,?,?,?,?,?,?,?,?,?)';
         const pinStatus = postV3.pinStatus || FeedsData.PinStatus.NOTPINNED;
+        const device = postV3.from || FeedsData.Device.UNKNOW;
         const params = [postV3.postId, postV3.destDid, postV3.channelId, postV3.createdAt, postV3.updatedAt
-          , JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, pinStatus];
+          , JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, pinStatus, device];
 
         const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'InsertData result is', result);
@@ -288,10 +305,11 @@ export class FeedsSqliteHelper {
   updatePostData(dbUserDid: string, postV3: FeedsData.PostV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'UPDATE ' + this.TABLE_POST_NEW
-          + ' SET updated_at=?, content=?, status=?, type=?, tag=?, proof=?, memo=?, pin_status=? WHERE post_id=?';
+        const statement = 'UPDATE ' + this.TABLE_POST_NEW330
+          + ' SET updated_at=?, content=?, status=?, type=?, tag=?, proof=?, memo=?, pin_status=?, device=? WHERE post_id=?';
         const pinStatus = postV3.pinStatus || FeedsData.PinStatus.NOTPINNED
-        const params = [postV3.updatedAt, JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, pinStatus, postV3.postId];
+        const device = postV3.from || FeedsData.Device.UNKNOW
+        const params = [postV3.updatedAt, JSON.stringify(postV3.content), postV3.status, postV3.type, postV3.tag, postV3.proof, postV3.memo, pinStatus, device, postV3.postId];
         const result = await this.executeSql(dbUserDid, statement, params);
 
         Logger.log(TAG, 'update post data result: ', result)
@@ -306,7 +324,7 @@ export class FeedsSqliteHelper {
   deletePostData(dbUserDid: string, postId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'DELETE FROM ' + this.TABLE_POST_NEW + ' WHERE post_id=?'
+        const statement = 'DELETE FROM ' + this.TABLE_POST_NEW330 + ' WHERE post_id=?'
         const params = [postId];
         const result = await this.executeSql(dbUserDid, statement, params);
 
@@ -337,10 +355,27 @@ export class FeedsSqliteHelper {
     });
   }
 
+  deleteNewOriginPostData(dbUserDid: string, postId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_POST_NEW + ' WHERE post_id=?'
+        const params = [postId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'delete post data result: ', result)
+        resolve('SUCCESS');
+      }
+      catch (error) {
+        Logger.error(TAG, 'delete post data error', error);
+        reject(error);
+      }
+    });
+  }
+
   removePostDataByChannel(dbUserDid: string, channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'DELETE FROM ' + this.TABLE_POST_NEW + ' WHERE channel_id=?'
+        const statement = 'DELETE FROM ' + this.TABLE_POST_NEW330 + ' WHERE channel_id=?'
         const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
 
@@ -1239,11 +1274,7 @@ export class FeedsSqliteHelper {
       const channelId = element['channel_id'];
       const postId = element['post_id'];
       const pinStatus = element['pin_status'] || FeedsData.PinStatus.NOTPINNED;
-      // const pinpost = _.find(pinPostList, { destDid: destDid, channelId: channelId, postId: postId }) || null;
-      // let pinPostStatus = FeedsData.PinStatus.NOTPINNED;
-      // if (pinpost) {
-      //   pinPostStatus = FeedsData.PinStatus.PINNED;
-      // }
+      const device = element['device'] || FeedsData.Device.UNKNOW;
 
       let postV3: FeedsData.PostV3 = {
         destDid: destDid,
@@ -1257,7 +1288,8 @@ export class FeedsSqliteHelper {
         tag: element['tag'],
         proof: element['proof'],
         memo: element['memo'],
-        pinStatus: pinStatus
+        pinStatus: pinStatus,
+        from: device
       }
       list.push(postV3);
     }
@@ -1416,7 +1448,9 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const sqlversion = await this.storageService.get(FeedsData.PersistenceKey.sqlversion) || 0;
-        if (sqlversion < Config.SQL_VERSION311) {
+        // const sqlversion = 30;
+        console.log('Sql version is', sqlversion);
+        if (sqlversion < Config.SQL_VERSION311 && sqlversion > 0) {
           await this.createChannelTable(dbUserDid);
           let channelData = [];
           try {
@@ -1430,7 +1464,7 @@ export class FeedsSqliteHelper {
           }
         }
 
-        if (sqlversion < Config.SQL_VERSION320) {
+        if (sqlversion < Config.SQL_VERSION320 && sqlversion > 0) {
           await this.createPostTable(dbUserDid);
           let postData = [];
           try {
@@ -1442,6 +1476,21 @@ export class FeedsSqliteHelper {
             const post = postData[index];
             await this.insertPostData(dbUserDid, post)
             await this.deleteOriginPostData(dbUserDid, post.postId);
+          }
+        }
+
+        if (sqlversion < Config.SQL_VERSION330 && sqlversion >= Config.SQL_VERSION320) {
+          await this.createPostTable(dbUserDid);
+          let postData = [];
+          try {
+            postData = await this.queryNewOriginPostData(dbUserDid);
+          } catch (error) {
+          }
+
+          for (let index = 0; index < postData.length; index++) {
+            const post = postData[index];
+            await this.insertPostData(dbUserDid, post)
+            await this.deleteNewOriginPostData(dbUserDid, post.postId);
           }
         }
         resolve('FINISH');

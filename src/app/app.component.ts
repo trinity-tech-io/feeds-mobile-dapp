@@ -282,7 +282,9 @@ export class MyApp {
       }).then(async () => {
         const signinData = await this.dataHelper.getSigninData()
         if (signinData) {
-          this.dataHelper.restoreSqlData(signinData.did);
+          this.native.showLoading('common.waitMoment');
+          await this.dataHelper.restoreSqlData(signinData.did)
+          this.native.hideLoading();
         }
 
         this.hiveVaultController.refreshAvatar().catch(() => { });
@@ -464,7 +466,7 @@ export class MyApp {
   }
 
 
-  async removeRedditToken(){
+  async removeRedditToken() {
     let signinData = await this.dataHelper.getSigninData() || null
     if (signinData == null || signinData == undefined) {
       return null

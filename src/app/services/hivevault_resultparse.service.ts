@@ -86,8 +86,10 @@ export class HiveVaultResultParse {
               tag: post.tag,
               proof: '',
               memo: post.memo,
-              pinStatus: remotePinStatus
+              pinStatus: remotePinStatus,
+              from: post.from || FeedsData.Device.UNKNOW
             }
+
             parseResult.push(postResult);
           }
         });

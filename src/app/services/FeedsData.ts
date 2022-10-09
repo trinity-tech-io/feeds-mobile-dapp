@@ -1007,7 +1007,8 @@ declare namespace FeedsData {
     proof: string,
     memo: string,
 
-    pinStatus: PinStatus
+    pinStatus: PinStatus,
+    from: FeedsData.Device
   }
 
   // 新添加

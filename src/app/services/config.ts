@@ -50,7 +50,8 @@ export class Config {
     //30200 update post sql -> add pin_status
     public static readonly SQL_VERSION311: number = 30101;
     public static readonly SQL_VERSION320: number = 30200;
-    public static readonly SQL_VERSION: number = 30202;
+    public static readonly SQL_VERSION330: number = 30300;
+    public static readonly SQL_VERSION: number = 30300;
 
     public static changeApi(api: string) {
         if (api == 'elastos.io') {

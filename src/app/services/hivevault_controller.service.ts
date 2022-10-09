@@ -607,7 +607,8 @@ export class HiveVaultController {
           tag: tag,
           proof: proof,
           memo: memo,
-          pinStatus: FeedsData.PinStatus.NOTPINNED
+          pinStatus: FeedsData.PinStatus.NOTPINNED,
+          from: from
         }
         await this.dataHelper.addPost(postV3);
 
@@ -652,7 +653,8 @@ export class HiveVaultController {
           tag: newTag,
           proof: newProof,
           memo: newMemo,
-          pinStatus: pinStatus
+          pinStatus: pinStatus,
+          from: from
         };
         await this.dataHelper.addPost(postV3);
         resolve(postV3);

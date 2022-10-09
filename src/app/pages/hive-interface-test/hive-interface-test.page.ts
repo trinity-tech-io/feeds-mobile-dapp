@@ -332,7 +332,8 @@ export class HiveInterfaceTestPage implements OnInit {
       tag: 'no tag',
       proof: 'string',
       memo: 'string',
-      pinStatus: FeedsData.PinStatus.PINNED
+      pinStatus: FeedsData.PinStatus.PINNED,
+      from: FeedsData.Device.ANDROID
     }
     const selfDid = (await this.dataHelper.getSigninData()).did;
     this.sqliteHelper.insertPostData(selfDid, post)
