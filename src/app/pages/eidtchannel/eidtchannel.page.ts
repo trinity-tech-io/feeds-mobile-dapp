@@ -19,7 +19,12 @@ import { PopupProvider } from 'src/app/services/popup';
 import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { StorageService } from 'src/app/services/StorageService';
-
+import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
+import { Config } from 'src/app/services/config';
+import { Logger } from 'src/app/services/logger';
+import { IPFSService } from 'src/app/services/ipfs.service';
+const TAG: string = 'EidtchannelPage';
+const SUCCESS = 'success';
 @Component({
   selector: 'app-eidtchannel',
   templateUrl: './eidtchannel.page.html',
@@ -34,6 +39,7 @@ export class EidtchannelPage implements OnInit {
   public channelDes: string = '';
   public channelAvatar = '';
   public avatar = '';
+  private avatarCid = '';
   public oldChannelInfo: any = {};
   public oldChannelAvatar: string = '';
   public isPublic: string = '';
@@ -47,6 +53,16 @@ export class EidtchannelPage implements OnInit {
   private popover: any = null;
   public lightThemeType: number = 3;
   public clickButton: boolean = false;
+  private channelContratctInfo:any = null;
+
+  public isLoading: boolean = false;
+  public loadingTitle: string = "";
+  public loadingText: string = "";
+  public loadingCurNumber: string = null;
+  public loadingMaxNumber: string = null;
+  private realFile: string = null;
+  public thumbnail: string = '';
+
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -64,7 +80,9 @@ export class EidtchannelPage implements OnInit {
     private popupProvider: PopupProvider,
     private feedsServiceApi: FeedsServiceApi,
     private hiveVaultController: HiveVaultController,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private walletConnectControllerService: WalletConnectControllerService,
+    private ipfsService: IPFSService,
   ) { }
 
   async ngOnInit() {
@@ -78,10 +96,17 @@ export class EidtchannelPage implements OnInit {
     this.channelDes = channelInfo['des'] || '';
     this.channelOwner = channelInfo['channelOwner'] || '';
     this.channelSubscribes = channelInfo['channelSubscribes'] || '';
-    this.tippingAddress = await this.getChannelTipAddress();
+    //this.tippingAddress = await this.getChannelTipAddress();
     this.oldTippingAddress = this.tippingAddress;
     this.followStatus = channelInfo['followStatus'] || false;
     this.oldChannelAvatar = this.dataHelper.getProfileIamge();
+    this.channelContratctInfo = await this.getChannelContratctInfo(this.channelId);
+    if(this.channelContratctInfo != null){
+      let walletAddress = this.walletConnectControllerService.getAccountAddress() || "";
+      if(walletAddress === ""){
+        this.walletConnectControllerService.connect();
+      }
+    }
   }
 
   async getChannelTipAddress() {
@@ -147,28 +172,20 @@ export class EidtchannelPage implements OnInit {
       return;
     }
 
-    // await this.native.showLoading('common.waitMoment', isDismiss => { })
-    // await this.getPublicStatus();
-    // this.native.hideLoading();
-    // if (this.isPublic === "1") {
-    //   this.open("EidtchannelPage.des", "EidtchannelPage.des1")
-    //   return;
-    // }
-    // if (this.isPublic === "2") {
-    //   this.open("EidtchannelPage.des", "EidtchannelPage.des2")
-    //   return;
-    // }
-    // if (this.isPublic === "3") {
-    //   this.open("EidtchannelPage.des", "EidtchannelPage.des3")
-    //   return;
-    // }
+    if(this.channelContratctInfo != null){
+      let walletAddress = this.walletConnectControllerService.getAccountAddress() || "";
+      if(walletAddress === ""){
+        this.walletConnectControllerService.connect();
+        return;
+      }
+    }
+
     this.isClickConfirm = false;
     if (this.checkparms() && this.isPublic === "") {
       const signinDid = (await this.dataHelper.getSigninData()).did;
       this.clickButton = true;
       await this.native.showLoading('common.waitMoment');
       try {
-
         const selfchannels = await this.hiveVaultController.getSelfChannel() || [];
         let nameValue = this.native.iGetInnerText(this.displayName);
         const list = _.filter(selfchannels, (channel: FeedsData.ChannelV3) => {
@@ -226,10 +243,27 @@ export class EidtchannelPage implements OnInit {
           this.storageService.set('feeds.currentChannel', JSON.stringify(currentChannel));
         }
 
+        //更新explore feeds cace
+
+        let channelCollectionPageList = this.dataHelper.getChannelCollectionPageList() || [];
+
+        let channelIndex = _.findIndex(channelCollectionPageList,(item: FeedsData.ChannelV3)=>{
+                  return item.channelId === this.channelId;
+        });
+
+        if(channelIndex > -1){
+          channelCollectionPageList[channelIndex].displayName = this.displayName;
+          channelCollectionPageList[channelIndex].intro = this.channelDes;
+          channelCollectionPageList[channelIndex].avatar = result.avatar;
+        }
+
         this.isClickConfirm = true;
         this.clickButton = false;
         this.native.hideLoading();
-        this.native.pop();
+
+        this.handleUpdateChannel();
+
+        //this.native.pop();
       }).catch((error) => {
         this.native.handleHiveError(error, 'common.editChannelFail');
         this.native.hideLoading();
@@ -462,6 +496,208 @@ export class EidtchannelPage implements OnInit {
       this.tippingAddress = scannedContent.replace('elastos:', '');
     } else {
       this.tippingAddress = scannedContent;
+    }
+  }
+
+  async getChannelContratctInfo(channelId: string) {
+
+    try {
+      await this.native.showLoading("common.waitMoment");
+      let tokenId: string = "0x" + channelId;
+      tokenId = UtilService.hex2dec(tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      if (tokenInfo[0] != '0') {
+        this.native.hideLoading();
+        return tokenInfo;
+      }
+      this.native.hideLoading();
+      return null;
+    } catch (error) {
+      this.native.hideLoading();
+      return null;
+    }
+  }
+
+  async handleUpdateChannel() {
+
+    // this.isLoading = true;
+    // this.loadingTitle = 'common.waitMoment';
+    // this.loadingText = 'EidtchannelPage.updateChannelDesc';
+
+    let sId = setTimeout(() => {
+      this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
+      this.isLoading = false;
+      clearTimeout(sId);
+      this.popupProvider.showSelfCheckDialog('EidtchannelPage.updateChannelTimeoutDesc');
+    }, Config.WAIT_TIME_BURN_NFTS);
+
+    this.loadingCurNumber = "1";
+    this.loadingMaxNumber = "2";
+
+    this.loadingText = "common.uploadingData"
+    this.isLoading = true;
+
+    let tokenId = '0x'+this.channelId;
+    let receiptAddr = this.channelContratctInfo[3];
+
+    this.uploadData()
+    .then(async (result) => {
+      Logger.log(TAG, 'Upload Result', result);
+      this.loadingCurNumber = "1";
+      this.loadingText = "common.uploadDataSuccess";
+
+      let tokenUri = result.jsonHash;
+      this.loadingCurNumber = "2";
+      this.loadingText = "EidtchannelPage.updateChannelDesc";
+      return this.updateChannelContract(tokenId, tokenUri, receiptAddr);
+    }).then(()=>{
+      this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
+      this.zone.run(()=>{
+        //this.curFeedPublicStatus = false;
+      });
+      this.isLoading = false;
+      clearTimeout(sId);
+      this.native.toast("EidtchannelPage.updateChannelSuccess");
+      this.native.pop();
+    }).catch(()=>{
+      this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
+      this.isLoading = false;
+      clearTimeout(sId);
+      this.native.toastWarn("EidtchannelPage.updateChannelFailed");
+    });
+  }
+
+
+  updateChannelContract(
+    tokenId: string,
+    tokenUri: string,
+    receiptAddr: string,
+  ): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const MINT_ERROR = 'update process error';
+      let result = '';
+      try {
+        result = await this.nftContractControllerService
+          .getChannel()
+          .updateChannel(tokenId,tokenUri,receiptAddr);
+      } catch (error) {
+        reject(error);
+        return;
+      }
+
+      result = result || '';
+      if (result === '') {
+        reject(MINT_ERROR);
+        return;
+      }
+
+      resolve(SUCCESS);
+    });
+  }
+
+  uploadData(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      this.realFile = await this.handleIpfsChannelAvatar();
+      if (this.realFile == null) {
+        reject('upload file error');
+        return;
+      }
+      this.sendIpfsImage(this.realFile).then((realFileObj: any) => {
+        this.avatarCid = realFileObj["cid"];
+        return this.sendIpfsJSON();
+        }).then((jsonHash) => {
+          resolve({ jsonHash: jsonHash });
+        })
+        .catch((error) => {
+          reject('upload file error');
+        });
+    });
+  }
+
+  sendIpfsImage(file: any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      let blob = UtilService.dataURLtoBlob(file);
+      let formData = new FormData();
+      formData.append('', blob);
+      Logger.log(TAG, 'Send img, formdata length is', formData.getAll('').length);
+      this.ipfsService
+        .nftPost(formData)
+        .then(result => {
+          let hash = result['Hash'] || null;
+          if (!hash) {
+            reject("Upload Image error, hash is null")
+            return;
+          }
+          let kind = blob.type.replace("image/", "");
+          let size = blob.size;
+          let cid = 'feeds:image:' + hash;
+          resolve({ "cid": cid, "size": size, "kind": kind });
+        })
+        .catch(err => {
+          reject('Upload image error, error is ' + JSON.stringify(err));
+        });
+    });
+  }
+
+  sendIpfsJSON(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let ownerAddr = this.walletConnectControllerService.getAccountAddress() || "";
+      let ipfsJSON = {
+        "version": "2",
+        "type": "FeedsChannel",
+        "name": this.channelName,
+        "description": this.channelDes,
+        "creator": {
+            "did": ownerAddr
+        },
+        "data": {
+            "cname": this.displayName,//channel displayName
+            "avatar": this.avatarCid,//feeds:image:QmUVpumZzH9ECm43nyrQ14wwYHDWf3aRMDmGmHxkM1ufEJ
+            "banner": "",
+            "ownerDid": ownerAddr,
+            "channelEntry": UtilService.generateFeedsQrCodeString(this.destDid,this.channelId),
+            "signature": ""
+        }
+        }
+
+      let formData = new FormData();
+      formData.append('', JSON.stringify(ipfsJSON));
+      Logger.log(TAG, 'Send json, formdata length is', formData.getAll('').length);
+      this.ipfsService
+        .nftPost(formData)
+        .then(result => {
+          //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
+          Logger.log(TAG, 'Json data is', JSON.stringify(result));
+          let hash = result['Hash'] || null;
+          if (hash != null) {
+            let jsonHash = 'feeds:json:' + hash;
+            resolve(jsonHash);
+          }
+        })
+        .catch(err => {
+          Logger.error(TAG, 'Send Json data error', err);
+          reject('upload json error');
+        });
+    });
+  }
+
+  async handleIpfsChannelAvatar() {
+
+    let channelAvatar: string = this.feedService.parseChannelAvatar(this.channelAvatar);
+    if (channelAvatar.startsWith("data:image")) {
+      return channelAvatar;
+    }
+
+    if (channelAvatar.startsWith("assets/images/profile")) {
+      let fileName = channelAvatar.replace("assets/images/", "");
+      let avatarBase64 = UtilService.getDefaultAvatar(fileName);
+      return avatarBase64;
+    }
+
+    if (channelAvatar.startsWith("https://")) {
+      let avatar = await UtilService.downloadFileFromUrl(channelAvatar);
+      let avatarBase64 = await UtilService.blobToDataURL(avatar);
+      return avatarBase64;
     }
   }
 }

@@ -169,7 +169,7 @@ export class FeedspreferencesPage implements OnInit {
     that.loadingTitle = 'common.waitMoment';
     that.loadingText = 'FeedspreferencesPage.burningNFTSDesc';
     let sId = setTimeout(() => {
-      that.nftContractControllerService.getSticker().cancelBurnProcess();
+      that.nftContractControllerService.getChannel().cancelBurnProcess();
       that.isLoading = false;
       clearTimeout(sId);
       that.popupProvider.showSelfCheckDialog('FeedspreferencesPage.burningNFTSTimeoutDesc');

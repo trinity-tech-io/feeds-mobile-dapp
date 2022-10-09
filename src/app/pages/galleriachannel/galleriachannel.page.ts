@@ -109,14 +109,8 @@ export class GalleriachannelPage implements OnInit {
   ionViewDidLeave() {
     Logger.log(TAG, 'Leave page');
     this.nftContractControllerService
-      .getSticker()
+      .getChannel()
       .cancelMintProcess();
-    this.nftContractControllerService
-      .getSticker()
-      .cancelSetApprovedProcess();
-    this.nftContractControllerService
-      .getPasar()
-      .cancelCreateOrderProcess();
   }
 
   initTile() {
@@ -422,32 +416,6 @@ export class GalleriachannelPage implements OnInit {
         })
         .catch(err => {
           reject('Upload image error, error is ' + JSON.stringify(err));
-        });
-    });
-  }
-
-  sendIpfsThumbnail(thumbnailBase64: string) {
-    return new Promise(async (resolve, reject) => {
-      let thumbnailBlob = UtilService.dataURLtoBlob(thumbnailBase64);
-      let formData = new FormData();
-      formData.append('', thumbnailBlob);
-      Logger.log(TAG, 'Send thumbnail, formdata length is', formData.getAll('').length);
-
-      this.ipfsService
-        .nftPost(formData)
-        .then(result => {
-          let hash = result['Hash'] || null;
-          if (!hash) {
-            reject("Send thumbnail error, hash is null");
-            return;
-          }
-
-          this.thumbnail = thumbnailBase64;
-          this.avatar = 'feeds:image:' + hash;
-          resolve('');
-        })
-        .catch(err => {
-          reject("Send thumbnail error, error is " + JSON.stringify(err));
         });
     });
   }

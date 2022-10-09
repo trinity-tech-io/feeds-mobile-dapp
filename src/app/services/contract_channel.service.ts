@@ -20,8 +20,10 @@ export class ChannelContractService {
   private channelContract: any;
   private checkTokenInterval: NodeJS.Timer;
   private checkBurnInterval: NodeJS.Timer;
+  private checkUpdateChannelInterval: NodeJS.Timer;
   private checkTokenNum: number = 0;
   private checkBurnNum: number = 0;
+  private checkUpdateChannelNum: number = 0;
 
   constructor(
     private walletConnectControllerService: WalletConnectControllerService,
@@ -185,6 +187,7 @@ export class ChannelContractService {
       if (this.checkTokenNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
         clearInterval(this.checkTokenInterval);
         this.checkTokenInterval = null;
+        callback(null);
         Logger.log(TAG, 'Exit check token state by self');
       }
     }, Config.CHECK_STATUS_INTERVAL_TIME);
@@ -234,8 +237,8 @@ export class ChannelContractService {
               .on('error', (error, receipt) => {
                 Logger.error(TAG, 'Burn process, error is', error, receipt);
               });
-              this.checkBurnState(tokenId,()=>{
-                 resolve(null);
+              this.checkBurnState(tokenId,(info)=>{
+                 resolve(info);
               });
           } catch (error) {
             Logger.error(TAG, 'burn error', error);
@@ -264,9 +267,34 @@ export class ChannelContractService {
       if (this.checkBurnNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
         clearInterval(this.checkBurnInterval);
         this.checkBurnInterval = null;
+        callback(null);
       }
      },Config.CHECK_STATUS_INTERVAL_TIME);
   }
+
+  cancelUpdateChanneProcess(){
+    if (!this.checkUpdateChannelInterval) return;
+    clearInterval(this.checkUpdateChannelInterval);
+  }
+
+  checkUpdateChannelState(tokenId:string,tokenUri: string,receiptAddr: string,callback: (tokenInfo: any) => void){
+    this.checkUpdateChannelInterval = setInterval(async () => {
+     if (!this.checkUpdateChannelInterval) return;
+     let info = await this.channelInfo(tokenId);
+     if (info[1] === tokenUri) {
+       clearInterval(this.checkUpdateChannelInterval);
+       callback("success");
+       this.checkUpdateChannelInterval = null;
+       return;
+     }
+     this.checkUpdateChannelNum++;
+     if (this.checkUpdateChannelNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
+       clearInterval(this.checkUpdateChannelInterval);
+       this.checkUpdateChannelInterval = null;
+       callback(null);
+     }
+    },Config.CHECK_STATUS_INTERVAL_TIME);
+ }
 
  async totalSupply() {
     return await this.channelContract.methods
@@ -280,6 +308,48 @@ export class ChannelContractService {
     .call();
   }
 
+
+  async updateChannel(tokenId: string, tokenUri: string, receiptAddr: string) : Promise<any>{
+    return new Promise(async (resolve, reject) => {
+          try {
+            Logger.log(TAG, 'updateChannel params ', tokenId, tokenUri, receiptAddr);
+            const updateChanneldata = this.channelContract.methods
+              .updateChannel(tokenId, tokenUri, receiptAddr)
+              .encodeABI();
+            let transactionParams = await this.createTxParams(updateChanneldata);
+            Logger.log(TAG,
+              'Calling smart contract through wallet connect',
+              updateChanneldata,
+              transactionParams,
+            );
+            this.channelContract.methods
+              .updateChannel(tokenId, tokenUri, receiptAddr)
+              .send(transactionParams)
+              .on('transactionHash', hash => {
+              Logger.log(TAG, 'updateChannel process, transactionHash is', hash);
+              })
+              .on('receipt', receipt => {
+                Logger.log(TAG, 'updateChannel process, receipt is', receipt);
+              })
+              .on('confirmation', (confirmationNumber, receipt) => {
+                Logger.log(TAG,
+                  'updateChannel process, confirmation is',
+                  confirmationNumber,
+                  receipt,
+                );
+              })
+              .on('error', (error, receipt) => {
+                Logger.error(TAG, 'updateChannel process, error is', error, receipt);
+              });
+              this.checkUpdateChannelState(tokenId,tokenUri,receiptAddr,(info)=>{
+                 resolve(info);
+              });
+          } catch (error) {
+            Logger.error(TAG, 'updateChannel error', error);
+            reject(error);
+          }
+    });
+  }
 
 
 }

@@ -75,7 +75,6 @@ export class SearchPage implements OnInit {
   private searchIsLoadimage: any = {};
   private chanCollectionSid: any = null;
   private handleDisplayNameMap: any = {};
-  private channelCollectionsAvatarisLoad: any = {};
   /**
    * 1. feeds netWork
    * 2. chenrong
@@ -238,6 +237,7 @@ export class SearchPage implements OnInit {
     this.removeObserveList();
     this.removeSubscribe();
     this.handleDisplayNameMap = {};
+    this.searchIsLoadimage = {};
     this.events.unsubscribe(FeedsEvent.PublishType.search);
   }
 
@@ -472,7 +472,7 @@ export class SearchPage implements OnInit {
   refreshChannelCollectionAvatar(list = []) {
     this.clearChanCollectionSid();
     this.chanCollectionSid = setTimeout(() => {
-      this.channelCollectionsAvatarisLoad = {};
+      this.searchIsLoadimage = {};
       this.handleDisplayNameMap = {};
       this.getSearchObserverList(list);
       this.clearChanCollectionSid();

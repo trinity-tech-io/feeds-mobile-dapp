@@ -632,6 +632,10 @@ export const zh = {
     des1: '此频道已经在探索Feeds公开，需要先从探索Feeds下架，才可以修改。',
     des2: '此频道已经是收藏品且在探索Feeds公开，需要从探索Feeds下架，销毁收藏品才可以修改。',
     des3: '此频道已经是收藏品，需要销毁收藏品后才可以修改。',
+    updateChannelDesc: '正在更新频道收藏品，请稍候',
+    updateChannelTimeoutDesc: '更新频道收藏品超时，稍后您可自行确认',
+    updateChannelSuccess: '已成功更新频道收藏品',
+    updateChannelFailed: '更新频道收藏品失败'
   },
   EditPostPage: {
     title: '编辑微说',
