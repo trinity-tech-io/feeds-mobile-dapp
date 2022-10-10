@@ -654,7 +654,7 @@ export class EidtchannelPage implements OnInit {
             "cname": this.displayName,//channel displayName
             "avatar": this.avatarCid,//feeds:image:QmUVpumZzH9ECm43nyrQ14wwYHDWf3aRMDmGmHxkM1ufEJ
             "banner": "",
-            "ownerDid": ownerAddr,
+            "ownerDid": this.destDid,
             "channelEntry": UtilService.generateFeedsQrCodeString(this.destDid,this.channelId),
             "signature": ""
         }

@@ -435,7 +435,7 @@ export class GalleriachannelPage implements OnInit {
             "cname": this.displayName,//channel displayName
             "avatar": this.avatar,//feeds:image:QmUVpumZzH9ECm43nyrQ14wwYHDWf3aRMDmGmHxkM1ufEJ
             "banner": "",
-            "ownerDid": this.ownerAddr,
+            "ownerDid": this.destDid,
             "channelEntry": this.channelEntry,
             "signature": ""
         }
