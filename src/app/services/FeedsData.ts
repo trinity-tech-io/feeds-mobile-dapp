@@ -1102,7 +1102,10 @@ declare namespace FeedsData {
     did: string,
     resolvedName: string,
     resolvedAvatar: string,
+    resolvedBio: string,
+    displayName: string,
     name: string,
-    avatar: string
+    avatar: string,
+    bio: string
   }
 }

@@ -4384,15 +4384,66 @@ export class DataHelper {
     return this.userList
   }
 
-  addUserData() {
-
+  addUser(newUser: FeedsData.User) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let isNew: boolean = false;
+        let originUser: FeedsData.User = await this.getUserData(newUser.did) || null;
+        if (!originUser) {
+          try {
+            await this.addUser(newUser);
+            isNew = true;
+          } catch (error) {
+          }
+        } else {
+          const isEqual = _.isEqual(newUser, originUser);
+          if (isEqual) {
+            resolve(isNew);
+            return;
+          }
+          await this.updateUserData(newUser);
+        }
+        resolve(isNew);
+      } catch (error) {
+        Logger.error(TAG, 'Add post error', error);
+        reject(error);
+      }
+    });
   }
 
-  updateUserData() {
-
+  private addUserData(user: FeedsData.User) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.insertUserData(selfDid, user);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
-  getUserData(userDid: string): FeedsData.User {
-    return null;
+  private updateUserData(user: FeedsData.User) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.updateUserData(selfDid, user);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getUserData(userDid: string): Promise<FeedsData.User> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryUserDataById(selfDid, userDid);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }

@@ -58,10 +58,7 @@ export class UserlistPage implements OnInit {
   async getUserList() {
     this.pageSize = 1;
     const userList = this.dataHelper.getUserDidList();
-    for (let index = 0; index < userList.length; index++) {
-      const userdid = userList[index];
-      this.handleUserAvatar(userdid);
-    }
+
     this.totalData = userList;
     let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
     if (data.currentPage === data.totalPage) {
@@ -88,6 +85,7 @@ export class UserlistPage implements OnInit {
 
   resolveData(userDid: string) {
     this.didHelper.resolveNameAndAvatarFromDidDocument(userDid).then((result: { name: string, avatar: string }) => {
+      console.log('resolveData====>', userDid, result.name, result.avatar);
       if (result.name) {
         this.setUserName(userDid, result.name);
       } else {

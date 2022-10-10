@@ -18,6 +18,7 @@ export class FeedsSqliteHelper {
   private readonly TABLE_CHANNEL_NEW: string = 'channelnew';
   private readonly TABLE_POST_NEW: string = 'postsnew';
   private readonly TABLE_POST_NEW330: string = 'postsnew330';
+  private readonly TABLE_USER: string = 'users';
   // private readonly TABLE_PINPOST: string = 'pinpost';
 
   public isOpen: boolean = false;
@@ -1101,6 +1102,78 @@ export class FeedsSqliteHelper {
     });
   }
 
+
+
+  //User
+  private createUserTable(dbUserDid: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'create table if not exists ' + this.TABLE_USER
+          + '('
+          + 'did VARCHAR(64) UNIQUE, resolved_name VARCHAR(64), resolved_avatar TEXT, resolved_bio TEXT, display_name VARCHAR(64), name VARCHAR(64), avatar TEXT, bio TEXT'
+          + ')';
+
+        const result = await this.executeSql(dbUserDid, statement);
+        Logger.log(TAG, 'Create users table result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Create users table error', error);
+        reject(error);
+      }
+    });
+  }
+
+  insertUserData(dbUserDid: string, user: FeedsData.User): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'INSERT INTO ' + this.TABLE_USER
+          + '(did, resolved_name, resolved_avatar, resolved_bio, display_name, name, avatar, bio) VALUES'
+          + '(?,?,?,?,?,?,?,?)';
+
+        const params = [user.did, user.resolvedName, user.avatar, user.resolvedBio, user.displayName, user.avatar, user.bio];
+
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Insert users data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Insert users date error', error);
+        reject(error);
+      }
+    });
+  }
+
+  updateUserData(dbUserDid: string, user: FeedsData.User): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'UPDATE ' + this.TABLE_USER
+          + ' SET resolved_name=?, resolved_avatar=?, resolved_bio=?, display_name=?, name=?, avatar=?, bio=? WHERE did=?';
+        const params = [user.resolvedName, user.resolvedAvatar, user.resolvedBio, user.displayName, user.name, user.avatar, user.bio, user.did];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'update users data result: ', result)
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'update users data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryUserDataById(dbUserDid: string, userDid: string): Promise<FeedsData.User> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_USER + 'WHERE did=?';
+        const params = [userDid];
+        const result = await this.executeSql(dbUserDid, statement);
+        const users = this.parseUserData(result);
+        resolve(users[0]);
+      } catch (error) {
+        Logger.error(TAG, 'query post data error', error);
+        reject(error);
+      }
+    });
+  }
+
   //pinpost
   // private createPinPostTable(dbUserDid: string): Promise<any> {
   //   return new Promise(async (resolve, reject) => {
@@ -1465,6 +1538,7 @@ export class FeedsSqliteHelper {
         }
 
         if (sqlversion < Config.SQL_VERSION320 && sqlversion > 0) {
+          await this.createUserTable(dbUserDid);
           await this.createPostTable(dbUserDid);
           let postData = [];
           try {
@@ -1480,6 +1554,7 @@ export class FeedsSqliteHelper {
         }
 
         if (sqlversion < Config.SQL_VERSION330 && sqlversion >= Config.SQL_VERSION320) {
+          await this.createUserTable(dbUserDid);
           await this.createPostTable(dbUserDid);
           let postData = [];
           try {
@@ -1518,6 +1593,41 @@ export class FeedsSqliteHelper {
       list.push(pinPost);
     }
     Logger.log(TAG, 'Parse subscription list from sql, list is', list);
+    return list;
+  }
+
+  parseUserData(result: any): FeedsData.User[] {
+    Logger.log(TAG, 'Parse user result from sql, result is', result);
+    if (!result) {
+      return [];
+    }
+    let list: FeedsData.User[] = [];
+    for (let index = 0; index < result.rows.length; index++) {
+      const element = result.rows.item(index);
+
+      const did = element['did']
+      const resolvedName = element['resolved_name'];
+      const resolvedAvatar = element['resolved_avatar'];
+      const resolvedBio = element['resolved_bio'];
+      const displayName = element['display_name'];
+      const name = element['name'];
+      const avatar = element['avatar'];
+      const bio = element['bio'];
+
+      let user: FeedsData.User = {
+        did: did,
+        resolvedName: resolvedName,
+        resolvedAvatar: resolvedAvatar,
+        resolvedBio: resolvedBio,
+        displayName: displayName,
+        name: name,
+        avatar: avatar,
+        bio: bio
+      }
+      list.push(user);
+    }
+
+    Logger.log(TAG, 'Parse user list from sql, list is', list);
     return list;
   }
 
