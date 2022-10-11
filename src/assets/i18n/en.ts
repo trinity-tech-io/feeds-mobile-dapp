@@ -638,6 +638,8 @@ export const en = {
     updateChannelTimeoutDesc: 'Update Channel Collectibles timeout, you can confirm later',
     updateChannelSuccess: 'Channel Collectibles updated successfully',
     updateChannelFailed: 'Failed to update channel collectibles',
+    updateChannelDesc1: 'Update Channel, please wait',
+    updateChannelDesc2: '当前频道与公开的频道的不一致，请及时更新'
   },
   EditPostPage: {
     title: 'Edit Post',

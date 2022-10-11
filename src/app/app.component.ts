@@ -250,8 +250,7 @@ export class MyApp {
         this.initCollectibleSetting();
         this.initFeedsSortType();
         this.initHideAdult();
-        this.initPublishedActivePanelList();
-
+        this.initFeedsContractInfoList();
         this.native.addNetworkListener(
           () => {
             this.dataHelper.setNetworkStatus(FeedsData.ConnState.disconnected);
@@ -717,13 +716,13 @@ export class MyApp {
     });
   }
 
-  initPublishedActivePanelList() {
-    this.dataHelper.loadData('feeds.published.activePanel.list').then((publishedActivePanelList) => {
-      if (publishedActivePanelList === null) {
-        this.dataHelper.setPublishedActivePanelList([]);
+  initFeedsContractInfoList() {
+    this.dataHelper.loadData('feeds.contractInfo.list').then((feedsContractInfoList) => {
+      if (feedsContractInfoList === null) {
+        this.dataHelper.setChannelContractInfoList({});
         return;
       }
-      this.dataHelper.setPublishedActivePanelList(publishedActivePanelList);
+      this.dataHelper.setChannelContractInfoList(feedsContractInfoList);
     }).catch((err) => {
 
     });

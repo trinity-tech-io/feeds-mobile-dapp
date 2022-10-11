@@ -281,7 +281,7 @@ export class ChannelContractService {
     this.checkUpdateChannelInterval = setInterval(async () => {
      if (!this.checkUpdateChannelInterval) return;
      let info = await this.channelInfo(tokenId);
-     if (info[1] === tokenUri) {
+     if (info[1] === tokenUri && info[3] === receiptAddr) {
        clearInterval(this.checkUpdateChannelInterval);
        callback("success");
        this.checkUpdateChannelInterval = null;

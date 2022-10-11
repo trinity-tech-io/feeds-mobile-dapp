@@ -429,7 +429,7 @@ export class GalleriachannelPage implements OnInit {
         "name": this.nftName,
         "description": this.nftDescription,
         "creator": {
-            "did": this.ownerAddr
+            "did": this.destDid
         },
         "data": {
             "cname": this.displayName,//channel displayName

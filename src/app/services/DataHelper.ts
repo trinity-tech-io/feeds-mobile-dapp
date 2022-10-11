@@ -16,6 +16,7 @@ declare let didManager: DIDPlugin.DIDManager;
 
 @Injectable()
 export class DataHelper {
+  private channelContractInfoList: any = {};
   private channelPublicStatusList: any = {};
   private channelCollectionPageList = [];
   private hiveAuthStatus: number = null;
@@ -4475,4 +4476,15 @@ export class DataHelper {
     this.channelPublicStatusList = channelPublicStatusList;
     this.saveData("feeds.channelPublicStatus.list", channelPublicStatusList);
   }
+
+  getChannelContractInfoList() {
+    console.log("setChannelContractInfoList", JSON.stringify(this.channelContractInfoList));
+    return this.channelContractInfoList;
+  }
+
+  setChannelContractInfoList(channelContractInfoList: any) {
+     console.log("setChannelContractInfoList", JSON.stringify(channelContractInfoList));
+     this.channelContractInfoList = channelContractInfoList;
+  }
+
 }

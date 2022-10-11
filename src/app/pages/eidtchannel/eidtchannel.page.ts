@@ -5,24 +5,21 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { FeedService } from 'src/app/services/FeedService';
 import { ActivatedRoute } from '@angular/router';
 import { NativeService } from 'src/app/services/NativeService';
-import { HttpService } from 'src/app/services/HttpService';
 import { ApiUrl } from 'src/app/services/ApiUrl';
 import { UtilService } from 'src/app/services/utilService';
-import { Events } from 'src/app/services/events.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import _ from 'lodash';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
-import { PasarAssistService } from 'src/app/services/pasar_assist.service';
 import { PopupProvider } from 'src/app/services/popup';
-import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { StorageService } from 'src/app/services/StorageService';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { Config } from 'src/app/services/config';
 import { Logger } from 'src/app/services/logger';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import SparkMD5 from 'spark-md5';
 const TAG: string = 'EidtchannelPage';
 const SUCCESS = 'success';
 @Component({
@@ -42,43 +39,33 @@ export class EidtchannelPage implements OnInit {
   private avatarCid = '';
   public oldChannelInfo: any = {};
   public oldChannelAvatar: string = '';
-  public isPublic: string = '';
   public tippingAddress: string = '';
   private oldTippingAddress: string = '';
-  private channelOwner: string = "";
-  private channelSubscribes: number = null;
-  private followStatus: boolean = false;
   private isClickConfirm: boolean = false;
-  private channelCollections: FeedsData.ChannelCollections = null;
-  private popover: any = null;
   public lightThemeType: number = 3;
   public clickButton: boolean = false;
   private channelContratctInfo:any = null;
-
   public isLoading: boolean = false;
   public loadingTitle: string = "";
   public loadingText: string = "";
   public loadingCurNumber: string = null;
   public loadingMaxNumber: string = null;
   private realFile: string = null;
-  public thumbnail: string = '';
-
+  private avatarHash: string = "";
+  public isShowTippingAddress: boolean = false;
+  public isShowUpdateContratct: boolean = false;
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
     public theme: ThemeService,
     private translate: TranslateService,
-    private events: Events,
     private native: NativeService,
     private zone: NgZone,
-    private httpService: HttpService,
     private popoverController: PopoverController,
     private titleBarService: TitleBarService,
     private dataHelper: DataHelper,
     private nftContractControllerService: NFTContractControllerService,
-    private pasarAssistService: PasarAssistService,
     private popupProvider: PopupProvider,
-    private feedsServiceApi: FeedsServiceApi,
     private hiveVaultController: HiveVaultController,
     private storageService: StorageService,
     private walletConnectControllerService: WalletConnectControllerService,
@@ -94,14 +81,29 @@ export class EidtchannelPage implements OnInit {
     this.channelName = channelInfo['name'] || '';
     this.displayName = channelInfo['displayName'] || this.channelName;
     this.channelDes = channelInfo['des'] || '';
-    this.channelOwner = channelInfo['channelOwner'] || '';
-    this.channelSubscribes = channelInfo['channelSubscribes'] || '';
-    //this.tippingAddress = await this.getChannelTipAddress();
-    this.oldTippingAddress = this.tippingAddress;
-    this.followStatus = channelInfo['followStatus'] || false;
     this.oldChannelAvatar = this.dataHelper.getProfileIamge();
-    this.channelContratctInfo = await this.getChannelContratctInfo(this.channelId);
+    let avatarBase64 =  await this.handleIpfsChannelAvatar(this.oldChannelAvatar);
+    this.avatarHash =  SparkMD5.hash(avatarBase64);
+    console.log("this.avatarHash",this.avatarHash);
+    let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+    this.channelContratctInfo = channelContractInfoList[this.channelId] || null;
+    if(this.channelContratctInfo === null){
+      this.channelContratctInfo = await this.getChannelContratctInfo(this.channelId) || null;
+    }
     if(this.channelContratctInfo != null){
+      channelContractInfoList[this.channelId] = this.channelContratctInfo;
+      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
+      this.tippingAddress =  this.channelContratctInfo.receiptAddr;
+      this.oldTippingAddress = this.tippingAddress;
+      this.isShowTippingAddress = true;
+      if(this.channelContratctInfo.cname != this.displayName ||
+         this.channelContratctInfo.avatar != this.avatarHash ||
+         this.channelContratctInfo.description != this.channelDes ){
+         this.isShowUpdateContratct = true;
+      }else{
+        this.isShowUpdateContratct = false;
+      }
       let walletAddress = this.walletConnectControllerService.getAccountAddress() || "";
       if(walletAddress === ""){
         this.walletConnectControllerService.connect();
@@ -109,23 +111,7 @@ export class EidtchannelPage implements OnInit {
     }
   }
 
-  async getChannelTipAddress() {
-
-    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
-    let tippingAddress = '';
-    if (channel != null) {
-      tippingAddress = channel.tipping_address || '';
-      if (tippingAddress != '') {
-        if (tippingAddress.indexOf("type") > -1) {
-          let tippingObj = JSON.parse(tippingAddress);
-          tippingAddress = tippingObj[0].address;
-        }
-      }
-    }
-    return tippingAddress;
-  }
-
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.theme.setTheme1();
     this.initTitle();
     this.channelAvatar = this.dataHelper.getProfileIamge();
@@ -145,10 +131,6 @@ export class EidtchannelPage implements OnInit {
   ionViewWillLeave() {
     this.clickButton = false;
     this.theme.restTheme();
-    let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
-    if (value != '') {
-      this.popoverController.dismiss();
-    }
     if (!this.isClickConfirm) {
       this.dataHelper.setProfileIamge(this.oldChannelAvatar);
     }
@@ -156,6 +138,9 @@ export class EidtchannelPage implements OnInit {
   }
 
   profileimage() {
+    if(this.isShowUpdateContratct){
+        return;
+    }
     this.native.navigateForward(['/profileimage'], '');
   }
 
@@ -181,10 +166,19 @@ export class EidtchannelPage implements OnInit {
     }
 
     this.isClickConfirm = false;
-    if (this.checkparms() && this.isPublic === "") {
+    if (this.checkparms()) {
       const signinDid = (await this.dataHelper.getSigninData()).did;
       this.clickButton = true;
-      await this.native.showLoading('common.waitMoment');
+
+      this.loadingCurNumber = "1";
+      if(this.channelContratctInfo != null){
+        this.loadingMaxNumber = "3";
+      }else{
+        this.loadingMaxNumber = "1";
+      }
+      this.loadingText = "EidtchannelPage.updateChannelDesc1";
+      this.isLoading = true;
+
       try {
         const selfchannels = await this.hiveVaultController.getSelfChannel() || [];
         let nameValue = this.native.iGetInnerText(this.displayName);
@@ -192,7 +186,7 @@ export class EidtchannelPage implements OnInit {
           return channel.destDid === signinDid && channel.channelId != this.channelId && channel.displayName === nameValue;
         }) || [];
         if (list.length > 0) {
-          this.native.hideLoading();
+          this.isLoading = false;
           this.native.toastWarn('CreatenewfeedPage.alreadyExist'); // 需要更改错误提示
           this.isClickConfirm = true;
           this.clickButton = false;
@@ -201,7 +195,7 @@ export class EidtchannelPage implements OnInit {
         this.editChannelInfo();
       } catch (error) {
         this.native.handleHiveError(error, 'common.editChannelFail');
-        this.native.hideLoading();
+        this.isLoading = false;
         this.clickButton = false;
         this.isClickConfirm = true;
       }
@@ -211,13 +205,12 @@ export class EidtchannelPage implements OnInit {
   editChannelInfo() {
     try {
       this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
-      let tippingAddress = this.tippingAddress || '';
       this.hiveVaultController.updateChannel(
         this.channelId,
         this.displayName,
         this.channelDes,
         this.avatar,
-        tippingAddress,
+        '',
         "public",
         '',
         '',
@@ -259,14 +252,15 @@ export class EidtchannelPage implements OnInit {
 
         this.isClickConfirm = true;
         this.clickButton = false;
-        this.native.hideLoading();
-
-        this.handleUpdateChannel();
-
-        //this.native.pop();
+        if(this.channelContratctInfo != null){
+          this.handleUpdateChannel();
+        }else{
+         this.isLoading = false;
+         this.native.pop();
+        }
       }).catch((error) => {
         this.native.handleHiveError(error, 'common.editChannelFail');
-        this.native.hideLoading();
+        this.isLoading = false;
         this.clickButton = false;
         this.isClickConfirm = false;
       })
@@ -337,151 +331,6 @@ export class EidtchannelPage implements OnInit {
     return true;
   }
 
-  updatePublicData() {
-    if (this.isPublic === '') {
-      return;
-    }
-    let serverInfo = this.feedsServiceApi.getServerbyNodeId(this.destDid);
-    let feedsUrl = serverInfo['feedsUrl'] + '/' + this.channelId;
-    let feedsUrlHash = UtilService.SHA256(feedsUrl);
-    let obj = {
-      feedsUrlHash: feedsUrlHash,
-      name: this.displayName,
-      description: this.channelDes,
-      feedsAvatar: this.avatar,
-      followers: this.oldChannelInfo['subscribers'],
-    };
-    this.httpService.ajaxPost(ApiUrl.update, obj, false).then(result => {
-      if (result['code'] === 200) {
-      }
-    });
-  }
-
-  async getPublicStatus() {
-    this.channelCollections = await this.getChannelCollectionsStatus() || null;
-    if (this.channelCollections != null) {
-      this.zone.run(() => {
-        this.isPublic = '2';
-      });
-      return;
-    }
-
-    let serverInfo = this.feedsServiceApi.getServerbyNodeId(this.destDid);
-    let feedsUrl = serverInfo['feedsUrl'] + '/' + this.channelId;
-    let tokenInfo = await this.isExitStrick(feedsUrl);
-    if (tokenInfo != null) {
-      this.isPublic = '3';
-      return;
-    }
-    let feedsUrlHash = UtilService.SHA256(feedsUrl);
-    try {
-      let result = await this.httpService
-        .ajaxGet(ApiUrl.get + '?feedsUrlHash=' + feedsUrlHash, false) || null;
-      if (result === null) {
-        this.isPublic = '';
-        return;
-      }
-      if (result['code'] === 200) {
-        let resultData = result['data'] || '';
-        if (resultData != '') {
-          this.isPublic = '1';
-        } else {
-          this.isPublic = '';
-        }
-      }
-    } catch (error) {
-
-    }
-  }
-
-  async getChannelCollectionsStatus() {
-    try {
-      let server = this.feedsServiceApi.getServerbyNodeId(this.destDid) || null;
-      if (server === null) {
-        return;
-      }
-      let feedsUrl = server.feedsUrl + '/' + this.channelId;
-      let feedsUrlHash = UtilService.SHA256(feedsUrl);
-      let tokenId: string = "0x" + feedsUrlHash;
-      tokenId = UtilService.hex2dec(tokenId);
-      let list = this.dataHelper.getPublishedActivePanelList() || [];
-      let fitleItem = _.find(list, (item) => {
-        return item.tokenId === tokenId;
-      }) || null;
-      if (fitleItem != null) {
-        return fitleItem;
-      }
-      let result = await this.pasarAssistService.getPanel(tokenId);
-      if (result != null) {
-        let tokenInfo = result["data"] || "";
-        if (tokenInfo === "") {
-          return null;
-        }
-        tokenInfo = await this.handlePanels(result["data"]);
-        let panelList = this.dataHelper.getPublishedActivePanelList() || [];
-        panelList.push(tokenInfo);
-        this.dataHelper.setPublishedActivePanelList(panelList);
-        return tokenInfo;
-      }
-      return null;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async isExitStrick(feedsUrl: string) {
-
-    try {
-      let tokenId: string = "0x" + UtilService.SHA256(feedsUrl);
-      tokenId = UtilService.hex2dec(tokenId);
-      //let tokenInfo = await this.pasarAssistService.searchStickers(tokenId);
-      let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(tokenId);
-      if (tokenInfo[0] != '0' && tokenInfo[2] != '0') {
-        return tokenInfo;
-      }
-      return null;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async handlePanels(item: any) {
-    let channelCollections: FeedsData.ChannelCollections = UtilService.getChannelCollections();
-    channelCollections.version = item.version;
-    channelCollections.panelId = item.panelId;
-    channelCollections.userAddr = item.user;
-    //channelCollections.diaBalance = await this.nftContractControllerService.getDiamond().getDiamondBalance(channelCollections.userAddr);
-    channelCollections.diaBalance = "0";
-    channelCollections.type = item.type;
-    channelCollections.tokenId = item.tokenId;
-    channelCollections.name = item.name;
-    channelCollections.description = item.description;
-    channelCollections.avatar = item.avatar;
-    channelCollections.entry = item.entry;
-    channelCollections.ownerDid = item.tokenDid.did;
-    channelCollections.ownerName = (await this.dataHelper.getSigninData()).name;
-    return channelCollections;
-  }
-
-  open(des1: string, des2: string) {
-    this.popover = this.popupProvider.showalertdialog(
-      this,
-      des1,
-      des2,
-      this.ok,
-      'finish.svg',
-      'common.ok',
-    );
-  }
-
-  ok(that: any) {
-    if (this.popover != null) {
-      this.popover.dismiss();
-      this.popover = null;
-      that.native.pop();
-    }
-  }
-
   async scanWalletAddress() {
     let scanObj = await this.popupProvider.scan() || {};
     let scanData = scanObj["data"] || {};
@@ -500,15 +349,40 @@ export class EidtchannelPage implements OnInit {
   }
 
   async getChannelContratctInfo(channelId: string) {
-
     try {
       await this.native.showLoading("common.waitMoment");
       let tokenId: string = "0x" + channelId;
       tokenId = UtilService.hex2dec(tokenId);
       let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
       if (tokenInfo[0] != '0') {
+         let channelContratctInfo: FeedsData.ChannelContractInfo = {
+           description: '',
+           cname: '',
+           avatar: '',
+           receiptAddr: '',
+           tokenId: '',
+           tokenUri: '',
+           channelEntry: '',
+           ownerAddr: ''
+         };
+        channelContratctInfo.tokenId = tokenInfo[0];
+        channelContratctInfo.tokenUri = tokenInfo[1];
+        channelContratctInfo.channelEntry = tokenInfo[2];
+        channelContratctInfo.receiptAddr = tokenInfo[3];
+        channelContratctInfo.ownerAddr = tokenInfo[4];
+        let uri = tokenInfo[1].replace('feeds:json:', '');
+        let result:any = await this.ipfsService
+          .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+        channelContratctInfo.description = result.description;
+        channelContratctInfo.cname = result.data.cname;
+        let avatarUri = result.data.avatar.replace('feeds:image:', '');
+        let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl()+avatarUri);
+        let avatarBase64 = await UtilService.blobToDataURL(avatar);
+        const hash = SparkMD5.hash(avatarBase64);
+        channelContratctInfo.avatar = hash;
+        console.log("=========channelContratctInfo",JSON.stringify(channelContratctInfo));
         this.native.hideLoading();
-        return tokenInfo;
+        return channelContratctInfo;
       }
       this.native.hideLoading();
       return null;
@@ -520,10 +394,6 @@ export class EidtchannelPage implements OnInit {
 
   async handleUpdateChannel() {
 
-    // this.isLoading = true;
-    // this.loadingTitle = 'common.waitMoment';
-    // this.loadingText = 'EidtchannelPage.updateChannelDesc';
-
     let sId = setTimeout(() => {
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
       this.isLoading = false;
@@ -531,33 +401,38 @@ export class EidtchannelPage implements OnInit {
       this.popupProvider.showSelfCheckDialog('EidtchannelPage.updateChannelTimeoutDesc');
     }, Config.WAIT_TIME_BURN_NFTS);
 
-    this.loadingCurNumber = "1";
-    this.loadingMaxNumber = "2";
-
-    this.loadingText = "common.uploadingData"
+    this.loadingCurNumber = "2";
+    this.loadingText = "common.uploadingData";
     this.isLoading = true;
 
     let tokenId = '0x'+this.channelId;
-    let receiptAddr = this.channelContratctInfo[3];
-
+    let receiptAddr = this.tippingAddress || '';
     this.uploadData()
     .then(async (result) => {
       Logger.log(TAG, 'Upload Result', result);
-      this.loadingCurNumber = "1";
+      this.loadingCurNumber = "2";
       this.loadingText = "common.uploadDataSuccess";
 
       let tokenUri = result.jsonHash;
-      this.loadingCurNumber = "2";
+      this.loadingCurNumber = "3";
       this.loadingText = "EidtchannelPage.updateChannelDesc";
       return this.updateChannelContract(tokenId, tokenUri, receiptAddr);
-    }).then(()=>{
+    }).then(async ()=>{
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
-      this.zone.run(()=>{
-        //this.curFeedPublicStatus = false;
-      });
+
+      //add channel Contratct cace
+      this.channelContratctInfo.description = this.channelDes;
+      this.channelContratctInfo.cname = this.displayName;
+      this.channelContratctInfo.receiptAddr = this.tippingAddress;
+      let avatarBase64 =  await this.handleIpfsChannelAvatar(this.channelAvatar);
+      let avatarHash =  SparkMD5.hash(avatarBase64);
+      this.channelContratctInfo.avatar = avatarHash;
+      let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+      channelContractInfoList[this.channelId] = this.channelContratctInfo;
+      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
       this.isLoading = false;
       clearTimeout(sId);
-      this.native.toast("EidtchannelPage.updateChannelSuccess");
       this.native.pop();
     }).catch(()=>{
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
@@ -597,7 +472,7 @@ export class EidtchannelPage implements OnInit {
 
   uploadData(): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      this.realFile = await this.handleIpfsChannelAvatar();
+      this.realFile = await this.handleIpfsChannelAvatar(this.channelAvatar);
       if (this.realFile == null) {
         reject('upload file error');
         return;
@@ -641,14 +516,14 @@ export class EidtchannelPage implements OnInit {
 
   sendIpfsJSON(): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      let ownerAddr = this.walletConnectControllerService.getAccountAddress() || "";
+
       let ipfsJSON = {
         "version": "2",
         "type": "FeedsChannel",
         "name": this.channelName,
         "description": this.channelDes,
         "creator": {
-            "did": ownerAddr
+            "did": this.destDid
         },
         "data": {
             "cname": this.displayName,//channel displayName
@@ -681,9 +556,9 @@ export class EidtchannelPage implements OnInit {
     });
   }
 
-  async handleIpfsChannelAvatar() {
+  async handleIpfsChannelAvatar(avatar: string) {
 
-    let channelAvatar: string = this.feedService.parseChannelAvatar(this.channelAvatar);
+    let channelAvatar: string = this.feedService.parseChannelAvatar(avatar);
     if (channelAvatar.startsWith("data:image")) {
       return channelAvatar;
     }

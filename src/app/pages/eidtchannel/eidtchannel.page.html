@@ -7,45 +7,40 @@
     <div class="cardImg">
       <img (click)="profileimage()" class="avatar" *ngIf="avatar === ''" src="./assets/images/selectAvatar.svg" />
       <img (click)="profileimage()" class="avatar" *ngIf="avatar != ''" [src]="avatar"/>
-      <img (click)="profileimage()" class="eidtAvatar" src="./assets/images/eidtAvatar.svg"/>
+      <img (click)="profileimage()" class="eidtAvatar" src="./assets/images/eidtAvatar.svg" *ngIf="!isShowUpdateContratct"/>
     </div>
   </ion-row>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
     <ion-list>
-        <!-- <ion-item lines="none" style="pointer-events: all;">
-            <ion-label position="stacked">{{ 'CreatenewfeedPage.name' | translate }}</ion-label>
-            <ion-input disabled="true" class="content-value" [placeholder]="'CreatenewfeedPage.inputName'|translate" [(ngModel)] ="channelName"></ion-input>
-        </ion-item> -->
-        <!-- <div>
-          <span class="twitterInfo">{{ 'CreatenewfeedPage.channelnamedes' | translate }}</span>
-        </div> -->
         <ion-item lines="none">
           <ion-label position="stacked">{{ 'CreatenewfeedPage.displayName' | translate }}</ion-label>
-          <ion-input clearInput class="content-value" [placeholder]="'CreatenewfeedPage.inputDisplayName'|translate" [(ngModel)] ="displayName"></ion-input>
+          <ion-input clearInput class="content-value" [placeholder]="'CreatenewfeedPage.inputDisplayName'|translate" [(ngModel)] ="displayName" [disabled]="isShowUpdateContratct"></ion-input>
       </ion-item>
-      <!-- <div style="margin-left: 10px;">
-        <span class="twitterInfo">{{ 'CreatenewfeedPage.displaynamedes' | translate }}</span>
-      </div> -->
         <ion-item lines="none">
             <ion-label position="stacked">{{ 'CreatenewfeedPage.description' | translate }}</ion-label>
-            <ion-input clearInput class="content-value" [placeholder]="'CreatenewfeedPage.inputFeedDesc'|translate" [(ngModel)] ="channelDes"></ion-input>
+            <ion-input clearInput class="content-value" [placeholder]="'CreatenewfeedPage.inputFeedDesc'|translate" [(ngModel)] ="channelDes" [disabled]="isShowUpdateContratct"></ion-input>
         </ion-item>
 
-        <!-- <ion-item lines="none">
+        <ion-item lines="none" *ngIf="isShowTippingAddress">
           <ion-label position="stacked">{{ 'CreatenewfeedPage.tippingAddress' | translate }}</ion-label>
-            <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.tippingAddressDes'|translate}}"  [(ngModel)]="tippingAddress"></ion-input>
+            <ion-input clearInput required type="text" placeholder="{{'CreatenewfeedPage.tippingAddressDes'|translate}}"  [(ngModel)]="tippingAddress" [disabled]="isShowUpdateContratct"></ion-input>
             <img class="qrCodeLine" src="./assets/images/qrCodeLine.svg" *ngIf="tippingAddress==='' || tippingAddress===null" (click)="scanWalletAddress()">
-        </ion-item> -->
+        </ion-item>
 
     </ion-list>
-
-    <ion-row class="btn-row">
+    <ion-row class="btn-row" *ngIf="!isShowUpdateContratct">
       <ion-button (click)="confirm()" [disabled]="clickButton">
           <ion-label *ngIf="!clickButton"> {{'common.save'|translate}}</ion-label>
           <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
       </ion-button>
     </ion-row>
-
+    <span *ngIf="isShowUpdateContratct" class="twitterInfo">{{ 'EidtchannelPage.updateChannelDesc2' | translate}} </span>
+    <ion-row class="btn-row" *ngIf="isShowUpdateContratct">
+      <ion-button (click)="confirm()" [disabled]="clickButton">
+          <ion-label *ngIf="!clickButton"> {{'EidtchannelPage.updateChannelDesc3'|translate}}</ion-label>
+          <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
+      </ion-button>
+    </ion-row>
   </ion-grid>
 </ion-content>
 <app-nftloading

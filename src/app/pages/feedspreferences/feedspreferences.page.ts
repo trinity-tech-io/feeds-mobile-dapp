@@ -175,25 +175,33 @@ export class FeedspreferencesPage implements OnInit {
       that.popupProvider.showSelfCheckDialog('FeedspreferencesPage.burningNFTSTimeoutDesc');
     }, Config.WAIT_TIME_BURN_NFTS);
 
-    let tokenId = '0x'+this.channelId;
+    let tokenId = '0x'+that.channelId;
 
     that.nftContractControllerService.getChannel()
       .burnChannel(tokenId)
       .then(() => {
         that.nftContractControllerService.getChannel().cancelBurnProcess();
-        this.zone.run(()=>{
-          this.curFeedPublicStatus = false;
+        that.zone.run(()=>{
+          that.curFeedPublicStatus = false;
         })
         that.isLoading = false;
         clearTimeout(sId);
         let channelCollectionPageList = that.dataHelper.getChannelCollectionPageList() || [];
         let channelIndex =_.findIndex(channelCollectionPageList,(channel: FeedsData.ChannelV3)=>{
-              return this.destDid === channel.destDid && this.channelId === channel.channelId;
+              return that.destDid === channel.destDid && that.channelId === channel.channelId;
         })
         if(channelIndex > -1 ){
           channelCollectionPageList.splice(channelIndex,1);
           that.dataHelper.setChannelCollectionPageList(channelCollectionPageList)
         }
+
+       let channelContractInfoList = that.dataHelper.getChannelContractInfoList() || {};
+       let channelContractInfo = channelContractInfoList[that.channelId] || "";
+       if(channelContractInfo != ""){
+          delete channelContractInfoList[this.channelId];
+          that.dataHelper.setChannelContractInfoList(channelContractInfoList);
+          that.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
+       }
         that.native.toast("FeedspreferencesPage.burnNFTSSuccess");
         let channelPublicStatusList = that.dataHelper.getChannelPublicStatusList();
         let key = that.destDid +'-'+that.channelId;

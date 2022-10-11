@@ -635,7 +635,10 @@ export const zh = {
     updateChannelDesc: '正在更新频道收藏品，请稍候',
     updateChannelTimeoutDesc: '更新频道收藏品超时，稍后您可自行确认',
     updateChannelSuccess: '已成功更新频道收藏品',
-    updateChannelFailed: '更新频道收藏品失败'
+    updateChannelFailed: '更新频道收藏品失败',
+    updateChannelDesc1: '更新频道，请稍候',
+    updateChannelDesc2: '当前频道与公开的频道的不一致，请及时同步数据',
+    updateChannelDesc3: '同步数据'
   },
   EditPostPage: {
     title: '编辑微说',

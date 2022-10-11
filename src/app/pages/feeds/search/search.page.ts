@@ -65,7 +65,6 @@ export class SearchPage implements OnInit {
   private panelPageNum: number = 1;//页码
   private confirmdialog = null;
 
-  private displayName: string = '';
   private toBeSubscribeddestDid: string = '';
   private toBeSubscribedChannelId: string = '';
   public isBorderGradient: boolean = false;
@@ -75,6 +74,7 @@ export class SearchPage implements OnInit {
   private searchIsLoadimage: any = {};
   private chanCollectionSid: any = null;
   private handleDisplayNameMap: any = {};
+  private displayNameIsLoadMap: any = {};
   /**
    * 1. feeds netWork
    * 2. chenrong
@@ -236,7 +236,7 @@ export class SearchPage implements OnInit {
   ionViewWillLeave() {
     this.removeObserveList();
     this.removeSubscribe();
-    this.handleDisplayNameMap = {};
+    this.displayNameIsLoadMap = {};
     this.searchIsLoadimage = {};
     this.events.unsubscribe(FeedsEvent.PublishType.search);
   }
@@ -473,7 +473,7 @@ export class SearchPage implements OnInit {
     this.clearChanCollectionSid();
     this.chanCollectionSid = setTimeout(() => {
       this.searchIsLoadimage = {};
-      this.handleDisplayNameMap = {};
+      this.displayNameIsLoadMap = {};
       this.getSearchObserverList(list);
       this.clearChanCollectionSid();
     }, 100);
@@ -657,8 +657,9 @@ export class SearchPage implements OnInit {
   }
 
   getDisplayName(destDid: string, channelId: string, userDid: string) {
-    let displayNameMap = this.handleDisplayNameMap[userDid] || '';
+    let displayNameMap = this.displayNameIsLoadMap[userDid] || '';
     if (displayNameMap === "") {
+      this.displayNameIsLoadMap[userDid] = "11";
       let text = destDid.replace('did:elastos:', '');
       this.handleDisplayNameMap[userDid] = UtilService.shortenAddress(text);
       try {

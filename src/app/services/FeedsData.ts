@@ -1108,4 +1108,15 @@ declare namespace FeedsData {
     avatar: string,
     bio: string
   }
+
+  type ChannelContractInfo = {
+    description: string, //频道描述
+    cname: string, //displayName
+    avatar: string, //频道头像
+    receiptAddr: string, //频道打赏地址
+    tokenId: string,
+    tokenUri: string,
+    channelEntry: string
+    ownerAddr: string
+  }
 }
