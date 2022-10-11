@@ -12,6 +12,7 @@ import { FileHelperService } from './FileHelperService';
 import _ from 'lodash';
 import { Config } from './config';
 import { VaultNotFoundException } from '@elastosfoundation/hive-js-sdk';
+import { DIDHelperService } from 'src/app/services/did_helper.service';
 
 const TAG = 'HiveVaultController';
 
@@ -25,7 +26,7 @@ export class HiveVaultController {
     private eventBus: Events,
     private twitterService: TwitterService,
     private redditService: RedditService,
-
+    private didHelper: DIDHelperService,
   ) {
   }
 
@@ -2206,6 +2207,100 @@ export class HiveVaultController {
         }
       } catch (error) {
         reject(error);
+      }
+    });
+  }
+
+  getUserProfile(userDid: string): Promise<FeedsData.UserProfile> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const user: FeedsData.UserProfile = await this.dataHelper.getUserProfileData(userDid)
+        if (!user) {
+          const displayName = await this.dataHelper.getDisplayNameByUserDid(userDid);
+          const newUser: FeedsData.UserProfile = {
+            did: userDid,
+            resolvedName: '',
+            resolvedAvatar: '',
+            resolvedBio: '',
+            displayName: displayName,
+            name: '',
+            avatar: '',
+            bio: ''
+          }
+
+          resolve(newUser);
+          return;
+        }
+        resolve(user);
+      } catch (error) {
+      }
+    });
+  }
+
+  syncUserProfileFromSubscribedChannel() {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        // resolve();  
+      } catch (error) {
+
+      }
+    });
+  }
+
+  syncUserProfileFromDidDocument(userDid: string): Promise<FeedsData.UserProfile> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userProfile = await this.didHelper.resolveUserProfile(userDid);
+
+        if (!userProfile) {
+          const originUserProfile = await this.dataHelper.getUserProfileData(userDid) || null;
+          resolve(originUserProfile);
+          Logger.warn(TAG, 'Resolve user profile result is null');
+          return;
+        }
+
+        const resolvedAvatar = userProfile.avatar;
+        const resolvedName = userProfile.name;
+        const resolvedDescrpition = userProfile.description;
+
+        let originUserProfile = await this.dataHelper.getUserProfileData(userDid) || null;
+
+        let originName = '';
+        let originDisplayName = '';
+        let originAvatar = '';
+        let originBio = '';
+
+        if (originUserProfile) {
+          originName = originUserProfile.name;
+          originDisplayName = originUserProfile.displayName;
+          originAvatar = originUserProfile.avatar;
+          originBio = originUserProfile.bio;
+        }
+
+        const newUserProfile: FeedsData.UserProfile = {
+          did: userDid,
+          resolvedName: resolvedName,
+          resolvedAvatar: resolvedAvatar,
+          resolvedBio: resolvedDescrpition,
+          displayName: originDisplayName,
+          name: originName,
+          avatar: originAvatar,
+          bio: originBio
+        }
+        this.dataHelper.addUserProfile(newUserProfile);
+        resolve(newUserProfile);
+      } catch (error) {
+
+      }
+    });
+  }
+
+  syncUserProfileFromHive(userDid: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        //TODO
+      } catch (error) {
       }
     });
   }

@@ -3221,7 +3221,26 @@ export class DataHelper {
         Logger.error(TAG, 'Update subscriptions error', error);
         reject(error)
       }
-    })
+    });
+  }
+
+  getDisplayNameByUserDid(userDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const displayName = await this.sqliteHelper.queryDisplayNameByUserDid(selfDid, userDid) || '';
+        if (!displayName) {
+          resolve('');
+          return;
+        }
+
+        resolve(displayName);
+      }
+      catch (error) {
+        Logger.error(TAG, 'get subscription displayName error', error);
+        reject(error)
+      }
+    });
   }
 
   addChannel(newChannel: FeedsData.ChannelV3): Promise<string> {
@@ -4384,14 +4403,14 @@ export class DataHelper {
     return this.userList
   }
 
-  addUser(newUser: FeedsData.User) {
+  addUserProfile(newUser: FeedsData.UserProfile): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
         let isNew: boolean = false;
-        let originUser: FeedsData.User = await this.getUserData(newUser.did) || null;
+        let originUser: FeedsData.UserProfile = await this.getUserProfileData(newUser.did) || null;
         if (!originUser) {
           try {
-            await this.addUser(newUser);
+            await this.addUserProfileData(newUser);
             isNew = true;
           } catch (error) {
           }
@@ -4401,17 +4420,17 @@ export class DataHelper {
             resolve(isNew);
             return;
           }
-          await this.updateUserData(newUser);
+          await this.updateUserProfileData(newUser);
         }
         resolve(isNew);
       } catch (error) {
-        Logger.error(TAG, 'Add post error', error);
+        Logger.error(TAG, 'Add user error', error);
         reject(error);
       }
     });
   }
 
-  private addUserData(user: FeedsData.User) {
+  private addUserProfileData(user: FeedsData.UserProfile) {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -4423,7 +4442,7 @@ export class DataHelper {
     });
   }
 
-  private updateUserData(user: FeedsData.User) {
+  private updateUserProfileData(user: FeedsData.UserProfile) {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -4435,7 +4454,7 @@ export class DataHelper {
     });
   }
 
-  getUserData(userDid: string): Promise<FeedsData.User> {
+  getUserProfileData(userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;

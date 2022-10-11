@@ -1098,7 +1098,7 @@ declare namespace FeedsData {
     refresh_token: string
   }
 
-  type User = {
+  type UserProfile = {
     did: string,
     resolvedName: string,
     resolvedAvatar: string,

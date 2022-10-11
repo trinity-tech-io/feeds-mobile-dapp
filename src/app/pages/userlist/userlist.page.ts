@@ -86,28 +86,34 @@ export class UserlistPage implements OnInit {
   resolveData(userDid: string) {
     this.didHelper.resolveNameAndAvatarFromDidDocument(userDid).then((result: { name: string, avatar: string }) => {
       console.log('resolveData====>', userDid, result.name, result.avatar);
-      if (result.name) {
-        this.setUserName(userDid, result.name);
-      } else {
-        this.userNameMap[userDid] = "common.unknown";
-      }
-
-      const avatarUrl = result.avatar;
-      if (avatarUrl) {
-        let fileName: string = userDid.replace('did:elastos:', '');
-        this.hiveVaultController.getV3HiveUrlData(userDid, avatarUrl, fileName)
-          .then((image) => {
-            this.setUserAvatar(userDid, image);
-          }).catch((err) => {
-            this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
-          })
-      } else {
-        this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
-      }
+      this.setUserNameUI(userDid, result.name);
+      this.setAvatarUI(userDid, result.avatar);
     }).catch((err) => {
       this.userNameMap[userDid] = "common.unknown";
       this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
     });
+  }
+
+  setUserNameUI(userDid: string, name: string) {
+    if (name) {
+      this.setUserName(userDid, name);
+    } else {
+      this.userNameMap[userDid] = "common.unknown";
+    }
+  }
+
+  setAvatarUI(userDid: string, avatarUrl: string) {
+    if (avatarUrl) {
+      let fileName: string = userDid.replace('did:elastos:', '');
+      this.hiveVaultController.getV3HiveUrlData(userDid, avatarUrl, fileName)
+        .then((image) => {
+          this.setUserAvatar(userDid, image);
+        }).catch((err) => {
+          this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
+        })
+    } else {
+      this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
+    }
   }
 
   setUserAvatar(userDid: string, avatar = './assets/images/default-contact.svg') {

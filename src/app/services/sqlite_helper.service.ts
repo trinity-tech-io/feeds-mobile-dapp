@@ -736,7 +736,35 @@ export class FeedsSqliteHelper {
         Logger.log(TAG, 'query subscription Num by channel id result is', num);
         resolve(num);
       } catch (error) {
-        Logger.error(TAG, 'query subscription num By ID  error', error);
+        Logger.error(TAG, 'query subscription num by channel id error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryDisplayNameByUserDid(dbUserDid: string, userDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE user_did=?'
+        const params = [userDid];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const subscriptions = this.parseSubscriptionData(result);
+
+        if (!subscriptions || subscriptions.length == 0) {
+          resolve('');
+          return;
+        }
+
+        const subscription = subscriptions[0];
+        if (!subscription || !subscription.displayName) {
+          resolve('');
+          return;
+        }
+
+        Logger.log(TAG, 'query subscription displayName by userdid result is', subscription.displayName);
+        resolve(subscription.displayName);
+      } catch (error) {
+        Logger.error(TAG, 'query subscription displayName by userdid error', error);
         reject(error);
       }
     });
@@ -1123,7 +1151,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertUserData(dbUserDid: string, user: FeedsData.User): Promise<string> {
+  insertUserData(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_USER
@@ -1142,7 +1170,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  updateUserData(dbUserDid: string, user: FeedsData.User): Promise<string> {
+  updateUserData(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_USER
@@ -1159,7 +1187,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryUserDataById(dbUserDid: string, userDid: string): Promise<FeedsData.User> {
+  queryUserDataById(dbUserDid: string, userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_USER + 'WHERE did=?';
@@ -1596,12 +1624,12 @@ export class FeedsSqliteHelper {
     return list;
   }
 
-  parseUserData(result: any): FeedsData.User[] {
+  parseUserData(result: any): FeedsData.UserProfile[] {
     Logger.log(TAG, 'Parse user result from sql, result is', result);
     if (!result) {
       return [];
     }
-    let list: FeedsData.User[] = [];
+    let list: FeedsData.UserProfile[] = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
 
@@ -1614,7 +1642,7 @@ export class FeedsSqliteHelper {
       const avatar = element['avatar'];
       const bio = element['bio'];
 
-      let user: FeedsData.User = {
+      let user: FeedsData.UserProfile = {
         did: did,
         resolvedName: resolvedName,
         resolvedAvatar: resolvedAvatar,

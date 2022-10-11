@@ -223,6 +223,40 @@ export class DIDHelperService {
     });
   }
 
+  resolveDiscriptionFromDidDocument(didDocument: DIDDocument): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const emptyDescription = '';
+      try {
+        if (!didDocument) {
+          Logger.warn(TAG, 'Get DIDDocument from did error');
+          resolve(emptyDescription);
+          return;
+        }
+
+        const descriptionCredential = didDocument.getCredential("#description");
+        if (!descriptionCredential) {
+          Logger.warn(TAG, 'Get description credential from did error');
+          resolve(emptyDescription);
+          return;
+        }
+
+        const avatarSubject = descriptionCredential.getSubject() || null;
+        if (!avatarSubject) {
+          Logger.warn(TAG, 'Get description subject from did error');
+          resolve(emptyDescription);
+          return;
+        }
+        const description = avatarSubject.getProperty('description');
+        resolve(description);
+      } catch (error) {
+        const errorMsg = 'Resolve DidDocument error';
+        Logger.error(TAG, errorMsg, error);
+        reject(error);
+      }
+    });
+  }
+
+
   resolveNameAndAvatarFromDidDocument(userDid: string): Promise<{ name: string, avatar: string }> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -231,6 +265,24 @@ export class DIDHelperService {
         const avatar = await this.resolveAvatarFromDidDocument(didDocument);
 
         const resultObj = { name: name, avatar: avatar };
+
+        resolve(resultObj);
+      } catch (error) {
+        Logger.error(TAG, 'Parse jwt error', error);
+        reject(error);
+      }
+    });
+  }
+
+  resolveUserProfile(userDid: string): Promise<{ name: string, avatar: string, description: string }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const didDocument = await this.resolveDidDocument(userDid);
+        const name = await this.resolveNameFromDidDocument(didDocument);
+        const avatar = await this.resolveAvatarFromDidDocument(didDocument);
+        const description = await this.resolveDiscriptionFromDidDocument(didDocument);
+
+        const resultObj = { name: name, avatar: avatar, description: description };
 
         resolve(resultObj);
       } catch (error) {
