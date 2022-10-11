@@ -225,7 +225,7 @@ export class HiveVaultHelper {
                     "regist_scripting": registScripting,
                 }
                 const option = new UpdateOptions(false, true)
-                let filter = { "laster_version": lasterVersion };
+                let filter = {};
                 let update = { "$set": doc };
 
                 const updateResult = await this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_FEEDS_SCRIPTING, filter, update, option);
