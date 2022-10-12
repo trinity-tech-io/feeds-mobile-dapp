@@ -36,7 +36,7 @@
     </ion-row>
     <span *ngIf="isShowUpdateContratct" class="twitterInfo">{{ 'EidtchannelPage.updateChannelDesc2' | translate}} </span>
     <ion-row class="btn-row" *ngIf="isShowUpdateContratct">
-      <ion-button (click)="confirm()" [disabled]="clickButton">
+      <ion-button (click)="updateContratct()" [disabled]="clickButton">
           <ion-label *ngIf="!clickButton"> {{'EidtchannelPage.updateChannelDesc3'|translate}}</ion-label>
           <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
       </ion-button>

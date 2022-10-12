@@ -84,13 +84,21 @@ export class EidtchannelPage implements OnInit {
     this.oldChannelAvatar = this.dataHelper.getProfileIamge();
     let avatarBase64 =  await this.handleIpfsChannelAvatar(this.oldChannelAvatar);
     this.avatarHash =  SparkMD5.hash(avatarBase64);
-    console.log("this.avatarHash",this.avatarHash);
     let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
     this.channelContratctInfo = channelContractInfoList[this.channelId] || null;
+
     if(this.channelContratctInfo === null){
       this.channelContratctInfo = await this.getChannelContratctInfo(this.channelId) || null;
     }
-    if(this.channelContratctInfo != null){
+
+    if(this.channelContratctInfo === "unPublic"){
+      channelContractInfoList[this.channelId] = this.channelContratctInfo;
+      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
+      return;
+    }
+
+    if(this.channelContratctInfo != null && this.channelContratctInfo != "unPublic"){
       channelContractInfoList[this.channelId] = this.channelContratctInfo;
       this.dataHelper.setChannelContractInfoList(channelContractInfoList);
       this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
@@ -157,7 +165,7 @@ export class EidtchannelPage implements OnInit {
       return;
     }
 
-    if(this.channelContratctInfo != null){
+    if(this.channelContratctInfo != null && this.channelContratctInfo != "unPublic" ){
       let walletAddress = this.walletConnectControllerService.getAccountAddress() || "";
       if(walletAddress === ""){
         this.walletConnectControllerService.connect();
@@ -171,7 +179,7 @@ export class EidtchannelPage implements OnInit {
       this.clickButton = true;
 
       this.loadingCurNumber = "1";
-      if(this.channelContratctInfo != null){
+      if(this.channelContratctInfo != null && this.channelContratctInfo != "unPublic"){
         this.loadingMaxNumber = "3";
       }else{
         this.loadingMaxNumber = "1";
@@ -252,7 +260,7 @@ export class EidtchannelPage implements OnInit {
 
         this.isClickConfirm = true;
         this.clickButton = false;
-        if(this.channelContratctInfo != null){
+        if(this.channelContratctInfo != null && this.channelContratctInfo != "unPublic"){
           this.handleUpdateChannel();
         }else{
          this.isLoading = false;
@@ -380,12 +388,11 @@ export class EidtchannelPage implements OnInit {
         let avatarBase64 = await UtilService.blobToDataURL(avatar);
         const hash = SparkMD5.hash(avatarBase64);
         channelContratctInfo.avatar = hash;
-        console.log("=========channelContratctInfo",JSON.stringify(channelContratctInfo));
         this.native.hideLoading();
         return channelContratctInfo;
       }
       this.native.hideLoading();
-      return null;
+      return "unPublic";
     } catch (error) {
       this.native.hideLoading();
       return null;
@@ -400,22 +407,37 @@ export class EidtchannelPage implements OnInit {
       clearTimeout(sId);
       this.popupProvider.showSelfCheckDialog('EidtchannelPage.updateChannelTimeoutDesc');
     }, Config.WAIT_TIME_BURN_NFTS);
+    if(this.isShowUpdateContratct){
+      this.loadingCurNumber = "1";
+      this.loadingText = "common.uploadingData";
+      this.loadingMaxNumber = "2";
+      this.isLoading = true;
+    }else{
+      this.loadingCurNumber = "2";
+      this.loadingText = "common.uploadingData";
+    }
 
-    this.loadingCurNumber = "2";
-    this.loadingText = "common.uploadingData";
-    this.isLoading = true;
 
     let tokenId = '0x'+this.channelId;
     let receiptAddr = this.tippingAddress || '';
     this.uploadData()
     .then(async (result) => {
       Logger.log(TAG, 'Upload Result', result);
-      this.loadingCurNumber = "2";
-      this.loadingText = "common.uploadDataSuccess";
-
+      if(this.isShowUpdateContratct){
+        this.loadingCurNumber = "1";
+        this.loadingText = "common.uploadDataSuccess";
+      }else{
+        this.loadingCurNumber = "2";
+        this.loadingText = "common.uploadDataSuccess";
+      }
       let tokenUri = result.jsonHash;
-      this.loadingCurNumber = "3";
-      this.loadingText = "EidtchannelPage.updateChannelDesc";
+      if(this.isShowUpdateContratct){
+        this.loadingCurNumber = "2";
+        this.loadingText = "EidtchannelPage.updateChannelDesc";
+      }else{
+        this.loadingCurNumber = "3";
+        this.loadingText = "EidtchannelPage.updateChannelDesc";
+      }
       return this.updateChannelContract(tokenId, tokenUri, receiptAddr);
     }).then(async ()=>{
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
@@ -438,6 +460,7 @@ export class EidtchannelPage implements OnInit {
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
       this.isLoading = false;
       clearTimeout(sId);
+      this.isShowUpdateContratct = true;
       this.native.toastWarn("EidtchannelPage.updateChannelFailed");
     });
   }
@@ -574,5 +597,24 @@ export class EidtchannelPage implements OnInit {
       let avatarBase64 = await UtilService.blobToDataURL(avatar);
       return avatarBase64;
     }
+  }
+
+  updateContratct() {
+    let connect = this.dataHelper.getNetworkStatus();
+    if (connect === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    if(this.channelContratctInfo != null && this.channelContratctInfo != "unPublic"){
+      let walletAddress = this.walletConnectControllerService.getAccountAddress() || "";
+      if(walletAddress === ""){
+        this.walletConnectControllerService.connect();
+        return;
+      }
+    }
+    this.isClickConfirm = false;
+    this.clickButton = true;
+    this.handleUpdateChannel();
   }
 }

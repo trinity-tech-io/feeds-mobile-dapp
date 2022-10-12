@@ -22,7 +22,8 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { CommonPageService } from 'src/app/services/common.page.service';
 import { MorenameComponent } from 'src/app/components/morename/morename.component';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
-
+import SparkMD5 from 'spark-md5';
+import { IPFSService } from 'src/app/services/ipfs.service';
 let TAG: string = 'Feeds-feeds';
 @Component({
   selector: 'app-channels',
@@ -141,6 +142,7 @@ export class ChannelsPage implements OnInit {
   public isFullPost: boolean = false;
   private infoPopover: any = null;
   private userDidList: string[] = []; //userdid list
+  public channelPublicStatusList: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -159,7 +161,8 @@ export class ChannelsPage implements OnInit {
     private feedsServiceApi: FeedsServiceApi,
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
-    private nftContractControllerService: NFTContractControllerService
+    private nftContractControllerService: NFTContractControllerService,
+    private ipfsService: IPFSService
   ) { }
 
   async subscribe() {
@@ -522,18 +525,10 @@ export class ChannelsPage implements OnInit {
       this.isRefresh = true;
       this.initRefresh();
     })
-    //let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    //if(this.destDid === ownerDid){
-    try {
-      let channelInfo = await this.getChannelInfo(this.channelId) || null;
-      if (channelInfo != null) {
-        this.tippingAddress = channelInfo[3] || '';
-      }
-    } catch (error) {
-
+    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    if (this.destDid === ownerDid) {
+      this.getChannelPublicStatus(this.destDid, this.channelId);
     }
-    // }
-
   }
 
   ionViewWillLeave() {
@@ -1604,6 +1599,70 @@ export class ChannelsPage implements OnInit {
     } catch (error) {
       return null;
     }
+  }
+
+  getChannelPublicStatus(destDid: string, channelId: string) {
+    this.channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
+    let key = destDid + '-' + channelId;
+    let channelPublicStatus = this.channelPublicStatusList[key] || '';
+    if (channelPublicStatus === '') {
+      this.getChannelInfo(channelId).then((channelInfo) => {
+        if (channelInfo != null) {
+          this.channelPublicStatusList[key] = "2";//已公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelContractInfoCache(channelInfo, channelId);
+
+        } else {
+          this.channelPublicStatusList[key] = "1";//未公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelContractInfoCache(null, channelId);
+        }
+      }).catch((err) => {
+
+      });
+
+    }
+  }
+
+  async addChannelContractInfoCache(channelInfo: any, channelId: string) {
+    if (channelInfo === null) {
+      let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+      channelContractInfoList[channelId] = "unPublic";
+      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+      return;
+    }
+    let channelContratctInfo: FeedsData.ChannelContractInfo = {
+      description: '',
+      cname: '',
+      avatar: '',
+      receiptAddr: '',
+      tokenId: '',
+      tokenUri: '',
+      channelEntry: '',
+      ownerAddr: ''
+    };
+    channelContratctInfo.tokenId = channelInfo[0];
+    channelContratctInfo.tokenUri = channelInfo[1];
+    channelContratctInfo.channelEntry = channelInfo[2];
+    channelContratctInfo.receiptAddr = channelInfo[3];
+    channelContratctInfo.ownerAddr = channelInfo[4];
+    let uri = channelInfo[1].replace('feeds:json:', '');
+    let result: any = await this.ipfsService
+      .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+    channelContratctInfo.description = result.description;
+    channelContratctInfo.cname = result.data.cname;
+    let avatarUri = result.data.avatar.replace('feeds:image:', '');
+    let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl() + avatarUri);
+    let avatarBase64 = await UtilService.blobToDataURL(avatar);
+    const hash = SparkMD5.hash(avatarBase64);
+    channelContratctInfo.avatar = hash;
+    let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+    channelContractInfoList[channelId] = channelContratctInfo;
+    this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+    this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
   }
 
 }

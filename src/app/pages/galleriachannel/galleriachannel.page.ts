@@ -17,6 +17,7 @@ import { Params, ActivatedRoute } from '@angular/router';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { FeedService } from 'src/app/services/FeedService';
+import SparkMD5 from 'spark-md5';
 
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
@@ -200,9 +201,33 @@ export class GalleriachannelPage implements OnInit {
                 return this.destDid === channel.destDid && this.channelId === channel.channelId;
           })
           if(channelIndex === -1 ){
-            channelCollectionPageList.push(this.channel);
+            channelCollectionPageList.unshift(this.channel);
             this.dataHelper.setChannelCollectionPageList(channelCollectionPageList)
           }
+          // add channelContracts Info Cache
+          let channelContratctInfo: FeedsData.ChannelContractInfo = {
+            description: '',
+            cname: '',
+            avatar: '',
+            receiptAddr: '',
+            tokenId: '',
+            tokenUri: '',
+            channelEntry: '',
+            ownerAddr: ''
+          };
+          channelContratctInfo.description = this.nftDescription;
+          channelContratctInfo.cname = this.displayName;
+          channelContratctInfo.receiptAddr = this.receiptAddr;
+          channelContratctInfo.channelEntry = this.channelEntry;
+          channelContratctInfo.ownerAddr = this.ownerAddr;
+          channelContratctInfo.tokenUri = this.tokenUri;
+          channelContratctInfo.tokenId = this.getTokenId();
+          let hash = SparkMD5.hash(this.realFile);
+          channelContratctInfo.avatar = hash;
+          let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+          channelContractInfoList[this.channelId] = channelContratctInfo;
+          this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+          this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
           this.showSuccessDialog();
           this.clearMintSid();
       })

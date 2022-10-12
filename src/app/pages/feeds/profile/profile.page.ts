@@ -30,7 +30,7 @@ import { FeedService } from 'src/app/services/FeedService';
 import { CommonPageService } from 'src/app/services/common.page.service';
 import { FeedsPage } from '../feeds.page';
 import { Config } from 'src/app/services/config';
-
+import SparkMD5 from 'spark-md5';
 let TAG: string = 'Feeds-profile';
 
 @Component({
@@ -2572,14 +2572,58 @@ export class ProfilePage implements OnInit {
         if (channelInfo != null) {
           this.channelPublicStatusList[key] = "2";//已公开
           this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelContractInfoCache(channelInfo,channelId);
+
         } else {
           this.channelPublicStatusList[key] = "1";//未公开
           this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelContractInfoCache(null,channelId);
         }
       }).catch((err)=>{
 
       });
 
     }
+  }
+
+  async addChannelContractInfoCache(channelInfo:any,channelId: string) {
+    if(channelInfo === null){
+      let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+      channelContractInfoList[channelId] = "unPublic";
+      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
+       return;
+    }
+    let channelContratctInfo: FeedsData.ChannelContractInfo = {
+      description: '',
+      cname: '',
+      avatar: '',
+      receiptAddr: '',
+      tokenId: '',
+      tokenUri: '',
+      channelEntry: '',
+      ownerAddr: ''
+    };
+   channelContratctInfo.tokenId = channelInfo[0];
+   channelContratctInfo.tokenUri = channelInfo[1];
+   channelContratctInfo.channelEntry = channelInfo[2];
+   channelContratctInfo.receiptAddr = channelInfo[3];
+   channelContratctInfo.ownerAddr = channelInfo[4];
+   let uri = channelInfo[1].replace('feeds:json:', '');
+   let result:any = await this.ipfsService
+     .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+   channelContratctInfo.description = result.description;
+   channelContratctInfo.cname = result.data.cname;
+   let avatarUri = result.data.avatar.replace('feeds:image:', '');
+   let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl()+avatarUri);
+   let avatarBase64 = await UtilService.blobToDataURL(avatar);
+   const hash = SparkMD5.hash(avatarBase64);
+   channelContratctInfo.avatar = hash;
+   let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+   channelContractInfoList[channelId] = channelContratctInfo;
+   this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+   this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
   }
 }
