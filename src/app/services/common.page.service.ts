@@ -32,31 +32,31 @@ export class CommonPageService {
   ) {
     try {
 
-        let arr = id.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let commentId = arr[3];
-        let userDid = arr[4];
-        let isInit = isInitUserNameMap[commentId] || '';
-        if (isInit === '') {
-          if (destDid === userDid) {
-            isInitUserNameMap[commentId] = "11";
-            userNameMap[destDid] = channelName;
-            return;
-          }
-
-          userNameMap[userDid] = this.indexText(userDid);
+      let arr = id.split('-');
+      let destDid = arr[0];
+      let channelId = arr[1];
+      let commentId = arr[3];
+      let userDid = arr[4];
+      let isInit = isInitUserNameMap[commentId] || '';
+      if (isInit === '') {
+        if (destDid === userDid) {
           isInitUserNameMap[commentId] = "11";
-          hiveVaultController.getDisplayName(destDid, channelId, userDid).
-            then((result: string) => {
-              let name = result || "";
-              if (name != "") {
-                userNameMap[userDid] = name;
-              }
-            }).catch(() => {
-              userNameMap[userDid] = this.indexText(userDid);
-            });
+          userNameMap[destDid] = channelName;
+          return;
         }
+
+        userNameMap[userDid] = this.indexText(userDid);
+        isInitUserNameMap[commentId] = "11";
+        hiveVaultController.getDisplayName(destDid, channelId, userDid).
+          then((result: string) => {
+            let name = result || "";
+            if (name != "") {
+              userNameMap[userDid] = name;
+            }
+          }).catch(() => {
+            userNameMap[userDid] = this.indexText(userDid);
+          });
+      }
 
     } catch (error) {
     }
@@ -66,7 +66,7 @@ export class CommonPageService {
     text = text || "";
     if (text != '') {
       text = text.replace('did:elastos:', '');
-      return UtilService.resolveAddress(text);
+      return UtilService.shortenAddress(text);
     }
   }
 
@@ -245,12 +245,12 @@ export class CommonPageService {
     isLoadingLikeMap: any
   ) {
 
-        let isInit = isInitLikeStatus[postId] || '';
-        if (isInit === '') {
-          isInitLikeStatus[postId] = "11";
-          this.initPostLikeStatusData(destDid, channelId, postId,
-            isLoadingLikeMap, hiveVaultController, likeMap, isInitLikeStatus);
-        }
+    let isInit = isInitLikeStatus[postId] || '';
+    if (isInit === '') {
+      isInitLikeStatus[postId] = "11";
+      this.initPostLikeStatusData(destDid, channelId, postId,
+        isLoadingLikeMap, hiveVaultController, likeMap, isInitLikeStatus);
+    }
   }
 
   static initPostLikeStatusData(
@@ -286,9 +286,9 @@ export class CommonPageService {
   ) {
     let isInit = isInitLikeNum[postId] || '';
     if (isInit === '') {
-    isInitLikeNum[postId] = "11";
-    this.initPostLikeNumData(destDid, channelId, postId,
-      hiveVaultController, likeNumMap, isInitLikeNum);
+      isInitLikeNum[postId] = "11";
+      this.initPostLikeNumData(destDid, channelId, postId,
+        hiveVaultController, likeNumMap, isInitLikeNum);
     }
   }
 
@@ -317,13 +317,13 @@ export class CommonPageService {
     hiveVaultController: any,
     isInitComment: any, commentNumMap: any
   ) {
-      let isInit = isInitComment[postId] || '';
-      if (isInit === '') {
-        isInitComment[postId] = "11";
-        this.initPostCommentData(destDid, channelId, postId,
-          hiveVaultController, isInitComment, commentNumMap
-        );
-      }
+    let isInit = isInitComment[postId] || '';
+    if (isInit === '') {
+      isInitComment[postId] = "11";
+      this.initPostCommentData(destDid, channelId, postId,
+        hiveVaultController, isInitComment, commentNumMap
+      );
+    }
   }
   static initPostCommentData(destDid: string, channelId: string, postId: string,
     hiveVaultController: any, isInitComment: any, commentNumMap: any
@@ -349,25 +349,25 @@ export class CommonPageService {
   ) {
     try {
 
-        let arr = id.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let commentId = arr[3];
-        let isInit = isInitLikeStatus[commentId] || '';
-        if (isInit === '') {
-          isInitLikeStatus[commentId] = "11";
-          this.initCommentLikeStatus(
-            destDid,
-            channelId,
-            postId,
-            commentId,
-            hiveVaultController,
-            isInitLikeStatus,
-            isloadingLikeMap,
-            likedCommentMap
-          );
-        }
+      let arr = id.split('-');
+      let destDid = arr[0];
+      let channelId = arr[1];
+      let postId = arr[2];
+      let commentId = arr[3];
+      let isInit = isInitLikeStatus[commentId] || '';
+      if (isInit === '') {
+        isInitLikeStatus[commentId] = "11";
+        this.initCommentLikeStatus(
+          destDid,
+          channelId,
+          postId,
+          commentId,
+          hiveVaultController,
+          isInitLikeStatus,
+          isloadingLikeMap,
+          likedCommentMap
+        );
+      }
 
     } catch (error) {
     }
@@ -413,24 +413,24 @@ export class CommonPageService {
   ) {
     try {
 
-        let arr = id.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let commentId = arr[3];
-        let isInit = isInitLikeNum[commentId] || '';
-        if (isInit === '') {
-          isInitLikeNum[commentId] = "11";
-          this.initCommnetLikeNum(
-            destDid,
-            channelId,
-            postId,
-            commentId,
-            hiveVaultController,
-            isInitLikeNum,
-            likedCommentNum,
-          );
-        }
+      let arr = id.split('-');
+      let destDid = arr[0];
+      let channelId = arr[1];
+      let postId = arr[2];
+      let commentId = arr[3];
+      let isInit = isInitLikeNum[commentId] || '';
+      if (isInit === '') {
+        isInitLikeNum[commentId] = "11";
+        this.initCommnetLikeNum(
+          destDid,
+          channelId,
+          postId,
+          commentId,
+          hiveVaultController,
+          isInitLikeNum,
+          likedCommentNum,
+        );
+      }
 
     } catch (error) {
     }
@@ -460,27 +460,26 @@ export class CommonPageService {
   }
 
   public static handleCommentNum(
-    id: string,hiveVaultController: any,
+    id: string, hiveVaultController: any,
     isInitComment: any, commentNum: any
   ) {
-    try
-      {
-        let arr = id.split('-');
-        let destDid = arr[0];
-        let channelId = arr[1];
-        let postId = arr[2];
-        let commentId = arr[3];
-        let isInit = isInitComment[commentId] || '';
-        if (isInit === '') {
-          isInitComment[commentId] = "11";
-          this.initCommentData(
-            destDid, channelId,
-            postId, commentId,
-            hiveVaultController,
-            isInitComment,
-            commentNum
-          );
-        }
+    try {
+      let arr = id.split('-');
+      let destDid = arr[0];
+      let channelId = arr[1];
+      let postId = arr[2];
+      let commentId = arr[3];
+      let isInit = isInitComment[commentId] || '';
+      if (isInit === '') {
+        isInitComment[commentId] = "11";
+        this.initCommentData(
+          destDid, channelId,
+          postId, commentId,
+          hiveVaultController,
+          isInitComment,
+          commentNum
+        );
+      }
 
     } catch (error) {
     }

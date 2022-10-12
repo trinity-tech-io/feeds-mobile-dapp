@@ -102,7 +102,7 @@ export class FeedinfoPage implements OnInit {
     //this.channelOwner = channelInfo.channelOwner || "";
 
     let text = this.destDid.replace('did:elastos:', '');
-    this.channelOwner = UtilService.resolveAddress(text);
+    this.channelOwner = UtilService.shortenAddress(text);
     try {
       this.hiveVaultController.getDisplayName(this.destDid, this.channelId, this.destDid).
         then((result: string) => {

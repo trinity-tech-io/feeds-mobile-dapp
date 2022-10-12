@@ -66,13 +66,13 @@ export class BidPage implements OnInit {
   public developerMode: boolean = false;
   public nftStatus: string = null;
   public accAddress: string = null;
-  public isLoading:boolean = false;
-  public loadingTitle:string = "common.waitMoment";
-  public loadingText:string = "common.buyingOrderDesc";
-  public loadingCurNumber:string = "1";
-  public loadingMaxNumber:string = "2";
-  public usdPrice:string = null;
-  public imageType:string = "";
+  public isLoading: boolean = false;
+  public loadingTitle: string = "common.waitMoment";
+  public loadingText: string = "common.buyingOrderDesc";
+  public loadingCurNumber: string = "1";
+  public loadingMaxNumber: string = "2";
+  public usdPrice: string = null;
+  public imageType: string = "";
   private creator: string = "";
   private isBuy: boolean = false;
   private orderCreateTime: number = null;
@@ -111,7 +111,7 @@ export class BidPage implements OnInit {
     private nftContractHelperService: NFTContractHelperService,
     private dataHelper: DataHelper,
     private videoService: VideoService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((queryParams: FeedsData.NFTItem) => {
@@ -147,11 +147,11 @@ export class BidPage implements OnInit {
             this.did = didObj.did.replace("did:elastos:", "");
             this.didDispaly = UtilService.resolveDid(this.did);
             this.handleNftDid();
-          }else{
-            this.dispalyOwer = UtilService.resolveAddress(this.seller);
+          } else {
+            this.dispalyOwer = UtilService.shortenAddress(this.seller);
           }
-        }).catch(()=>{
-          this.dispalyOwer = UtilService.resolveAddress(this.seller);
+        }).catch(() => {
+          this.dispalyOwer = UtilService.shortenAddress(this.seller);
         });
       }
 
@@ -162,24 +162,24 @@ export class BidPage implements OnInit {
         .getPasar()
         .getPasarAddress();
 
-        if(this.imageType === "video"){
-          this.videoService.intVideoAllId(TAG);
-          this.videoIdObj = this.videoService.getVideoAllId();
-        }else if(this.imageType === "audio"){
-          let ipfsUrl = this.ipfsService.getNFTGetUrl();
-          let audioInfo: FeedsData.FeedsAudio = this.curAssetItem.data || null;
-          if(audioInfo === null){
-            this.thumbnail = "";
-            return;
-          }
-          this.kind = audioInfo.kind;
-          let audioUri = audioInfo.audio;
-             audioUri = audioUri.replace('feeds:audio:', '');
-          this.assetUri = ipfsUrl + audioUri;
-        }else{
-          let version = queryParams.version || "1";
-          this.assetUri = this.handleImg(this.curAssetItem,version);
+      if (this.imageType === "video") {
+        this.videoService.intVideoAllId(TAG);
+        this.videoIdObj = this.videoService.getVideoAllId();
+      } else if (this.imageType === "audio") {
+        let ipfsUrl = this.ipfsService.getNFTGetUrl();
+        let audioInfo: FeedsData.FeedsAudio = this.curAssetItem.data || null;
+        if (audioInfo === null) {
+          this.thumbnail = "";
+          return;
         }
+        this.kind = audioInfo.kind;
+        let audioUri = audioInfo.audio;
+        audioUri = audioUri.replace('feeds:audio:', '');
+        this.assetUri = ipfsUrl + audioUri;
+      } else {
+        let version = queryParams.version || "1";
+        this.assetUri = this.handleImg(this.curAssetItem, version);
+      }
       this.fixedPrice = queryParams.fixedAmount || null;
       this.royalties = queryParams.royalties || null;
       this.saleOrderId = queryParams.saleOrderId || '';
@@ -187,17 +187,17 @@ export class BidPage implements OnInit {
     });
   }
 
- ionViewWillEnter() {
+  ionViewWillEnter() {
     let audio = document.getElementById("bid-audio") || null;
-    if(audio != null ){
+    if (audio != null) {
       this.isAudioLoading = true;
-      audio.addEventListener("loadeddata",()=>{
-         audio.style.display = "block";
-         this.isAudioLoading = false;
+      audio.addEventListener("loadeddata", () => {
+        audio.style.display = "block";
+        this.isAudioLoading = false;
       });
       audio.style.display = "none";
     }
-    this.NftDidList= this.dataHelper.getNftDidList() || {};
+    this.NftDidList = this.dataHelper.getNftDidList() || {};
     this.handleNftDid();
     this.accAddress =
       this.nftContractControllerService.getAccountAddress() || null;
@@ -205,37 +205,37 @@ export class BidPage implements OnInit {
     this.initTile();
     this.collectContractData();
     this.addEvent();
-    if(this.fixedPrice != null){
-    let elaPrice = this.dataHelper.getElaUsdPrice() || "";
-    if(elaPrice != ""){
-      let ethprice = this.nftContractControllerService.transFromWei(this.fixedPrice);
-      this.usdPrice  = UtilService.accMul(elaPrice,ethprice).toFixed(2);
-     }else{
-      this.httpService.getElaPrice().then((elaPrice)=>{
-        if(elaPrice != null){
-          let ethprice = this.nftContractControllerService.transFromWei(this.fixedPrice);
-          this.usdPrice  = UtilService.accMul(elaPrice,ethprice).toFixed(2);
-         }
-      });
+    if (this.fixedPrice != null) {
+      let elaPrice = this.dataHelper.getElaUsdPrice() || "";
+      if (elaPrice != "") {
+        let ethprice = this.nftContractControllerService.transFromWei(this.fixedPrice);
+        this.usdPrice = UtilService.accMul(elaPrice, ethprice).toFixed(2);
+      } else {
+        this.httpService.getElaPrice().then((elaPrice) => {
+          if (elaPrice != null) {
+            let ethprice = this.nftContractControllerService.transFromWei(this.fixedPrice);
+            this.usdPrice = UtilService.accMul(elaPrice, ethprice).toFixed(2);
+          }
+        });
+      }
     }
-   }
-   if(this.imageType === "video"){
-    let ipfsUrl = this.ipfsService.getNFTGetUrl();
-    let videoInfo: FeedsData.FeedsVideo = this.curAssetItem.data || null;
-    if(videoInfo === null){
-      this.thumbnail = "";
-      return;
+    if (this.imageType === "video") {
+      let ipfsUrl = this.ipfsService.getNFTGetUrl();
+      let videoInfo: FeedsData.FeedsVideo = this.curAssetItem.data || null;
+      if (videoInfo === null) {
+        this.thumbnail = "";
+        return;
+      }
+      let thumbnail = videoInfo.thumbnail;
+      this.thumbnail = thumbnail;
+      let thumbnailUri = thumbnail.replace('feeds:image:', '');
+      thumbnailUri = ipfsUrl + thumbnailUri;
+      let kind = videoInfo.kind;
+      let video = videoInfo.video;
+      let videoUri = video.replace('feeds:video:', '');
+      videoUri = ipfsUrl + videoUri;
+      this.videoService.getVideoPoster(thumbnailUri, kind, videoUri);
     }
-    let thumbnail = videoInfo.thumbnail;
-    this.thumbnail  = thumbnail;
-    let thumbnailUri = thumbnail.replace('feeds:image:', '');
-    thumbnailUri = ipfsUrl + thumbnailUri;
-    let kind = videoInfo.kind;
-    let video = videoInfo.video;
-    let videoUri = video.replace('feeds:video:', '');
-    videoUri = ipfsUrl + videoUri;
-    this.videoService.getVideoPoster(thumbnailUri,kind,videoUri);
-  }
   }
 
   ionViewWillLeave() {
@@ -245,7 +245,7 @@ export class BidPage implements OnInit {
       this.popover = null;
     }
     this.removeEvent();
-    if(this.isBuy){
+    if (this.isBuy) {
       this.event.publish(FeedsEvent.PublishType.nftBuyOrder);
     }
     this.native.handleTabsEvents();
@@ -270,7 +270,7 @@ export class BidPage implements OnInit {
     this.event.unsubscribe(FeedsEvent.PublishType.updateTitle);
   }
 
- async collectContractData() {
+  async collectContractData() {
 
     this.contractDetails = [];
 
@@ -285,7 +285,7 @@ export class BidPage implements OnInit {
     });
 
     let creatorAddress = await this.getCreatorAddress();
-    let creatorAddressDes:any = await this.handleCreatorAddress(creatorAddress)
+    let creatorAddressDes: any = await this.handleCreatorAddress(creatorAddress)
     this.contractDetails.push({
       type: creatorAddressDes,
       details: creatorAddress,
@@ -295,17 +295,17 @@ export class BidPage implements OnInit {
       details: this.seller,
     });
 
-    let tokenID = '0x'+UtilService.dec2hex(this.tokenID);
+    let tokenID = '0x' + UtilService.dec2hex(this.tokenID);
     this.contractDetails.push({
       type: 'AssetdetailsPage.tokenID',
       details: tokenID,
     });
 
-    if(this.royalties!=null){
-      let royalties = UtilService.accDiv(this.royalties,10000);
+    if (this.royalties != null) {
+      let royalties = UtilService.accDiv(this.royalties, 10000);
       this.contractDetails.push({
         type: 'AssetdetailsPage.royalties',
-        details: royalties +"%",
+        details: royalties + "%",
       });
     }
 
@@ -321,9 +321,9 @@ export class BidPage implements OnInit {
 
     let saleDes = "";
 
-    if(creatorAddress === this.seller){
+    if (creatorAddress === this.seller) {
       saleDes = "AssetdetailsPage.firstSale";
-    }else{
+    } else {
       saleDes = "AssetdetailsPage.secondarySale";
     }
 
@@ -336,7 +336,7 @@ export class BidPage implements OnInit {
     let tokenCreateTime = await this.getTokenCreateTime();
     this.contractDetails.push({
       type: 'AssetdetailsPage.dateCreated',
-      details:tokenCreateTime,
+      details: tokenCreateTime,
     });
 
     let marketDate = await this.getMarketDate();
@@ -369,21 +369,21 @@ export class BidPage implements OnInit {
       details: this.blockchain,
     });
   }
- async getTokenCreateTime() {
-    if(this.tokenCreateTime != null){
-      let createDate = new Date(this.tokenCreateTime*1000);
+  async getTokenCreateTime() {
+    if (this.tokenCreateTime != null) {
+      let createDate = new Date(this.tokenCreateTime * 1000);
       let dateCreated = UtilService.dateFormat(
-            createDate,
-            'yyyy-MM-dd HH:mm:ss',
+        createDate,
+        'yyyy-MM-dd HH:mm:ss',
       );
       return dateCreated;
     }
 
     let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
-    let createDate = new Date(parseInt(tokenInfo[6])*1000);
+    let createDate = new Date(parseInt(tokenInfo[6]) * 1000);
     let dateCreated = UtilService.dateFormat(
-          createDate,
-          'yyyy-MM-dd HH:mm:ss',
+      createDate,
+      'yyyy-MM-dd HH:mm:ss',
     );
     return dateCreated;
   }
@@ -398,39 +398,39 @@ export class BidPage implements OnInit {
 
     let orderInfo = await this.nftContractControllerService.getPasar().getOrderById(this.saleOrderId);
     let orderState = parseInt(orderInfo[2]);
-    let orderType =  orderInfo[1] || "1";
-    if(orderType === "2"){
+    let orderType = orderInfo[1] || "1";
+    if (orderType === "2") {
       this.native.toast_trans('common.auction');
-        return;
+      return;
     }
-    if(orderState === FeedsData.OrderState.SOLD){
+    if (orderState === FeedsData.OrderState.SOLD) {
       this.native.toast_trans('common.sold');
-          return;
+      return;
     }
-    if(orderState === FeedsData.OrderState.CANCELED){
+    if (orderState === FeedsData.OrderState.CANCELED) {
       this.native.toast_trans('common.offTheShelf');
-          return;
-    }
-
-    if(orderState === FeedsData.OrderState.SALEING){
-    //start loading
-    this.isLoading = true;
-    this.didUri = await this.getDidUri();
-
-    // new didUri
-    if(this.didUri === null){
-      this.native.toast("common.didUriNull");
-      this.isLoading = false;
       return;
     }
 
-    let sId = setTimeout(()=>{
-       //Buy order Timeout
-       this.nftContractControllerService.getPasar().cancelBuyOrderProcess();
-       this.isLoading = false;
-       this.showSelfCheckDialog();
-       clearTimeout(sId);
-    },Config.WAIT_TIME_BUY_ORDER)
+    if (orderState === FeedsData.OrderState.SALEING) {
+      //start loading
+      this.isLoading = true;
+      this.didUri = await this.getDidUri();
+
+      // new didUri
+      if (this.didUri === null) {
+        this.native.toast("common.didUriNull");
+        this.isLoading = false;
+        return;
+      }
+
+      let sId = setTimeout(() => {
+        //Buy order Timeout
+        this.nftContractControllerService.getPasar().cancelBuyOrderProcess();
+        this.isLoading = false;
+        this.showSelfCheckDialog();
+        clearTimeout(sId);
+      }, Config.WAIT_TIME_BUY_ORDER)
       this.nftContractHelperService.buyOrder(this.curAssetItem, this.quantity, this.didUri, (eventName: string, result: FeedsData.ContractEventResult) => {
         if (eventName == FeedsData.ContractEvent.TRANSACTION_HASH) {
           this.loadingText = 'common.queryTransactionResult';
@@ -444,12 +444,12 @@ export class BidPage implements OnInit {
         this.isBuy = true;
         this.native.pop();
       })
-      .catch((error) => {
-        this.buyFail();
-        this.isLoading = false;
-        this.isBuy = false;
-        clearTimeout(sId)
-      });
+        .catch((error) => {
+          this.buyFail();
+          this.isLoading = false;
+          this.isBuy = false;
+          clearTimeout(sId)
+        });
     }
   }
 
@@ -501,23 +501,23 @@ export class BidPage implements OnInit {
     });
   }
 
-  handleImg(queryParams: any,version :string): string {
+  handleImg(queryParams: any, version: string): string {
     let fetchUrl = "";
     let imageUri = "";
-    if(version === "1"){
+    if (version === "1") {
       imageUri = queryParams.asset || "";
-    }else if(version === "2"){
+    } else if (version === "2") {
       let data = queryParams.data || "";
-      if(data != ""){
-        imageUri  = data.image || "";
-      }else{
-        imageUri  = "";
+      if (data != "") {
+        imageUri = data.image || "";
+      } else {
+        imageUri = "";
       }
     }
-    if(imageUri === ""){
+    if (imageUri === "") {
       return "";
     }
-    if(imageUri.indexOf('feeds:imgage:') > -1) {
+    if (imageUri.indexOf('feeds:imgage:') > -1) {
       imageUri = imageUri.replace('feeds:imgage:', '');
       fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
     } else if (imageUri.indexOf('feeds:image:') > -1) {
@@ -530,7 +530,7 @@ export class BidPage implements OnInit {
     return fetchUrl;
   }
 
- hanldePrice(price: string) {
+  hanldePrice(price: string) {
     let ethprice = this.nftContractControllerService.transFromWei(price)
     return ethprice;
   }
@@ -543,7 +543,7 @@ export class BidPage implements OnInit {
         .then(() => {
           this.native.toast_trans('common.textcopied');
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }
 
@@ -569,20 +569,20 @@ export class BidPage implements OnInit {
     }
   }
 
- async getCreatorAddress(){
+  async getCreatorAddress() {
 
-  if(this.creator!=""){
-  return  this.creator;
+    if (this.creator != "") {
+      return this.creator;
+    }
+
+    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
+    return tokenInfo[4];
+
   }
 
-  let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
-  return tokenInfo[4];
-
-  }
-
-  async getMarketDate(){
-    if(this.orderCreateTime!=null){
-      let createDate = new Date(this.orderCreateTime*1000);
+  async getMarketDate() {
+    if (this.orderCreateTime != null) {
+      let createDate = new Date(this.orderCreateTime * 1000);
       let dateCreated = UtilService.dateFormat(
         createDate,
         'yyyy-MM-dd HH:mm:ss',
@@ -590,84 +590,84 @@ export class BidPage implements OnInit {
       return dateCreated;
     }
     let order = await this.nftContractControllerService
-    .getPasar()
-    .getOrderById(this.saleOrderId);
-   let createDate = new Date(parseInt(order[15])*1000);
-   let dateCreated = UtilService.dateFormat(
-     createDate,
-     'yyyy-MM-dd HH:mm:ss',
-   );
+      .getPasar()
+      .getOrderById(this.saleOrderId);
+    let createDate = new Date(parseInt(order[15]) * 1000);
+    let dateCreated = UtilService.dateFormat(
+      createDate,
+      'yyyy-MM-dd HH:mm:ss',
+    );
     return dateCreated;
   }
 
- async handleCreatorAddress(creatorAddress: string){
-  return new Promise((resolve, reject) => {
-    let whiteListData :FeedsData.WhiteItem[] =  this.feedService.getWhiteListData();
-    let whiteListItem =  _.find(whiteListData,(item: FeedsData.WhiteItem)=>{
-           return item.address === creatorAddress;
-    }) || "";
-    if(whiteListItem != ""){
-      resolve('BidPage.verifiedCreator');
-    }else{
-      resolve('AssetdetailsPage.creator');
-    }
-  });
+  async handleCreatorAddress(creatorAddress: string) {
+    return new Promise((resolve, reject) => {
+      let whiteListData: FeedsData.WhiteItem[] = this.feedService.getWhiteListData();
+      let whiteListItem = _.find(whiteListData, (item: FeedsData.WhiteItem) => {
+        return item.address === creatorAddress;
+      }) || "";
+      if (whiteListItem != "") {
+        resolve('BidPage.verifiedCreator');
+      } else {
+        resolve('AssetdetailsPage.creator');
+      }
+    });
 
   }
 
-  async getDidUri(){
+  async getDidUri() {
     return await this.feedService.getDidUri();
   }
 
-  handleNftDid(){
-    if(this.did === null){
+  handleNftDid() {
+    if (this.did === null) {
       return;
     }
-   let didname =  this.NftDidList[this.did] || null;
-   if(didname === null){
-     let did = "did:elastos:"+this.did;
-     this.feedService.resolveDidObjectForName(did).then((result) => {
-               this.didName = result["name"] || null;
-               if(this.didName!=null){
-                  this.isSwitch = true;
-               }
-               this.NftDidList[this.did] =  this.didName;
-               this.dataHelper.setNftDidList(this.NftDidList);
-      }).catch(()=>{
+    let didname = this.NftDidList[this.did] || null;
+    if (didname === null) {
+      let did = "did:elastos:" + this.did;
+      this.feedService.resolveDidObjectForName(did).then((result) => {
+        this.didName = result["name"] || null;
+        if (this.didName != null) {
+          this.isSwitch = true;
+        }
+        this.NftDidList[this.did] = this.didName;
+        this.dataHelper.setNftDidList(this.NftDidList);
+      }).catch(() => {
       });
-   }else{
+    } else {
       this.didName = this.NftDidList[this.did];
       this.isSwitch = true;
-   }
+    }
   }
 
-  switchDid(){
-   if(!this.isSwitch){
-     return;
-   }
-   if(this.didName!=null){
-      this.didName = null;
-   }else{
-    this.didName = this.NftDidList[this.did];
-   }
-  }
-
-  copyDid(){
-    if(this.did === null){
+  switchDid() {
+    if (!this.isSwitch) {
       return;
     }
-   if(this.didName === null){
-    this.native
-    .copyClipboard(this.did)
-    .then(() => {
-      this.native.toast_trans('common.textcopied');
-    })
-    .catch(() => {});
-   }
+    if (this.didName != null) {
+      this.didName = null;
+    } else {
+      this.didName = this.NftDidList[this.did];
+    }
   }
 
-  openPasarExplorer(){
-   let url = "https://pasarprotocol.io/explorer/collectible/detail/"+this.tokenID;
+  copyDid() {
+    if (this.did === null) {
+      return;
+    }
+    if (this.didName === null) {
+      this.native
+        .copyClipboard(this.did)
+        .then(() => {
+          this.native.toast_trans('common.textcopied');
+        })
+        .catch(() => { });
+    }
+  }
+
+  openPasarExplorer() {
+    let url = "https://pasarprotocol.io/explorer/collectible/detail/" + this.tokenID;
     this.native.openUrl(url);
   }
 }

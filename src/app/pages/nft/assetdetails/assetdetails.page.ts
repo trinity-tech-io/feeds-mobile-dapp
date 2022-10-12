@@ -63,12 +63,12 @@ export class AssetdetailsPage implements OnInit {
   public assetUri: string = null;
   public developerMode: boolean = false;
   public nftStatus: string = null;
-  public royalties:string = null;
-  public isLoading:boolean = false;
-  public loadingTitle:string = "";
-  public loadingText:string = "";
-  public loadingCurNumber:string = "";
-  public loadingMaxNumber:string = "";
+  public royalties: string = null;
+  public isLoading: boolean = false;
+  public loadingTitle: string = "";
+  public loadingText: string = "";
+  public loadingCurNumber: string = "";
+  public loadingMaxNumber: string = "";
   public saleOrderId: string = null;
   public usdPrice: string = null;
   public imageType: string = "";
@@ -110,84 +110,84 @@ export class AssetdetailsPage implements OnInit {
     private videoService: VideoService,
     private dataHelper: DataHelper,
     private httpService: HttpService
-  ) {}
+  ) { }
 
   async ngOnInit() {
     //this.activatedRoute.queryParams.subscribe(queryParams => {
-     let queryParams = this.dataHelper.getAssetPageAssetItem();
-      this.assItem = _.cloneDeep(queryParams);
-      let did = (await this.dataHelper.getSigninData()).did;
-      this.imageType = queryParams.type || "";
-      this.owner = queryParams.name || '';
-      this.name = queryParams.name || '';
-      this.description = queryParams.description || '';
-      this.saleOrderId = queryParams.saleOrderId || '';
-      this.quantity = (queryParams.curQuantity || queryParams.quantity).toString();
-      this.tokenID = queryParams.tokenId || '';
-      this.orderCreateTime = queryParams.orderCreateTime || null;
-      this.tokenCreateTime = queryParams.tokenCreateTime || null;
-      this.stickerContractAddress = this.nftContractControllerService
-        .getSticker()
-        .getStickerAddress();
-      this.parsarContractAddress = this.nftContractControllerService
-        .getPasar()
-        .getPasarAddress();
+    let queryParams = this.dataHelper.getAssetPageAssetItem();
+    this.assItem = _.cloneDeep(queryParams);
+    let did = (await this.dataHelper.getSigninData()).did;
+    this.imageType = queryParams.type || "";
+    this.owner = queryParams.name || '';
+    this.name = queryParams.name || '';
+    this.description = queryParams.description || '';
+    this.saleOrderId = queryParams.saleOrderId || '';
+    this.quantity = (queryParams.curQuantity || queryParams.quantity).toString();
+    this.tokenID = queryParams.tokenId || '';
+    this.orderCreateTime = queryParams.orderCreateTime || null;
+    this.tokenCreateTime = queryParams.tokenCreateTime || null;
+    this.stickerContractAddress = this.nftContractControllerService
+      .getSticker()
+      .getStickerAddress();
+    this.parsarContractAddress = this.nftContractControllerService
+      .getPasar()
+      .getPasarAddress();
 
-        if(this.imageType === "video"){
-          this.videoService.intVideoAllId(TAG);
-          this.videoIdObj = this.videoService.getVideoAllId();
-        }else if(this.imageType === "audio"){
-          let ipfsUrl = this.ipfsService.getNFTGetUrl();
-          let audioInfo: FeedsData.FeedsAudio = this.assItem.data || null;
-          if(audioInfo === null){
-            this.thumbnail = "";
-            return;
-          }
+    if (this.imageType === "video") {
+      this.videoService.intVideoAllId(TAG);
+      this.videoIdObj = this.videoService.getVideoAllId();
+    } else if (this.imageType === "audio") {
+      let ipfsUrl = this.ipfsService.getNFTGetUrl();
+      let audioInfo: FeedsData.FeedsAudio = this.assItem.data || null;
+      if (audioInfo === null) {
+        this.thumbnail = "";
+        return;
+      }
 
-          this.kind = audioInfo.kind;
-          let audioUri = audioInfo.audio;
-             audioUri = audioUri.replace('feeds:audio:', '');
-          this.assetUri = ipfsUrl + audioUri;
-        }else{
-          let version = queryParams.version || "1";
-          this.assetUri = this.handleImg(queryParams,version);
+      this.kind = audioInfo.kind;
+      let audioUri = audioInfo.audio;
+      audioUri = audioUri.replace('feeds:audio:', '');
+      this.assetUri = ipfsUrl + audioUri;
+    } else {
+      let version = queryParams.version || "1";
+      this.assetUri = this.handleImg(queryParams, version);
+    }
+
+    this.creator = queryParams.creator || '';//原创者
+
+    this.ownerAddress = queryParams.sellerAddr || '';//所有者
+    if (this.ownerAddress === "") {
+      this.ownerAddress = this.nftContractControllerService.getAccountAddress();
+    }
+
+    if (did != null) {
+      this.did = did.replace("did:elastos:", "");
+      this.didDispaly = UtilService.resolveDid(this.did);
+    } else {
+      this.feedService.getDidFromWalletAddress(this.ownerAddress).then((didObj: FeedsData.DidObj) => {
+        if (didObj && didObj.did) {
+          this.did = didObj.did.replace("did:elastos:", "");
+          this.didDispaly = UtilService.resolveDid(this.did);
+          this.handleNftDid();
+        } else {
+          this.dispalyOwer = UtilService.shortenAddress(this.ownerAddress);
         }
+      }).catch(() => {
+        this.dispalyOwer = UtilService.shortenAddress(this.ownerAddress);
+      });
+    }
 
-      this.creator = queryParams.creator || '';//原创者
-
-      this.ownerAddress = queryParams.sellerAddr || '';//所有者
-      if(this.ownerAddress === ""){
-        this.ownerAddress = this.nftContractControllerService.getAccountAddress();
-      }
-
-      if (did != null) {
-        this.did = did.replace("did:elastos:", "");
-        this.didDispaly = UtilService.resolveDid(this.did);
-      } else {
-        this.feedService.getDidFromWalletAddress(this.ownerAddress).then((didObj: FeedsData.DidObj) => {
-          if (didObj && didObj.did) {
-            this.did = didObj.did.replace("did:elastos:", "");
-            this.didDispaly = UtilService.resolveDid(this.did);
-            this.handleNftDid();
-          }else{
-            this.dispalyOwer = UtilService.resolveAddress(this.ownerAddress);
-          }
-        }).catch(()=>{
-          this.dispalyOwer = UtilService.resolveAddress(this.ownerAddress);
-        });
-      }
-
-      this.royalties = queryParams.royalties || null;
+    this.royalties = queryParams.royalties || null;
     //});
   }
 
   ionViewWillEnter() {
     let audio = document.getElementById("assetdetails-audio") || null;
-    if(audio != null ){
+    if (audio != null) {
       this.isAudioLoading = true;
-      audio.addEventListener("loadeddata",()=>{
-         audio.style.display = "block";
-         this.isAudioLoading = false;
+      audio.addEventListener("loadeddata", () => {
+        audio.style.display = "block";
+        this.isAudioLoading = false;
       });
       audio.style.display = "none";
     }
@@ -195,20 +195,20 @@ export class AssetdetailsPage implements OnInit {
     this.initTile();
     this.changeType(this.selectType);
     this.addEvent();
-    this.NftDidList= this.dataHelper.getNftDidList() || {};
+    this.NftDidList = this.dataHelper.getNftDidList() || {};
     this.handleNftDid();
     this.price = this.assItem.fixedAmount || null;
-    if(this.price!=null){
+    if (this.price != null) {
       let elaPrice = this.dataHelper.getElaUsdPrice() || "";
-      if(elaPrice != ""){
+      if (elaPrice != "") {
         let ethprice = this.nftContractControllerService.transFromWei(this.price.toString());
-      this.usdPrice = UtilService.accMul(elaPrice,ethprice).toFixed(2);
-      }else{
-        this.httpService.getElaPrice().then((elaPrice)=>{
-          if(elaPrice != null){
+        this.usdPrice = UtilService.accMul(elaPrice, ethprice).toFixed(2);
+      } else {
+        this.httpService.getElaPrice().then((elaPrice) => {
+          if (elaPrice != null) {
             let ethprice = this.nftContractControllerService.transFromWei(this.price.toString());
-            this.usdPrice  = UtilService.accMul(elaPrice,ethprice).toFixed(2);
-           }
+            this.usdPrice = UtilService.accMul(elaPrice, ethprice).toFixed(2);
+          }
         });
       }
     }
@@ -216,22 +216,22 @@ export class AssetdetailsPage implements OnInit {
       this.nftStatus = this.translate.instant('common.onsale');
     }
 
-    if(this.imageType === "video"){
+    if (this.imageType === "video") {
       let ipfsUrl = this.ipfsService.getNFTGetUrl();
       let videoInfo: FeedsData.FeedsVideo = this.assItem.data || null;
-      if(videoInfo === null){
+      if (videoInfo === null) {
         this.thumbnail = "";
         return;
       }
       let thumbnail = videoInfo.thumbnail;
-      this.thumbnail  = thumbnail;
+      this.thumbnail = thumbnail;
       let thumbnailUri = thumbnail.replace('feeds:image:', '');
       thumbnailUri = ipfsUrl + thumbnailUri;
       let kind = videoInfo.kind;
       let video = videoInfo.video;
       let videoUri = video.replace('feeds:video:', '');
       videoUri = ipfsUrl + videoUri;
-      this.videoService.getVideoPoster(thumbnailUri,kind,videoUri);
+      this.videoService.getVideoPoster(thumbnailUri, kind, videoUri);
     }
 
 
@@ -253,23 +253,23 @@ export class AssetdetailsPage implements OnInit {
 
   addEvent() {
 
-    this.events.subscribe(FeedsEvent.PublishType.startLoading,(obj)=>{
-                   let title = obj["title"];
-                   let des = obj["des"];
-                   let curNum = obj["curNum"];
-                   let maxNum = obj["maxNum"];
-                   this.loadingTitle = title;
-                   this.loadingText = des;
-                   this.loadingCurNumber = curNum;
-                   this.loadingMaxNumber = maxNum;
-                   this.isLoading = true;
+    this.events.subscribe(FeedsEvent.PublishType.startLoading, (obj) => {
+      let title = obj["title"];
+      let des = obj["des"];
+      let curNum = obj["curNum"];
+      let maxNum = obj["maxNum"];
+      this.loadingTitle = title;
+      this.loadingText = des;
+      this.loadingCurNumber = curNum;
+      this.loadingMaxNumber = maxNum;
+      this.isLoading = true;
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.endLoading,(obj)=>{
+    this.events.subscribe(FeedsEvent.PublishType.endLoading, (obj) => {
       this.isLoading = false;
     });
 
-    this.events.subscribe(FeedsEvent.PublishType.nftUpdatePrice,(nftPrice)=>{
+    this.events.subscribe(FeedsEvent.PublishType.nftUpdatePrice, (nftPrice) => {
       this.price = nftPrice;
     });
 
@@ -285,7 +285,7 @@ export class AssetdetailsPage implements OnInit {
         case 'buy':
           break;
         case 'created':
-          this.handleCreate(tokenId,createAddr,assItem,sellQuantity);
+          this.handleCreate(tokenId, createAddr, assItem, sellQuantity);
           this.native.pop();
           break;
       }
@@ -300,7 +300,7 @@ export class AssetdetailsPage implements OnInit {
     this.native.handleTabsEvents()
   }
 
- async collectContractData() {
+  async collectContractData() {
     this.contractDetails = [];
     this.contractDetails.push({
       type: 'AssetdetailsPage.name',
@@ -313,10 +313,10 @@ export class AssetdetailsPage implements OnInit {
     });
 
     this.creator = await this.getCreatorAddress();
-    let creatorAddressDes:any = await this.handleCreatorAddress(this.creator);
+    let creatorAddressDes: any = await this.handleCreatorAddress(this.creator);
     this.contractDetails.push({
       type: creatorAddressDes,
-      details:this.creator,
+      details: this.creator,
     });
 
     if (this.ownerAddress != '') {
@@ -325,17 +325,17 @@ export class AssetdetailsPage implements OnInit {
         details: this.ownerAddress,
       });
     }
-    let tokenID = '0x'+UtilService.dec2hex(this.tokenID);
+    let tokenID = '0x' + UtilService.dec2hex(this.tokenID);
     this.contractDetails.push({
       type: 'AssetdetailsPage.tokenID',
       details: tokenID,
     });
 
-    if(this.royalties!=null){
-     let royalties = UtilService.accDiv(this.royalties,10000);
+    if (this.royalties != null) {
+      let royalties = UtilService.accDiv(this.royalties, 10000);
       this.contractDetails.push({
         type: 'AssetdetailsPage.royalties',
-        details: royalties +"%",
+        details: royalties + "%",
       });
     }
 
@@ -352,9 +352,9 @@ export class AssetdetailsPage implements OnInit {
 
     let saleDes = "";
 
-    if(this.creator === this.ownerAddress){
+    if (this.creator === this.ownerAddress) {
       saleDes = "AssetdetailsPage.firstSale";
-    }else{
+    } else {
       saleDes = "AssetdetailsPage.secondarySale";
     }
 
@@ -379,7 +379,7 @@ export class AssetdetailsPage implements OnInit {
       details: tokenCreateTime,
     });
 
-    if(this.saleOrderId!=""){
+    if (this.saleOrderId != "") {
       let marketDate = await this.getMarketDate();
       this.contractDetails.push({
         type: 'AssetdetailsPage.dateoNMarket',
@@ -405,9 +405,9 @@ export class AssetdetailsPage implements OnInit {
     });
   }
 
- async collectPurchaseInfos() {
+  async collectPurchaseInfos() {
     this.purchaseInfos = [];
-    let creatorAddressDes:any = await this.handleCreatorAddress(this.creator);
+    let creatorAddressDes: any = await this.handleCreatorAddress(this.creator);
     this.purchaseInfos.push({
       type: creatorAddressDes,
       details: this.creator,
@@ -455,24 +455,24 @@ export class AssetdetailsPage implements OnInit {
     }
   }
 
-  handleImg(queryParams: any,version :string): string {
+  handleImg(queryParams: any, version: string): string {
 
     let fetchUrl = "";
     let imageUri = "";
-    if(version === "1"){
+    if (version === "1") {
       imageUri = queryParams.asset || "";
-    }else if(version === "2"){
+    } else if (version === "2") {
       let data = queryParams.data || "";
-      if(data != ""){
-        imageUri  = data.image || "";
-      }else{
-        imageUri  = "";
+      if (data != "") {
+        imageUri = data.image || "";
+      } else {
+        imageUri = "";
       }
     }
-    if(imageUri === ""){
+    if (imageUri === "") {
       return "";
     }
-    if(imageUri.indexOf('feeds:imgage:') > -1) {
+    if (imageUri.indexOf('feeds:imgage:') > -1) {
       imageUri = imageUri.replace('feeds:imgage:', '');
       fetchUrl = this.ipfsService.getNFTGetUrl() + imageUri;
     } else if (imageUri.indexOf('feeds:image:') > -1) {
@@ -493,7 +493,7 @@ export class AssetdetailsPage implements OnInit {
         .then(() => {
           this.native.toast_trans('common.textcopied');
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }
 
@@ -513,26 +513,26 @@ export class AssetdetailsPage implements OnInit {
     );
   }
 
-  getImageBase64(uri:string):Promise<string> {
-   return new Promise((resolve, reject) => {
-    let img = new Image();
-    img.crossOrigin='*';
-    img.crossOrigin = "Anonymous";
-    img.src=uri;
+  getImageBase64(uri: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      let img = new Image();
+      img.crossOrigin = '*';
+      img.crossOrigin = "Anonymous";
+      img.src = uri;
 
-    img.onload = () =>{
-      let canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      var ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, img.width, img.height);
-      let dataURL = canvas.toDataURL("image/*");
-      resolve(dataURL);
-    };
+      img.onload = () => {
+        let canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        let dataURL = canvas.toDataURL("image/*");
+        resolve(dataURL);
+      };
     });
   }
 
-  async handleCreate(tokenId:any,createAddr:any,assItem:any,sellQuantity:any){
+  async handleCreate(tokenId: any, createAddr: any, assItem: any, sellQuantity: any) {
     let quantity = await this.nftContractControllerService
       .getSticker()
       .balanceOf(tokenId);
@@ -577,17 +577,17 @@ export class AssetdetailsPage implements OnInit {
   }
 
 
-  async getCreatorAddress(){
-    if(this.creator!=""){
+  async getCreatorAddress() {
+    if (this.creator != "") {
       return this.creator;
     }
     let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
     return tokenInfo[4];
   }
 
-  async getMarketDate(){
-    if(this.orderCreateTime!=null){
-      let createDate = new Date(this.orderCreateTime*1000);
+  async getMarketDate() {
+    if (this.orderCreateTime != null) {
+      let createDate = new Date(this.orderCreateTime * 1000);
       let dateCreated = UtilService.dateFormat(
         createDate,
         'yyyy-MM-dd HH:mm:ss',
@@ -595,102 +595,102 @@ export class AssetdetailsPage implements OnInit {
       return dateCreated;
     }
     let order = await this.nftContractControllerService
-    .getPasar()
-    .getOrderById(this.saleOrderId);
-   let createDate = new Date(parseInt(order[15])*1000);
-   let dateCreated = UtilService.dateFormat(
-     createDate,
-     'yyyy-MM-dd HH:mm:ss',
-   );
+      .getPasar()
+      .getOrderById(this.saleOrderId);
+    let createDate = new Date(parseInt(order[15]) * 1000);
+    let dateCreated = UtilService.dateFormat(
+      createDate,
+      'yyyy-MM-dd HH:mm:ss',
+    );
     return dateCreated;
   }
 
-  async handleCreatorAddress(creatorAddress: string){
+  async handleCreatorAddress(creatorAddress: string) {
     return new Promise((resolve, reject) => {
-      let whiteListData :FeedsData.WhiteItem[] =  this.feedService.getWhiteListData();
-      let whiteListItem =  _.find(whiteListData,(item: FeedsData.WhiteItem)=>{
-             return item.address === creatorAddress;
+      let whiteListData: FeedsData.WhiteItem[] = this.feedService.getWhiteListData();
+      let whiteListItem = _.find(whiteListData, (item: FeedsData.WhiteItem) => {
+        return item.address === creatorAddress;
       }) || "";
-      if(whiteListItem != ""){
+      if (whiteListItem != "") {
         resolve('BidPage.verifiedCreator');
-      }else{
+      } else {
         resolve('AssetdetailsPage.creator');
       }
     });
 
-    }
+  }
 
-    async getTokenCreateTime() {
-      if(this.tokenCreateTime != null){
-        let createDate = new Date(this.tokenCreateTime*1000);
-        let dateCreated = UtilService.dateFormat(
-              createDate,
-              'yyyy-MM-dd HH:mm:ss',
-        );
-        return dateCreated;
-      }
-
-      let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
-      let createDate = new Date(parseInt(tokenInfo[6])*1000);
+  async getTokenCreateTime() {
+    if (this.tokenCreateTime != null) {
+      let createDate = new Date(this.tokenCreateTime * 1000);
       let dateCreated = UtilService.dateFormat(
-            createDate,
-            'yyyy-MM-dd HH:mm:ss',
+        createDate,
+        'yyyy-MM-dd HH:mm:ss',
       );
       return dateCreated;
     }
 
-    handleNftDid(){
-      if(this.did === null){
-        return;
-      }
-      let didname =  this.NftDidList[this.did] || null;
-      if(didname === null){
-        let did = "did:elastos:"+this.did;
-        this.feedService.resolveDidObjectForName(did).then((result) => {
-                  this.didName = result["name"] || null;
-                  if(this.didName!=null){
-                     this.isSwitch = true;
-                  }
-                  this.NftDidList[this.did] =  this.didName;
-                  this.dataHelper.setNftDidList(this.NftDidList);
-         }).catch(()=>{
-         });
-      }else{
-         this.didName = this.NftDidList[this.did];
-         this.isSwitch = true;
-      }
-     }
+    let tokenInfo = await this.nftContractControllerService.getSticker().tokenInfo(this.tokenID);
+    let createDate = new Date(parseInt(tokenInfo[6]) * 1000);
+    let dateCreated = UtilService.dateFormat(
+      createDate,
+      'yyyy-MM-dd HH:mm:ss',
+    );
+    return dateCreated;
+  }
 
-     switchDid(){
+  handleNftDid() {
+    if (this.did === null) {
+      return;
+    }
+    let didname = this.NftDidList[this.did] || null;
+    if (didname === null) {
+      let did = "did:elastos:" + this.did;
+      this.feedService.resolveDidObjectForName(did).then((result) => {
+        this.didName = result["name"] || null;
+        if (this.didName != null) {
+          this.isSwitch = true;
+        }
+        this.NftDidList[this.did] = this.didName;
+        this.dataHelper.setNftDidList(this.NftDidList);
+      }).catch(() => {
+      });
+    } else {
+      this.didName = this.NftDidList[this.did];
+      this.isSwitch = true;
+    }
+  }
 
-      if(!this.isSwitch){
-        return;
-      }
+  switchDid() {
 
-      if(this.didName!=null){
-         this.didName = null;
-      }else{
-       this.didName = this.NftDidList[this.did];
-      }
-     }
+    if (!this.isSwitch) {
+      return;
+    }
 
-     copyDid(){
-      if(this.did === null){
-        return;
-      }
-      if(this.didName === null){
-       this.native
-       .copyClipboard(this.did)
-       .then(() => {
-         this.native.toast_trans('common.textcopied');
-       })
-       .catch(() => {});
-      }
-     }
+    if (this.didName != null) {
+      this.didName = null;
+    } else {
+      this.didName = this.NftDidList[this.did];
+    }
+  }
 
-     openPasarExplorer(){
-      let url = "https://pasarprotocol.io/explorer/collectible/detail/"+this.tokenID;
-       this.native.openUrl(url);
-     }
+  copyDid() {
+    if (this.did === null) {
+      return;
+    }
+    if (this.didName === null) {
+      this.native
+        .copyClipboard(this.did)
+        .then(() => {
+          this.native.toast_trans('common.textcopied');
+        })
+        .catch(() => { });
+    }
+  }
+
+  openPasarExplorer() {
+    let url = "https://pasarprotocol.io/explorer/collectible/detail/" + this.tokenID;
+    this.native.openUrl(url);
+  }
 
 }

@@ -2214,7 +2214,7 @@ export class HiveVaultController {
   getUserProfile(userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
-        const user: FeedsData.UserProfile = await this.dataHelper.getUserProfileData(userDid)
+        const user: FeedsData.UserProfile = await this.dataHelper.getUserProfileData(userDid);
         if (!user) {
           const displayName = await this.dataHelper.getDisplayNameByUserDid(userDid);
           const newUser: FeedsData.UserProfile = {
@@ -2227,7 +2227,24 @@ export class HiveVaultController {
             avatar: '',
             bio: ''
           }
+          this.dataHelper.addUserProfile(newUser);
+          resolve(newUser);
+          return;
+        }
 
+        if (user && !user.displayName) {
+          const displayName = await this.dataHelper.getDisplayNameByUserDid(userDid);
+          const newUser: FeedsData.UserProfile = {
+            did: userDid,
+            resolvedName: user.resolvedName,
+            resolvedAvatar: user.resolvedAvatar,
+            resolvedBio: user.resolvedBio,
+            displayName: displayName,
+            name: user.name,
+            avatar: user.avatar,
+            bio: user.bio
+          }
+          this.dataHelper.addUserProfile(newUser);
           resolve(newUser);
           return;
         }
@@ -2303,5 +2320,12 @@ export class HiveVaultController {
       } catch (error) {
       }
     });
+  }
+
+  syncDidDocumentProfileFromList(usersDidList: string[]) {
+  }
+
+  syncHiveProfileFromList(usersDidList: string[]) {
+
   }
 }

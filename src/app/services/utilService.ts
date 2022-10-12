@@ -542,7 +542,7 @@ export class UtilService {
     return (r1 / r2) * Math.pow(10, t2 - t1);
   }
 
-  public static resolveAddress(address: string, start: number = 6, end: number = 4) {
+  public static shortenAddress(address: string, start: number = 6, end: number = 4) {
     if (!address) return '';
     let len = address.length;
     return address.substring(0, start) + '...' + address.substring(len - end, len);

@@ -61,7 +61,7 @@ export class SearchPage implements OnInit {
   public curtotalNum: number = 0;
   private clientHeight: number = 0;
   private channelCollectionList: any = [];//所有的
-  public channelCollectionPageList:any = [];
+  public channelCollectionPageList: any = [];
   public searchChannelCollectionPageList: any = [];//搜索使用
   private panelPageSize: number = 10;//一页多少个
   private panelPageNum: number = 1;//页码
@@ -71,10 +71,10 @@ export class SearchPage implements OnInit {
   private toBeSubscribeddestDid: string = '';
   private toBeSubscribedChannelId: string = '';
   public isBorderGradient: boolean = false;
-  public channelAvatarMap:any = {};
-  public subscriptionV3NumMap:any = {};
-  private searchObserver:any = {};
-  private searchIsLoadimage:any = {};
+  public channelAvatarMap: any = {};
+  public subscriptionV3NumMap: any = {};
+  private searchObserver: any = {};
+  private searchIsLoadimage: any = {};
   private chanCollectionSid: any = null;
   private handleDisplayNameMap: any = {};
   private channelCollectionsAvatarisLoad: any = {};
@@ -186,37 +186,37 @@ export class SearchPage implements OnInit {
     this.titleBarService.setTitleBarMoreMemu(this.titleBar);
   }
 
-  async filterChannelCollectionPageList(channelCollectionPageList = []){
+  async filterChannelCollectionPageList(channelCollectionPageList = []) {
     let channelList = [];
     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-    for(let index = 0;index < channelCollectionPageList.length; index++){
-        let channel: FeedsData.ChannelV3 = channelCollectionPageList[index];
-        let channelIndex = _.findIndex(subscribedChannel,(item)=>{
-          return item.destDid === channel.destDid && item.channelId ===  channel.channelId;
-     });
-     if(channelIndex > -1){
+    for (let index = 0; index < channelCollectionPageList.length; index++) {
+      let channel: FeedsData.ChannelV3 = channelCollectionPageList[index];
+      let channelIndex = _.findIndex(subscribedChannel, (item) => {
+        return item.destDid === channel.destDid && item.channelId === channel.channelId;
+      });
+      if (channelIndex > -1) {
         continue;
-     }
-     channelList.push(channel);
+      }
+      channelList.push(channel);
     }
 
     return channelList;
   }
 
   async init() {
-      let channelCollectionPageList =  this.dataHelper.getChannelCollectionPageList() || [];
-      if(channelCollectionPageList.length === 0){
-        this.channelCollectionPageList = await this.getChannels();
-        this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
-        this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
-      }else{
-       this.channelCollectionPageList = await this.filterChannelCollectionPageList(channelCollectionPageList);
-       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
-       this.isLoading = false;
-       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
-      }
-      this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
-      this.initSubscribe();
+    let channelCollectionPageList = this.dataHelper.getChannelCollectionPageList() || [];
+    if (channelCollectionPageList.length === 0) {
+      this.channelCollectionPageList = await this.getChannels();
+      this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+      this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+    } else {
+      this.channelCollectionPageList = await this.filterChannelCollectionPageList(channelCollectionPageList);
+      this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+      this.isLoading = false;
+      this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+    }
+    this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
+    this.initSubscribe();
   }
 
   ionViewWillLeave() {
@@ -236,17 +236,17 @@ export class SearchPage implements OnInit {
 
     await this.native.showLoading('common.waitMoment');
     try {
-      await this.hiveVaultController.subscribeChannel( destDid,  channelId);
-      await this.hiveVaultController.syncPostFromChannel( destDid, channelId);
-      await this.hiveVaultController.syncCommentFromChannel( destDid, channelId);
-      await this.hiveVaultController.syncLikeDataFromChannel( destDid, channelId);
+      await this.hiveVaultController.subscribeChannel(destDid, channelId);
+      await this.hiveVaultController.syncPostFromChannel(destDid, channelId);
+      await this.hiveVaultController.syncCommentFromChannel(destDid, channelId);
+      await this.hiveVaultController.syncLikeDataFromChannel(destDid, channelId);
 
-      let channelIndex = _.findIndex(this.channelCollectionPageList,(item: FeedsData.ChannelV3)=>{
-               return item.channelId === channelId && item.destDid === destDid;
+      let channelIndex = _.findIndex(this.channelCollectionPageList, (item: FeedsData.ChannelV3) => {
+        return item.channelId === channelId && item.destDid === destDid;
       });
 
-      if(channelIndex > -1){
-        this.channelCollectionPageList.splice(channelIndex,1);
+      if (channelIndex > -1) {
+        this.channelCollectionPageList.splice(channelIndex, 1);
         this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
         this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
       }
@@ -260,22 +260,22 @@ export class SearchPage implements OnInit {
   }
 
   getItems(events: any) {
-       this.isSearch = events.target.value || '';
-       this.scanServiceStyle['z-index'] = -1;
-      if (
-        (events && events.keyCode === 13) ||
-        (events.keyCode === 8 && this.isSearch === '')
-      ) {
-        this.keyboard.hide();
-        if (this.isSearch == '') {
-          this.scanServiceStyle['z-index'] = 3;
-          this.ionRefresher.disabled = false;
-          this.channelCollectionPageList = _.cloneDeep(this.searchChannelCollectionPageList);
-          return;
-        }
-        this.ionRefresher.disabled = true;
-        this.handleSearch();
+    this.isSearch = events.target.value || '';
+    this.scanServiceStyle['z-index'] = -1;
+    if (
+      (events && events.keyCode === 13) ||
+      (events.keyCode === 8 && this.isSearch === '')
+    ) {
+      this.keyboard.hide();
+      if (this.isSearch == '') {
+        this.scanServiceStyle['z-index'] = 3;
+        this.ionRefresher.disabled = false;
+        this.channelCollectionPageList = _.cloneDeep(this.searchChannelCollectionPageList);
+        return;
       }
+      this.ionRefresher.disabled = true;
+      this.handleSearch();
+    }
   }
 
   ionClear() {
@@ -285,7 +285,7 @@ export class SearchPage implements OnInit {
       this.ionRefresher.disabled = false;
       this.channelCollectionPageList = _.cloneDeep(this.searchChannelCollectionPageList);
       if (this.channelCollectionPageList.length > 0) {
-      this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
+        this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
       }
       return;
     }
@@ -309,11 +309,11 @@ export class SearchPage implements OnInit {
 
   async doRefresh(event) {
     try {
-    this.channelCollectionPageList = await this.getChannels(event);
-    this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
-    this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
-    this.removeObserveList();
-    this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
+      this.channelCollectionPageList = await this.getChannels(event);
+      this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+      this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+      this.removeObserveList();
+      this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
     } catch (error) {
       event.target.complete();
     }
@@ -456,8 +456,8 @@ export class SearchPage implements OnInit {
 
 
   refreshChannelCollectionAvatar(list = []) {
-     this.clearChanCollectionSid();
-     this.chanCollectionSid = setTimeout(() => {
+    this.clearChanCollectionSid();
+    this.chanCollectionSid = setTimeout(() => {
       this.channelCollectionsAvatarisLoad = {};
       this.handleDisplayNameMap = {};
       this.getSearchObserverList(list);
@@ -466,24 +466,24 @@ export class SearchPage implements OnInit {
   }
 
   clearChanCollectionSid() {
-     if(this.chanCollectionSid != null){
+    if (this.chanCollectionSid != null) {
       clearTimeout(this.chanCollectionSid);
       this.chanCollectionSid = null;
-     }
+    }
   }
 
   ionBlur() {
-   this.isBorderGradient = false;
+    this.isBorderGradient = false;
   }
 
   ionFocus() {
     this.isBorderGradient = true;
   }
 
-  removeSearchObserver(postGridId: string, observer: any){
+  removeSearchObserver(postGridId: string, observer: any) {
     let item = document.getElementById(postGridId) || null;
-    if(item != null){
-      if( observer != null ){
+    if (item != null) {
+      if (observer != null) {
         observer.unobserve(item);//解除观察器
         observer.disconnect();  // 关闭观察器
         this.searchObserver[postGridId] = null;
@@ -491,17 +491,17 @@ export class SearchPage implements OnInit {
     }
   }
 
-  getSearchObserverList(follingList = []){
+  getSearchObserverList(follingList = []) {
 
-    for(let index = 0; index < follingList.length; index++){
-      let postItem =  follingList[index] || null;
-      if(postItem === null){
+    for (let index = 0; index < follingList.length; index++) {
+      let postItem = follingList[index] || null;
+      if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid+"-"+postItem.channelId+'-search';
+      let postGridId = postItem.destDid + "-" + postItem.channelId + '-search';
       let exit = this.searchObserver[postGridId] || null;
-      if(exit != null){
-         continue;
+      if (exit != null) {
+        continue;
       }
       this.newSearchObserver(postGridId);
     }
@@ -509,70 +509,70 @@ export class SearchPage implements OnInit {
 
   newSearchObserver(postGridId: string) {
     let observer = this.searchObserver[postGridId] || null;
-    if(observer != null){
+    if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
-    if(item != null ){
-    this.searchObserver[postGridId] = new IntersectionObserver(async (changes:any)=>{
-    let container = changes[0].target;
-    let newId = container.getAttribute("id");
+    if (item != null) {
+      this.searchObserver[postGridId] = new IntersectionObserver(async (changes: any) => {
+        let container = changes[0].target;
+        let newId = container.getAttribute("id");
 
-    let intersectionRatio = changes[0].intersectionRatio;
+        let intersectionRatio = changes[0].intersectionRatio;
 
-    if(intersectionRatio === 0){
-      //console.log("======newId leave========", newId);
-      return;
-    }
-    let arr =  newId.split("-");
-    let destDid: string = arr[0];
-    let channelId: string = arr[1];
-    this.getDisplayName(destDid,channelId,destDid);
-    this.handleSearchAvatarV2(destDid,channelId);
-    this.getChannelFollower(destDid,channelId);
-    });
+        if (intersectionRatio === 0) {
+          //console.log("======newId leave========", newId);
+          return;
+        }
+        let arr = newId.split("-");
+        let destDid: string = arr[0];
+        let channelId: string = arr[1];
+        this.getDisplayName(destDid, channelId, destDid);
+        this.handleSearchAvatarV2(destDid, channelId);
+        this.getChannelFollower(destDid, channelId);
+      });
 
-    this.searchObserver[postGridId].observe(item);
+      this.searchObserver[postGridId].observe(item);
     }
   }
 
-  getChannelFollower(destDid: string,channelId: string) {
-     //关注数
-     let follower = this.subscriptionV3NumMap[channelId] || '';
-     if (follower === "") {
-       try {
-         this.subscriptionV3NumMap[channelId] = "...";
-         this.dataHelper.getSubscriptionV3NumByChannelId(
-           destDid, channelId).
-           then((result) => {
-             result = result || 0;
-             if (result == 0) {
-               this.hiveVaultController.querySubscriptionChannelById(destDid, channelId).then(() => {
-                 this.zone.run(async () => {
-                   this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(destDid, channelId);
-                 });
-               })
-             }
-             this.subscriptionV3NumMap[channelId] = result;
+  getChannelFollower(destDid: string, channelId: string) {
+    //关注数
+    let follower = this.subscriptionV3NumMap[channelId] || '';
+    if (follower === "") {
+      try {
+        this.subscriptionV3NumMap[channelId] = "...";
+        this.dataHelper.getSubscriptionV3NumByChannelId(
+          destDid, channelId).
+          then((result) => {
+            result = result || 0;
+            if (result == 0) {
+              this.hiveVaultController.querySubscriptionChannelById(destDid, channelId).then(() => {
+                this.zone.run(async () => {
+                  this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(destDid, channelId);
+                });
+              })
+            }
+            this.subscriptionV3NumMap[channelId] = result;
 
-           }).catch(() => {
-             this.subscriptionV3NumMap[channelId] = 0;
-           });
-       } catch (error) {
-       }
-     }
+          }).catch(() => {
+            this.subscriptionV3NumMap[channelId] = 0;
+          });
+      } catch (error) {
+      }
+    }
   }
 
   removeObserveList() {
-    for(let postGridId in this.searchObserver){
-        let observer = this.searchObserver[postGridId] || null;
-        this.removeSearchObserver(postGridId, observer)
+    for (let postGridId in this.searchObserver) {
+      let observer = this.searchObserver[postGridId] || null;
+      this.removeSearchObserver(postGridId, observer)
     }
     this.searchObserver = {};
   }
 
-  async handleSearchAvatarV2(destDid: string,channelId: string) {
-    let id = destDid+"-"+channelId;
+  async handleSearchAvatarV2(destDid: string, channelId: string) {
+    let id = destDid + "-" + channelId;
     let isload = this.searchIsLoadimage[id] || '';
     if (isload === "") {
       let arr = id.split("-");
@@ -601,40 +601,40 @@ export class SearchPage implements OnInit {
     }
   }
 
-  async getChannels(event=null) {
+  async getChannels(event = null) {
     try {
-     let channelCollectionPageList = [];
-     let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-     let channelsCount = this.specificPublicChannels.length;
-     for(let channelIndex = 0; channelIndex < channelsCount; channelIndex++){
-       let channelUrl = this.specificPublicChannels[channelIndex];
-       const scanResult = ScannerHelper.parseScannerResult(channelUrl);
-       const feedsUrl = scanResult.feedsUrl;
-       let index = _.findIndex(subscribedChannel,(item)=>{
-            return item.destDid === feedsUrl.destDid && item.channelId ===  feedsUrl.channelId;
-       });
-       if(index > -1){
+      let channelCollectionPageList = [];
+      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+      let channelsCount = this.specificPublicChannels.length;
+      for (let channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
+        let channelUrl = this.specificPublicChannels[channelIndex];
+        const scanResult = ScannerHelper.parseScannerResult(channelUrl);
+        const feedsUrl = scanResult.feedsUrl;
+        let index = _.findIndex(subscribedChannel, (item) => {
+          return item.destDid === feedsUrl.destDid && item.channelId === feedsUrl.channelId;
+        });
+        if (index > -1) {
           continue;
-       }
-       try {
-         const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-         if(channelInfo != null){
-          channelCollectionPageList.push(channelInfo);
-         }
-       } catch (error) {
-        this.isLoading = false;
-        if(event != null){
-          event.target.complete();
-         }
-       }
-     }
-     this.isLoading = false;
-     if(event != null){
-      event.target.complete();
-     }
-     return channelCollectionPageList;
+        }
+        try {
+          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+          if (channelInfo != null) {
+            channelCollectionPageList.push(channelInfo);
+          }
+        } catch (error) {
+          this.isLoading = false;
+          if (event != null) {
+            event.target.complete();
+          }
+        }
+      }
+      this.isLoading = false;
+      if (event != null) {
+        event.target.complete();
+      }
+      return channelCollectionPageList;
     } catch (error) {
-      if(event != null){
+      if (event != null) {
         event.target.complete();
       }
       this.isLoading = false;
@@ -642,11 +642,11 @@ export class SearchPage implements OnInit {
 
   }
 
-  getDisplayName(destDid: string,channelId: string, userDid: string) {
+  getDisplayName(destDid: string, channelId: string, userDid: string) {
     let displayNameMap = this.handleDisplayNameMap[userDid] || '';
     if (displayNameMap === "") {
       let text = destDid.replace('did:elastos:', '');
-      this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+      this.handleDisplayNameMap[userDid] = UtilService.shortenAddress(text);
       try {
         this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
           then((result: string) => {
@@ -660,5 +660,5 @@ export class SearchPage implements OnInit {
 
       }
     }
-   }
+  }
 }

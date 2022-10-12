@@ -2443,7 +2443,7 @@ export class HomePage implements OnInit {
       let displayName = this.handleDisplayNameMap[userDid] || "";
       if (displayName === "") {
         let text = destDid.replace('did:elastos:', '');
-        this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+        this.handleDisplayNameMap[userDid] = UtilService.shortenAddress(text);
       }
       try {
         this.hiveVaultController.getDisplayName(destDid, channelId, userDid).

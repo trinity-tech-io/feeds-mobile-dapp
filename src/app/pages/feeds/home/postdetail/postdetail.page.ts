@@ -487,7 +487,7 @@ export class PostdetailPage implements OnInit {
     text = text || "";
     if (text != '') {
       text = text.replace('did:elastos:', '');
-      return UtilService.resolveAddress(text);
+      return UtilService.shortenAddress(text);
     }
   }
 

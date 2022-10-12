@@ -636,7 +636,7 @@ export class MyApp {
       this.walletAddress = this.walletConnectControllerService.getAccountAddress();
     else
       this.walletAddress = walletAccount;
-    this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
+    this.walletAddressStr = UtilService.shortenAddress(this.walletAddress);
   }
 
   copyText(text: string) {

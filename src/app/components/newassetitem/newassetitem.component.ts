@@ -49,10 +49,10 @@ export class NewassetitemComponent implements OnInit {
       kind = this.assetItem["kind"];
       size = this.assetItem["originAssetSize"];
       if (!size)
-      size = '0';
-    if (kind === "gif" && parseInt(size) <= this.maxSize) {
-      thumbnailUri = this.assetItem['asset'] || "";
-    }
+        size = '0';
+      if (kind === "gif" && parseInt(size) <= this.maxSize) {
+        thumbnailUri = this.assetItem['asset'] || "";
+      }
     } else if (version === "2") {
       let jsonData = this.assetItem['data'] || "";
       if (jsonData != "") {
@@ -60,10 +60,10 @@ export class NewassetitemComponent implements OnInit {
         kind = jsonData["kind"];
         size = jsonData["size"];
         if (!size)
-        size = '0';
-      if (kind === "gif" && parseInt(size) <= this.maxSize) {
-        thumbnailUri = jsonData['image'] || "";
-      }
+          size = '0';
+        if (kind === "gif" && parseInt(size) <= this.maxSize) {
+          thumbnailUri = jsonData['image'] || "";
+        }
       } else {
         thumbnailUri = "";
       }
@@ -138,7 +138,7 @@ export class NewassetitemComponent implements OnInit {
   }
 
   handleAddr(sellerAddr: string) {
-    let walletAddressStr = UtilService.resolveAddress(sellerAddr);
+    let walletAddressStr = UtilService.shortenAddress(sellerAddr);
     return walletAddressStr;
   }
 

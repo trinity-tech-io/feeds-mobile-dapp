@@ -408,7 +408,7 @@ export class ChannelsPage implements OnInit {
     this.channelOwner = "";
 
     let text = this.destDid.replace('did:elastos:', '');
-    this.channelOwner = UtilService.resolveAddress(text);
+    this.channelOwner = UtilService.shortenAddress(text);
     try {
       this.hiveVaultController.getDisplayName(this.destDid, this.channelId, this.destDid).
         then((result: string) => {

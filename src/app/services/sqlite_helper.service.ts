@@ -178,7 +178,7 @@ export class FeedsSqliteHelper {
         const postList = this.parsePostData(result);
         resolve(postList);
       } catch (error) {
-        Logger.error(TAG, 'query post data error', error);
+        Logger.error(TAG, 'query origin post data error', error);
         reject(error);
       }
     });
@@ -193,7 +193,7 @@ export class FeedsSqliteHelper {
         const postList = this.parsePostData(result);
         resolve(postList);
       } catch (error) {
-        Logger.error(TAG, 'query post data error', error);
+        Logger.error(TAG, 'query new origin post data error', error);
         reject(error);
       }
     });
@@ -745,11 +745,12 @@ export class FeedsSqliteHelper {
   queryDisplayNameByUserDid(dbUserDid: string, userDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT COUNT(*) FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE user_did=?'
+        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE user_did=?'
         const params = [userDid];
         const result = await this.executeSql(dbUserDid, statement, params);
         const subscriptions = this.parseSubscriptionData(result);
 
+        console.log('queryDisplayNameByUserDid====>', subscriptions);
         if (!subscriptions || subscriptions.length == 0) {
           resolve('');
           return;
@@ -1190,13 +1191,13 @@ export class FeedsSqliteHelper {
   queryUserDataById(dbUserDid: string, userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_USER + 'WHERE did=?';
+        const statement = 'SELECT * FROM ' + this.TABLE_USER + ' WHERE did=?';
         const params = [userDid];
-        const result = await this.executeSql(dbUserDid, statement);
+        const result = await this.executeSql(dbUserDid, statement, params);
         const users = this.parseUserData(result);
         resolve(users[0]);
       } catch (error) {
-        Logger.error(TAG, 'query post data error', error);
+        Logger.error(TAG, 'query userdata data error', error);
         reject(error);
       }
     });

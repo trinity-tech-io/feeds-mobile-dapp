@@ -10,20 +10,12 @@ import { DIDHelperService } from 'src/app/services/did_helper.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { UtilService } from 'src/app/services/utilService';
 
-@Component({
-  selector: 'app-userlist',
-  templateUrl: './userlist.page.html',
-  styleUrls: ['./userlist.page.scss'],
-})
+@Component({ selector: 'app-userlist', templateUrl: './userlist.page.html', styleUrls: ['./userlist.page.scss'], })
 export class UserlistPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  public userAvatarMap: { [userDid: string]: string } = {};
-  public userNameMap: { [userDid: string]: string } = {};
-  private userAvatarisLoad: { [userDid: string]: string } = {};
-  private userNameisLoad: { [userDid: string]: string } = {};
-  private channelId = '';
-  public totalData: any = [];
-  public userList: any = [];
+  public pageItemMap: { [userDid: string]: PageItem } = {};
+  public totalUserDidList: string[] = [];
+  public usersDidList: string[] = [];
   public pageSize = 1;
   public pageNumber = 10;
   private userAvatarSid: NodeJS.Timer = null;
@@ -41,7 +33,7 @@ export class UserlistPage implements OnInit {
 
   ionViewWillEnter() {
     this.initTitle();
-    this.getUserList();
+    this.initData();
   }
 
   initTitle() {
@@ -52,24 +44,21 @@ export class UserlistPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
 
-  ionViewWillLeave() {
-  }
-
-  async getUserList() {
+  async initData() {
     this.pageSize = 1;
     const userList = this.dataHelper.getUserDidList();
+    this.totalUserDidList = userList;
+    let pageData = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
+    //tobe check
+    this.usersDidList = pageData.items;
+    // for (let index = 0; index < this.usersDidList.length; index++) {
+    //   const userdid = this.usersDidList[index];
+    //   this.setPageItemData(userdid);
+    // }
 
-    this.totalData = userList;
-    let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
-    if (data.currentPage === data.totalPage) {
-      this.userList = data.items
-    } else {
-      this.userList = data.items;
-    }
+    this.syncDidDocumentProfileFromList(this.usersDidList);
     this.removeObserveList();
-    this.userAvatarisLoad = {};
-    this.userNameisLoad = {};
-    this.refreshUserAvatar(this.userList);
+    this.initUserObserVerList(this.usersDidList);
   }
 
   clickItem(userItem: string) {
@@ -77,28 +66,22 @@ export class UserlistPage implements OnInit {
   }
 
   ngOnInit() {
-
     this.activatedRoute.queryParams.subscribe((params: Params) => {
-      this.channelId = params.channelId;
     });
   }
 
-  resolveData(userDid: string) {
-    this.didHelper.resolveNameAndAvatarFromDidDocument(userDid).then((result: { name: string, avatar: string }) => {
-      console.log('resolveData====>', userDid, result.name, result.avatar);
-      this.setUserNameUI(userDid, result.name);
-      this.setAvatarUI(userDid, result.avatar);
-    }).catch((err) => {
-      this.userNameMap[userDid] = "common.unknown";
-      this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
-    });
+  setUserNameAndAvatarUI(userProfile: FeedsData.UserProfile) {
+    const name = userProfile.name || userProfile.resolvedName || userProfile.displayName;
+    const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
+    this.setUserNameUI(userProfile.did, name);
+    this.setAvatarUI(userProfile.did, avatarUrl);
   }
 
   setUserNameUI(userDid: string, name: string) {
     if (name) {
       this.setUserName(userDid, name);
     } else {
-      this.userNameMap[userDid] = "common.unknown";
+      this.setUserName(userDid);
     }
   }
 
@@ -109,80 +92,85 @@ export class UserlistPage implements OnInit {
         .then((image) => {
           this.setUserAvatar(userDid, image);
         }).catch((err) => {
-          this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
+          this.setUserAvatar(userDid);
         })
     } else {
-      this.userAvatarMap[userDid] = './assets/images/default-contact.svg';
+      this.setUserAvatar(userDid);
     }
   }
 
   setUserAvatar(userDid: string, avatar = './assets/images/default-contact.svg') {
-    this.userAvatarMap[userDid] = avatar;
+    if (!this.pageItemMap[userDid])
+      this.pageItemMap[userDid] = this.generatePageItem(userDid);
+    this.pageItemMap[userDid].avatar = avatar;
   }
 
-  setUserName(userDid: string, userName: string) {
-    this.userNameMap[userDid] = userName;
+  setUserName(userDid: string, userName: string = 'common.unknown') {
+    if (!this.pageItemMap[userDid])
+      this.pageItemMap[userDid] = this.generatePageItem(userDid);
+    this.pageItemMap[userDid].name = userName;
   }
 
-  clickSubscription(subscription: any) {
-
+  generatePageItem(userDid: string): PageItem {
+    return { did: userDid, name: '', avatar: '', description: '' }
   }
 
-  refreshUserAvatar(list = []) {
+  initUserObserVerList(userDidList = []) {
     this.clearUserAvatarSid();
     this.userAvatarSid = setTimeout(() => {
-      this.getUserObserverList(list);
+      this.getUserObserverList(userDidList);
       this.clearUserAvatarSid();
     }, 100);
   }
 
-
-  getUserObserverList(follingList = []) {
-    for (let index = 0; index < follingList.length; index++) {
-      let item = follingList[index] || null;
-      if (item === null) {
+  getUserObserverList(userDidList = []) {
+    for (let index = 0; index < userDidList.length; index++) {
+      let userDid = userDidList[index] || null;
+      if (userDid === null) {
         return;
       }
-      let postGridId = item.userDid + '-userList';
-      let exit = this.userObserver[postGridId] || null;
+      let observerId = userDid + '-userList';
+      let exit = this.userObserver[observerId] || null;
       if (exit != null) {
         continue;
       }
     }
   }
 
-  newUserObserver(postGridId: string) {
-    let observer = this.userObserver[postGridId] || null;
+  newUserObserver(observerId: string) {
+    let observer = this.userObserver[observerId] || null;
     if (observer != null) {
       return;
     }
-    let item = document.getElementById(postGridId) || null;
+    let item = document.getElementById(observerId) || null;
     if (item != null) {
-      this.userObserver[postGridId] = new IntersectionObserver(async (changes: any) => {
+      this.userObserver[observerId] = new IntersectionObserver(async (changes: any) => {
         let container = changes[0].target;
         let newId = container.getAttribute("id");
 
         let intersectionRatio = changes[0].intersectionRatio;
 
         if (intersectionRatio === 0) {
-          //console.log("======newId leave========", newId);
           return;
         }
         let arr = newId.split("-");
         let userDid: string = arr[0];
-        await this.handleUserAvatar(userDid);
+        this.setPageItemData(userDid);
       });
-
-      this.userObserver[postGridId].observe(item);
+      this.userObserver[observerId].observe(item);
     }
   }
 
-  getDisplayName(userDid: string) {
-    let isLoad = this.userNameisLoad[userDid] || '';
-    if (isLoad === "") {
-      this.userNameisLoad[userDid] = "11";
-      let text = userDid.replace('did:elastos:', '');
-      this.userNameMap[userDid] = UtilService.resolveAddress(text);
+  setPageItemData(userDid: string) {
+    let pageItem = this.pageItemMap[userDid] || '';
+    if (!pageItem) {
+      this.pageItemMap[userDid] = this.generatePageItem(userDid);
+      let simpleDid = userDid.replace('did:elastos:', '');
+      this.pageItemMap[userDid].name = UtilService.shortenAddress(simpleDid);
+
+      this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+        this.setUserNameAndAvatarUI(userProfile);
+      });
     }
   }
 
@@ -190,15 +178,6 @@ export class UserlistPage implements OnInit {
     if (this.userAvatarSid != null) {
       clearTimeout(this.userAvatarSid);
       this.userAvatarSid = null;
-    }
-  }
-  async handleUserAvatar(userDid: string) {
-
-    let isload = this.userAvatarisLoad[userDid] || '';
-    if (isload === "") {
-      this.userAvatarisLoad[userDid] = '11';
-      this.getDisplayName(userDid);
-      this.resolveData(userDid);
     }
   }
 
@@ -222,49 +201,40 @@ export class UserlistPage implements OnInit {
   }
 
   doRefresh(event: any) {
-
     let sId = setTimeout(() => {
       try {
         this.handleRefesh();
       } catch (error) {
-
       }
       event.target.complete();
       clearTimeout(sId);
     }, 200)
-
   }
 
   async handleRefesh() {
     this.pageSize = 1;
     // refresh total data todo
-    let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
-    if (data.currentPage === data.totalPage) {
-      this.userList = data.items
-    } else {
-      this.userList = data.items;
-    }
+    let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
+    this.usersDidList = data.items;
+    this.syncDidDocumentProfileFromList(this.usersDidList);
     this.removeObserveList();
-    this.userAvatarisLoad = {};
-    this.userNameisLoad = {};
-    this.refreshUserAvatar(this.userList);
+    this.initUserObserVerList(this.usersDidList);
   }
 
   loadData(event: any) {
     let sId = setTimeout(() => {
-      if (this.userList.length === this.totalData.length) {
+      if (this.usersDidList.length === this.totalUserDidList.length) {
         event.target.complete();
         clearTimeout(sId);
         return;
       }
       this.pageSize++;
-      let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
-      if (data.currentPage === data.totalPage) {
-        this.userList = this.userList.concat(data.items);
-      } else {
-        this.userList = this.userList.concat(data.items);
-      }
-      this.refreshUserAvatar(data.items);
+      let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
+      const newLoadedList = data.items
+      this.usersDidList = this.usersDidList.concat(newLoadedList);
+      this.syncDidDocumentProfileFromList(newLoadedList);
+
+      this.initUserObserVerList(data.items);
       event.target.complete();
       clearTimeout(sId);
     }, 500);
@@ -278,4 +248,23 @@ export class UserlistPage implements OnInit {
       })
       .catch(() => { });
   }
+
+  syncDidDocumentProfileFromList(usersDidList: string[]) {
+    for (let index = 0; index < usersDidList.length; index++) {
+      const userdid: string = usersDidList[index];
+      this.hiveVaultController.syncUserProfileFromDidDocument(userdid).then((userProfile: FeedsData.UserProfile) => {
+        this.setUserNameAndAvatarUI(userProfile);
+      });
+    }
+  }
+
+  clickSubscription(userDid: string) {
+  }
+}
+
+type PageItem = {
+  did: string,
+  name: string,
+  avatar: string,
+  description: string
 }

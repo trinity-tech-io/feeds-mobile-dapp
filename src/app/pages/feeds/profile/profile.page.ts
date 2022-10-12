@@ -1840,7 +1840,7 @@ export class ProfilePage implements OnInit {
     else
       this.walletAddress = walletAccount;
     Logger.log(TAG, 'Update WalletAddress', this.walletAddress);
-    this.walletAddressStr = UtilService.resolveAddress(this.walletAddress);
+    this.walletAddressStr = UtilService.shortenAddress(this.walletAddress);
     if (this.walletAddress === "") {
       this.ownNftSum = 0;
     }
@@ -2463,7 +2463,7 @@ export class ProfilePage implements OnInit {
       let displayName = this.handleDisplayNameMap[userDid] || "";
       if (displayName === "") {
         let text = userDid.replace('did:elastos:', '');
-        this.handleDisplayNameMap[userDid] = UtilService.resolveAddress(text);
+        this.handleDisplayNameMap[userDid] = UtilService.shortenAddress(text);
       }
 
       try {
