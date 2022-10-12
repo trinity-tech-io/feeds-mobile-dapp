@@ -166,6 +166,21 @@ export class EidtchannelPage implements OnInit {
     }
 
     if(this.channelContratctInfo != null && this.channelContratctInfo != "unPublic" ){
+
+      let tippingAddress = this.tippingAddress || "";
+      if(tippingAddress === ""){
+        this.native.toastWarn('CreatenewfeedPage.tippingAddressDes');
+        return false;
+      }
+
+      if(tippingAddress != ""){
+        let isVailAddress = this.nftContractControllerService.isAddress(tippingAddress);
+        if(!isVailAddress){
+          this.native.toastWarn("common.addressinvalid");
+          return false;
+        }
+      }
+
       let walletAddress = this.walletConnectControllerService.getAccountAddress() || "";
       if(walletAddress === ""){
         this.walletConnectControllerService.connect();
@@ -319,7 +334,6 @@ export class EidtchannelPage implements OnInit {
       this.native.toastWarn('CreatenewfeedPage.tipMsgLength');
       return;
     }
-
     if (this.channelAvatar === '') {
       this.native.toastWarn('CreatenewfeedPage.des');
       return false;
@@ -347,13 +361,23 @@ export class EidtchannelPage implements OnInit {
       this.tippingAddress = "";
       return;
     }
+    let tippingAddress = "";
     if (scannedContent.indexOf('ethereum:') > -1) {
-      this.tippingAddress = scannedContent.replace('ethereum:', '');
+      tippingAddress = scannedContent.replace('ethereum:', '');
     } else if (scannedContent.indexOf('elastos:') > -1) {
-      this.tippingAddress = scannedContent.replace('elastos:', '');
+      tippingAddress = scannedContent.replace('elastos:', '');
     } else {
-      this.tippingAddress = scannedContent;
+      tippingAddress = scannedContent;
     }
+
+    if(tippingAddress != ""){
+      let isVailAddress = this.nftContractControllerService.isAddress(tippingAddress);
+      if(isVailAddress){
+        this.tippingAddress = tippingAddress;
+      }else{
+        this.native.toastWarn("common.addressinvalid");
+      }
+     }
   }
 
   async getChannelContratctInfo(channelId: string) {
@@ -607,6 +631,21 @@ export class EidtchannelPage implements OnInit {
     }
 
     if(this.channelContratctInfo != null && this.channelContratctInfo != "unPublic"){
+
+      let tippingAddress = this.tippingAddress || "";
+      if(tippingAddress === ""){
+        this.native.toastWarn('CreatenewfeedPage.tippingAddressDes');
+        return false;
+      }
+
+      if(tippingAddress != ""){
+        let isVailAddress = this.nftContractControllerService.isAddress(tippingAddress);
+        if(!isVailAddress){
+          this.native.toastWarn("common.addressinvalid");
+          return false;
+        }
+      }
+
       let walletAddress = this.walletConnectControllerService.getAccountAddress() || "";
       if(walletAddress === ""){
         this.walletConnectControllerService.connect();
