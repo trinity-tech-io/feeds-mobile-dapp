@@ -38,6 +38,7 @@ export class FeedspreferencesPage implements OnInit {
   public isShowMint: boolean = false;
   private channelInfo: any = null;
   private unPublicDialog: any = null;
+  private burnChannelSid: NodeJS.Timer = null;
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -163,15 +164,21 @@ export class FeedspreferencesPage implements OnInit {
     }
     that.handleBurnChannel(that);
   }
-
+  clearBurnChannelSid(){
+    if(this.burnChannelSid != null){
+        clearTimeout(this.burnChannelSid);
+        this.burnChannelSid = null;
+    }
+  }
   async handleBurnChannel(that: any) {
     that.isLoading = true;
     that.loadingTitle = 'common.waitMoment';
     that.loadingText = 'FeedspreferencesPage.burningNFTSDesc';
-    let sId = setTimeout(() => {
+    that.burnChannelSid = setTimeout(() => {
       that.nftContractControllerService.getChannel().cancelBurnProcess();
       that.isLoading = false;
-      clearTimeout(sId);
+      that.clearBurnChannelSid();
+      that.handleCache(that);
       that.popupProvider.showSelfCheckDialog('FeedspreferencesPage.burningNFTSTimeoutDesc');
     }, Config.WAIT_TIME_BURN_NFTS);
 
@@ -185,32 +192,12 @@ export class FeedspreferencesPage implements OnInit {
           that.curFeedPublicStatus = false;
         })
         that.isLoading = false;
-        clearTimeout(sId);
-        let channelCollectionPageList = that.dataHelper.getChannelCollectionPageList() || [];
-        let channelIndex =_.findIndex(channelCollectionPageList,(channel: FeedsData.ChannelV3)=>{
-              return that.destDid === channel.destDid && that.channelId === channel.channelId;
-        })
-        if(channelIndex > -1 ){
-          channelCollectionPageList.splice(channelIndex,1);
-          that.dataHelper.setChannelCollectionPageList(channelCollectionPageList)
-        }
-
-       let channelContractInfoList = that.dataHelper.getChannelContractInfoList() || {};
-       let channelContractInfo = channelContractInfoList[that.channelId] || "";
-       if(channelContractInfo != ""){
-          delete channelContractInfoList[this.channelId];
-          that.dataHelper.setChannelContractInfoList(channelContractInfoList);
-          that.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
-       }
-        that.native.toast("FeedspreferencesPage.burnNFTSSuccess");
-        let channelPublicStatusList = that.dataHelper.getChannelPublicStatusList();
-        let key = that.destDid +'-'+that.channelId;
-        channelPublicStatusList[key] = "1";
-        that.dataHelper.setChannelPublicStatusList(channelPublicStatusList);
+        that.clearBurnChannelSid();
+        that.handleCache(that);
       }).catch(() => {
         that.nftContractControllerService.getChannel().cancelBurnProcess();
         that.isLoading = false;
-        clearTimeout(sId);
+        that.clearBurnChannelSid();
         that.native.toastWarn("FeedspreferencesPage.burnNFTSFailed");
       });
   }
@@ -243,6 +230,30 @@ export class FeedspreferencesPage implements OnInit {
       }
       return;
     }
+  }
+
+  handleCache(that:any){
+    let channelCollectionPageList = that.dataHelper.getChannelCollectionPageList() || [];
+    let channelIndex =_.findIndex(channelCollectionPageList,(channel: FeedsData.ChannelV3)=>{
+          return that.destDid === channel.destDid && that.channelId === channel.channelId;
+    })
+    if(channelIndex > -1 ){
+      channelCollectionPageList.splice(channelIndex,1);
+      that.dataHelper.setChannelCollectionPageList(channelCollectionPageList)
+    }
+
+   let channelContractInfoList = that.dataHelper.getChannelContractInfoList() || {};
+   let channelContractInfo = channelContractInfoList[that.channelId] || "";
+   if(channelContractInfo != ""){
+      delete channelContractInfoList[this.channelId];
+      that.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      that.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
+   }
+    that.native.toast("FeedspreferencesPage.burnNFTSSuccess");
+    let channelPublicStatusList = that.dataHelper.getChannelPublicStatusList();
+    let key = that.destDid +'-'+that.channelId;
+    channelPublicStatusList[key] = "1";
+    that.dataHelper.setChannelPublicStatusList(channelPublicStatusList);
   }
 
 

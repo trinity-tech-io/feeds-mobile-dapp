@@ -115,22 +115,17 @@ export class ChannelContractService {
     });
   }
 
-  // QuoteToken 为0x000 表示使用 ELA
-  // mintFee为0 表示不需要注册费用，使用最基础的交易费就可以了。
-
   async mint(
     tokenId: string,
     tokenURI: string,
     channelEntry: string,
     receiptAddr: string,
-    quoteToken: string,
-    mintFee: string
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        Logger.log(TAG, 'Mint params ', tokenId, tokenURI, channelEntry, receiptAddr,  quoteToken, mintFee);
+        Logger.log(TAG, 'Mint params ', tokenId, tokenURI, channelEntry, receiptAddr);
         const mintdata = this.channelContract.methods
-          .mint(tokenId, tokenURI, channelEntry, receiptAddr, quoteToken, mintFee)
+          .mint(tokenId, tokenURI, channelEntry, receiptAddr)
           .encodeABI();
         let transactionParams = await this.createTxParams(mintdata);
 
@@ -140,7 +135,7 @@ export class ChannelContractService {
           transactionParams,
         );
         this.channelContract.methods
-          .mint(tokenId, tokenURI, channelEntry, receiptAddr, quoteToken, mintFee)
+          .mint(tokenId, tokenURI, channelEntry, receiptAddr)
           .send(transactionParams)
           .on('transactionHash', hash => {
             Logger.log(TAG, 'Mint process, transactionHash is', hash);
@@ -277,7 +272,7 @@ export class ChannelContractService {
     clearInterval(this.checkUpdateChannelInterval);
   }
 
-  checkUpdateChannelState(tokenId:string,tokenUri: string,receiptAddr: string,callback: (tokenInfo: any) => void){
+  checkUpdateChannelState(tokenId:string,tokenUri: string, channelEntry:string, receiptAddr: string,callback: (tokenInfo: any) => void){
     this.checkUpdateChannelInterval = setInterval(async () => {
      if (!this.checkUpdateChannelInterval) return;
      let info = await this.channelInfo(tokenId);
@@ -309,12 +304,12 @@ export class ChannelContractService {
   }
 
 
-  async updateChannel(tokenId: string, tokenUri: string, receiptAddr: string) : Promise<any>{
+  async updateChannel(tokenId: string, tokenUri: string, channelEntry: string,receiptAddr: string) : Promise<any>{
     return new Promise(async (resolve, reject) => {
           try {
-            Logger.log(TAG, 'updateChannel params ', tokenId, tokenUri, receiptAddr);
+            Logger.log(TAG, 'updateChannel params ', tokenId, tokenUri, channelEntry, receiptAddr);
             const updateChanneldata = this.channelContract.methods
-              .updateChannel(tokenId, tokenUri, receiptAddr)
+              .updateChannel(tokenId, tokenUri, channelEntry, receiptAddr)
               .encodeABI();
             let transactionParams = await this.createTxParams(updateChanneldata);
             Logger.log(TAG,
@@ -323,7 +318,7 @@ export class ChannelContractService {
               transactionParams,
             );
             this.channelContract.methods
-              .updateChannel(tokenId, tokenUri, receiptAddr)
+              .updateChannel(tokenId, tokenUri, channelEntry, receiptAddr)
               .send(transactionParams)
               .on('transactionHash', hash => {
               Logger.log(TAG, 'updateChannel process, transactionHash is', hash);
@@ -341,7 +336,7 @@ export class ChannelContractService {
               .on('error', (error, receipt) => {
                 Logger.error(TAG, 'updateChannel process, error is', error, receipt);
               });
-              this.checkUpdateChannelState(tokenId,tokenUri,receiptAddr,(info)=>{
+              this.checkUpdateChannelState(tokenId,tokenUri, channelEntry, receiptAddr,(info)=>{
                  resolve(info);
               });
           } catch (error) {

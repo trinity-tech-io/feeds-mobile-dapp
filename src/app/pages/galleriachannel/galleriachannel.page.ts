@@ -186,7 +186,7 @@ export class GalleriachannelPage implements OnInit {
       this.tokenUri = result.jsonHash;
       this.loadingCurNumber = "2";
       this.loadingText = "GalleriachannelPage.mintingData";
-      return this.mintContract(tokenId,this.tokenUri,this.channelEntry,this.receiptAddr,'0x0000000000000000000000000000000000000000','0')
+      return this.mintContract(tokenId,this.tokenUri,this.channelEntry,this.receiptAddr)
 
     }).then(mintResult => {
           this.loadingCurNumber = "3";
@@ -283,9 +283,7 @@ export class GalleriachannelPage implements OnInit {
     tokenId: string,
     tokenUri: string,
     channelEntry: string,
-    receiptAddr: string,
-    quoteToken: string,
-    mintFee: string
+    receiptAddr: string
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const MINT_ERROR = 'Mint process error';
@@ -293,7 +291,7 @@ export class GalleriachannelPage implements OnInit {
       try {
         result = await this.nftContractControllerService
           .getChannel()
-          .mint(tokenId, tokenUri, channelEntry, receiptAddr, quoteToken, mintFee);
+          .mint(tokenId, tokenUri, channelEntry, receiptAddr);
       } catch (error) {
         reject(error);
         return;

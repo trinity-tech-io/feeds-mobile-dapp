@@ -91,7 +91,6 @@ export class NftdialogComponent implements OnInit {
         break;
       case 'created':
         if (this.assetType === "feeds-channel") {
-          this.handleCreatedChannel();
         } else {
           this.handleCreatedList();
         }
@@ -182,125 +181,8 @@ export class NftdialogComponent implements OnInit {
     this.sellCollectibles(tokenId, 'created');
   }
 
-  handleCreatedChannel() {
 
-    this.quantity = this.quantity || '';
-    if (this.quantity === '') {
-      this.native.toastWarn('MintnftPage.nftQuantityPlaceholder');
-      return;
-    }
-    let regNumber = /^\+?[1-9][0-9]*$/;
-    if (regNumber.test(this.quantity) == false) {
-      this.native.toast_trans('MintnftPage.quantityErrorMsg');
-      return;
-    }
 
-    if (parseInt(this.quantity) > parseInt(this.Maxquantity)) {
-      this.native.toast_trans('MintnftPage.quantityErrorMsg1');
-      return;
-    }
-    let tokenId = this.assItem.tokenId;
-
-    this.sellChannelCollectibles(tokenId, 'created');
-  }
-
-  async sellChannelCollectibles(tokenId: any, type: string) {
-    this.didUri = await this.getDidUri();
-    if (this.didUri === null) {
-      this.native.toast("common.didUriNull");
-      return;
-    }
-    await this.popover.dismiss();
-    this.events.publish(FeedsEvent.PublishType.startLoading, { des: "common.sellingOrderDesc", title: "common.waitMoment", curNum: null, maxNum: null, type: "changePrice" });
-    let sId = setTimeout(() => {
-      this.nftContractControllerService.getGalleria().cancelCreatePanelProcess();
-      this.nftContractControllerService.getSticker().cancelSetApprovedProcess();
-      this.events.publish(FeedsEvent.PublishType.endLoading);
-      clearTimeout(sId);
-      this.popupProvider.showSelfCheckDialog('common.saleOrderTimeoutDesc');
-    }, Config.WAIT_TIME_SELL_ORDER);
-
-    this.doSetChannelApproval()
-      .then(() => {
-        return this.doCreateChannelOrder(tokenId, type);
-      })
-      .then(() => {
-        this.nftContractControllerService.getGalleria().cancelCreatePanelProcess();
-        this.nftContractControllerService.getSticker().cancelSetApprovedProcess()
-        this.events.publish(FeedsEvent.PublishType.endLoading);
-        clearTimeout(sId);
-        //show success
-      })
-      .catch(() => {
-        this.nftContractControllerService.getGalleria().cancelCreatePanelProcess();
-        this.nftContractControllerService.getSticker().cancelSetApprovedProcess()
-        this.events.publish(FeedsEvent.PublishType.endLoading);
-        clearTimeout(sId);
-      });
-  }
-
-  doCreateChannelOrder(tokenId: any, type: string) {
-    return new Promise(async (resolve, reject) => {
-      try {
-
-        if (typeof this.quantity === 'number') {
-          this.quantity = this.quantity.toString();
-        }
-        Logger.log(TAG, 'Quantity type is', typeof this.quantity);
-        let tokenInfo = null;
-        tokenInfo = await this.nftContractControllerService
-          .getGalleria()
-          .createPanel(tokenId, this.quantity, this.didUri);
-
-        if (tokenInfo == null || tokenInfo == undefined || tokenInfo == -1) {
-          reject(-1);
-          return;
-        }
-        await this.handleCreteChannelOrderResult(tokenId, tokenInfo);
-        resolve('Success');
-      } catch (error) {
-        reject(error);
-      }
-    })
-  }
-
-  doSetChannelApproval(): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let accountAddress = this.nftContractControllerService.getAccountAddress();
-        // Seller approve pasar
-        let galleriaAddress = this.nftContractControllerService
-          .getGalleria()
-          .getGalleriaAddress();
-        let result = '';
-
-        result = await this.nftContractControllerService
-          .getSticker()
-          .setApprovalForAll(accountAddress, galleriaAddress, true);
-
-        if (!result) {
-          reject('SetApprovalError');
-          return;
-        }
-
-        resolve('Success');
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
-
-  async handleCreteChannelOrderResult(tokenId: string, tokenInfo: any): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        this.events.publish(FeedsEvent.PublishType.nftUpdateList, { "tokenId": tokenId, "panelId": tokenInfo[0], "assItem": this.curAssItem });
-        resolve('Success');
-      } catch (err) {
-        Logger.error(TAG,"handleCreteChannelOrder error",err);
-        reject(err);
-      }
-    });
-  }
 
   async sellCollectibles(tokenId: any, type: string) {
     await this.popover.dismiss();

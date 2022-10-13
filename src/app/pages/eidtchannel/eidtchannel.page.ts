@@ -54,6 +54,7 @@ export class EidtchannelPage implements OnInit {
   private avatarHash: string = "";
   public isShowTippingAddress: boolean = false;
   public isShowUpdateContratct: boolean = false;
+  private updateChannelSid: NodeJS.Timer = null;
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -137,6 +138,8 @@ export class EidtchannelPage implements OnInit {
   ionViewDidEnter() { }
 
   ionViewWillLeave() {
+
+    this.clearUpdateChannelSid();
     this.clickButton = false;
     this.theme.restTheme();
     if (!this.isClickConfirm) {
@@ -423,14 +426,22 @@ export class EidtchannelPage implements OnInit {
     }
   }
 
-  async handleUpdateChannel() {
+  clearUpdateChannelSid(){
+    if(this.updateChannelSid != null){
+        clearTimeout(this.updateChannelSid);
+        this.updateChannelSid = null;
+    }
+  }
 
-    let sId = setTimeout(() => {
+  async handleUpdateChannel() {
+     this.clearUpdateChannelSid();
+     this.updateChannelSid = setTimeout(() => {
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
       this.isLoading = false;
-      clearTimeout(sId);
+      this.clearUpdateChannelSid();
       this.popupProvider.showSelfCheckDialog('EidtchannelPage.updateChannelTimeoutDesc');
-    }, Config.WAIT_TIME_BURN_NFTS);
+      this.addChannelNftCache();
+    }, Config.WAIT_TIME_UPDATE_NFTS);
     if(this.isShowUpdateContratct){
       this.loadingCurNumber = "1";
       this.loadingText = "common.uploadingData";
@@ -441,9 +452,9 @@ export class EidtchannelPage implements OnInit {
       this.loadingText = "common.uploadingData";
     }
 
-
     let tokenId = '0x'+this.channelId;
     let receiptAddr = this.tippingAddress || '';
+    let channelEntry = UtilService.generateFeedsQrCodeString(this.destDid,this.channelId);
     this.uploadData()
     .then(async (result) => {
       Logger.log(TAG, 'Upload Result', result);
@@ -462,28 +473,18 @@ export class EidtchannelPage implements OnInit {
         this.loadingCurNumber = "3";
         this.loadingText = "EidtchannelPage.updateChannelDesc";
       }
-      return this.updateChannelContract(tokenId, tokenUri, receiptAddr);
+      return this.updateChannelContract(tokenId, tokenUri, channelEntry, receiptAddr);
     }).then(async ()=>{
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
-
       //add channel Contratct cace
-      this.channelContratctInfo.description = this.channelDes;
-      this.channelContratctInfo.cname = this.displayName;
-      this.channelContratctInfo.receiptAddr = this.tippingAddress;
-      let avatarBase64 =  await this.handleIpfsChannelAvatar(this.channelAvatar);
-      let avatarHash =  SparkMD5.hash(avatarBase64);
-      this.channelContratctInfo.avatar = avatarHash;
-      let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
-      channelContractInfoList[this.channelId] = this.channelContratctInfo;
-      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
-      this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
+      await this.addChannelNftCache();
       this.isLoading = false;
-      clearTimeout(sId);
+      this.clearUpdateChannelSid();
       this.native.pop();
     }).catch(()=>{
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
       this.isLoading = false;
-      clearTimeout(sId);
+      this.clearUpdateChannelSid();
       this.isShowUpdateContratct = true;
       this.native.toastWarn("EidtchannelPage.updateChannelFailed");
     });
@@ -493,6 +494,7 @@ export class EidtchannelPage implements OnInit {
   updateChannelContract(
     tokenId: string,
     tokenUri: string,
+    channelEntry: string,
     receiptAddr: string,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
@@ -501,7 +503,7 @@ export class EidtchannelPage implements OnInit {
       try {
         result = await this.nftContractControllerService
           .getChannel()
-          .updateChannel(tokenId,tokenUri,receiptAddr);
+          .updateChannel(tokenId,tokenUri,channelEntry,receiptAddr);
       } catch (error) {
         reject(error);
         return;
@@ -655,5 +657,18 @@ export class EidtchannelPage implements OnInit {
     this.isClickConfirm = false;
     this.clickButton = true;
     this.handleUpdateChannel();
+  }
+
+  async addChannelNftCache() {
+    this.channelContratctInfo.description = this.channelDes;
+      this.channelContratctInfo.cname = this.displayName;
+      this.channelContratctInfo.receiptAddr = this.tippingAddress;
+      let avatarBase64 =  await this.handleIpfsChannelAvatar(this.channelAvatar);
+      let avatarHash =  SparkMD5.hash(avatarBase64);
+      this.channelContratctInfo.avatar = avatarHash;
+      let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+      channelContractInfoList[this.channelId] = this.channelContratctInfo;
+      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
   }
 }
