@@ -6,7 +6,6 @@ import { NativeService } from '../../services/NativeService';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { Params, ActivatedRoute } from '@angular/router';
-import { DIDHelperService } from 'src/app/services/did_helper.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { UtilService } from 'src/app/services/utilService';
 
@@ -27,7 +26,6 @@ export class UserlistPage implements OnInit {
     private dataHelper: DataHelper,
     private native: NativeService,
     public theme: ThemeService,
-    private didHelper: DIDHelperService,
     private hiveVaultController: HiveVaultController
   ) { }
 
@@ -49,14 +47,8 @@ export class UserlistPage implements OnInit {
     const userList = this.dataHelper.getUserDidList();
     this.totalUserDidList = userList;
     let pageData = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
-    //tobe check
     this.usersDidList = pageData.items;
-    // for (let index = 0; index < this.usersDidList.length; index++) {
-    //   const userdid = this.usersDidList[index];
-    //   this.setPageItemData(userdid);
-    // }
-
-    this.syncDidDocumentProfileFromList(this.usersDidList);
+    this.syncRemoteUserProfile(this.usersDidList);
     this.removeObserveList();
     this.initUserObserVerList(this.usersDidList);
   }
@@ -86,6 +78,7 @@ export class UserlistPage implements OnInit {
   }
 
   setAvatarUI(userDid: string, avatarUrl: string) {
+    this.setUserAvatar(userDid);
     if (avatarUrl) {
       let fileName: string = userDid.replace('did:elastos:', '');
       this.hiveVaultController.getV3HiveUrlData(userDid, avatarUrl, fileName)
@@ -94,8 +87,6 @@ export class UserlistPage implements OnInit {
         }).catch((err) => {
           this.setUserAvatar(userDid);
         })
-    } else {
-      this.setUserAvatar(userDid);
     }
   }
 
@@ -147,9 +138,7 @@ export class UserlistPage implements OnInit {
       this.userObserver[observerId] = new IntersectionObserver(async (changes: any) => {
         let container = changes[0].target;
         let newId = container.getAttribute("id");
-
         let intersectionRatio = changes[0].intersectionRatio;
-
         if (intersectionRatio === 0) {
           return;
         }
@@ -216,7 +205,7 @@ export class UserlistPage implements OnInit {
     // refresh total data todo
     let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
     this.usersDidList = data.items;
-    this.syncDidDocumentProfileFromList(this.usersDidList);
+    this.syncRemoteUserProfile(this.usersDidList);
     this.removeObserveList();
     this.initUserObserVerList(this.usersDidList);
   }
@@ -232,7 +221,7 @@ export class UserlistPage implements OnInit {
       let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
       const newLoadedList = data.items
       this.usersDidList = this.usersDidList.concat(newLoadedList);
-      this.syncDidDocumentProfileFromList(newLoadedList);
+      this.syncRemoteUserProfile(newLoadedList);
 
       this.initUserObserVerList(data.items);
       event.target.complete();
@@ -249,13 +238,17 @@ export class UserlistPage implements OnInit {
       .catch(() => { });
   }
 
-  syncDidDocumentProfileFromList(usersDidList: string[]) {
+  private syncDidDocumentProfileFromList(usersDidList: string[]) {
     for (let index = 0; index < usersDidList.length; index++) {
       const userdid: string = usersDidList[index];
       this.hiveVaultController.syncUserProfileFromDidDocument(userdid).then((userProfile: FeedsData.UserProfile) => {
         this.setUserNameAndAvatarUI(userProfile);
       });
     }
+  }
+
+  syncRemoteUserProfile(userDidList: string[]) {
+    this.syncDidDocumentProfileFromList(userDidList);
   }
 
   clickSubscription(userDid: string) {
