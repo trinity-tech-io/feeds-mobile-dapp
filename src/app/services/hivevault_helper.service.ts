@@ -22,7 +22,7 @@ export class HiveVaultHelper {
     public static readonly TABLE_COMMENTS = "comments";
     public static readonly TABLE_LIKES = "likes";
     public static readonly TABLE_BACKUP_SUBSCRIBEDCHANNEL = "backup_subscribed_channel";
-
+    public static readonly TABLE_PROFILE = "profile";
 
     // public static readonly SCRIPT_ALLPOST = "script_allpost_name";
     public static readonly SCRIPT_SPECIFIED_POST = "script_specified_post_name";
@@ -68,6 +68,8 @@ export class HiveVaultHelper {
     public static readonly QUERY_PUBLIC_SPECIFIED_POST = "query_public_specified_post";
     public static readonly QUERY_PUBLIC_SOMETIME_POST = "query_public_sometime_post";
     public static readonly QUERY_PUBLIC_POST_BY_CHANNEL = "query_public_post_by_channel";
+
+    public static readonly SCRIPT_QUERY_PROFILE = "script_query_profile";
     private buyStorageSpaceDialog: any = null;
     constructor(
         private hiveService: HiveService,
@@ -125,7 +127,9 @@ export class HiveVaultHelper {
                 const p27 = this.registerQueryPublicPostRangeOfTimeScripting();
 
                 const p28 = this.registerQuerySubscriptionInfoByUserDIDAndChannelIdScripting();
-                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28] as const
+
+                const p29 = this.registerQueryProfileScripting();
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
                 }, reason => {
@@ -274,8 +278,8 @@ export class HiveVaultHelper {
             const p5 = this.createCollection(HiveVaultHelper.TABLE_COMMENTS);
             const p6 = this.createCollection(HiveVaultHelper.TABLE_LIKES);
             const p7 = this.createCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
-
-            const array = [p1, p2, p3, p4, p5, p6, p7] as const
+            const p8 = this.createCollection(HiveVaultHelper.TABLE_PROFILE);
+            const array = [p1, p2, p3, p4, p5, p6, p7, p8] as const
             Promise.all(array).then(values => {
                 resolve('true');
             }, async reason => {
@@ -299,6 +303,7 @@ export class HiveVaultHelper {
                 await this.deleteCollection(HiveVaultHelper.TABLE_LIKES);
                 await this.deleteCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
                 await this.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
+                await this.deleteCollection(HiveVaultHelper.TABLE_PROFILE);
                 resolve("true")
             } catch (error) {
                 Logger.error(TAG, 'delete Collections error', error);
@@ -436,7 +441,7 @@ export class HiveVaultHelper {
                 let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, { "channel_id": channelId })
                 resolve(result)
             } catch (error) {
-                Logger.error(TAG, 'callGetAllPostScripting error:', error)
+                Logger.error(TAG, 'Call query channel info Scripting error:', error)
                 reject(error)
             }
         })
@@ -2306,4 +2311,133 @@ export class HiveVaultHelper {
             that.buyStorageSpaceDialog = null;
         }
     }
+
+    /** create profile start */
+    private insertSelfProfileToProfileDB(did: string, name: string, description: string, avatar: string, updatedAt: number): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            const doc = {
+                "did": did,
+                "name": name,
+                "description": description,
+                "avatar": avatar,
+                "updated_at": updatedAt,
+            }
+
+            try {
+                const insertResult = await this.hiveService.insertDBData(HiveVaultHelper.TABLE_PROFILE, doc);
+                Logger.log(TAG, 'Insert profile db result', insertResult)
+                resolve(doc)
+            } catch (error) {
+                Logger.error(TAG, 'Insert profile db error', error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    private insertSelfProfileData(name: string, description: string, avatarAddress: string): Promise<{ did: string, name: string, description: string, avatar: string }> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const signinDid = (await this.dataHelper.getSigninData()).did;
+                const updatedAt = UtilService.getCurrentTimeNum();
+                let result = await this.insertSelfProfileToProfileDB(signinDid, name, description, avatarAddress, updatedAt);
+                if (result) {
+                    const insertResult = {
+                        did: signinDid,
+                        name: name,
+                        description: description,
+                        avatar: avatarAddress
+                    }
+                    resolve(insertResult);
+                }
+                else
+                    reject('Insert profile data error');
+            } catch (error) {
+                Logger.error(TAG, "Insert profile error", error);
+                reject(error)
+            }
+        });
+    }
+
+    uploadSelfProfile(name: string, description: string, avatarAddress: string): Promise<{ did: string, name: string, description: string, avatar: string }> {
+        return this.insertSelfProfileData(name, description, avatarAddress);
+    }
+    /** create profile end */
+
+    /** update profile start */
+    private updateDataToProfileDB(did: string, name: string, description: string, avatar: string, updatedAt: number): Promise<UpdateResult> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const doc =
+                {
+                    "name": name,
+                    "description": description,
+                    "avatar": avatar,
+                    "updated_at": updatedAt,
+                }
+                const option = new UpdateOptions(false, true)
+                let filter = { "did": did };
+                let update = { "$set": doc };
+
+                const updateResult = await this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_PROFILE, filter, update, option);
+                Logger.log(TAG, 'update channel result', updateResult)
+                resolve(updateResult)
+            } catch (error) {
+                Logger.error(TAG, 'updateDataToChannelDB error', error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    private async updateProfileData(name: string, description: string, avatar: string) {
+        const signinDid = (await this.dataHelper.getSigninData()).did;
+        const updatedAt = UtilService.getCurrentTimeNum();
+        return await this.updateDataToProfileDB(signinDid, name, description, avatar, updatedAt);
+    }
+
+    updateProfile(name: string, description: string, avatar: string) {
+        return this.updateProfileData(name, description, avatar);
+    }
+    /** update profile end */
+
+    /** query profile start*/
+    private registerQueryProfileScripting(forceCreate: boolean = false): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let executablefilter = { "did": "$params.did" };
+                let options = { "projection": { "_id": false } };
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_PROFILE, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(forceCreate, HiveVaultHelper.SCRIPT_QUERY_PROFILE, executable, null, false)
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(TAG, "registerQueryChannelInfo error", error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    private callQueryProfile(targetDid: string, did: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_PROFILE, { "did": did })
+                resolve(result)
+            } catch (error) {
+                Logger.error(TAG, 'Call query profile Scripting error:', error)
+                reject(error)
+            }
+        })
+    }
+
+    queryProfile(targetDid: string, did: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await this.callQueryProfile(targetDid, did);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query profile error', error);
+                reject(error);
+            }
+        });
+    }
+    /** query profile info end*/
+
 }
