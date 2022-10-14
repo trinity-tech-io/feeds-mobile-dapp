@@ -45,9 +45,9 @@
     <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="pageItemMap[userDid] != '' && pageItemMap[userDid] != undefined && pageItemMap[userDid].name != '' && pageItemMap[userDid].name != undefined">
       {{ pageItemMap[userDid].name | translate }}
     </ion-label>
-    <!-- <div class="displayName" *ngIf="userNameMap[subscription.userDid] != '' && userNameMap[subscription.userDid] != undefined" (click)="copyText(subscription.userDid)">
-      {{  subscription.userDid.replace('did:elastos:', '').substring(0, 20) }}...{{  subscription.userDid.replace('did:elastos:', '').substring(subscription.userDid.replace('did:elastos:', '').length - 4, subscription.userDid.replace('did:elastos:', '').length) }}<img class="copy" src="./assets/images/darkmode/copy.svg">
-    </div> -->
+    <div class="displayName" *ngIf="pageItemMap[userDid] != '' && pageItemMap[userDid] != undefined && pageItemMap[userDid].description != '' && pageItemMap[userDid].description != undefined" (click)="copyText(subscription.userDid)">
+      {{  pageItemMap[userDid].description }}
+    </div>
     </ion-col>
     <ion-ripple-effect></ion-ripple-effect>
   </ion-row>

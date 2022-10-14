@@ -125,6 +125,8 @@ export class UserlistPage implements OnInit {
       if (exit != null) {
         continue;
       }
+
+      this.newUserObserver(observerId);
     }
   }
 
