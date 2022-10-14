@@ -262,7 +262,6 @@ export class ChannelContractService {
       if (this.checkBurnNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
         clearInterval(this.checkBurnInterval);
         this.checkBurnInterval = null;
-        callback(null);
       }
      },Config.CHECK_STATUS_INTERVAL_TIME);
   }
@@ -272,7 +271,7 @@ export class ChannelContractService {
     clearInterval(this.checkUpdateChannelInterval);
   }
 
-  checkUpdateChannelState(tokenId:string,tokenUri: string, channelEntry:string, receiptAddr: string,callback: (tokenInfo: any) => void){
+  checkUpdateChannelState(tokenId:string, tokenUri: string, channelEntry:string, receiptAddr: string,callback: (tokenInfo: any) => void){
     this.checkUpdateChannelInterval = setInterval(async () => {
      if (!this.checkUpdateChannelInterval) return;
      let info = await this.channelInfo(tokenId);
@@ -286,7 +285,6 @@ export class ChannelContractService {
      if (this.checkUpdateChannelNum * Config.CHECK_STATUS_INTERVAL_TIME > Config.WAIT_TIME_MINT) {
        clearInterval(this.checkUpdateChannelInterval);
        this.checkUpdateChannelInterval = null;
-       callback(null);
      }
     },Config.CHECK_STATUS_INTERVAL_TIME);
  }
@@ -336,7 +334,7 @@ export class ChannelContractService {
               .on('error', (error, receipt) => {
                 Logger.error(TAG, 'updateChannel process, error is', error, receipt);
               });
-              this.checkUpdateChannelState(tokenId,tokenUri, channelEntry, receiptAddr,(info)=>{
+              this.checkUpdateChannelState(tokenId, tokenUri, channelEntry, receiptAddr,(info)=>{
                  resolve(info);
               });
           } catch (error) {

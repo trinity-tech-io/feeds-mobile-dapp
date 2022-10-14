@@ -178,7 +178,6 @@ export class FeedspreferencesPage implements OnInit {
       that.nftContractControllerService.getChannel().cancelBurnProcess();
       that.isLoading = false;
       that.clearBurnChannelSid();
-      that.handleCache(that);
       that.popupProvider.showSelfCheckDialog('FeedspreferencesPage.burningNFTSTimeoutDesc');
     }, Config.WAIT_TIME_BURN_NFTS);
 

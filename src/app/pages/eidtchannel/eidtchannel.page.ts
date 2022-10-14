@@ -55,6 +55,7 @@ export class EidtchannelPage implements OnInit {
   public isShowTippingAddress: boolean = false;
   public isShowUpdateContratct: boolean = false;
   private updateChannelSid: NodeJS.Timer = null;
+  private popoverDialog: any = null;
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -435,12 +436,13 @@ export class EidtchannelPage implements OnInit {
 
   async handleUpdateChannel() {
      this.clearUpdateChannelSid();
-     this.updateChannelSid = setTimeout(() => {
+     this.updateChannelSid = setTimeout(async () => {
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
       this.isLoading = false;
+      this.isClickConfirm = true;
+      this.clickButton = false;
       this.clearUpdateChannelSid();
-      this.popupProvider.showSelfCheckDialog('EidtchannelPage.updateChannelTimeoutDesc');
-      this.addChannelNftCache();
+      await this.openAlert('EidtchannelPage.updateChannelTimeoutDesc');
     }, Config.WAIT_TIME_UPDATE_NFTS);
     if(this.isShowUpdateContratct){
       this.loadingCurNumber = "1";
@@ -479,11 +481,15 @@ export class EidtchannelPage implements OnInit {
       //add channel Contratct cace
       await this.addChannelNftCache();
       this.isLoading = false;
+      this.isClickConfirm = true;
+      this.clickButton = false;
       this.clearUpdateChannelSid();
       this.native.pop();
     }).catch(()=>{
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
       this.isLoading = false;
+      this.isClickConfirm = true;
+      this.clickButton = false;
       this.clearUpdateChannelSid();
       this.isShowUpdateContratct = true;
       this.native.toastWarn("EidtchannelPage.updateChannelFailed");
@@ -660,7 +666,7 @@ export class EidtchannelPage implements OnInit {
   }
 
   async addChannelNftCache() {
-    this.channelContratctInfo.description = this.channelDes;
+      this.channelContratctInfo.description = this.channelDes;
       this.channelContratctInfo.cname = this.displayName;
       this.channelContratctInfo.receiptAddr = this.tippingAddress;
       let avatarBase64 =  await this.handleIpfsChannelAvatar(this.channelAvatar);
@@ -670,5 +676,29 @@ export class EidtchannelPage implements OnInit {
       channelContractInfoList[this.channelId] = this.channelContratctInfo;
       this.dataHelper.setChannelContractInfoList(channelContractInfoList);
       this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
+  }
+
+  async openAlert(desc: string) {
+    this.popoverDialog = await this.popupProvider.ionicAlert(
+      this,
+      'common.timeout',
+      desc,
+      this.timeOutconfirm,
+      'tskth.svg',
+    );
+  }
+
+  timeOutconfirm(that: any) {
+    if(that.popoverDialog != null ){
+      that.popoverDialog.dismiss();
+    }
+    let channelContractInfoList = that.dataHelper.getChannelContractInfoList() || {};
+    let channelNft = channelContractInfoList[that.channelId] || null;
+    if(channelNft != null){
+      delete channelContractInfoList[that.channelId];
+      that.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      that.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
+    }
+    that.native.pop();
   }
 }
