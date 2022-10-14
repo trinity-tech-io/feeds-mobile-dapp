@@ -30,7 +30,7 @@
       (click)="clickSubscription(userDid)"
     >
       <div  class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-      <img [src] = "pageItemMap[userDid].avatar" *ngIf="pageItemMap[userDid] != null && pageItemMap[userDid] != undefined && pageItemMap[userDid].avatar != null && pageItemMap[userDid].avatar != undefined ">
+      <img [src] = "pageItemMap[userDid].avatar" *ngIf="pageItemMap[userDid] != null && pageItemMap[userDid] != undefined && pageItemMap[userDid].avatar != null && pageItemMap[userDid].avatar != undefined && pageItemMap[userDid].avatar != ''">
     </div>
     </ion-col>
     <ion-col

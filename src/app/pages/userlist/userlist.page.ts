@@ -19,6 +19,7 @@ export class UserlistPage implements OnInit {
   public pageNumber = 10;
   private userAvatarSid: NodeJS.Timer = null;
   private userObserver: any = {};
+  private isLoadUsers: any = {};
   constructor(
     private translate: TranslateService,
     private titleBarService: TitleBarService,
@@ -78,15 +79,16 @@ export class UserlistPage implements OnInit {
   }
 
   setAvatarUI(userDid: string, avatarUrl: string) {
-    this.setUserAvatar(userDid);
     if (avatarUrl) {
       let fileName: string = userDid.replace('did:elastos:', '');
       this.hiveVaultController.getV3HiveUrlData(userDid, avatarUrl, fileName)
         .then((image) => {
           this.setUserAvatar(userDid, image);
         }).catch((err) => {
-          this.setUserAvatar(userDid);
+           this.setUserAvatar(userDid);
         })
+    }else{
+      this.setUserAvatar(userDid);
     }
   }
 
@@ -146,7 +148,11 @@ export class UserlistPage implements OnInit {
         }
         let arr = newId.split("-");
         let userDid: string = arr[0];
-        this.setPageItemData(userDid);
+        let isLoad = this.isLoadUsers[userDid] || ''
+        if(isLoad === ''){
+          this.isLoadUsers[userDid] = "loaded"
+          this.setPageItemData(userDid);
+        }
       });
       this.userObserver[observerId].observe(item);
     }
@@ -158,7 +164,6 @@ export class UserlistPage implements OnInit {
       this.pageItemMap[userDid] = this.generatePageItem(userDid);
       let simpleDid = userDid.replace('did:elastos:', '');
       this.pageItemMap[userDid].name = UtilService.shortenAddress(simpleDid);
-
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
         this.setUserNameAndAvatarUI(userProfile);
       });
@@ -209,6 +214,7 @@ export class UserlistPage implements OnInit {
     this.usersDidList = data.items;
     this.syncRemoteUserProfile(this.usersDidList);
     this.removeObserveList();
+    this.isLoadUsers = {};
     this.initUserObserVerList(this.usersDidList);
   }
 
