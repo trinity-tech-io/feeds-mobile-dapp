@@ -107,7 +107,7 @@ export class SearchPage implements OnInit {
   private totalNum: number = 0;
   private startIndex: number = 0;
   private endIndex: number = 0;
-  private pageSize: number = 15;
+  private pageSize: number = 9;
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private feedService: FeedService,
