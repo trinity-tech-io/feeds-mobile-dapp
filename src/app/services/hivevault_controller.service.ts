@@ -2250,6 +2250,7 @@ export class HiveVaultController {
         }
         resolve(user);
       } catch (error) {
+        reject(error);
       }
     });
   }
@@ -2258,7 +2259,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
 
-        // resolve();  
+        // resolve();
       } catch (error) {
 
       }
