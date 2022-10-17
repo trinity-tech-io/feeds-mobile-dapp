@@ -912,9 +912,6 @@ export const zh = {
   WhitelistPage: {
     title: '已验证原创者'
   },
-  UserListPage: {
-    title: '用户列表'
-  },
   AssistpasarPage: {
     title: 'Assist Pasar API',
     assistProviderDes: '用于读取数据的辅助 Assist Pasar 服务',
@@ -968,6 +965,7 @@ export const zh = {
     reddit: 'Reddit'
   },
   UserlistPage: {
+    title: '关注者列表',
     emptyDes: "还没有关注你的频道"
   }
 };

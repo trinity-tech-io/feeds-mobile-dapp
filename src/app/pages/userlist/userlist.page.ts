@@ -38,7 +38,7 @@ export class UserlistPage implements OnInit {
   initTitle() {
     this.titleBarService.setTitle(
       this.titleBar,
-      this.translate.instant('UserListPage.title'),
+      this.translate.instant('UserlistPage.title'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
