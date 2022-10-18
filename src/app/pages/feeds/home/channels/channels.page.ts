@@ -414,18 +414,24 @@ export class ChannelsPage implements OnInit {
 
     let text = this.destDid.replace('did:elastos:', '');
     this.channelOwner = UtilService.shortenAddress(text);
-    try {
-      this.hiveVaultController.getDisplayName(this.destDid, this.channelId, this.destDid).
-        then((result: string) => {
-          let name = result || "";
-          if (name != "") {
-            this.channelOwner = name;
-          }
-        }).catch(() => {
-        });
-    } catch (error) {
-
-    }
+    this.hiveVaultController.getUserProfile(this.destDid).then((userProfile: FeedsData.UserProfile) => {
+      const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
+      if (name) {
+        this.channelOwner = name;
+      }
+    }).catch(() => {
+    });
+    // try {
+    //   this.hiveVaultController.getDisplayName(this.destDid, this.channelId, this.destDid).
+    //     then((result: string) => {
+    //       let name = result || "";
+    //       if (name != "") {
+    //         this.channelOwner = name;
+    //       }
+    //     }).catch(() => {
+    //     });
+    // } catch (error) {
+    // }
     this.channelDesc = channel.intro;
     this.channelSubscribes = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
     if (this.channelSubscribes == 0) {

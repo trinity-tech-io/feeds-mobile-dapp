@@ -111,14 +111,21 @@ export class FeedinfoPage implements OnInit {
     let text = this.destDid.replace('did:elastos:', '');
     this.channelOwner = UtilService.shortenAddress(text);
     try {
-      this.hiveVaultController.getDisplayName(this.destDid, this.channelId, this.destDid).
-        then((result: string) => {
-          let name = result || "";
-          if (name != "") {
-            this.channelOwner = name;
-          }
-        }).catch(() => {
-        });
+      this.hiveVaultController.getUserProfile(this.destDid).then((userProfile: FeedsData.UserProfile) => {
+        const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
+        if (name) {
+          this.channelOwner = name;
+        }
+      }).catch(() => {
+      });
+      // this.hiveVaultController.getDisplayName(this.destDid, this.channelId, this.destDid).
+      //   then((result: string) => {
+      //     let name = result || "";
+      //     if (name != "") {
+      //       this.channelOwner = name;
+      //     }
+      //   }).catch(() => {
+      //   });
     } catch (error) {
 
     }
@@ -135,8 +142,8 @@ export class FeedinfoPage implements OnInit {
     this.channelAvatar = this.feedService.parseChannelAvatar(avatar);
     this.addEvents();
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    if(this.destDid === ownerDid){
-       this.getChannelPublicStatus(this.destDid, this.channelId);
+    if (this.destDid === ownerDid) {
+      this.getChannelPublicStatus(this.destDid, this.channelId);
     }
   }
 
@@ -376,33 +383,33 @@ export class FeedinfoPage implements OnInit {
     let key = destDid + '-' + channelId;
     let channelPublicStatus = this.channelPublicStatusList[key] || '';
     if (channelPublicStatus === '') {
-      this.getChannelInfo(channelId).then((channelInfo)=>{
+      this.getChannelInfo(channelId).then((channelInfo) => {
         if (channelInfo != null) {
           this.channelPublicStatusList[key] = "2";//已公开
           this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
           //add channel contract cache
-          this.addChannelNftCache(channelInfo,channelId);
+          this.addChannelNftCache(channelInfo, channelId);
 
         } else {
           this.channelPublicStatusList[key] = "1";//未公开
           this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
           //add channel contract cache
-          this.addChannelNftCache(null,channelId);
+          this.addChannelNftCache(null, channelId);
         }
-      }).catch((err)=>{
+      }).catch((err) => {
 
       });
 
     }
   }
 
-  async addChannelNftCache(channelInfo:any, channelId: string) {
-    if(channelInfo === null){
+  async addChannelNftCache(channelInfo: any, channelId: string) {
+    if (channelInfo === null) {
       let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
       channelContractInfoList[channelId] = "unPublic";
       this.dataHelper.setChannelContractInfoList(channelContractInfoList);
-      this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
-       return;
+      this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+      return;
     }
     let channelNft: FeedsData.ChannelContractInfo = {
       description: '',
@@ -419,20 +426,20 @@ export class FeedinfoPage implements OnInit {
     channelNft.channelEntry = channelInfo[2];
     channelNft.receiptAddr = channelInfo[3];
     channelNft.ownerAddr = channelInfo[4];
-   let uri = channelInfo[1].replace('feeds:json:', '');
-   let result:any = await this.ipfsService
-     .nftGet(this.ipfsService.getNFTGetUrl() + uri);
-   channelNft.description = result.description;
-   channelNft.cname = result.data.cname;
-   let avatarUri = result.data.avatar.replace('feeds:image:', '');
-   let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl()+avatarUri);
-   let avatarBase64 = await UtilService.blobToDataURL(avatar);
-   const hash = SparkMD5.hash(avatarBase64);
-   channelNft.avatar = hash;
-   let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
-   channelContractInfoList[channelId] =  channelNft;
-   this.dataHelper.setChannelContractInfoList(channelContractInfoList);
-   this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
+    let uri = channelInfo[1].replace('feeds:json:', '');
+    let result: any = await this.ipfsService
+      .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+    channelNft.description = result.description;
+    channelNft.cname = result.data.cname;
+    let avatarUri = result.data.avatar.replace('feeds:image:', '');
+    let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl() + avatarUri);
+    let avatarBase64 = await UtilService.blobToDataURL(avatar);
+    const hash = SparkMD5.hash(avatarBase64);
+    channelNft.avatar = hash;
+    let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+    channelContractInfoList[channelId] = channelNft;
+    this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+    this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
   }
 
 }

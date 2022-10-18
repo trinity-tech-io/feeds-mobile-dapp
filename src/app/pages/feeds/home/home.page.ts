@@ -2445,19 +2445,24 @@ export class HomePage implements OnInit {
         let text = destDid.replace('did:elastos:', '');
         this.handleDisplayNameMap[userDid] = UtilService.shortenAddress(text);
       }
-      try {
-        this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
-          then((result: string) => {
-            let name = result || "";
-            if (name != "") {
-              this.handleDisplayNameMap[userDid] = name;
-            }
-          }).catch(() => {
-          });
-      } catch (error) {
+      this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+        const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
+        if (name) {
+          this.handleDisplayNameMap[userDid] = name;
+        }
+      }).catch(() => {
+      });
+      // try {
+      //   this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
+      //     then((result: string) => {
+      //       let name = result || "";
+      //       if (name != "") {
+      //         this.handleDisplayNameMap[userDid] = name;
+      //       }
+      //     }).catch(() => {
+      //     });
+      // } catch (error) {
 
-      }
     }
   }
-
 }

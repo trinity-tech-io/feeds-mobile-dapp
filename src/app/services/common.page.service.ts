@@ -26,7 +26,7 @@ export class CommonPageService {
     id: string,
     isInitUserNameMap: any,
     userNameMap: any,
-    hiveVaultController: any,
+    hiveVaultController: HiveVaultController,
     ownerDid: string = "",
     channelName?: string,
   ) {
@@ -47,15 +47,25 @@ export class CommonPageService {
 
         userNameMap[userDid] = this.indexText(userDid);
         isInitUserNameMap[commentId] = "11";
-        hiveVaultController.getDisplayName(destDid, channelId, userDid).
-          then((result: string) => {
-            let name = result || "";
-            if (name != "") {
-              userNameMap[userDid] = name;
-            }
-          }).catch(() => {
+        hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+          const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
+          if (name) {
+            userNameMap[userDid] = name;
+          } else {
             userNameMap[userDid] = this.indexText(userDid);
-          });
+          }
+        }).catch(() => {
+          userNameMap[userDid] = this.indexText(userDid);
+        });
+        // hiveVaultController.getDisplayName(destDid, channelId, userDid).
+        //   then((result: string) => {
+        //     let name = result || "";
+        //     if (name != "") {
+        //       userNameMap[userDid] = name;
+        //     }
+        //   }).catch(() => {
+        //     userNameMap[userDid] = this.indexText(userDid);
+        //   });
       }
 
     } catch (error) {

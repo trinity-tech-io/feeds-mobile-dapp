@@ -207,8 +207,8 @@ export class SearchPage implements OnInit {
   async init() {
     try {
       let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-      this.subscribedChannelMap =  _.keyBy(subscribedChannel, (item: FeedsData.ChannelV3)=> {
-       return item.channelId;
+      this.subscribedChannelMap = _.keyBy(subscribedChannel, (item: FeedsData.ChannelV3) => {
+        return item.channelId;
       });
     } catch (error) {
 
@@ -216,7 +216,7 @@ export class SearchPage implements OnInit {
     let channelCollectionPageList = this.dataHelper.getChannelCollectionPageList() || [];
     if (channelCollectionPageList.length === 0) {
       try {
-       this.totalNum = await this.nftContractControllerService.getChannel().totalSupply();
+        this.totalNum = await this.nftContractControllerService.getChannel().totalSupply();
       } catch (error) {
 
       }
@@ -662,99 +662,106 @@ export class SearchPage implements OnInit {
       this.displayNameIsLoadMap[userDid] = "11";
       let text = destDid.replace('did:elastos:', '');
       this.handleDisplayNameMap[userDid] = UtilService.shortenAddress(text);
-      try {
-        this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
-          then((result: string) => {
-            let name = result || "";
-            if (name != "") {
-              this.handleDisplayNameMap[userDid] = name;
-            }
-          }).catch(() => {
-          });
-      } catch (error) {
-      }
+      this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+        const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
+        if (name) {
+          this.handleDisplayNameMap[userDid] = name;
+        }
+      }).catch(() => {
+      });
+      // try {
+      //   this.hiveVaultController.getDisplayName(destDid, channelId, userDid).
+      //     then((result: string) => {
+      //       let name = result || "";
+      //       if (name != "") {
+      //         this.handleDisplayNameMap[userDid] = name;
+      //       }
+      //     }).catch(() => {
+      //     });
+      // } catch (error) {
+      // }
     }
   }
 
-  async getChannelsV2(event=null) {
+  async getChannelsV2(event = null) {
     try {
-    let channelCollectionPageList = [];
-    if(this.totalNum <= this.pageSize){
-      this.endIndex = this.totalNum - 1;
-      this.startIndex = 0;
-    }else{
-      this.endIndex = this.totalNum - 1;
-      this.startIndex = this.totalNum - this.pageSize;
-    }
-    for(let channelIndex = this.endIndex; channelIndex >= this.startIndex; channelIndex--){
-      let channel = [];
-       try {
-        channel = await this.nftContractControllerService.getChannel().channelByIndex(channelIndex);
-       } catch (error) {
-        continue;
-       }
-       let tokenURI = channel[2];
-       const scanResult = ScannerHelper.parseScannerResult(tokenURI);
-       const feedsUrl = scanResult.feedsUrl;
-       try {
-         const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-         channelCollectionPageList.push(channelInfo);
-       } catch (error) {
-        this.isLoading = false;
-       }
-     }
-     this.isLoading = false;
-     if(event != null){
-      event.target.complete();
-    }
-     return channelCollectionPageList;
+      let channelCollectionPageList = [];
+      if (this.totalNum <= this.pageSize) {
+        this.endIndex = this.totalNum - 1;
+        this.startIndex = 0;
+      } else {
+        this.endIndex = this.totalNum - 1;
+        this.startIndex = this.totalNum - this.pageSize;
+      }
+      for (let channelIndex = this.endIndex; channelIndex >= this.startIndex; channelIndex--) {
+        let channel = [];
+        try {
+          channel = await this.nftContractControllerService.getChannel().channelByIndex(channelIndex);
+        } catch (error) {
+          continue;
+        }
+        let tokenURI = channel[2];
+        const scanResult = ScannerHelper.parseScannerResult(tokenURI);
+        const feedsUrl = scanResult.feedsUrl;
+        try {
+          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+          channelCollectionPageList.push(channelInfo);
+        } catch (error) {
+          this.isLoading = false;
+        }
+      }
+      this.isLoading = false;
+      if (event != null) {
+        event.target.complete();
+      }
+      return channelCollectionPageList;
     } catch (error) {
-      if(event != null){
+      if (event != null) {
         event.target.complete();
       }
       this.isLoading = false;
     }
-   }
+  }
 
-  async loadData(event:any){
+  async loadData(event: any) {
     try {
-      if(this.startIndex === 0){
+      if (this.startIndex === 0) {
         event.target.complete();
         return;
       }
-     let channelCollectionPageList = [];
+      let channelCollectionPageList = [];
       this.endIndex = this.startIndex - 1;
-      if(this.startIndex - this.pageSize < 0){
+      if (this.startIndex - this.pageSize < 0) {
         this.startIndex = 0;
-      }else{
+      } else {
         this.startIndex = this.startIndex - this.pageSize;
       }
 
-      for(let channelIndex = this.endIndex; channelIndex >= this.startIndex; channelIndex--){
+      for (let channelIndex = this.endIndex; channelIndex >= this.startIndex; channelIndex--) {
         let channel = [];
-         try {
+        try {
           channel = await this.nftContractControllerService.getChannel().channelByIndex(channelIndex);
-         } catch (error) {
+        } catch (error) {
           continue;
-         }
-         let tokenURI = channel[2];
-         const scanResult = ScannerHelper.parseScannerResult(tokenURI);
-         const feedsUrl = scanResult.feedsUrl;
-         try {
-           const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-           channelCollectionPageList.push(channelInfo);
-         } catch (error) {
+        }
+        let tokenURI = channel[2];
+        const scanResult = ScannerHelper.parseScannerResult(tokenURI);
+        const feedsUrl = scanResult.feedsUrl;
+        try {
+          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+          channelCollectionPageList.push(channelInfo);
+        } catch (error) {
           this.isLoading = false;
-         }
+        }
       }
       this.channelCollectionPageList = this.channelCollectionPageList.concat(channelCollectionPageList);
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
       this.refreshChannelCollectionAvatar(channelCollectionPageList);
       event.target.complete();
-  }catch(error){
-    event.target.complete();
+    } catch (error) {
+      event.target.complete();
+    }
   }
-}
 
 }
