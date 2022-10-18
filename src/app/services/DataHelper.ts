@@ -41,7 +41,6 @@ export class DataHelper {
 
   private localSignInData: SignInData = null;
   private userDidUriMap: { [did: string]: FeedsData.DIDUriObj } = {};
-  private publishedActivePanelList: any = [];
   private isShowAdult: boolean = true;
   private originalAdultStatus: boolean = true;
   private nftDidList: any = null;
@@ -2896,15 +2895,6 @@ export class DataHelper {
 
   getAssetPageAssetItem(): FeedsData.NFTItem {
     return this.assetPageAssetItem;
-  }
-
-  setPublishedActivePanelList(publishedActivePanelList: any) {
-    this.publishedActivePanelList = publishedActivePanelList;
-    this.saveData("feeds.published.activePanel.list", this.publishedActivePanelList);
-  }
-
-  getPublishedActivePanelList() {
-    return this.publishedActivePanelList;
   }
 
   createSQLTables(userDid: string): Promise<string> {

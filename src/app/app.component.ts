@@ -438,7 +438,7 @@ export class MyApp {
 
   async confirm(that: any) {
     if (this.popover != null) {
-      this.popover.dismiss();
+       await this.popover.dismiss();
     }
     try {
       await that.dataHelper.removeData("feeds.initHive");
@@ -516,6 +516,10 @@ export class MyApp {
     this.feedService.signOut()
       .then(() => {
         this.events.publish(FeedsEvent.PublishType.clearHomeEvent);
+        this.dataHelper.setChannelPublicStatusList({});
+        this.dataHelper.setChannelCollectionPageList([]);
+        this.dataHelper.setChannelContractInfoList({});
+        this.dataHelper.saveData("feeds.contractInfo.list",{});
         this.globalService.restartApp();
       })
       .catch(err => {

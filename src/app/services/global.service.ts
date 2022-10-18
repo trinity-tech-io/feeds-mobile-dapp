@@ -62,7 +62,6 @@ export class GlobalService {
   }
 
   restartApp() {
-    this.dataHelper.setPublishedActivePanelList([]);
     this.splashScreen.show();
     window.location.href = "/";
   }
