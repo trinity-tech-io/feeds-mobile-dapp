@@ -4478,12 +4478,10 @@ export class DataHelper {
   }
 
   getChannelContractInfoList() {
-    console.log("setChannelContractInfoList", JSON.stringify(this.channelContractInfoList));
     return this.channelContractInfoList;
   }
 
   setChannelContractInfoList(channelContractInfoList: any) {
-     console.log("setChannelContractInfoList", JSON.stringify(channelContractInfoList));
      this.channelContractInfoList = channelContractInfoList;
   }
 

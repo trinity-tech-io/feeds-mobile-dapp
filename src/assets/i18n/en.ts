@@ -639,7 +639,8 @@ export const en = {
     updateChannelSuccess: 'Channel Collectibles updated successfully',
     updateChannelFailed: 'Failed to update channel collectibles',
     updateChannelDesc1: 'Update Channel, please wait',
-    updateChannelDesc2: '当前频道与公开的频道的不一致，请及时更新'
+    updateChannelDesc2: 'The current channel is inconsistent with the public channel, please update it in time',
+    updateChannelDesc3: 'Synchronize data'
   },
   EditPostPage: {
     title: 'Edit Post',
