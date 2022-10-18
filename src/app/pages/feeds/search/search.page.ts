@@ -27,6 +27,7 @@ import { FeedsUrl, ScannerCode, ScannerHelper } from 'src/app/services/scanner_h
 import { Logger } from 'src/app/services/logger';
 import { FeedsPage } from '../feeds.page';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { MenuService } from 'src/app/services/MenuService';
 
 const TAG: string = 'SearchPage';
 @Component({
@@ -64,9 +65,6 @@ export class SearchPage implements OnInit {
   private panelPageSize: number = 10;//一页多少个
   private panelPageNum: number = 1;//页码
   private confirmdialog = null;
-
-  private toBeSubscribeddestDid: string = '';
-  private toBeSubscribedChannelId: string = '';
   public isBorderGradient: boolean = false;
   public channelAvatarMap: any = {};
   public subscriptionV3NumMap: any = {};
@@ -131,7 +129,8 @@ export class SearchPage implements OnInit {
     private feedsServiceApi: FeedsServiceApi,
     private hiveVaultController: HiveVaultController,
     private feedspage: FeedsPage,
-    private keyboard: Keyboard
+    private keyboard: Keyboard,
+    private menuService: MenuService,
   ) { }
 
   ngOnInit() {
@@ -150,6 +149,16 @@ export class SearchPage implements OnInit {
     });
 
     this.events.subscribe(
+      FeedsEvent.PublishType.unsubscribeFinish,
+      (channel: FeedsData.SubscribedChannelV3) => {
+        this.zone.run(() => {
+          let channelId = channel.channelId;
+          this.subscribedChannelMap[channelId] = undefined;
+        });
+      },
+    );
+
+    this.events.subscribe(
       FeedsEvent.PublishType.subscribeFinish,
       (subscribeFinishData: FeedsEvent.SubscribeFinishData) => {
         this.zone.run(() => {
@@ -166,6 +175,7 @@ export class SearchPage implements OnInit {
       this.popover = '';
     }
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
+    this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.subscribeFinish);
   }
 
@@ -761,6 +771,26 @@ export class SearchPage implements OnInit {
       event.target.complete();
     } catch (error) {
       event.target.complete();
+    }
+  }
+
+  async unsubscribe(destDid: string,channelId: string,event: any) {
+    event.stopPropagation();
+    let connectStatus = this.dataHelper.getNetworkStatus();
+    if (connectStatus === FeedsData.ConnState.disconnected) {
+      this.native.toastWarn('common.connectionError');
+      return;
+    }
+
+    try {
+      const userDid = (await this.dataHelper.getSigninData()).did || '';
+
+      if (destDid != userDid) {
+        this.menuService.showChannelMenu(destDid, channelId, userDid);
+      } else {
+        this.native.toast_trans('common.unableUnsubscribe');
+      }
+    } catch (error) {
     }
   }
 

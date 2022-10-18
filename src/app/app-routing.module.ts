@@ -108,13 +108,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'discoverfeedinfo',
-    loadChildren: () =>
-      import('./pages/discoverfeedinfo/discoverfeedinfo.module').then(
-        m => m.DiscoverfeedinfoPageModule,
-      ),
-  },
-  {
     path: 'feedinfo',
     loadChildren: () =>
       import('./pages/feedinfo/feedinfo.module').then(
