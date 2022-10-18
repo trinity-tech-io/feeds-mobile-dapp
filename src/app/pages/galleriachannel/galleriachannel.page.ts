@@ -342,19 +342,27 @@ export class GalleriachannelPage implements OnInit {
     );
   }
 
-  confirm(that: any) {
+  async confirm(that: any) {
     if (this.popover != null) {
-      this.popover.dismiss();
-      this.popover = null;
-      that.native.pop();
+      try {
+        await this.popover.dismiss();
+        this.popover = null;
+        that.native.pop();
+      } catch (error) {
+
+      }
     }
   }
 
-  bindingCompleted(that: any) {
+  async bindingCompleted(that: any) {
     if (this.popover != null) {
-      this.popover.dismiss();
-      this.popover = null;
-      that.native.pop();
+      try {
+        await this.popover.dismiss();
+        this.popover = null;
+        that.native.pop();
+      } catch (error) {
+
+      }
     }
   }
 
