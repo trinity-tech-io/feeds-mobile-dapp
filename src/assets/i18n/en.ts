@@ -968,6 +968,6 @@ export const en = {
   },
   UserlistPage: {
     title: 'Subscribers',
-    emptyDes: "No one has followed your channel yet"
+    emptyDes: "No one has subscribed to this channel yet"
   }
 };

@@ -965,7 +965,7 @@ export const zh = {
     reddit: 'Reddit'
   },
   UserlistPage: {
-    title: '关注者列表',
-    emptyDes: "还没有关注你的频道"
+    title: '订阅者列表',
+    emptyDes: "还没有人订阅此频道"
   }
 };

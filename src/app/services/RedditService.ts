@@ -136,8 +136,8 @@ export class RedditService {
         "api_type": "Json",
         "kind": "self",
         "title": tittle,
-        "text": text,
-        "sr": "Elastos" //Elastos //668899
+        "text": text,       
+        "sr": "668899" //Elastos //668899
       }
       const token = await this.checkRedditIsExpired()
       let header = {
@@ -179,7 +179,7 @@ export class RedditService {
       const userDid = (await this.dataHelper.getSigninData()).did
       let containsElastos = false
       children.forEach(async item => {
-        const elastosUrl = "/r/Elastos/"
+        const elastosUrl = "/r/668899/"
         const myUrl = item.data.url
         if (elastosUrl === myUrl) {
           this.dataHelper.updateRedditIsSubscribeElastos(userDid, "true")
