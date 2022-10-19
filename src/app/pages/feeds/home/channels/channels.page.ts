@@ -405,7 +405,7 @@ export class ChannelsPage implements OnInit {
 
   async initChannelData() {
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
-    await this.checkFollowStatus(this.destDid, this.channelId);
+    this.followStatus = await this.checkFollowStatus(this.destDid, this.channelId);
     if (channel == null || channel == undefined) return;
     this.channelName = channel.displayName || channel.name;
     this.channelOriginName = channel.name;
@@ -690,21 +690,9 @@ export class ChannelsPage implements OnInit {
   }
 
   async checkFollowStatus(destDid: string, channelId: string) {
-    let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-    if (subscribedChannel.length === 0) {
-      this.followStatus = false;
-      return;
-    }
-
-    let channelIndex = _.find(subscribedChannel, (item: FeedsData.SubscribedChannelV3) => {
-      return item.destDid === destDid && item.channelId === channelId;
-    }) || '';
-    if (channelIndex === '') {
-      this.followStatus = false;
-      return;
-    }
-    this.followStatus = true;
+    return this.dataHelper.checkSubscribedStatus(destDid, channelId);
   }
+
   handleDisplayTime(postId: string, createTime: number) {
     let newPostTime = this.postTime[postId] || null;
     if (newPostTime != null) {

@@ -4472,7 +4472,28 @@ export class DataHelper {
   }
 
   setChannelContractInfoList(channelContractInfoList: any) {
-     this.channelContractInfoList = channelContractInfoList;
+    this.channelContractInfoList = channelContractInfoList;
   }
 
+  checkSubscribedStatus(destDid: string, channelId: string): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+        if (subscribedChannel.length === 0) {
+          resolve(false);
+          return;
+        }
+
+        let channelIndex = _.find(subscribedChannel, (item: FeedsData.SubscribedChannelV3) => {
+          return item.destDid === destDid && item.channelId === channelId;
+        }) || '';
+        if (channelIndex === '') {
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      } catch (error) {
+      }
+    })
+  }
 }

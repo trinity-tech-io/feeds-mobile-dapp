@@ -140,6 +140,7 @@ export class PostdetailPage implements OnInit {
   private commentTime: any = {};
   private captainObserverList: any = {};
   private replyObserverList: any = {};
+  public isSubscribed: boolean = false;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -163,6 +164,11 @@ export class PostdetailPage implements OnInit {
   async initData(isInit: boolean) {
     let channel: FeedsData.ChannelV3 =
       await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
+
+    this.isSubscribed = await this.checkFollowStatus(this.destDid, this.channelId);
+    if (!channel) {
+      channel = await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
+    }
     this.channelOwner = channel.destDid || '';
     this.channelOwnerName = this.indexText(channel.destDid);
     this.channelWName = channel['displayName'] || channel['name'] || '';
@@ -300,6 +306,9 @@ export class PostdetailPage implements OnInit {
 
   async initPostContent() {
     let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId);
+    if (!post) {
+      post = await this.hiveVaultController.queryPublicPostById(this.destDid, this.channelId, this.postId);
+    }
     this.post = post;
 
     this.postStatus = post.status || 0;
@@ -1423,6 +1432,8 @@ export class PostdetailPage implements OnInit {
     this.replyObserverList = {};
   }
 
-
+  checkFollowStatus(destDid: string, channelId: string): Promise<boolean> {
+    return this.dataHelper.checkSubscribedStatus(destDid, channelId);
+  }
 }
 

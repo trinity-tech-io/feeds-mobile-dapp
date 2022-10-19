@@ -2329,4 +2329,26 @@ export class HiveVaultController {
   syncHiveProfileFromList(usersDidList: string[]) {
 
   }
+
+  queryPublicPostById(targetDid: string, channelId: string, postId: string): Promise<FeedsData.PostV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryPublicPostById(targetDid, channelId, postId);
+        if (!result) {
+          resolve(null);
+          return;
+        }
+
+        const posts = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
+        if (!posts || posts.length == 0) {
+          resolve(null);
+          return;
+        }
+
+        resolve(posts[0]);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 }

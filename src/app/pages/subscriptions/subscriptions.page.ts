@@ -311,18 +311,7 @@ export class SubscriptionsPage implements OnInit {
   }
 
   async checkFollowStatus(destDid: string, channelId: string) {
-    let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
-    if (subscribedChannel.length === 0) {
-      return false;
-    }
-
-    let channelIndex = _.find(subscribedChannel, (item: FeedsData.SubscribedChannelV3) => {
-      return item.destDid === destDid && item.channelId === channelId;
-    }) || '';
-    if (channelIndex === '') {
-      return false;
-    }
-    return true;
+    return this.dataHelper.checkSubscribedStatus(destDid, channelId);
   }
 
   ionScroll() {
@@ -523,7 +512,7 @@ export class SubscriptionsPage implements OnInit {
     if (follower === "") {
       try {
         let subscriptionV3Num = this.subscriptionV3NumMap[channelId] || "";
-        if(subscriptionV3Num === ""){
+        if (subscriptionV3Num === "") {
           this.subscriptionV3NumMap[channelId] = "...";
         }
         this.dataHelper.getSubscriptionV3NumByChannelId(
