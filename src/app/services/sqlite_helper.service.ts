@@ -126,6 +126,7 @@ export class FeedsSqliteHelper {
           [p1, p2, p3, p4, p5, p6, p7]
         );
 
+        this.storageService.set(FeedsData.PersistenceKey.sqlversion, Config.SQL_VERSION);
         resolve('SUCCESS');
       } catch (error) {
         Logger.error(TAG, 'Create table error', error);
@@ -750,7 +751,6 @@ export class FeedsSqliteHelper {
         const result = await this.executeSql(dbUserDid, statement, params);
         const subscriptions = this.parseSubscriptionData(result);
 
-        console.log('queryDisplayNameByUserDid====>', subscriptions);
         if (!subscriptions || subscriptions.length == 0) {
           resolve('');
           return;
@@ -1546,57 +1546,97 @@ export class FeedsSqliteHelper {
     return list;
   }
 
+  restoreSqlData311(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.createChannelTable(dbUserDid);
+        let channelData = [];
+        try {
+          channelData = await this.queryOriginChannelData(dbUserDid);
+        } catch (error) {
+        }
+        for (let index = 0; index < channelData.length; index++) {
+          const channel = channelData[index];
+          await this.insertChannelData(dbUserDid, channel);
+          await this.deleteOriginChannelData(dbUserDid, channel.channelId);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  restoreSqlData320(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.createUserTable(dbUserDid);
+        await this.createPostTable(dbUserDid);
+        let postData = [];
+        try {
+          postData = await this.queryOriginPostData(dbUserDid);
+        } catch (error) {
+        }
+
+        for (let index = 0; index < postData.length; index++) {
+          const post = postData[index];
+          await this.insertPostData(dbUserDid, post)
+          await this.deleteOriginPostData(dbUserDid, post.postId);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  restoreSqlData330(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.createUserTable(dbUserDid);
+        await this.createPostTable(dbUserDid);
+        let postData = [];
+        try {
+          postData = await this.queryNewOriginPostData(dbUserDid);
+        } catch (error) {
+        }
+
+        for (let index = 0; index < postData.length; index++) {
+          const post = postData[index];
+          await this.insertPostData(dbUserDid, post)
+          await this.deleteNewOriginPostData(dbUserDid, post.postId);
+        }
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   restoreSqlData(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const sqlversion = await this.storageService.get(FeedsData.PersistenceKey.sqlversion) || 0;
-        // const sqlversion = 30;
         console.log('Sql version is', sqlversion);
         if (sqlversion < Config.SQL_VERSION311 && sqlversion > 0) {
-          await this.createChannelTable(dbUserDid);
-          let channelData = [];
-          try {
-            channelData = await this.queryOriginChannelData(dbUserDid);
-          } catch (error) {
-          }
-          for (let index = 0; index < channelData.length; index++) {
-            const channel = channelData[index];
-            await this.insertChannelData(dbUserDid, channel);
-            await this.deleteOriginChannelData(dbUserDid, channel.channelId);
-          }
+          await this.restoreSqlData311(dbUserDid);
         }
 
         if (sqlversion < Config.SQL_VERSION320 && sqlversion > 0) {
-          await this.createUserTable(dbUserDid);
-          await this.createPostTable(dbUserDid);
-          let postData = [];
-          try {
-            postData = await this.queryOriginPostData(dbUserDid);
-          } catch (error) {
-          }
-
-          for (let index = 0; index < postData.length; index++) {
-            const post = postData[index];
-            await this.insertPostData(dbUserDid, post)
-            await this.deleteOriginPostData(dbUserDid, post.postId);
-          }
+          await this.restoreSqlData320(dbUserDid);
         }
 
         if (sqlversion < Config.SQL_VERSION330 && sqlversion >= Config.SQL_VERSION320) {
-          await this.createUserTable(dbUserDid);
-          await this.createPostTable(dbUserDid);
-          let postData = [];
-          try {
-            postData = await this.queryNewOriginPostData(dbUserDid);
-          } catch (error) {
-          }
-
-          for (let index = 0; index < postData.length; index++) {
-            const post = postData[index];
-            await this.insertPostData(dbUserDid, post)
-            await this.deleteNewOriginPostData(dbUserDid, post.postId);
-          }
+          await this.restoreSqlData330(dbUserDid);
         }
+
+        if (sqlversion == 0) {
+          const restore311 = this.restoreSqlData311(dbUserDid);
+          const restore320 = this.restoreSqlData320(dbUserDid);
+          const restore330 = this.restoreSqlData330(dbUserDid);
+          await Promise.allSettled([restore311, restore320, restore330]);
+        }
+
         resolve('FINISH');
       } catch (error) {
       } finally {

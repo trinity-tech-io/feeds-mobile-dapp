@@ -121,11 +121,13 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready()
-      .then(async () => {
+      .then(() => {
         // // 测试twitter 记得删除
         // const userDid = (await this.dataHelper.getSigninData()).did
         // this.dataHelper.removeTwitterToken(userDid)
-        return await this.dataHelper.loadApiProvider();
+        return this.dataHelper.loadApiProvider();
+      }).then(() => {
+        return this.initSql();
       })
       .then(async (api) => {
         Config.changeApi(api);
@@ -272,6 +274,13 @@ export class MyApp {
           },
         );
       }).then(async () => {
+
+      }).catch(() => { });
+  }
+
+  initSql(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
         const signinData = await this.dataHelper.getSigninData()
         if (signinData) {
           await this.native.showLoading('common.waitMoment');
@@ -282,10 +291,12 @@ export class MyApp {
             this.native.hideLoading();
           }
         }
-
         this.hiveVaultController.refreshAvatar().catch(() => { });
         this.hiveVaultController.initRegisterScript(false).catch((error) => { console.log("initRegisterScript error === ", error) })
-      }).catch(() => { });
+        resolve('FINISH');
+      } catch (error) {
+      }
+    })
   }
 
   initConnector() {
