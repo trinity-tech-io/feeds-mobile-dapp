@@ -98,12 +98,12 @@ export class MenuService {
     });
   }
 
-  async showShareMenu(destDid?: string, channelId?: string, channelName?: string, postId?: string) {
+  async showShareMenu(destDid?: string, channelId?: string, channelName?: string, postId?: string, sharedPost?: FeedsData.PostV3) {
     if (this.actionSheetMenuStatus != null) {
       return;
     }
     this.actionSheetMenuStatus = "opening";
-    const sharePostButton = this.createSharePostButton(destDid, postId);
+    const sharePostButton = this.createSharePostButton(destDid, postId, sharedPost);
     const cancelButton = this.createCancelButton();
 
     await this.createActionSheetMenu({
@@ -334,14 +334,19 @@ export class MenuService {
     await this.actionSheetMenu.present();
   }
 
-  private createSharePostButton(destDid: string, postId: string): ActionSheetButton {
+  private createSharePostButton(destDid: string, postId: string, sharedPost: FeedsData.PostV3 = null): ActionSheetButton {
     return {
       text: this.translate.instant('common.share'),
       icon: 'ios-share1',
       handler: () => {
         this.native.showLoading("common.generateSharingLink").then(async () => {
           try {
-            let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(postId) || null;
+            let post: FeedsData.PostV3 = null;
+            if (sharedPost) {
+              post = sharedPost;
+            } else {
+              post = await this.dataHelper.getPostV3ById(postId) || null;
+            }
             const sharedLink = await this.intentService.createPostShareLink(post);
             this.intentService.share(this.intentService.createSharePostTitle(post), sharedLink);
             this.native.hideLoading();

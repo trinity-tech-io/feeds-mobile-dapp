@@ -305,28 +305,34 @@ export class PostdetailPage implements OnInit {
   }
 
   async initPostContent() {
-    let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId);
-    if (!post) {
-      post = await this.hiveVaultController.queryPublicPostById(this.destDid, this.channelId, this.postId);
-    }
-    this.post = post;
+    try {
+      let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(this.postId);
+      if (!post) {
+        post = await this.hiveVaultController.queryPublicPostById(this.destDid, this.channelId, this.postId);
+      }
+      this.post = post;
 
-    this.postStatus = post.status || 0;
-    this.mediaType = post.content.mediaType;
-    this.postContent = post.content.content;
-    this.updatedTime = post.updatedAt;
-    this.updatedTimeStr = this.handleUpdateDate(this.updatedTime);
-    if (this.mediaType === FeedsData.MediaType.containsImg) {
-      this.getImage(post);
-    }
-    if (this.mediaType === FeedsData.MediaType.containsVideo) {
-      this.getVideoPoster(post);
-    }
+      if (!this.post) {
+        //TODO
+      }
+      this.postStatus = post.status || 0;
+      this.mediaType = post.content.mediaType;
+      this.postContent = post.content.content;
+      this.updatedTime = post.updatedAt;
+      this.updatedTimeStr = this.handleUpdateDate(this.updatedTime);
+      if (this.mediaType === FeedsData.MediaType.containsImg) {
+        this.getImage(post);
+      }
+      if (this.mediaType === FeedsData.MediaType.containsVideo) {
+        this.getVideoPoster(post);
+      }
 
-    // like status
-    this.getLikeStatus(post.postId, '0');
-    this.getPostLikeNum(post.postId, '0');
-
+      // like status
+      this.getLikeStatus(post.postId, '0');
+      this.getPostLikeNum(post.postId, '0');
+    } catch (error) {
+      //TODO
+    }
   }
 
   getLikeStatus(postId: string, commentId: string) {
@@ -639,6 +645,7 @@ export class PostdetailPage implements OnInit {
         this.channelId,
         this.channelName,
         this.postId,
+        this.post
       );
     }
   }
