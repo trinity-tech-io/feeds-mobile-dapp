@@ -59,11 +59,8 @@ export class SearchPage implements OnInit {
   public scanServiceStyle = { right: '' };
   public curtotalNum: number = 0;
   private clientHeight: number = 0;
-  private channelCollectionList: any = [];//所有的
   public channelCollectionPageList: any = [];
   public searchChannelCollectionPageList: any = [];//搜索使用
-  private panelPageSize: number = 10;//一页多少个
-  private panelPageNum: number = 1;//页码
   private confirmdialog = null;
   public isBorderGradient: boolean = false;
   public channelAvatarMap: any = {};
