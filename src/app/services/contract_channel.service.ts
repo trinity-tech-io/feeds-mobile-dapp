@@ -142,6 +142,7 @@ export class ChannelContractService {
           })
           .on('receipt', receipt => {
             Logger.log(TAG, 'Mint process, receipt is', receipt);
+            reject(receipt);
           })
           .on('confirmation', (confirmationNumber, receipt) => {
             Logger.log(TAG,
@@ -152,6 +153,9 @@ export class ChannelContractService {
           })
           .on('error', (error, receipt) => {
             Logger.error(TAG, 'Mint process, error is', error, receipt);
+            if(error.indexOf("cancelled") > -1){
+              reject(error);
+            }
           });
 
         this.checkTokenState(tokenId, info => {
@@ -221,6 +225,7 @@ export class ChannelContractService {
               })
               .on('receipt', receipt => {
                 Logger.log(TAG, 'Burn process, receipt is', receipt);
+                reject(receipt);
               })
               .on('confirmation', (confirmationNumber, receipt) => {
                 Logger.log(TAG,
@@ -231,6 +236,9 @@ export class ChannelContractService {
               })
               .on('error', (error, receipt) => {
                 Logger.error(TAG, 'Burn process, error is', error, receipt);
+                if(error.indexOf("cancelled") > -1){
+                  reject(error);
+                }
               });
               this.checkBurnState(tokenId,(info)=>{
                  resolve(info);
@@ -323,6 +331,7 @@ export class ChannelContractService {
               })
               .on('receipt', receipt => {
                 Logger.log(TAG, 'updateChannel process, receipt is', receipt);
+                reject(receipt);
               })
               .on('confirmation', (confirmationNumber, receipt) => {
                 Logger.log(TAG,
@@ -333,6 +342,9 @@ export class ChannelContractService {
               })
               .on('error', (error, receipt) => {
                 Logger.error(TAG, 'updateChannel process, error is', error, receipt);
+                if(error.indexOf("cancelled") > -1){
+                  reject(error);
+                }
               });
               this.checkUpdateChannelState(tokenId, tokenUri, channelEntry, receiptAddr,(info)=>{
                  resolve(info);
