@@ -153,9 +153,12 @@ export class ChannelContractService {
           })
           .on('error', (error, receipt) => {
             Logger.error(TAG, 'Mint process, error is', error, receipt);
-            console.log("=========error1", typeof(error));
-            console.log("=========error2", Object.getOwnPropertyNames(error));
-            reject(error);
+            if(typeof(error) === 'object'){
+              let message: string = error['message'] || '';
+              if(message != '' && message.indexOf('Errored or cancelled') > -1){
+                reject(error);
+              }
+            }
           });
 
         this.checkTokenState(tokenId, info => {
@@ -236,7 +239,12 @@ export class ChannelContractService {
               })
               .on('error', (error, receipt) => {
                 Logger.error(TAG, 'Burn process, error is', error, receipt);
-                reject(error);
+                if(typeof(error) === 'object'){
+                  let message: string = error['message'] || '';
+                  if(message != '' && message.indexOf('Errored or cancelled') > -1){
+                    reject(error);
+                  }
+                }
               });
               this.checkBurnState(tokenId,(info)=>{
                  resolve(info);
@@ -340,7 +348,12 @@ export class ChannelContractService {
               })
               .on('error', (error, receipt) => {
                 Logger.error(TAG, 'updateChannel process, error is', error, receipt);
-                reject(error);
+                if(typeof(error) === 'object'){
+                  let message: string = error['message'] || '';
+                  if(message != '' && message.indexOf('Errored or cancelled') > -1){
+                    reject(error);
+                  }
+                }
               });
               this.checkUpdateChannelState(tokenId, tokenUri, channelEntry, receiptAddr,(info)=>{
                  resolve(info);
