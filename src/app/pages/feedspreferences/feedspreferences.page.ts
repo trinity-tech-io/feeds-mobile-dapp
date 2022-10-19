@@ -39,6 +39,7 @@ export class FeedspreferencesPage implements OnInit {
   private channelInfo: any = null;
   private unPublicDialog: any = null;
   private burnChannelSid: NodeJS.Timer = null;
+  private popoverDialog: any = null;
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -178,7 +179,7 @@ export class FeedspreferencesPage implements OnInit {
       that.nftContractControllerService.getChannel().cancelBurnProcess();
       that.isLoading = false;
       that.clearBurnChannelSid();
-      that.popupProvider.showSelfCheckDialog('FeedspreferencesPage.burningNFTSTimeoutDesc');
+      that.openAlert('FeedspreferencesPage.burningNFTSTimeoutDesc');
     }, Config.WAIT_TIME_BURN_NFTS);
 
     let tokenId = '0x'+that.channelId;
@@ -253,6 +254,30 @@ export class FeedspreferencesPage implements OnInit {
     let key = that.destDid +'-'+that.channelId;
     channelPublicStatusList[key] = "1";
     that.dataHelper.setChannelPublicStatusList(channelPublicStatusList);
+  }
+
+  async openAlert(desc: string) {
+    this.popoverDialog = await this.popupProvider.ionicAlert(
+      this,
+      'common.timeout',
+      desc,
+      this.timeOutconfirm,
+      'tskth.svg',
+    );
+  }
+
+  async timeOutconfirm(that: any) {
+    if(that.popoverDialog != null ){
+      await that.popoverDialog.dismiss();
+    }
+    let channelPublicStatusList = that.dataHelper.getChannelPublicStatusList();
+    let key = that.destDid +'-'+that.channelId;
+    let channelPublicStatus = channelPublicStatusList[key] || '';
+    if(channelPublicStatus != ''){
+      channelPublicStatusList[key] = '';
+    }
+    that.dataHelper.setChannelPublicStatusList(channelPublicStatusList);
+    that.native.pop();
   }
 
 
