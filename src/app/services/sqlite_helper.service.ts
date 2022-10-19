@@ -730,7 +730,7 @@ export class FeedsSqliteHelper {
   queryDistinctSubscriptionUserListByChannelId(dbUserDid: string, channelId: string): Promise<string[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT DISTINCT user_did FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=?';
+        const statement = 'SELECT DISTINCT user_did FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=? ORDER BY updated_at desc';
         const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
         const userList = this.parseUserDidData(result);
