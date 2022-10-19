@@ -245,11 +245,11 @@ export class ChannelsPage implements OnInit {
   }
 
   initUserList() {
-    this.dataHelper.getSubscriptionV3DataByChannelId(this.channelId).then((subscriptionList: FeedsData.SubscriptionV3[]) => {
+    this.dataHelper.getDistinctSubscriptionV3UserListByChannelId(this.channelId).then((userList: string[]) => {
       this.userDidList = [];
-      subscriptionList.forEach((subscription: FeedsData.SubscriptionV3) => {
-        if (subscription && subscription.userDid)
-          this.userDidList.push(subscription.userDid);
+      userList.forEach((userdid: string) => {
+        if (userdid)
+          this.userDidList.push(userdid);
       });
     });
   }
@@ -433,12 +433,12 @@ export class ChannelsPage implements OnInit {
     // } catch (error) {
     // }
     this.channelDesc = channel.intro;
-    this.channelSubscribes = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
+    this.channelSubscribes = await this.dataHelper.getDistinctSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
     if (this.channelSubscribes == 0) {
       try {
         this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId).then(() => {
           this.zone.run(async () => {
-            this.channelSubscribes = await this.dataHelper.getSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
+            this.channelSubscribes = await this.dataHelper.getDistinctSubscriptionV3NumByChannelId(channel.destDid, channel.channelId);
           });
         })
       } catch (error) {

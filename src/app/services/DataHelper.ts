@@ -3184,11 +3184,11 @@ export class DataHelper {
     });
   }
 
-  getSubscriptionV3NumByChannelId(destDid: string, channelId: string): Promise<number> {
+  getDistinctSubscriptionV3NumByChannelId(destDid: string, channelId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const result = await this.sqliteHelper.querySubscriptionNumByChannelId(selfDid, channelId);
+        const result = await this.sqliteHelper.queryDistinnctSubscriptionNumByChannelId(selfDid, channelId);
         resolve(result);
       }
       catch (error) {
@@ -3203,6 +3203,24 @@ export class DataHelper {
       try {
         const selfDid = (await this.getSigninData()).did;
         const result = await this.sqliteHelper.querySubscriptionDataByChannelId(selfDid, channelId) || [];
+        if (result) {
+          resolve(result);
+        } else {
+          resolve(null);
+        }
+      }
+      catch (error) {
+        Logger.error(TAG, 'Update subscriptions error', error);
+        reject(error)
+      }
+    });
+  }
+
+  getDistinctSubscriptionV3UserListByChannelId(channelId: string): Promise<string[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryDistinctSubscriptionUserListByChannelId(selfDid, channelId) || [];
         if (result) {
           resolve(result);
         } else {

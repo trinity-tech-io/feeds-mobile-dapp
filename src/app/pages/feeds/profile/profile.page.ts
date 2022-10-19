@@ -2333,14 +2333,14 @@ export class ProfilePage implements OnInit {
         if (subscriptionV3Num === "") {
           this.subscriptionV3NumMap[channelId] = "...";
         }
-        this.dataHelper.getSubscriptionV3NumByChannelId(
+        this.dataHelper.getDistinctSubscriptionV3NumByChannelId(
           destDid, channelId).
           then((result) => {
             result = result || 0;
             if (result == 0) {
               this.hiveVaultController.querySubscriptionChannelById(destDid, channelId).then(() => {
                 this.zone.run(async () => {
-                  this.subscriptionV3NumMap[channelId] = await this.dataHelper.getSubscriptionV3NumByChannelId(destDid, channelId);
+                  this.subscriptionV3NumMap[channelId] = await this.dataHelper.getDistinctSubscriptionV3NumByChannelId(destDid, channelId);
                 });
               })
             }

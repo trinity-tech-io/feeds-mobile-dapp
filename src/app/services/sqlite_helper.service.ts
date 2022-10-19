@@ -727,6 +727,23 @@ export class FeedsSqliteHelper {
     });
   }
 
+  queryDistinctSubscriptionUserListByChannelId(dbUserDid: string, channelId: string): Promise<string[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT DISTINCT user_did FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=?';
+        const params = [channelId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const userList = this.parseUserDidData(result);
+
+        Logger.log(TAG, 'query subscription user list by channel id result is', result);
+        resolve(userList);
+      } catch (error) {
+        Logger.error(TAG, 'query subscription user list by channel id  error', error);
+        reject(error);
+      }
+    });
+  }
+
   querySubscriptionNumByChannelId(dbUserDid: string, channelId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -738,6 +755,22 @@ export class FeedsSqliteHelper {
         resolve(num);
       } catch (error) {
         Logger.error(TAG, 'query subscription num by channel id error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryDistinnctSubscriptionNumByChannelId(dbUserDid: string, channelId: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT COUNT(DISTINCT user_did) FROM ' + this.TABLE_SUBSCRIPTION + ' WHERE channel_id=?'
+        const params = [channelId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const num = this.parseDistinctUserDidNum(result);
+        Logger.log(TAG, 'query subscription user Num by channel id result is', num);
+        resolve(num);
+      } catch (error) {
+        Logger.error(TAG, 'query subscription user num by channel id error', error);
         reject(error);
       }
     });
@@ -1504,6 +1537,20 @@ export class FeedsSqliteHelper {
     return num;
   }
 
+  parseDistinctUserDidNum(result: any): number {
+    Logger.log(TAG, 'Parse like count result from sql, result is', result);
+    if (!result) {
+      return 0;
+    }
+    let num = 0;
+    for (let index = 0; index < result.rows.length; index++) {
+      const element = result.rows.item(index);
+      num = element['COUNT(DISTINCT user_did)']
+    }
+    Logger.log(TAG, 'Parse count from sql, count is', num);
+    return num;
+  }
+
   parseSubscriptionChannelData(result: any): FeedsData.SubscribedChannelV3[] {
     Logger.log(TAG, 'Parse subscription channel result from sql, result is', result);
     if (!result) {
@@ -1541,6 +1588,20 @@ export class FeedsSqliteHelper {
         status: element['status'],
       }
       list.push(subscriptionV3);
+    }
+    Logger.log(TAG, 'Parse subscription list from sql, list is', list);
+    return list;
+  }
+
+  parseUserDidData(result: any): string[] {
+    Logger.log(TAG, 'Parse subscription result from sql, result is', result);
+    if (!result) {
+      return [];
+    }
+    let list = [];
+    for (let index = 0; index < result.rows.length; index++) {
+      const element = result.rows.item(index);
+      list.push(element['user_did']);
     }
     Logger.log(TAG, 'Parse subscription list from sql, list is', list);
     return list;
