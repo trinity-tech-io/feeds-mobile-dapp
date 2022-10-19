@@ -190,6 +190,13 @@ export class EidtchannelPage implements OnInit {
         this.walletConnectControllerService.connect();
         return;
       }
+
+      let channelNftList = this.dataHelper.getChannelContractInfoList() || {};
+      let channelNft:any = channelNftList[this.channelId] || null;
+      if(channelNft != null && walletAddress  != channelNft.ownerAddr){
+          this.native.toastWarn("commom.channelError");
+          return false;
+      }
     }
 
     this.isClickConfirm = false;
@@ -657,7 +664,14 @@ export class EidtchannelPage implements OnInit {
       let walletAddress = this.walletConnectControllerService.getAccountAddress() || "";
       if(walletAddress === ""){
         this.walletConnectControllerService.connect();
-        return;
+        return false;
+      }
+
+      let channelNftList = this.dataHelper.getChannelContractInfoList() || {};
+      let channelNft:any = channelNftList[this.channelId] || null;
+      if(channelNft != null && walletAddress  != channelNft.ownerAddr){
+          this.native.toastWarn("commom.channelError");
+          return false;
       }
     }
     this.isClickConfirm = false;

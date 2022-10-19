@@ -153,9 +153,9 @@ export class ChannelContractService {
           })
           .on('error', (error, receipt) => {
             Logger.error(TAG, 'Mint process, error is', error, receipt);
-            if(error.indexOf("cancelled") > -1){
-              reject(error);
-            }
+            console.log("=========error1", typeof(error));
+            console.log("=========error2", Object.getOwnPropertyNames(error));
+            reject(error);
           });
 
         this.checkTokenState(tokenId, info => {
@@ -236,9 +236,7 @@ export class ChannelContractService {
               })
               .on('error', (error, receipt) => {
                 Logger.error(TAG, 'Burn process, error is', error, receipt);
-                if(error.indexOf("cancelled") > -1){
-                  reject(error);
-                }
+                reject(error);
               });
               this.checkBurnState(tokenId,(info)=>{
                  resolve(info);
@@ -342,9 +340,7 @@ export class ChannelContractService {
               })
               .on('error', (error, receipt) => {
                 Logger.error(TAG, 'updateChannel process, error is', error, receipt);
-                if(error.indexOf("cancelled") > -1){
-                  reject(error);
-                }
+                reject(error);
               });
               this.checkUpdateChannelState(tokenId, tokenUri, channelEntry, receiptAddr,(info)=>{
                  resolve(info);

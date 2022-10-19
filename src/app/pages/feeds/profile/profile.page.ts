@@ -724,7 +724,7 @@ export class ProfilePage implements OnInit {
           this.isLoadSubscriptionV3Num = {};
           this.isLoadChannelNameMap = {};
           this.removeMyFeedsObserveList();
-          this.channelPublicStatusList = {};
+          this.dataHelper.setChannelPublicStatusList({});
           await this.initMyFeeds(selfchannels);
           event.target.complete();
         } catch (error) {

@@ -49,7 +49,10 @@ export class SubscriptionsPage implements OnInit {
   private follingObserver: any = {};
   public userDid: string = "";
   public isLoading: boolean = true;
-
+  public pageSize = 1;
+  public pageNumber = 10;
+  public totalSubscribedChannelList: any = [];
+  public totalNum:number = 0;
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -134,7 +137,11 @@ export class SubscriptionsPage implements OnInit {
 
   async initFollowing() {
     try {
-      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+      this.pageSize = 1;
+      this.totalSubscribedChannelList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+      let pageData = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalSubscribedChannelList);
+      let subscribedChannel = pageData.items;
+      this.totalNum = subscribedChannel.length;
       this.followingList = await this.getFollowedChannelList(subscribedChannel);
       this.searchFollowingList = _.cloneDeep(this.followingList);
       this.isLoading = false;
@@ -183,6 +190,7 @@ export class SubscriptionsPage implements OnInit {
 
       this.removeObserveList();
       this.isLoadSubscriptionV3Num = {};
+      this.totalNum = 0;
       this.initFollowing();
       event.target.complete();
     } catch (err) {
@@ -542,6 +550,25 @@ export class SubscriptionsPage implements OnInit {
       this.removeFollingObserver(postGridId, observer)
     }
     this.follingObserver = {};
+  }
+
+  loadData(event: any) {
+    let sId = setTimeout(async () => {
+      if (this.totalNum === this.totalSubscribedChannelList.length) {
+        event.target.complete();
+        clearTimeout(sId);
+        return;
+      }
+      this.pageSize++;
+      let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalSubscribedChannelList);
+      let subscribedChannel = data.items;
+      this.totalNum = this.totalNum + subscribedChannel.length;
+      let newLoadedList = await this.getFollowedChannelList(subscribedChannel);
+      this.followingList = this.followingList.concat(newLoadedList);
+      this.refreshFollowingVisibleareaImageV2(newLoadedList);
+      event.target.complete();
+      clearTimeout(sId);
+    }, 500);
   }
 
 }

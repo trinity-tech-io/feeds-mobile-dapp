@@ -343,10 +343,11 @@ export class MyApp {
           this.dataHelper.setChannelPublicStatusList({});
           return;
         }
-        console.log("======feeds.channelPublicStatus.list========",channelPublicStatusList);
         this.dataHelper.setChannelPublicStatusList(channelPublicStatusList);
       })
-      .catch(err => { });
+      .catch(err => {
+
+      });
   }
 
   initSetting() {

@@ -29,7 +29,7 @@
   <p>{{'common.beingRefresh'|translate}}</p>
   </ion-col>
   </ion-row>
-
+   <div>
    <app-following
    *ngIf="!isLoading"
    [followingList] = "followingList"
@@ -39,6 +39,14 @@
    (fromChild)="showMenuMore($event)"
    (toFollowPage)="toPage($event)">
   </app-following>
+  </div>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content
+      class="ion-padding-top"
+      loadingSpinner="circles"
+    >
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>
 <!---------------- ADD share menu---------------->
 <app-sharemenu

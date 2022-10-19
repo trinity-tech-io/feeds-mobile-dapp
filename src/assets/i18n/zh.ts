@@ -223,7 +223,8 @@ export const zh = {
     SubscribeElastosCommunity: '请先在Reddit中订阅Elastos社区',
     redditError: 'Reddit 请求超时',
     twitterError3: '无法解析twitter服务地址，请检查网络后重试',
-    unableUnsubscribe: '无法取消订阅自己的频道'
+    unableUnsubscribe: '无法取消订阅自己的频道',
+    channelError:'请使用公开此频道时所用的钱包',
   },
   app: {
     profileDetails: '档案详情',

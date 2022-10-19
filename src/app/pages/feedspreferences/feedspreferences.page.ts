@@ -88,10 +88,17 @@ export class FeedspreferencesPage implements OnInit {
         return;
      }
 
+
      let channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
      let key = this.destDid+"-"+this.channelId;
      let channelPublicStatus = channelPublicStatusList[key] || "";
      if(channelPublicStatus === '2'){
+      let channelNftList = this.dataHelper.getChannelContractInfoList() || {};
+      let channelNft:any = channelNftList[this.channelId] || null;
+      if(channelNft != null && accountAddress != channelNft.ownerAddr){
+          this.native.toastWarn("commom.channelError");
+          return;
+      }
        this.showUnPublicDialog();
        return;
      }
