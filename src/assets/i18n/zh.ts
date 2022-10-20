@@ -968,5 +968,9 @@ export const zh = {
   UserlistPage: {
     title: '订阅者列表',
     emptyDes: "还没有人订阅此频道"
+  },
+  DeveloperPage: {
+    confirmTitle: "删除数据",
+    des:"确认删除所有数据吗？"
   }
 };

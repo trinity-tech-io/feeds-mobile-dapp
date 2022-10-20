@@ -79,8 +79,8 @@ export class DeveloperPage implements OnInit {
   cleanData() {
     this.popover = this.popupProvider.ionicConfirm(
       this,
-      'SearchPage.confirmTitle',
-      'Confirm delete all data?',
+      'DeveloperPage.confirmTitle',
+      'DeveloperPage.des',
       this.cancel,
       this.confirm,
       '',
@@ -122,7 +122,6 @@ export class DeveloperPage implements OnInit {
       }
     } catch (error) {
       that.native.hideLoading();
-      alert("====error===" + JSON.stringify(error));
     }
   }
 

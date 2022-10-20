@@ -970,5 +970,9 @@ export const en = {
   UserlistPage: {
     title: 'Subscribers',
     emptyDes: "No one has subscribed to this channel yet"
+  },
+  DeveloperPage: {
+    confirmTitle: "Delete Data",
+    des:"Confirm delete all data?"
   }
 };
