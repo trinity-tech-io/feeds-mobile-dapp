@@ -142,7 +142,6 @@ export class ChannelContractService {
           })
           .on('receipt', receipt => {
             Logger.log(TAG, 'Mint process, receipt is', receipt);
-            reject(receipt);
           })
           .on('confirmation', (confirmationNumber, receipt) => {
             Logger.log(TAG,
@@ -155,7 +154,7 @@ export class ChannelContractService {
             Logger.error(TAG, 'Mint process, error is', error, receipt);
             if(typeof(error) === 'object'){
               let message: string = error['message'] || '';
-              if(message != '' && message.indexOf('Errored or cancelled') > -1){
+              if(message != '' && message.indexOf('Errored or cancelled') > -1  || message.indexOf('User rejected the transaction') > -1){
                 reject(error);
               }
             }
@@ -228,7 +227,6 @@ export class ChannelContractService {
               })
               .on('receipt', receipt => {
                 Logger.log(TAG, 'Burn process, receipt is', receipt);
-                reject(receipt);
               })
               .on('confirmation', (confirmationNumber, receipt) => {
                 Logger.log(TAG,
@@ -241,7 +239,7 @@ export class ChannelContractService {
                 Logger.error(TAG, 'Burn process, error is', error, receipt);
                 if(typeof(error) === 'object'){
                   let message: string = error['message'] || '';
-                  if(message != '' && message.indexOf('Errored or cancelled') > -1){
+                  if(message != '' && message.indexOf('Errored or cancelled') > -1 || message.indexOf('User rejected the transaction') > -1){
                     reject(error);
                   }
                 }
@@ -337,7 +335,6 @@ export class ChannelContractService {
               })
               .on('receipt', receipt => {
                 Logger.log(TAG, 'updateChannel process, receipt is', receipt);
-                reject(receipt);
               })
               .on('confirmation', (confirmationNumber, receipt) => {
                 Logger.log(TAG,
@@ -350,7 +347,7 @@ export class ChannelContractService {
                 Logger.error(TAG, 'updateChannel process, error is', error, receipt);
                 if(typeof(error) === 'object'){
                   let message: string = error['message'] || '';
-                  if(message != '' && message.indexOf('Errored or cancelled') > -1){
+                  if(message != '' && message.indexOf('Errored or cancelled') > -1 || message.indexOf('User rejected the transaction') > -1){
                     reject(error);
                   }
                 }

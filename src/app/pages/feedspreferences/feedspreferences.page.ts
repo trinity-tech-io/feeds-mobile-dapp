@@ -95,8 +95,8 @@ export class FeedspreferencesPage implements OnInit {
      if(channelPublicStatus === '2'){
       let channelNftList = this.dataHelper.getChannelContractInfoList() || {};
       let channelNft:any = channelNftList[this.channelId] || null;
-      if(channelNft != null && accountAddress != channelNft.ownerAddr){
-          this.native.toastWarn("commom.channelError");
+      if(channelNft != null && accountAddress.toLocaleUpperCase() != channelNft.ownerAddr.toLocaleUpperCase()){
+          this.native.toastWarn("common.channelError");
           return;
       }
        this.showUnPublicDialog();

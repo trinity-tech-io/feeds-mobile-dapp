@@ -640,7 +640,7 @@ export const en = {
     updateChannelSuccess: 'Channel Collectibles updated successfully',
     updateChannelFailed: 'Failed to update channel collectibles',
     updateChannelDesc1: 'Update Channel, please wait',
-    updateChannelDesc2: 'The current channel is inconsistent with the public channel, please update it in time',
+    updateChannelDesc2: 'The current channel information is inconsistent with the public channel information, please synchronize the data in time.',
     updateChannelDesc3: 'Synchronize data'
   },
   EditPostPage: {

@@ -193,8 +193,8 @@ export class EidtchannelPage implements OnInit {
 
       let channelNftList = this.dataHelper.getChannelContractInfoList() || {};
       let channelNft:any = channelNftList[this.channelId] || null;
-      if(channelNft != null && walletAddress  != channelNft.ownerAddr){
-          this.native.toastWarn("commom.channelError");
+      if(channelNft != null && walletAddress.toLocaleUpperCase() != channelNft.ownerAddr.toLocaleUpperCase()){
+          this.native.toastWarn("common.channelError");
           return false;
       }
     }
@@ -492,7 +492,7 @@ export class EidtchannelPage implements OnInit {
       this.clickButton = false;
       this.clearUpdateChannelSid();
       this.native.pop();
-    }).catch(()=>{
+    }).catch((err)=>{
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
       this.isLoading = false;
       this.isClickConfirm = true;
@@ -669,8 +669,8 @@ export class EidtchannelPage implements OnInit {
 
       let channelNftList = this.dataHelper.getChannelContractInfoList() || {};
       let channelNft:any = channelNftList[this.channelId] || null;
-      if(channelNft != null && walletAddress  != channelNft.ownerAddr){
-          this.native.toastWarn("commom.channelError");
+      if(channelNft != null && walletAddress.toLocaleUpperCase()  != channelNft.ownerAddr.toLocaleUpperCase()){
+          this.native.toastWarn("common.channelError");
           return false;
       }
     }
