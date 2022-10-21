@@ -402,6 +402,10 @@ export class HiveService {
     })
   }
 
+  async deleteFile(remotePath: string) {
+    return (await this.getFilesService()).delete(remotePath);
+  }
+
   newInsertOptions() {
     return new InsertOptions(false, true);
   }

@@ -2347,6 +2347,68 @@ export class HiveVaultController {
 
         resolve(posts[0]);
       } catch (error) {
+      }
+    });
+  }
+
+  uploadUserProfile(did: string, name: string, description: string, avatar: string): Promise<FeedsData.UserProfile> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatar);
+        const result = await this.hiveVaultApi.uploadSelfProfile(name, description, avatarHiveURL);
+
+        const originProfile = await this.dataHelper.getUserProfileData(did);
+        const userProfile: FeedsData.UserProfile = {
+          did: did,
+          resolvedName: originProfile.resolvedName,
+          resolvedAvatar: originProfile.resolvedAvatar,
+          resolvedBio: originProfile.resolvedBio,
+          displayName: originProfile.displayName,
+          name: result.name,
+          avatar: result.avatar,
+          bio: result.description
+        }
+
+        this.dataHelper.addUserProfile(userProfile);
+        resolve(userProfile)
+      } catch (error) {
+      }
+    });
+  }
+
+  updateUserProfile(did: string, name: string, description: string, avatar: string): Promise<FeedsData.UserProfile> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const originProfile = await this.getUserProfile(did);
+
+        const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatar);
+        if (avatarHiveURL != originProfile.avatar) {
+          await this.hiveVaultApi.delteFile(originProfile.avatar);
+        }
+
+        const result = await this.hiveVaultApi.updateSelfProfile(name, description, avatarHiveURL);
+
+        if (!result) {
+          Logger.error(TAG, 'Update profile result null');
+          reject('Update profile result null');
+          return;
+        }
+
+        const userProfile: FeedsData.UserProfile = {
+          did: did,
+          resolvedName: originProfile.resolvedName,
+          resolvedAvatar: originProfile.resolvedAvatar,
+          resolvedBio: originProfile.resolvedBio,
+          displayName: originProfile.displayName,
+          name: name,
+          avatar: avatar,
+          bio: description
+        }
+
+        this.dataHelper.addUserProfile(userProfile);
+        resolve(userProfile)
+      } catch (error) {
+        Logger.error(TAG, 'Update profile error', error);
         reject(error);
       }
     });
