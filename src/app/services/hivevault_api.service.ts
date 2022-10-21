@@ -256,4 +256,20 @@ export class HiveVaultApi {
   queryPublicPostRangeOfTime(targetDid: string, channelId: string, start: number, end: number): Promise<any> {
     return this.hiveVaultHelper.queryPublicPostRangeOfTime(targetDid, channelId, start, end);
   }
+
+  uploadSelfProfile(name: string, description: string, avatarAddress: string) {
+    return this.hiveVaultHelper.uploadProfile(name, description, avatarAddress);
+  }
+
+  updateSelfProfile(name: string, description: string, avatarAddress: string) {
+    return this.hiveVaultHelper.updateProfile(name, description, avatarAddress);
+  }
+
+  queryProfile(targetDid: string) {
+    return this.hiveVaultHelper.queryProfile(targetDid);
+  }
+
+  delteFile(remotePath: string) {
+    return this.hiveVaultHelper.deleteFile(remotePath);
+  }
 }

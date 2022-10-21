@@ -2358,7 +2358,7 @@ export class HiveVaultHelper {
         });
     }
 
-    uploadSelfProfile(name: string, description: string, avatarAddress: string): Promise<{ did: string, name: string, description: string, avatar: string }> {
+    uploadProfile(name: string, description: string, avatarAddress: string): Promise<{ did: string, name: string, description: string, avatar: string }> {
         return this.insertSelfProfileData(name, description, avatarAddress);
     }
     /** create profile end */
@@ -2415,10 +2415,10 @@ export class HiveVaultHelper {
         })
     }
 
-    private callQueryProfile(targetDid: string, did: string) {
+    private callQueryProfile(targetDid: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_PROFILE, { "did": did })
+                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_PROFILE, { "did": targetDid })
                 resolve(result)
             } catch (error) {
                 Logger.error(TAG, 'Call query profile Scripting error:', error)
@@ -2427,10 +2427,10 @@ export class HiveVaultHelper {
         })
     }
 
-    queryProfile(targetDid: string, did: string): Promise<any> {
+    queryProfile(targetDid: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await this.callQueryProfile(targetDid, did);
+                const result = await this.callQueryProfile(targetDid);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'Query profile error', error);
@@ -2440,4 +2440,17 @@ export class HiveVaultHelper {
     }
     /** query profile info end*/
 
+    /** delete File start*/
+    deleteFile(remotePath: string): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await this.hiveService.deleteFile(remotePath);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'Query profile error', error);
+                reject(error);
+            }
+        });
+    }
+    /** delete File end*/
 }

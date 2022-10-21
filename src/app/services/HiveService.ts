@@ -8,7 +8,6 @@ import { DataHelper } from 'src/app/services/DataHelper';
 let TAG: string = 'Feeds-HiveService';
 import { Events } from 'src/app/services/events.service';
 import { Config } from './config';
-import { reject } from 'lodash';
 
 @Injectable()
 export class HiveService {
@@ -400,6 +399,10 @@ export class HiveService {
         reject(error)
       }
     })
+  }
+
+  async deleteFile(remotePath: string) {
+    return (await this.getFilesService()).delete(remotePath);
   }
 
   newInsertOptions() {
