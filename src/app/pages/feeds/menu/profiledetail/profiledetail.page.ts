@@ -142,6 +142,9 @@ export class ProfiledetailPage implements OnInit {
       this.nftContractControllerService.getAccountAddress() || '';
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
+    this.events.subscribe(FeedsEvent.PublishType.editProfileInfoRightMenu, () => {
+      this.clickEditProfileInfo();
+    });
 
     let signInData = await this.dataHelper.getSigninData();
     let nickname = signInData['nickname'] || '';
@@ -180,6 +183,12 @@ export class ProfiledetailPage implements OnInit {
       this.translate.instant('ProfiledetailPage.profileDetails'),
     );
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
+
+    if (!this.theme.darkMode) {
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar, "editProfileInfoRightMenu", "assets/icon/edit.ico");
+    } else {
+      this.titleBarService.setTitleBarMoreMemu(this.titleBar, "editProfileInfoRightMenu", "assets/icon/dark/edit.ico");
+    }
   }
 
   ionViewWillUnload() { }
@@ -187,6 +196,7 @@ export class ProfiledetailPage implements OnInit {
   async ionViewWillLeave() {
     document.body.removeEventListener("touchmove", this.preventDefault, false);
     this.theme.restTheme();
+    this.events.unsubscribe(FeedsEvent.PublishType.editProfileInfoRightMenu);
     this.native.handleTabsEvents();
   }
 
@@ -230,7 +240,6 @@ export class ProfiledetailPage implements OnInit {
   }
 
   editProfile() {
-    //this.native.navigateForward(['editprofileimage'], {});
     this.editImage();
   }
 
@@ -297,5 +306,9 @@ export class ProfiledetailPage implements OnInit {
   }
 
   preventDefault(e: any) { e.preventDefault(); };
+
+  clickEditProfileInfo() {
+    this.native.navigateForward(['/editprofileinfo'], { queryParams: { "userDid": this.userDid } });
+  }
 
 }

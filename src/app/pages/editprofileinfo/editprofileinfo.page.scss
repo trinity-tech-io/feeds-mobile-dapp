@@ -1,0 +1,264 @@
+.bg{
+    --background:linear-gradient(180deg, #000000 0%, #A067FF 99.09%);
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    height: 200px;
+
+    .cardImg{
+        position: absolute;
+        width: 100%;
+        display: flex;
+        top: 20px;
+        justify-content: center;
+        .avatar{
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border-radius: 60px;
+        background-color: #161C24;
+        border: 2px solid transparent;
+        background-clip: padding-box, border-box;
+        background-origin: padding-box, border-box;
+        background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+        img{
+            width: 80px;
+            height: 80px;
+            border-radius: 60px;
+            object-fit: cover;
+            overflow: hidden;
+        }
+
+        .eidtAvatar{
+          width: 36px;
+          height: 36px;
+          top: 59px;
+          position: absolute;
+          left: calc(50% + 14px);
+        }
+        }
+    }
+
+    .cardTitle{
+        position: absolute;
+        width: 100%;
+        display: flex;
+        top: 104px;
+        justify-content: center;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 25px;
+        color: #FFFFFF;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .connectWallet{
+        display: flex;
+        position: absolute;
+        width: 150px;
+        height: 35px;
+        background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+        border-radius: 20px;
+        justify-content: center;
+        align-items: center;
+        top: 128px;
+    }
+
+    .card-subtitle{
+        display: flex;
+        position: absolute;
+        width: 170px;
+        height: 35px;
+        background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+        border-radius: 20px;
+        justify-content: center;
+        align-items: center;
+        top: 128px;
+
+        span {
+            font-style: normal;
+            font-weight: 700;
+            font-size: 15px;
+            color: #FFFFFF;
+            margin-left: 17px;
+        }
+
+        img {
+            margin-left: 8px;
+            vertical-align:middle;
+            margin-left:5px;
+            width: 18px;
+            height: 21.33px;
+        }
+    }
+  }
+
+  .container {
+    overflow: auto;
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 200px);
+    background: #161c24;
+    border-radius: 40px 40px 0px 0px;
+
+    ion-list {
+        margin-top: 20px;
+        .section {
+            padding-top: 20px;
+            padding-bottom: 5px;
+            margin-right: 20px;
+            ion-col {
+              padding: 0;
+            }
+
+            .title-col {
+              h1, h2 {
+                margin: 0;
+              }
+
+              h1 {
+                font-size: 16px;
+                font-weight: bold;
+                font-stretch: normal;
+                font-style: normal;
+                color: #000000;
+                margin-top: 14px;
+              }
+
+              h2 {
+                font-size: 14px;
+                font-weight: normal;
+                font-stretch: normal;
+                font-style: normal;
+                color: #9ca0a4;
+                margin-left:20px;
+              }
+            }
+
+            .arrow-col {
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+
+              ion-img {
+                width: 7.7px;
+                height: 13.3px;
+              }
+
+              ion-toggle {
+                  --background: #ddd;
+                  margin-left: 30px;
+              }
+            }
+
+          }
+
+          .dev-mode {
+            border: none;
+            margin-right: 5px;
+          }
+        width: 100%;
+        background: transparent;
+
+        ion-item {
+            --background: transparent;
+            --padding-top: 10px;
+            --padding-bottom: 10px;
+            --padding-start: 0px;
+            margin: 0px 10px;
+            border-bottom: 1px solid #f5f4f8;
+
+            ion-row {
+                width: 100%;
+                padding: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                ion-col {
+                    padding: 0;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: flex-start;
+                }
+            }
+
+            ion-label {
+                margin: 0;
+                padding: 7.5px 0 0;
+                font-size: 16px;
+                font-weight: bold;
+                font-stretch: normal;
+                font-style: normal;
+                color: #000000;
+            }
+
+            ion-input{
+              --placeholder-color:#9ca0a4;
+              font-size: 14px;
+              font-weight: normal;
+              font-stretch: normal;
+              font-style: normal;
+              color: #9ca0a4;
+              margin: 0;
+              --padding-start:20px;
+              word-break: break-all;
+            }
+            h2 {
+                font-size: 14px;
+                font-weight: normal;
+                font-stretch: normal;
+                font-style: normal;
+                color: #9ca0a4;
+                margin: 0;
+                padding: 7.5px 0;
+                word-break: break-all;
+            }
+        }
+
+        .removeBorder {
+            border-bottom: none;
+        }
+    }
+
+    .btn-row {
+        margin-top: 25px;
+        width: 95%;
+    }
+  }
+
+  .darkContainer {
+  overflow: auto;
+  ion-list {
+    ion-item {
+        border-bottom: 1px solid #2e2f4e;
+
+        ion-label {
+            color: #ffffff;
+        }
+    }
+
+    .section {
+      .title-col {
+        h1 {
+          color:#ffffff;
+        }
+        h2 {
+          color: #9ca0a4;
+        }
+      }
+    }
+
+      .dev-mode {
+        border: none;
+      }
+}
+
+  }

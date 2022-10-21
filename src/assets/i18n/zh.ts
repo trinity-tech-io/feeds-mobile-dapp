@@ -221,7 +221,7 @@ export const zh = {
     redditError: 'Reddit 请求超时',
     twitterError3: '无法解析twitter服务地址，请检查网络后重试',
     unableUnsubscribe: '无法取消订阅自己的频道',
-    channelError:'请使用公开此频道时所用的钱包',
+    channelError: '请使用公开此频道时所用的钱包',
   },
   app: {
     profileDetails: '档案详情',
@@ -855,6 +855,14 @@ export const zh = {
   },
   DeveloperPage: {
     confirmTitle: "删除数据",
-    des:"确认删除所有数据吗？"
+    des: "确认删除所有数据吗？"
+  },
+  EditprofileinfoPage: {
+    title: '编辑档案详情',
+    des: '描述',
+    inputName: '添加名字',
+    inputDes: '添加描述',
+    inputTelephone: '添加手机号',
+    inputEmail: '添加邮箱'
   }
 };

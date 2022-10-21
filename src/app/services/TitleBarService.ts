@@ -59,25 +59,6 @@ export class TitleBarService {
     this.setIcon(titleBar, FeedsData.TitleBarIconSlot.OUTER_LEFT, null, null);
   }
 
-  setTitleBarEditChannel(titleBar: TitleBarComponent) {
-    this.setIcon(
-      titleBar,
-      FeedsData.TitleBarIconSlot.INNER_RIGHT,
-      'editChannel',
-      'assets/icon/edit.svg',
-    );
-    this.registEditChannel(titleBar);
-  }
-
-  setTitleBarEditServer(titleBar: TitleBarComponent) {
-    this.setIcon(
-      titleBar,
-      FeedsData.TitleBarIconSlot.INNER_RIGHT,
-      'editServer',
-      'assets/icon/edit.svg',
-    );
-    this.registEditServer(titleBar);
-  }
 
   setTitleBarEditImage(titleBar: TitleBarComponent) {
     this.setIcon(
@@ -144,6 +125,11 @@ export class TitleBarService {
 
       if(icon.key === "channelInfoRightMenu"){
         this.event.publish(FeedsEvent.PublishType.channelInfoRightMenu);
+        return;
+      }
+
+      if(icon.key === "editProfileInfoRightMenu"){
+        this.event.publish(FeedsEvent.PublishType.editProfileInfoRightMenu);
         return;
       }
 

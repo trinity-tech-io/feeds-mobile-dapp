@@ -17,7 +17,7 @@ declare namespace FeedsEvent {
     twitterLoginFailed = 'twitter:loginFailed',
     RedditLoginSuccess = 'reddit:loginSuccess',
     RedditLoginFailed = 'reddit:loginFailed',
-    
+
     ////////
     networkStatusChanged = 'feeds:networkStatusChanged',
 
@@ -167,6 +167,7 @@ declare namespace FeedsEvent {
 
     channelRightMenu = "feeds:channelRightMenu",
     channelInfoRightMenu = "feeds:channelInfoRightMenu",
+    editProfileInfoRightMenu = "feeds:editProfileInfoRightMenu",
 
     savePicture = "feeds:savePicture",
     clickDialog = "feeds:clickDialog",
