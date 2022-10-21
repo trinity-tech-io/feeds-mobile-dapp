@@ -1,0 +1,55 @@
+<app-titlebar [lightThemeType]="lightThemeType"></app-titlebar>
+<ion-content class="bg">
+  <ion-row class="card">
+    <div class="cardImg">
+      <div class="avatar" (click) = "editProfile()">
+       <img  *ngIf="avatar === ''" src="./assets/images/selectAvatar.svg" />
+       <img  *ngIf="avatar != ''"  [src]="avatar"/>
+       <img   class="eidtAvatar" src="./assets/images/eidtAvatar.svg"/>
+      </div>
+
+      <div class="cardTitle">{{userName}}</div>
+    </div>
+  </ion-row>
+  <ion-grid class="container" [class.darkContainer]="theme.darkMode">
+    <ion-list>
+      <ion-item lines="none">
+        <ion-label position="stacked">{{ 'ProfiledetailPage.name' | translate }}</ion-label>
+        <ion-input clearInput class="content-value" [placeholder]="'EditprofileinfoPage.inputName'|translate" [(ngModel)] ="userName"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label position="stacked">{{ 'EditprofileinfoPage.des' | translate }}</ion-label>
+        <ion-input clearInput class="content-value" [placeholder]="'EditprofileinfoPage.inputDes'|translate" [(ngModel)] ="userDes"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label position="stacked">{{ 'ProfiledetailPage.telephone' | translate }}</ion-label>
+        <ion-input clearInput class="content-value" [placeholder]="'EditprofileinfoPage.inputTelephone'|translate" [(ngModel)] ="userTelephone"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label position="stacked">{{ 'ProfiledetailPage.email' | translate }}</ion-label>
+        <ion-input clearInput class="content-value" [placeholder]="'EditprofileinfoPage.inputEmail'|translate" [(ngModel)] ="userTelephone"></ion-input>
+      </ion-item>
+
+    </ion-list>
+
+    <ion-row class="btn-row">
+      <ion-button (click)="clickEditProfile()" [disabled]="clickButton">
+          <ion-label *ngIf="!clickButton"> {{'common.save'|translate}}</ion-label>
+          <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
+      </ion-button>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>
+<!---------------- ADD picture menu---------------->
+<app-picturemenu
+ *ngIf="hidePictureMenuComponent"
+ [isSupportGif] = "isSupportGif"
+ (openCamera) = "openCamera()"
+ (openGallery)= "openGallery($event)"
+ (hidePictureMenu)="hidePictureMenu($event)"
+>
+</app-picturemenu>

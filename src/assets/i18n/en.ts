@@ -224,7 +224,7 @@ export const en = {
     redditError: 'Reddit request timed out',
     twitterError3: 'Unable to connect to Twitter. Please check the network and try again',
     unableUnsubscribe: 'Unable to unsubscribe from your own channel',
-    channelError:'Please use the wallet you used to public this channel',
+    channelError: 'Please use the wallet you used to public this channel',
   },
   app: {
     profileDetails: 'Profile Details',
@@ -973,6 +973,14 @@ export const en = {
   },
   DeveloperPage: {
     confirmTitle: "Delete Data",
-    des:"Confirm delete all data?"
+    des: "Confirm delete all data?"
+  },
+  EditprofileinfoPage: {
+    title: 'Edit Profile',
+    des: 'Description',
+    inputName: 'Add Name',
+    inputDes: 'Add Description',
+    inputTelephone: 'Add Telephone',
+    inputEmail: 'Add Email'
   }
 };
