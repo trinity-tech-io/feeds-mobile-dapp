@@ -2413,4 +2413,73 @@ export class HiveVaultController {
       }
     });
   }
+
+  getRemoteUserProfileWithoutSave(userDid: string): Promise<FeedsData.UserProfile> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        const result = await this.hiveVaultApi.queryProfile(userDid);
+        if (!result) {
+          Logger.error(TAG, 'Get remote result null');
+          resolve(null);
+          return;
+        }
+        const profile = HiveVaultResultParse.parseProfileResult(result);
+        const originProfile = await this.getUserProfile(userDid);
+        const userProfile: FeedsData.UserProfile = {
+          did: userDid,
+          resolvedName: originProfile.resolvedName,
+          resolvedAvatar: originProfile.resolvedAvatar,
+          resolvedBio: originProfile.resolvedBio,
+          displayName: originProfile.displayName,
+          name: profile.name,
+          avatar: profile.avatar,
+          bio: profile.description
+        }
+        resolve(userProfile);
+      } catch (error) {
+        Logger.error(TAG, 'Update profile error', error);
+        reject(error);
+      }
+    });
+  }
+
+  getRemoteUserProfileWithSave(userDid: string): Promise<FeedsData.UserProfile> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        const profile = await this.getRemoteUserProfileWithoutSave(userDid);
+        if (!profile) {
+          Logger.error(TAG, 'Get remote user profile result null');
+          resolve(null);
+          return;
+        }
+        this.dataHelper.addUserProfile(profile);
+        resolve(profile);
+      } catch (error) {
+        Logger.error(TAG, 'Update profile error', error);
+        reject(error);
+      }
+    });
+
+  }
+
+  diffRemoteProfile(userDid: string): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const originProfile = await this.getUserProfile(userDid);
+        const remoteProfile = await this.getRemoteUserProfileWithoutSave(userDid);
+
+        const diffResult = _.isEqual(originProfile, remoteProfile);
+        resolve(diffResult);
+      } catch (error) {
+        Logger.error(TAG, 'Update profile error', error);
+        reject(error);
+      }
+    });
+  }
+
+  diffProfile(originProfile: FeedsData.UserProfile, newProfile: FeedsData.UserProfile): boolean {
+    return _.isEqual(originProfile, newProfile);
+  }
 }
