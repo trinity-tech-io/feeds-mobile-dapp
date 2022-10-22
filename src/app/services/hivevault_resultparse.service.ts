@@ -328,4 +328,27 @@ export class HiveVaultResultParse {
     }
   }
   /** parse backup subscribed channel result end */
+
+  public static parseProfileResult(result: any): { did: string, name: string, description: string, avatar: string } {
+    try {
+      console.log('parseProfileResult====>', result);
+      /**
+      */
+      const profiles = result;
+      let parseResult: FeedsData.SubscribedChannelV3[] = [];
+      if (!profiles || profiles.length == 0) {
+        return null;
+      }
+
+      const profileResult = {
+        did: profiles[0].did,
+        name: profiles[0].name,
+        description: profiles[0].description,
+        avatar: profiles[0].avatar
+      }
+      return profileResult;
+    } catch (error) {
+      Logger.error(TAG, 'Parse profile data result error', error);
+    }
+  }
 }
