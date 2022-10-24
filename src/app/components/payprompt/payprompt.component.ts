@@ -1,10 +1,13 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { PopoverController, NavParams } from '@ionic/angular';
 import { ThemeService } from 'src/app/services/theme.service';
-import { FeedService } from 'src/app/services/FeedService';
 import { NativeService } from 'src/app/services/NativeService';
 import { PopupProvider } from 'src/app/services/popup';
 import { Events } from '../../services/events.service';
+import { DataHelper } from 'src/app/services/DataHelper';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { Config } from 'src/app/services/config';
 
 @Component({
   selector: 'app-payprompt',
@@ -15,42 +18,46 @@ export class PaypromptComponent implements OnInit {
   public elaAddress: string = '';
   public amount: any = '';
   public memo: string = '';
-  public defalutMemo: string = '';
+  public defalutMemo: string = 'tipping';
   public title: string = '';
   public disableMemo: boolean = false;
   public isAdvancedSetting: boolean = false;
-  public nodeId: string = '';
+  public destDid: string = '';
   public channelId: string = null;
   public channelAvatar: string = '';
   public channelName: string = '';
   private confirmdialog: any = null;
+  private tippingChannelSid: NodeJS.Timer = null;
+  private postId: string = '';
   constructor(
     private native: NativeService,
-    private feedService: FeedService,
     private navParams: NavParams,
     private popupProvider: PopupProvider,
     private popover: PopoverController,
+    private dataHelper: DataHelper,
+    private hiveVaultController: HiveVaultController,
+    private nftContractControllerService: NFTContractControllerService,
     private events: Events,
     public theme: ThemeService,
     public zone: NgZone,
   ) { }
 
-  ngOnInit() {
-    this.nodeId = this.navParams.get('nodeId') || '';
-    if (this.nodeId != '') {
-      this.channelId = this.navParams.get('channelId') || "0";
-      let channel = this.feedService.getChannelFromId(
-        this.nodeId,
-        this.channelId,
-      );
+  async ngOnInit() {
+    this.destDid = this.navParams.get('destDid') || '';
+    this.channelId = this.navParams.get('channelId') || '';
+    this.postId = this.navParams.get('postId') || '';
+    let channel: FeedsData.ChannelV3 =
+    await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
+    if (channel != null) {
       this.channelName = channel.name || '';
-      // this.channelName = channel.displayName || channel.name || '';
-      this.channelAvatar =
-        this.feedService.parseChannelAvatar(channel.avatar) || '';
+      let channelAvatarUri = channel['avatar'] || '';
+      if (channelAvatarUri != '') {
+        this.handleChannelAvatar(channelAvatarUri);
+      }
     }
     this.amount = this.navParams.get('amount') || "";
     this.elaAddress = this.navParams.get('elaAddress');
-    this.memo = this.defalutMemo = this.navParams.get('defalutMemo') || "";
+    this.memo = this.defalutMemo = this.navParams.get('defalutMemo') || "tipping";
     this.title = this.navParams.get('title');
 
     if (this.defalutMemo != '') {
@@ -97,7 +104,7 @@ export class PaypromptComponent implements OnInit {
 
   }
 
-  confirm() {
+  async confirm() {
     let count = this.amount;
     if (!this.number(count)) {
       this.native.toastWarn('common.amountError');
@@ -105,32 +112,16 @@ export class PaypromptComponent implements OnInit {
     }
 
     if (count <= 0) {
-      this.native.toast_trans('common.amountError');
+      this.native.toastWarn('common.amountError');
       return;
     }
 
     if (this.memo == '') this.memo = this.defalutMemo;
-
-    this.feedService.pay(
-      this.elaAddress,
-      count,
-      this.memo,
-      res => {
-        let result = res['result'];
-        let txId = result['txid'] || '';
-        if (txId === '') {
-          this.native.toastWarn('common.fail');
-          return;
-        }
-
-        this.native.toast('common.success');
-        this.popover.dismiss();
-      },
-      err => {
-        this.native.toastWarn('common.unknownError');
-        this.popover.dismiss();
-      },
-    );
+    if (this.popover != null) {
+      await this.popover.dismiss();
+      this.popover = null;
+      this.handleTipping();
+    }
   }
 
   number(text) {
@@ -160,7 +151,7 @@ export class PaypromptComponent implements OnInit {
       await that.confirmdialog.dismiss();
       that.confirmdialog = null;
       that.events.publish(FeedsEvent.PublishType.openPayPrompt, {
-        nodeId: that.nodeId,
+        destDid: that.destDid,
         channelId: that.channelId,
         elaAddress: that.elaAddress,
         amount: that.amount,
@@ -173,6 +164,62 @@ export class PaypromptComponent implements OnInit {
     if (that.confirmdialog != null) {
       await that.confirmdialog.dismiss();
       that.confirmdialog = null;
+    }
+  }
+
+  handleChannelAvatar(channelAvatarUri: string) {
+    let fileName: string = channelAvatarUri.split("@")[0];
+    this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
+      .then((result) => {
+        this.channelAvatar = result;
+      }).catch((err) => {
+      })
+  }
+
+  async handleTipping() {
+     let textObj = {
+      "isLoading": true,
+      "loadingTitle": 'common.waitMoment',
+      "loadingText": 'common.makeTipping',
+      "loadingCurNumber": '1',
+      "loadingMaxNumber": '1'
+    }
+    this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
+    this.tippingChannelSid = setTimeout(() => {
+      this.nftContractControllerService.getChannelTippingContractService().cancelTippingProcess();
+      textObj.isLoading = false;
+      this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
+      this.clearTippingChannelSid();
+      this.popupProvider.showSelfCheckDialog('common.burningNFTSTimeoutDesc');
+    }, Config.WAIT_TIME_BURN_NFTS);
+
+    let channelId = '0x'+this.channelId;
+    let postId = '0x'+this.postId;
+    let tippingAmount = this.nftContractControllerService.transToWei(
+      this.amount.toString(),
+    );
+    let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
+
+    this.nftContractControllerService.getChannelTippingContractService()
+      .makeTipping(channelId, postId, '0x0000000000000000000000000000000000000000',tippingAmount,this.memo,walletAdress)
+      .then(() => {
+        this.nftContractControllerService.getChannelTippingContractService().cancelTippingProcess();
+        this.native.toast("common.tippingSucess");
+        textObj.isLoading = false;
+        this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
+        this.clearTippingChannelSid();
+      }).catch(() => {
+        textObj.isLoading = false;
+        this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
+        this.clearTippingChannelSid();
+        this.native.toastWarn("commont.tippingFailed");
+      });
+  }
+
+  clearTippingChannelSid(){
+    if(this.tippingChannelSid != null){
+        clearTimeout(this.tippingChannelSid);
+        this.tippingChannelSid = null;
     }
   }
 }

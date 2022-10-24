@@ -113,12 +113,12 @@ export class MyApp {
     });
 
     this.events.subscribe(FeedsEvent.PublishType.openPayPrompt, (obj) => {
-      let nodeId: string = obj.nodeId;
+      let destDid: string = obj.destDid;
       let channelId: string = obj.channelId;
       let elaAddress: string = obj.elaAddress;
       let amount: string = obj.amount;
       let memo: string = obj.memo;
-      this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress, amount, memo);
+      this.viewHelper.showPayPrompt(destDid, channelId, elaAddress, amount, memo);
     });
   }
 

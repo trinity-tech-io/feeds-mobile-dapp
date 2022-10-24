@@ -25,7 +25,7 @@ export const en = {
     fail: 'Transfer unsuccessful',
     unknownError: 'Unknown error',
     loadingText: 'Loading additional data…',
-    noElaAddress: 'Channel owner has not set up an ELA address yet',
+    noElaAddress: 'Channel owner has not set up an Tipping address yet',
     copysucceeded: 'Copied',
     des4: 'Your donation will be sent to this ELA address:',
     amountError: 'Incorrect amount',
@@ -222,6 +222,9 @@ export const en = {
     twitterError3: 'Unable to connect to Twitter. Please check the network and try again',
     unableUnsubscribe: 'Unable to unsubscribe from your own channel',
     channelError: 'Please use the wallet you used to public this channel',
+    makeTipping: 'Tipping, please wait',
+    tippingFailed: 'Tipping Failed',
+    tippingSucess: 'Tipping Sucess'
   },
   app: {
     profileDetails: 'Profile Details',

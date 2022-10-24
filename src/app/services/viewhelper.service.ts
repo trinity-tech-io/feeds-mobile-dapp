@@ -179,7 +179,7 @@ export class ViewHelper {
     return await popover.present();
   }
 
-  async showPayPrompt(nodeId: string, channelId: string, elaAddress: string, amount?: any, memo?: any) {
+  async showPayPrompt(destDid: string, channelId: string, elaAddress: string, postId: string, amount?: any, memo?: any) {
     let amountData = amount || "";
     let memoData = memo || "";
     let popover = await this.popoverController.create({
@@ -191,9 +191,10 @@ export class ViewHelper {
         title: this.translate.instant('ChannelsPage.tip'),
         elaAddress: elaAddress,
         defalutMemo: memoData,
-        nodeId: nodeId,
+        destDid: destDid,
         channelId: channelId,
-        amount: amountData
+        amount: amountData,
+        postId: postId
       },
     });
     popover.onWillDismiss().then(() => {
