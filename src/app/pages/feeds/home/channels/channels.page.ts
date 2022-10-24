@@ -195,22 +195,6 @@ export class ChannelsPage implements OnInit {
     }
   }
 
-  tip() {
-    let connectStatus = this.dataHelper.getNetworkStatus();
-    if (connectStatus === FeedsData.ConnState.disconnected) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
-
-    if (this.tippingAddress == "") {
-      this.native.toast('common.noElaAddress');
-      return;
-    }
-
-    this.pauseAllVideo();
-    this.viewHelper.showPayPrompt(this.destDid, this.channelId, this.tippingAddress);
-  }
-
   async unsubscribe() {
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
@@ -1414,7 +1398,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
-    this.viewHelper.showPayPrompt(destDid, channelId, this.tippingAddress);
+    this.viewHelper.showPayPrompt(destDid, channelId, this.tippingAddress, postId);
   }
 
   retry(destDid: string, channelId: string, postId: string) {

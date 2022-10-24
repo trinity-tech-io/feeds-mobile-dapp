@@ -132,10 +132,10 @@
           <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode">
           <ion-label>{{ commentsNum }}</ion-label>
         </ion-col>
-        <!-- <ion-col (click)="clickDashang()" *ngIf="isAndroid">
+        <ion-col (click)="clickDashang()" *ngIf="isAndroid">
           <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
           <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
-        </ion-col> -->
+        </ion-col>
         <ion-col>
           <ion-label class="status" *ngIf="postStatus === 2">{{ 'common.edit' | translate}} </ion-label>
           <ion-label class="status" *ngIf="postStatus === 11">{{ 'common.sending' | translate}} </ion-label>

@@ -19,7 +19,8 @@ export class Config {
     public static STICKER_ADDRESS: string = '0x020c7303664bc88ae92cE3D380BF361E03B78B81';
     public static PASAR_ADDRESS: string = '0x02E8AD0687D583e2F6A7e5b82144025f30e26aA0';
     public static DIAMOND_ADDRESS: string = '0x2C8010Ae4121212F836032973919E8AeC9AEaEE5';
-    public static CHANNEL_ADDRESS: string = '0xF5c140100F1E8475bc5097FF9D5689d043d9BE12';
+    public static CHANNEL_ADDRESS: string = '';
+    public static CHANNEL_TIPPTING_PAYMENT_ADDRESS: string = '';
 
     public static CONTRACT_URI = 'https://api.' + Config.BASE_API + '/eth';
     public static CONTRACT_CHAINID: number = 20;
@@ -34,8 +35,9 @@ export class Config {
     public static STICKER_TEST_ADDRESS: string = '0xed1978c53731997f4DAfBA47C9b07957Ef6F3961';
     public static PASAR_TEST_ADDRESS: string = '0x2652d10A5e525959F7120b56f2D7a9cD0f6ee087';
     public static DIAMOND_TEST_ADDRESS: string = '';
-    public static CHANNEL_TEST_ADDRESS: string = '0x38D3fE3C53698fa836Ba0c1e1DD8b1d8584127A7';
-
+    //public static CHANNEL_TEST_ADDRESS: string = '0x38D3fE3C53698fa836Ba0c1e1DD8b1d8584127A7';
+    public static CHANNEL_TEST_ADDRESS: string = '0x530b57b762dbc1d25c7a9167BFf81B040378979f';
+    public static CHANNEL_TEST_TIPPTING_PAYMENT_ADDRESS = '0xe31a727184919DA9aDe687E18501122FF81841cb';
     public static CONTRACT_TEST_URI = 'https://api-testnet.' + Config.BASE_API + '/eth';
     public static CONTRACT_TEST_CHAINID: number = 21;
     public static CONTRACT_TEST_RPC = {

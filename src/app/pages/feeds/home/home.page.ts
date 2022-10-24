@@ -1748,7 +1748,7 @@ export class HomePage implements OnInit {
       return;
     }
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
-    this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress);
+    this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress, postId);
   }
 
   retry(destDid: string, channelId: string, postId: string) {

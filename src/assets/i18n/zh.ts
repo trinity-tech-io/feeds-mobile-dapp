@@ -25,7 +25,7 @@ export const zh = {
     fail: '失败',
     unknownError: '未知错误',
     loadingText: '加载更多数据...',
-    noElaAddress: '频道所有者尚未设置ELA地址',
+    noElaAddress: '频道所有者尚未设置打赏地址',
     copysucceeded: '复制成功',
     des4: '您的捐款将寄至ELA地址：',
     amountError: '请输入正确的数额',
@@ -222,6 +222,9 @@ export const zh = {
     twitterError3: '无法解析twitter服务地址，请检查网络后重试',
     unableUnsubscribe: '无法取消订阅自己的频道',
     channelError: '请使用公开此频道时所用的钱包',
+    makeTipping: '正在打赏，请稍后',
+    tippingFailed: '打赏失败',
+    tippingSucess: '打赏成功'
   },
   app: {
     profileDetails: '档案详情',

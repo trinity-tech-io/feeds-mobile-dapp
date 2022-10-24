@@ -1212,17 +1212,30 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
-    let tippingAddress = '';
-    if (tippingAddress != null) {
-      tippingAddress = channel.tipping_address || '';
+    let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
+    if (walletAdress === "") {
+      this.walletConnectControllerService.connect();
+      return;
     }
-    if (tippingAddress == "") {
-      this.native.toast('common.noElaAddress');
+
+    let tippingAddress = '';
+    try {
+      let channelNft = await this.getChannelNft(this.channelId) || null;
+      if (channelNft === null) {
+        tippingAddress = '';
+      } else {
+        tippingAddress = channelNft[3];
+      }
+    } catch (error) {
+      tippingAddress = '';
+    }
+
+    if (tippingAddress == '') {
+      this.native.toast_trans('common.noElaAddress');
       return;
     }
     this.pauseVideo();
-    this.viewHelper.showPayPrompt(this.destDid, this.channelId, tippingAddress);
+    this.viewHelper.showPayPrompt(this.destDid, this.channelId, tippingAddress, this.postId);
   }
 
   clickComment(comment: FeedsData.CommentV3, event?: any) {
@@ -1659,5 +1672,23 @@ export class PostdetailPage implements OnInit {
   openUserProfile(userDid: string) {
     this.native.navigateForward(['/userprofile'], { queryParams: { 'userDid': userDid } });
   }
+
+  async getChannelNft(channelId: string) {
+    try {
+      let tokenId: string = "0x" + channelId;
+      Logger.log(TAG, "tokenId:", tokenId);
+      tokenId = UtilService.hex2dec(tokenId);
+      Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      Logger.log(TAG, "tokenInfo:", tokenInfo);
+      if (tokenInfo[0] != '0') {
+        return tokenInfo;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
 }
 

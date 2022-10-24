@@ -1,0 +1,713 @@
+[
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "channel_",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "platformAddress_",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "platformFeeRate_",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "platformAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "platformFeeRate",
+          "type": "uint256"
+        }
+      ],
+      "name": "PlatformFeeChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "channelId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "paidFrom",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "paidTo",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "paidToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "memo",
+          "type": "string"
+        }
+      ],
+      "name": "Tipped",
+      "type": "event"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "inputs": [],
+      "name": "getPlatformFee",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "platformAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "platformFeeRate",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "channelId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTipping",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "channelId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "postId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "paidFrom",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidTo",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "memo",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct ITippingPaymentDataAndEvents.TippingItem[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "paidFrom",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTippings",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "channelId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "postId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "paidFrom",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidTo",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "memo",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct ITippingPaymentDataAndEvents.TippingItem[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "channelId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTippings",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "channelId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "postId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "paidFrom",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidTo",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "memo",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct ITippingPaymentDataAndEvents.TippingItem[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "startIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTippings",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "channelId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "postId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "paidFrom",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidTo",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "memo",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct ITippingPaymentDataAndEvents.TippingItem[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "channelId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "paidToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "memo",
+          "type": "string"
+        }
+      ],
+      "name": "makeTipping",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "platformAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "platformFeeRate",
+          "type": "uint256"
+        }
+      ],
+      "name": "setPlatformFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "channelId",
+          "type": "uint256"
+        }
+      ],
+      "name": "tippingCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "tippingCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "paidFrom",
+          "type": "address"
+        }
+      ],
+      "name": "tippingCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "channelId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "tippingItem",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "channelId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "postId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "paidFrom",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidTo",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "memo",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct ITippingPaymentDataAndEvents.TippingItem",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "tippingItem",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "channelId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "postId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "paidFrom",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidTo",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "memo",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct ITippingPaymentDataAndEvents.TippingItem",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "paidFrom",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "tippingItem",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "channelId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "postId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "paidFrom",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidTo",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "paidToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "memo",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct ITippingPaymentDataAndEvents.TippingItem",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+]

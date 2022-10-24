@@ -4,9 +4,9 @@
        <p class="paytitle">{{ title }}</p>
     </ion-col>
     <ion-col size="12" *ngIf="channelAvatar!=''" style="display:flex;justify-content: center;">
-      <div class="big">
-           <img [src]="channelAvatar"/>
-     </div>
+      <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+        <img src={{channelAvatar}}>
+      </div>
     </ion-col>
     <ion-col size="12" *ngIf="channelName!=''">
       <p class="key">{{ 'DonationPage.channelName' | translate }}</p>
@@ -14,12 +14,12 @@
     <ion-col size="12" *ngIf="channelName!=''">
       <p class="value">{{ channelName }}</p>
     </ion-col>
-    <ion-col size="12">
+    <!-- <ion-col size="12">
       <p class="key">{{ 'DonationPage.elaAddress' | translate }}</p>
     </ion-col>
     <ion-col size="12">
       <p class="value">{{ elaAddress }}</p>
-    </ion-col>
+    </ion-col> -->
   </ion-row>
   <ion-row class="borderbottom">
     <ion-col size="12">
