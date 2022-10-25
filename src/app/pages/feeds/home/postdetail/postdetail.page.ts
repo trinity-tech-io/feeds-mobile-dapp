@@ -1218,13 +1218,6 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
-    if (walletAdress === "") {
-      await this.walletConnectControllerService.connect();
-      this.isClickDashang = true;
-      return;
-    }
-
     let tippingAddress = '';
     try {
       let channelTippingAddress = await this.getChannelTippingAddress(this.channelId) || null;
@@ -1243,6 +1236,16 @@ export class PostdetailPage implements OnInit {
       this.isClickDashang = true;
       return;
     }
+
+    if(tippingAddress != ''){
+      let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
+      if (walletAdress === "") {
+        this.isClickDashang = true;
+        await this.walletConnectControllerService.connect();
+        return;
+      }
+    }
+
     this.pauseVideo();
     await this.viewHelper.showPayPrompt(this.destDid, this.channelId, tippingAddress, this.postId);
     this.isClickDashang = true;
