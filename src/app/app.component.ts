@@ -127,6 +127,7 @@ export class MyApp {
         // this.dataHelper.removeTwitterToken(userDid)
         return this.dataHelper.loadApiProvider();
       }).then(() => {
+        this.appService.initTranslateConfig();
         return this.initSql();
       })
       .then(async (api) => {
@@ -408,7 +409,6 @@ export class MyApp {
   }
 
   initDisclaimer() {
-    this.appService.initTranslateConfig();
     this.appService.init();
 
     this.appService.initializeApp();
