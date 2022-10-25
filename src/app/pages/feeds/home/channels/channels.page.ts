@@ -25,6 +25,7 @@ import { MorenameComponent } from 'src/app/components/morename/morename.componen
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import SparkMD5 from 'spark-md5';
 import { IPFSService } from 'src/app/services/ipfs.service';
+import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 let TAG: string = 'Feeds-feeds';
 @Component({
   selector: 'app-channels',
@@ -146,6 +147,8 @@ export class ChannelsPage implements OnInit {
   private userDidList: string[] = []; //userdid list
   public channelPublicStatusList: any = {};
   public createrDid: string = '';
+  private isClickDashang: boolean = true;
+
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -165,7 +168,8 @@ export class ChannelsPage implements OnInit {
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
     private nftContractControllerService: NFTContractControllerService,
-    private ipfsService: IPFSService
+    private ipfsService: IPFSService,
+    private walletConnectControllerService: WalletConnectControllerService
   ) { }
 
   async subscribe() {
@@ -441,21 +445,21 @@ export class ChannelsPage implements OnInit {
 
   handleChannelAvatar(channelAvatarUri: string) {
     let fileName: string = channelAvatarUri.split("@")[0];
-    if(this.channelAvatar === ''){
+    if (this.channelAvatar === '') {
       this.channelAvatar = "./assets/images/loading.svg";
     }
     this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
       .then((result) => {
         result = result || '';
-        if(result != ''){
+        if (result != '') {
           this.channelAvatar = result;
-        }else{
-          if(this.channelAvatar === './assets/images/loading.svg'){
+        } else {
+          if (this.channelAvatar === './assets/images/loading.svg') {
             this.channelAvatar = "./assets/images/profile-0.svg";
           }
         }
       }).catch((err) => {
-        if(this.channelAvatar === './assets/images/loading.svg'){
+        if (this.channelAvatar === './assets/images/loading.svg') {
           this.channelAvatar = "./assets/images/profile-0.svg";
         }
       })
@@ -533,7 +537,7 @@ export class ChannelsPage implements OnInit {
     })
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     //if (this.destDid === ownerDid) {
-      this.getChannelPublicStatus(this.destDid, this.channelId);
+    this.getChannelPublicStatus(this.destDid, this.channelId);
     //}
   }
 
@@ -1387,20 +1391,46 @@ export class ChannelsPage implements OnInit {
       .catch(() => { });
   }
 
-  clickDashang(destDid: string, channelId: string, postId: string) {
-
+  async clickDashang(destDid: string, channelId: string, postId: string) {
+    if (!this.isClickDashang) {
+      return;
+    }
+    this.isClickDashang = false;
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
+      this.isClickDashang = true;
       return;
     }
 
-    if (this.tippingAddress == "") {
-      this.native.toast('common.noElaAddress');
+    let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
+    if (walletAdress === "") {
+      await this.walletConnectControllerService.connect();
+      this.isClickDashang = true;
+      return;
+    }
+
+    let tippingAddress = '';
+    try {
+      let channelTippingAddress = await this.getChannelTippingAddress(channelId) || null;
+      if (channelTippingAddress === null) {
+        tippingAddress = '';
+      } else {
+        tippingAddress = channelTippingAddress;
+      }
+    } catch (error) {
+      tippingAddress = '';
+      this.isClickDashang = true;
+    }
+
+    if (tippingAddress == "") {
+      this.native.toastWarn('common.noElaAddress');
+      this.isClickDashang = true;
       return;
     }
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
-    this.viewHelper.showPayPrompt(destDid, channelId, this.tippingAddress, postId);
+    await this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress, postId);
+    this.isClickDashang = true;
   }
 
   retry(destDid: string, channelId: string, postId: string) {
@@ -1654,6 +1684,31 @@ export class ChannelsPage implements OnInit {
     channelContractInfoList[channelId] = channelNft;
     this.dataHelper.setChannelContractInfoList(channelContractInfoList);
     this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+  }
+
+
+  async getChannelTippingAddress(channelId: string) {
+    try {
+      let channelTippingAddressMap = this.dataHelper.getChannelTippingAddressMap() || {};
+      let channelTippingAddress = channelTippingAddressMap[channelId] || '';
+      if (channelTippingAddress != '') {
+        return channelTippingAddress;
+      }
+      let tokenId: string = "0x" + channelId;
+      Logger.log(TAG, "tokenId:", tokenId);
+      tokenId = UtilService.hex2dec(tokenId);
+      Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      Logger.log(TAG, "tokenInfo:", tokenInfo);
+      if (tokenInfo[0] != '0') {
+        channelTippingAddressMap[channelId] = tokenInfo[3];
+        this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
+        return channelTippingAddressMap[channelId];
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
   }
 
 }

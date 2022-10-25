@@ -13,8 +13,11 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { Events } from 'src/app/services/events.service';
 import _ from 'lodash';
 import { CommonPageService } from 'src/app/services/common.page.service';
-import { FeedService } from 'src/app/services/FeedService';
-
+import { FeedsPage } from 'src/app/pages/feeds/feeds.page';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
+import { Logger } from 'src/app/services/logger';
+let TAG: string = 'Feeds-likes';
 @Component({
   selector: 'app-likes',
   templateUrl: './likes.component.html',
@@ -57,7 +60,7 @@ export class LikesComponent implements OnInit {
   chatIcon = ChatBubbleIcon
   public isPress: boolean = false;
   public isAndroid: boolean = true;
-
+  private isClickDashang: boolean = true;
   constructor(
     private platform: Platform,
     public theme: ThemeService,
@@ -69,7 +72,9 @@ export class LikesComponent implements OnInit {
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
     private events: Events,
-    private feedService: FeedService
+    private feedspage: FeedsPage,
+    private nftContractControllerService: NFTContractControllerService,
+    private walletConnectControllerService: WalletConnectControllerService
   ) { }
 
   ngOnInit() {
@@ -150,11 +155,11 @@ export class LikesComponent implements OnInit {
       let target = e.target || e.srcElement; //判断目标事件
       if (target.tagName.toLowerCase() == 'span') {
         let url = target.textContent || target.innerText;
-        let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+        let reg = /(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
         var urlExp = new RegExp(reg);
-        if(urlExp.test(url) === true){
+        if (urlExp.test(url) === true) {
           this.native.clickUrl(url, event);
-        }else{//handle #
+        } else {//handle #
           this.pauseVideo(destDid + '-' + channelId + '-' + postId);
           this.toPage.emit({
             destDid: destDid,
@@ -320,23 +325,47 @@ export class LikesComponent implements OnInit {
   }
 
   async clickDashang(destDid: string, channelId: string, postId: string) {
+
+    if (!this.isClickDashang) {
+      return;
+    }
+    this.isClickDashang = false;
+
     let connect = this.dataHelper.getNetworkStatus();
     if (connect === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
+      this.isClickDashang = true;
       return;
     }
 
-    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-    let tippingAddress = '';
-    if (tippingAddress != null) {
-      tippingAddress = channel.tipping_address || '';
-    }
-    if (tippingAddress == '') {
-      this.native.toast('common.noElaAddress');
+    let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
+    if (walletAdress === "") {
+      await this.walletConnectControllerService.connect();
+      this.isClickDashang = true;
       return;
     }
+
+    let tippingAddress = '';
+    try {
+      let channelTippingAddress = await this.getChannelTippingAddress(channelId) || null;
+      if (channelTippingAddress === null) {
+        tippingAddress = '';
+      } else {
+        tippingAddress = channelTippingAddress;
+      }
+    } catch (error) {
+      tippingAddress = '';
+      this.isClickDashang = true;
+    }
+
+    if (tippingAddress == '') {
+      this.native.toastWarn('common.noElaAddress');
+      return;
+    }
+
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
-    this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress, postId);
+    await this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress, postId);
+
   }
 
   handleName(post: FeedsData.PostV3) {
@@ -358,6 +387,30 @@ export class LikesComponent implements OnInit {
   }
 
   handlePostText(url: string, event: any) {
-      event.stopPropagation();
+    event.stopPropagation();
+  }
+
+  async getChannelTippingAddress(channelId: string) {
+    try {
+      let channelTippingAddressMap = this.dataHelper.getChannelTippingAddressMap() || {};
+      let channelTippingAddress = channelTippingAddressMap[channelId] || '';
+      if (channelTippingAddress != '') {
+        return channelTippingAddress;
+      }
+      let tokenId: string = "0x" + channelId;
+      Logger.log(TAG, "tokenId:", tokenId);
+      tokenId = UtilService.hex2dec(tokenId);
+      Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      Logger.log(TAG, "tokenInfo:", tokenInfo);
+      if (tokenInfo[0] != '0') {
+        channelTippingAddressMap[channelId] = tokenInfo[3];
+        this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
+        return channelTippingAddressMap[channelId];
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
   }
 }
