@@ -1745,13 +1745,6 @@ export class HomePage implements OnInit {
       return;
     }
 
-    let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
-    if (walletAdress === "") {
-      await this.walletConnectControllerService.connect();
-      this.isClickDashang = true;
-      return;
-    }
-
     let tippingAddress = '';
     try {
       let channelTippingAddress = await this.getChannelTippingAddress(channelId) || null;
@@ -1770,6 +1763,16 @@ export class HomePage implements OnInit {
       this.isClickDashang = true;
       return;
     }
+
+    if(tippingAddress != ''){
+      let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
+      if (walletAdress === "") {
+        this.isClickDashang = true;
+        await this.walletConnectControllerService.connect();
+        return;
+      }
+    }
+
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
     await this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress, postId);
     this.isClickDashang = true;

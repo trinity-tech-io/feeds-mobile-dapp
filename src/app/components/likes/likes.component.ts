@@ -338,13 +338,6 @@ export class LikesComponent implements OnInit {
       return;
     }
 
-    let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
-    if (walletAdress === "") {
-      await this.walletConnectControllerService.connect();
-      this.isClickDashang = true;
-      return;
-    }
-
     let tippingAddress = '';
     try {
       let channelTippingAddress = await this.getChannelTippingAddress(channelId) || null;
@@ -361,6 +354,15 @@ export class LikesComponent implements OnInit {
     if (tippingAddress == '') {
       this.native.toastWarn('common.noElaAddress');
       return;
+    }
+
+    if(tippingAddress != ''){
+      let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
+      if (walletAdress === "") {
+        this.isClickDashang = true;
+        await this.walletConnectControllerService.connect();
+        return;
+      }
     }
 
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
