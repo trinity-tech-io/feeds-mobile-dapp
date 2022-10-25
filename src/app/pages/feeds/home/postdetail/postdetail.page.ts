@@ -147,6 +147,7 @@ export class PostdetailPage implements OnInit {
   private refreshLikeAndCommentSid: any = null;
   public channelPublicStatusList: any = {};
   public createrDid: string = '';
+  private isClickDashang: boolean = true;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -1206,36 +1207,45 @@ export class PostdetailPage implements OnInit {
   }
 
   async clickDashang() {
+    if (!this.isClickDashang) {
+      return;
+    }
+    this.isClickDashang = false;
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
+      this.isClickDashang = true;
       return;
     }
 
     let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
     if (walletAdress === "") {
-      this.walletConnectControllerService.connect();
+      await this.walletConnectControllerService.connect();
+      this.isClickDashang = true;
       return;
     }
 
     let tippingAddress = '';
     try {
-      let channelNft = await this.getChannelNft(this.channelId) || null;
-      if (channelNft === null) {
+      let channelTippingAddress = await this.getChannelTippingAddress(this.channelId) || null;
+      if (channelTippingAddress === null) {
         tippingAddress = '';
       } else {
-        tippingAddress = channelNft[3];
+        tippingAddress = channelTippingAddress;
       }
     } catch (error) {
       tippingAddress = '';
+      this.isClickDashang = true;
     }
 
     if (tippingAddress == '') {
-      this.native.toast_trans('common.noElaAddress');
+      this.native.toastWarn('common.noElaAddress');
+      this.isClickDashang = true;
       return;
     }
     this.pauseVideo();
-    this.viewHelper.showPayPrompt(this.destDid, this.channelId, tippingAddress, this.postId);
+    await this.viewHelper.showPayPrompt(this.destDid, this.channelId, tippingAddress, this.postId);
+    this.isClickDashang = true;
   }
 
   clickComment(comment: FeedsData.CommentV3, event?: any) {
@@ -1673,8 +1683,13 @@ export class PostdetailPage implements OnInit {
     this.native.navigateForward(['/userprofile'], { queryParams: { 'userDid': userDid } });
   }
 
-  async getChannelNft(channelId: string) {
+  async getChannelTippingAddress(channelId: string) {
     try {
+      let channelTippingAddressMap = this.dataHelper.getChannelTippingAddressMap() || {};
+      let channelTippingAddress = channelTippingAddressMap[channelId] || '';
+      if (channelTippingAddress != '') {
+        return channelTippingAddress;
+      }
       let tokenId: string = "0x" + channelId;
       Logger.log(TAG, "tokenId:", tokenId);
       tokenId = UtilService.hex2dec(tokenId);
@@ -1682,7 +1697,9 @@ export class PostdetailPage implements OnInit {
       let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
       Logger.log(TAG, "tokenInfo:", tokenInfo);
       if (tokenInfo[0] != '0') {
-        return tokenInfo;
+        channelTippingAddressMap[channelId] = tokenInfo[3];
+        this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
+        return channelTippingAddressMap[channelId];
       }
       return null;
     } catch (error) {

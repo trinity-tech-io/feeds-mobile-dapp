@@ -189,6 +189,7 @@ export class HomePage implements OnInit {
   private scrollToTopSid: any = null;
   private channelPublicStatusList: any = {};
   public createrDid: string = '';
+  private isClickDashang: boolean = true;
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -1731,24 +1732,45 @@ export class HomePage implements OnInit {
   }
 
   async clickDashang(destDid: string, channelId: string, postId: string) {
-
+    if (!this.isClickDashang) {
+      return;
+    }
+    this.isClickDashang = false;
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
+      this.isClickDashang = true;
       return;
     }
 
-    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-    let tippingAddress = '';
-    if (tippingAddress != null) {
-      tippingAddress = channel.tipping_address || '';
+    let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
+    if (walletAdress === "") {
+      await this.walletConnectControllerService.connect();
+      this.isClickDashang = true;
+      return;
     }
+
+    let tippingAddress = '';
+    try {
+      let channelTippingAddress = await this.getChannelTippingAddress(channelId) || null;
+      if (channelTippingAddress === null) {
+        tippingAddress = '';
+      } else {
+        tippingAddress = channelTippingAddress;
+      }
+    } catch (error) {
+      tippingAddress = '';
+      this.isClickDashang = true;
+    }
+
     if (tippingAddress == "") {
-      this.native.toast('common.noElaAddress');
+      this.native.toastWarn('common.noElaAddress');
+      this.isClickDashang = true;
       return;
     }
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
-    this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress, postId);
+    await this.viewHelper.showPayPrompt(destDid, channelId, tippingAddress, postId);
+    this.isClickDashang = true;
   }
 
   retry(destDid: string, channelId: string, postId: string) {
@@ -2534,9 +2556,33 @@ export class HomePage implements OnInit {
     this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
   }
 
-  async getChannelInfo(channelId: string) {
+  // async getChannelInfo(channelId: string) {
 
+  //   try {
+  //     let tokenId: string = "0x" + channelId;
+  //     Logger.log(TAG, "tokenId:", tokenId);
+  //     tokenId = UtilService.hex2dec(tokenId);
+  //     Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+  //     let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+  //     Logger.log(TAG, "tokenInfo:", tokenInfo);
+  //     if (tokenInfo[0] != '0') {
+  //       channelTippingAddressMap[channelId] = tokenInfo[3];
+  //       this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
+  //       return channelTippingAddressMap[channelId];
+  //     }
+  //     return null;
+  //   } catch (error) {
+  //     return null;
+  //   }
+  // }
+
+  async getChannelTippingAddress(channelId: string) {
     try {
+      let channelTippingAddressMap = this.dataHelper.getChannelTippingAddressMap() || {};
+      let channelTippingAddress = channelTippingAddressMap[channelId] || '';
+      if (channelTippingAddress != '') {
+        return channelTippingAddress;
+      }
       let tokenId: string = "0x" + channelId;
       Logger.log(TAG, "tokenId:", tokenId);
       tokenId = UtilService.hex2dec(tokenId);
@@ -2544,7 +2590,9 @@ export class HomePage implements OnInit {
       let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
       Logger.log(TAG, "tokenInfo:", tokenInfo);
       if (tokenInfo[0] != '0') {
-        return tokenInfo;
+        channelTippingAddressMap[channelId] = tokenInfo[3];
+        this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
+        return channelTippingAddressMap[channelId];
       }
       return null;
     } catch (error) {

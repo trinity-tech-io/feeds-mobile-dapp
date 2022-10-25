@@ -16,6 +16,7 @@ declare let didManager: DIDPlugin.DIDManager;
 
 @Injectable()
 export class DataHelper {
+  private channelTippingAddressMap: any = {};
   private channelContractInfoList: any = {};
   private channelPublicStatusList: any = {};
   private channelCollectionPageList = [];
@@ -4709,5 +4710,13 @@ export class DataHelper {
 
   getClipProfileIamge() {
     return this.clipProfileIamge;
+  }
+
+  setChannelTippingAddressMap(channelTippingAddressMap: any) {
+    this.channelTippingAddressMap = channelTippingAddressMap;
+  }
+
+  getChannelTippingAddressMap() {
+    return this.channelTippingAddressMap;
   }
 }

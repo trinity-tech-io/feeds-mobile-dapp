@@ -442,7 +442,7 @@ export class MyApp {
   }
 
   initPages() {
-    this.appService.initTranslateConfig();
+    // this.appService.initTranslateConfig();
     this.appService.init();
 
     this.appService.initializeApp().then(() => {

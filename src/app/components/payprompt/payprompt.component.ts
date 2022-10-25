@@ -18,7 +18,7 @@ export class PaypromptComponent implements OnInit {
   public elaAddress: string = '';
   public amount: any = '';
   public memo: string = '';
-  public defalutMemo: string = 'tipping';
+  public defalutMemo: string = 'like the post';
   public title: string = '';
   public disableMemo: boolean = false;
   public isAdvancedSetting: boolean = false;
@@ -57,7 +57,7 @@ export class PaypromptComponent implements OnInit {
     }
     this.amount = this.navParams.get('amount') || "";
     this.elaAddress = this.navParams.get('elaAddress');
-    this.memo = this.defalutMemo = this.navParams.get('defalutMemo') || "tipping";
+    this.memo = this.defalutMemo = this.navParams.get('defalutMemo') || "like the post";
     this.title = this.navParams.get('title');
 
     if (this.defalutMemo != '') {
