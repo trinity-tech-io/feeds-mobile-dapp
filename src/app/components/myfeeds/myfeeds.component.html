@@ -3,7 +3,7 @@
   <h1 style="margin-top: 20px;">{{ 'MyfeedsComponent.allempty' | translate }}</h1>
   <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
 
-  <div class="btn-row-empty" style="margin-top:5px;" (click)="createNewFeed()">
+  <div class="btn-row-empty" style="margin-top:5px;" (click)="createNewFeed()" *ngIf="isOwner">
     {{ 'MyfeedsComponent.createFeed' | translate }}
   </div>
 
@@ -29,7 +29,7 @@
     *ngFor="let channel of channels let num=index"
     lines="none"
   >
-    <ion-row class="channel-row ion-activatable ripple ionRowMyfeeds" id={{channel.destDid}}-{{channel.channelId}}-myFeeds>
+    <ion-row class="channel-row ion-activatable ripple ionRowMyfeeds" id={{channel.destDid}}-{{channel.channelId}}-myFeeds-{{pageName}}>
       <ion-col
         size="2.8"
         class="left-col"
@@ -54,14 +54,14 @@
           </p>
         </ion-row>
       </ion-col>
-      <ion-col size="0.5" (click)="menuMore(channel.destDid, channel.channelId, channel.displayName||channel.name)"></ion-col>
-      <ion-col size="1.5" class="right-col" (click)="menuMore(channel.destDid, channel.channelId, channel.displayName||channel.name)">
+      <ion-col size="0.5" (click)="menuMore(channel.destDid, channel.channelId, channel.displayName||channel.name)" *ngIf="isOwner"></ion-col>
+      <ion-col size="1.5" class="right-col" (click)="menuMore(channel.destDid, channel.channelId, channel.displayName||channel.name)" *ngIf="isOwner">
         <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">
       </ion-col>
       <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
   </ion-item>
-  <ion-item  lines="none" (click)="createNewFeed()" class="removeBorder">
+  <ion-item  lines="none" (click)="createNewFeed()" class="removeBorder" *ngIf="isOwner">
     <ion-row class="channel-row ion-activatable ripple">
       <ion-col
         size="2.8"

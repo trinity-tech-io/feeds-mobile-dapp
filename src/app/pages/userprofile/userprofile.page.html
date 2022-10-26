@@ -1,3 +1,4 @@
+
 <app-titlebar [lightThemeType]="lightThemeType"></app-titlebar>
 <ion-content class="bg" [scrollEvents]="true" (ionScroll) = "postListScroll($event)">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
@@ -9,6 +10,7 @@
       refreshingText="{{'common.beingRefresh'|translate}}">
     </ion-refresher-content>
   </ion-refresher>
+
   <ion-row class="card" *ngIf="!isFullPost">
     <div class="cardImg">
       <div class="avatar" (click) = "editProfile()">
@@ -16,11 +18,11 @@
        <img   *ngIf="avatar != ''"  [src]="avatar"/>
       </div>
       <div class="cardTitle">{{name}}</div>
-      <div class="card-subtitle" *ngIf="walletAddressStr!=''">
+      <div class="card-subtitle" *ngIf="isOwner&&walletAddressStr!=''">
         <span style="text-transform: none" (click)="clickWalletAddr()">{{walletAddressStr}}</span>
         <img  (click)="copyWalletAddr()" src="./assets/images/darkmode/copy.svg">
       </div>
-      <div class="connectWallet" *ngIf="walletAddressStr===''" (click)="connectWallet()">{{"WalletteachPage.connectWallet" | translate}}</div>
+      <div class="connectWallet" *ngIf="isOwner&&walletAddressStr===''" (click)="connectWallet()">{{"WalletteachPage.connectWallet" | translate}}</div>
     </div>
   </ion-row>
 
@@ -30,11 +32,6 @@
       <ion-col size="4.5" class="des colBorder" [ngClass]="{'select-colBorder':selectType === 'ProfilePage.myFeeds','select-color':selectType === 'ProfilePage.myFeeds','no-select-color':selectType != 'ProfilePage.myFeeds'}" (click)="changeType('ProfilePage.myFeeds')">
         {{'ProfilePage.myFeeds' | translate}}
       </ion-col>
-      <!-- <ion-col size="0.4" class="des"></ion-col>
-      <ion-col size="3.4" class="des colBorder"  [ngClass]="{'select-colBorder':selectType === 'ProfilePage.collectibles','select-color':selectType === 'ProfilePage.collectibles','no-select-color':selectType != 'ProfilePage.collectibles'}" (click)="changeType('ProfilePage.collectibles')">
-        {{'ProfilePage.collectibles'|translate}}
-      </ion-col>
-      <ion-col size="0.4" class="des"></ion-col> -->
       <ion-col size="0.5" class="des"></ion-col>
       <ion-col size="4.5" class="des colBorder"  [ngClass]="{'select-colBorder':selectType === 'ProfilePage.myLikes','select-color':selectType === 'ProfilePage.myLikes','no-select-color':selectType != 'ProfilePage.myLikes'}" (click)="changeType('ProfilePage.myLikes')">
         {{'ProfilePage.myLikes'|translate}}
@@ -42,12 +39,11 @@
       <ion-col size="1.25" class="des"></ion-col>
     </ion-row>
     <ion-row style="height:40px">&nbsp;</ion-row>
-    <ion-content (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
+   <ion-content [scrollEvents]="true">
     <app-myfeeds
     *ngIf="selectType == 'ProfilePage.myFeeds'"
     (toFeedPage)="toPage($event)"
     (subsciptions)="subsciptions()"
-    (chanelCollections)="chanelCollections()"
     [channels] = "channels"
     [pageName] = "pageName"
     [isOwner] = "isOwner"
@@ -58,50 +54,12 @@
     [isLoadingMyFeeds] = "isLoadingMyFeeds"
     [channelPublicStatusList]= "channelPublicStatusList"
     [channelAvatarMap] = "myFeedAvatarMap">
-  </app-myfeeds>
-    <!-- <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum===0">
-      <ion-col size="12">
-       <div class="bigCircle">
-           <div class="smallCircle">
-              <img src="./assets/images/lock.svg"/>
-           </div>
-       </div>
-    </ion-col>
-    <ion-col size="12" class="subscribeChannel">
-      {{"CollectionsPage.emptypurchased"|translate}}
-    </ion-col>
-    </ion-row> -->
-    <div *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum===0" class="new-empty-container">
-      <img src="./assets/images/no-Collectibles.svg">
-      <h1>{{'ProfilePage.allempty' | translate }}</h1>
-      <p>{{'ProfilePage.emptyDes' | translate }}</p>
+    </app-myfeeds>
 
-      <div class="btn-row-empty" style="margin-top:5px;" (click)="clickMint()">
-        {{"ProfilePage.createCollectible"|translate}}
-      </div>
-
-      <div class="btn-row-empty" style="margin-top:10px;" (click)="exploreMarketplace()">
-        {{"ProfilePage.exploreMarketplace" | translate}}
-      </div>
-
-    </div>
-    <ion-row *ngIf="selectType === 'ProfilePage.collectibles'&&ownNftSum>0" class="leftrightrow" id="profileCollectibles">
-      <ion-col size="6" *ngFor="let item of collectiblesList" class="profileCollectiblesCol" id={{handleId(item)}}>
-        <app-assetitem
-        [thumbImageName] = "thumbImageName"
-        [isAutoGet] = "isAutoGet"
-        [elaPrice] = "elaPrice"
-        [assetItem] = "item"
-        (clickAssetItem) = "clickAssetItem($event)"
-        (clickMore) = "clickMore($event)"
-        >
-        </app-assetitem>
-      </ion-col>
-     </ion-row>
     <app-likes
        *ngIf="selectType == 'ProfilePage.myLikes'"
-       [hideDeletedPosts] = "hideDeletedPosts"
        [pageName] = "pageName"
+       [hideDeletedPosts] = "hideDeletedPosts"
        [isImgPercentageLoading]="isImgPercentageLoading"
        [isImgLoading]="isImgLoading"
        [imgloadingStyleObj]="imgloadingStyleObj"
@@ -159,12 +117,7 @@
  (hideShareMenu)="hideShareMenu($event)"
 >
 </app-sharemenu>
-<div class="add-tab" *ngIf="selectType!='ProfilePage.collectibles' && !isFullPost" (click)="createPost()">
-  <img src="/assets/images/createPost.svg"/>
-</div>
-<div class="add-nft" *ngIf="selectType==='ProfilePage.collectibles'" (click)="createNft()">
-  <img src="/assets/images/createNFT.svg"/>
-</div>
+
 <!---------------- ADD COMMENT FOOTER ---------------->
 <app-comment
   *ngIf="!hideComment"

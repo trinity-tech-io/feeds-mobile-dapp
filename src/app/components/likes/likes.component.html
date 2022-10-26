@@ -23,7 +23,7 @@
 
 <div *ngIf="likeList.length > 0 && !isLoadingLike">
   <div *ngFor="let post of likeList let i=index">
-  <ion-grid  class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-like>
+  <ion-grid  class="post-grid ion-activatable ripple postgridlike" [class.darkPostGrid]="theme.darkMode" [class.removeBorder]="post === likeList[likeList.length - 1]" id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-like-{{pageName}}>
     <ion-row class="post-row">
       <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
 

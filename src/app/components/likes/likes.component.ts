@@ -12,7 +12,7 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { Events } from 'src/app/services/events.service';
 import _ from 'lodash';
 import { CommonPageService } from 'src/app/services/common.page.service';
-import { FeedsPage } from 'src/app/pages/feeds/feeds.page';
+import { FeedService } from 'src/app/services/FeedService';
 
 @Component({
   selector: 'app-likes',
@@ -22,7 +22,7 @@ import { FeedsPage } from 'src/app/pages/feeds/feeds.page';
 export class LikesComponent implements OnInit {
   @Input() likeList: any = [];
   @Input() isLoadVideoiamge: any = {};
-
+  @Input() pageName: string = '';
   @Input() isImgLoading: any = {};
   @Input() isImgPercentageLoading: any = {};
   @Input() imgloadingStyleObj: any = {};
@@ -67,7 +67,7 @@ export class LikesComponent implements OnInit {
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
     private events: Events,
-    private feedspage: FeedsPage
+    private feedService: FeedService
   ) { }
 
   ngOnInit() {
@@ -347,12 +347,12 @@ export class LikesComponent implements OnInit {
 
   timeline() {
     this.native.setRootRouter(['/tabs/home']);
-    this.feedspage.home();
+    this.feedService.setCurTab('home');
   }
 
   exploreFeeds() {
     this.native.setRootRouter(['/tabs/search']);
-    this.feedspage.search();
+    this.feedService.setCurTab('search');
   }
 
   handlePostText(url: string, event: any) {

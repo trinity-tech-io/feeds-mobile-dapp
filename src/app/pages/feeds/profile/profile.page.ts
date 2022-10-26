@@ -200,6 +200,9 @@ export class ProfilePage implements OnInit {
   public isLoadingMyFeeds: boolean = true;
   private setMyFeedsSid: any = null;
   private channelPublicStatusList: any = {};
+  public  pageName: string = "profile";
+  public  isOwner: boolean = true;
+
   constructor(
     private elmRef: ElementRef,
     public theme: ThemeService,
@@ -2283,7 +2286,7 @@ export class ProfilePage implements OnInit {
       if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid + "-" + postItem.channelId + "-myFeeds";
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-myFeeds-"+this.pageName;
       let exit = this.myFeedsObserver[postGridId] || null;
       if (exit != null) {
         continue;
@@ -2367,7 +2370,7 @@ export class ProfilePage implements OnInit {
       if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-like';
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-like-'+this.pageName;
       let exit = this.myLikeObserver[postGridId] || null;
       if (exit != null) {
         continue;
