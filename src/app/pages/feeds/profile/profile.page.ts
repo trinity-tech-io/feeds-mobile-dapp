@@ -200,6 +200,9 @@ export class ProfilePage implements OnInit {
   private setMyFeedsSid: any = null;
   private channelPublicStatusList: any = {};
   public createrDid: string = '';
+  public pageName: string = "profile";
+  public isOwner: boolean = true;
+
   constructor(
     private elmRef: ElementRef,
     public theme: ThemeService,
@@ -468,7 +471,7 @@ export class ProfilePage implements OnInit {
     this.description = signInData['description'] || '';
     // let userDid = signInData['did'] || '';
     try {
-      if(this.avatar === ''){
+      if (this.avatar === '') {
         this.avatar = './assets/images/loading.svg';
       }
       await this.updateUserAvatar();
@@ -476,7 +479,7 @@ export class ProfilePage implements OnInit {
 
     }
     let avatar = this.avatar || null;
-    if (avatar === null ||  this.avatar === './assets/images/loading.svg') {
+    if (avatar === null || this.avatar === './assets/images/loading.svg') {
       this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
     }
 
@@ -881,7 +884,7 @@ export class ProfilePage implements OnInit {
       let arr = id.split("-");
       this.myFeedsIsLoadimage[id] = '11';
       let myFeedAvatar = this.myFeedAvatarMap[id] || '';
-      if(myFeedAvatar === ''){
+      if (myFeedAvatar === '') {
         this.myFeedAvatarMap[id] = './assets/images/loading.svg';
       }
       let destDid = arr[0];
@@ -898,22 +901,22 @@ export class ProfilePage implements OnInit {
               this.myFeedsIsLoadimage[id] = '13';
               this.myFeedAvatarMap[id] = data;
             } else {
-              if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
-                 this.myFeedAvatarMap[id] =  "./assets/images/profile-0.svg";
+              if (this.myFeedAvatarMap[id] === './assets/images/loading.svg') {
+                this.myFeedAvatarMap[id] = "./assets/images/profile-0.svg";
               }
               this.myFeedsIsLoadimage[id] = '13';
             }
           });
         }).catch((err) => {
-          if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
-            this.myFeedAvatarMap[id] =  "./assets/images/profile-0.svg";
+          if (this.myFeedAvatarMap[id] === './assets/images/loading.svg') {
+            this.myFeedAvatarMap[id] = "./assets/images/profile-0.svg";
           }
         });
 
-      }else{
-        if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
-          this.myFeedAvatarMap[id] =  "./assets/images/profile-0.svg";
-       }
+      } else {
+        if (this.myFeedAvatarMap[id] === './assets/images/loading.svg') {
+          this.myFeedAvatarMap[id] = "./assets/images/profile-0.svg";
+        }
       }
     }
 
@@ -1156,7 +1159,7 @@ export class ProfilePage implements OnInit {
       let fileName: string = avatarUri.split("@")[0];
       //头像
       let channelAvatar = this.likeAvatarMap[id] || '';
-      if(channelAvatar === ''){
+      if (channelAvatar === '') {
         this.likeAvatarMap[id] = './assets/images/loading.svg';
       }
       this.hiveVaultController.
@@ -1167,14 +1170,14 @@ export class ProfilePage implements OnInit {
             this.likeAvatarMap[id] = realImage;
             this.isLoadAvatarImage[id] = "13";
           } else {
-            if(this.likeAvatarMap[id] === './assets/images/loading.svg'){
+            if (this.likeAvatarMap[id] === './assets/images/loading.svg') {
               this.likeAvatarMap[id] = './assets/images/profile-0.svg';
             }
             this.isLoadAvatarImage[id] = "13";
           }
         })
         .catch(reason => {
-          if(this.likeAvatarMap[id] === './assets/images/loading.svg'){
+          if (this.likeAvatarMap[id] === './assets/images/loading.svg') {
             this.likeAvatarMap[id] = './assets/images/profile-0.svg';
           }
           Logger.error(TAG,
@@ -2315,7 +2318,7 @@ export class ProfilePage implements OnInit {
       if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid + "-" + postItem.channelId + "-myFeeds";
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-myFeeds-" + this.pageName;
       let exit = this.myFeedsObserver[postGridId] || null;
       if (exit != null) {
         continue;
@@ -2403,7 +2406,7 @@ export class ProfilePage implements OnInit {
       if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-like';
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-like-' + this.pageName;
       let exit = this.myLikeObserver[postGridId] || null;
       if (exit != null) {
         continue;

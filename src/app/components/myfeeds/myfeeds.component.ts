@@ -6,7 +6,7 @@ import { UtilService } from '../../services/utilService';
 import { PopupProvider } from '../../services/popup';
 import { ViewHelper } from '../../services/viewhelper.service';
 import { DataHelper } from 'src/app/services/DataHelper';
-import { FeedsPage } from 'src/app/pages/feeds/feeds.page';
+
 @Component({
   selector: 'app-myfeeds',
   templateUrl: './myfeeds.component.html',
@@ -14,6 +14,8 @@ import { FeedsPage } from 'src/app/pages/feeds/feeds.page';
 })
 export class MyfeedsComponent implements OnInit {
   @Output() fromChild = new EventEmitter();
+  @Input() pageName: string = '';
+  @Input() isOwner: boolean = true;
   @Input() channels: any = [];
   @Input() isLoadingMyFeeds: boolean = true;
   @Input() followers= 0;
@@ -31,7 +33,7 @@ export class MyfeedsComponent implements OnInit {
     private native: NativeService,
     private viewHelper: ViewHelper,
     public popupProvider: PopupProvider,
-    private feedspage: FeedsPage
+    private feedService: FeedService
   ) {}
 
   ngOnInit() {
@@ -79,7 +81,7 @@ export class MyfeedsComponent implements OnInit {
 
   exploreFeeds() {
     this.native.setRootRouter(['/tabs/search']);
-    this.feedspage.search();
+    this.feedService.setCurTab('search');
   }
 
   clickFollowing() {

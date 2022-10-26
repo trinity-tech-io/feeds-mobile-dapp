@@ -869,5 +869,8 @@ export const en = {
     inputTelephone: 'Add Telephone',
     inputEmail: 'Add Email',
     notChange: 'No data changes'
+  },
+  UserprofilePage: {
+    title: 'User Profile',
   }
 };
