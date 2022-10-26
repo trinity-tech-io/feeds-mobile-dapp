@@ -3,14 +3,13 @@
 <ion-content class="bg">
   <ion-row class="card">
     <div class="cardImg">
-      <div class="avatar" (click) = "editProfile()">
+      <div class="avatar">
        <img
        *ngIf="avatar != ''"
        class="customizeAvatar"
        [src]="avatar"/>
-       <img   class="eidtAvatar" src="./assets/images/eidtAvatar.svg"/>
+       <!-- <img   class="eidtAvatar" src="./assets/images/eidtAvatar.svg"/> -->
       </div>
-
 
       <div class="cardTitle">{{name}}</div>
     </div>

@@ -62,7 +62,7 @@ export class ProfiledetailPage implements OnInit {
   private userDid: string = '';
   public hidePictureMenuComponent: boolean = false;
   public isSupportGif: boolean = false;
-
+  public isProfileSame: boolean = false;
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -148,9 +148,9 @@ export class ProfiledetailPage implements OnInit {
 
     let signInData = await this.dataHelper.getSigninData();
     let nickname = signInData['nickname'] || '';
-    if(nickname !='' && nickname != 'Information not provided'){
+    if (nickname != '' && nickname != 'Information not provided') {
       this.name = nickname;
-    }else{
+    } else {
       this.name = signInData['name'] || '';
     }
     this.description = signInData['description'] || '';
@@ -161,13 +161,13 @@ export class ProfiledetailPage implements OnInit {
     this.location = signInData['location'] || '';
     this.collectData();
     try {
-      let croppedImage = this.dataHelper.getClipProfileIamge();
-      if (croppedImage != '') {
-        this.avatar = croppedImage;
-        await this.saveAvatar();
-      } else {
-        this.avatar = await this.hiveVaultController.getUserAvatar();
-      }
+      // let croppedImage = this.dataHelper.getClipProfileIamge();
+      // if (croppedImage != '') {
+      //   this.avatar = croppedImage;
+      //   await this.saveAvatar();
+      // } else {
+      this.avatar = await this.hiveVaultController.getUserAvatar();
+      // }
     } catch (error) {
 
     }
@@ -239,8 +239,12 @@ export class ProfiledetailPage implements OnInit {
     this.intentService.share('', feedsUrl);
   }
 
-  editProfile() {
-    this.editImage();
+  // editProfile() {
+  //   this.editImage();
+  // }
+
+  syncProfileToHive() {
+    this.native.toast('' + this.isProfileSame);
   }
 
 
@@ -276,21 +280,6 @@ export class ProfiledetailPage implements OnInit {
       },
       err => { },
     );
-  }
-
-  async saveAvatar() {
-    await this.native.showLoading('common.waitMoment');
-    try {
-      await this.hiveService.uploadScriptWithString("custome", this.avatar)
-      this.native.hideLoading()
-      this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
-      this.dataHelper.setClipProfileIamge("");
-    } catch (error) {
-      this.avatar = await this.hiveVaultController.getUserAvatar();
-      this.dataHelper.setClipProfileIamge("");
-      this.native.hideLoading();
-      this.native.toast('common.saveFailed');
-    }
   }
 
   hidePictureMenu(data: any) {

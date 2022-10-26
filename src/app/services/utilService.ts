@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import BigNumber from 'bignumber.js';
+import { Config } from './config';
 import { Logger } from './logger';
 
 const TAG: string = 'UtilService';
@@ -378,6 +379,7 @@ export class UtilService {
       }
       return HASH;
     }
+
     function str2binb(str) {
       var bin = Array();
       var mask = (1 << chrsz) - 1;
@@ -818,12 +820,14 @@ export class UtilService {
     return "feeds://v3/" + targetDid + "/" + channelId;
   }
 
+  // https://feeds.trinity-feeds.app/v3post/?targetDid=did:elastos:in...ChN&channelId=d3...d8
   public static generateChannelShareLink(baseUrl: string, targetDid: string, channelId: string): string {
     return baseUrl
       + "/?targetDid=" + targetDid
       + "&channelId=" + channelId;
   }
 
+  // https://feeds.trinity-feeds.app/v3post/?targetDid=did:elastos:in...ChN&channelId=d3...d8&postId=56...55
   public static generatePostShareLink(baseUrl: string, targetDid: string, channelId: string, postId: string): string {
     return baseUrl
       + "/?targetDid=" + targetDid
@@ -891,19 +895,35 @@ export class UtilService {
   }
 
   /**
- *根据数据条数与每页多少条数据计算页数
- * totalnum 数据条数
- * limit 每页多少条
- */
+    *根据数据条数与每页多少条数据计算页数
+    * totalnum 数据条数
+    * limit 每页多少条
+  */
   public static pageCount(totalnum: number, limit: number) {
     return totalnum > 0 ? ((totalnum < limit) ? 1 : ((totalnum % limit) ? (parseInt((totalnum / limit).toString()) + 1) : (totalnum / limit))) : 0;
   }
 
-
   public static shortenDid(did: string, start: number = 3, end: number = 3) {
     if (!did) return '';
     let len = did.length;
-    let shortDid: string = 'did:'+did.substring(0, start) + '...' + did.substring(len - end, len)
+    let shortDid: string = 'did:' + did.substring(0, start) + '...' + did.substring(len - end, len)
     return shortDid;
+  }
+
+  public static createHiveUrl(targetDid: string, scriptName: string) {
+    // hive://<target_did>@<target_app_did>/<script_name>?params=<params>
+    return 'hive://' + targetDid + '@' + Config.APPLICATION_DID + '/' + scriptName + '?params={"empty":0}';
+  }
+
+  public static getScriptName(hiveUrl: string) {
+    if (!hiveUrl) {
+      return '';
+    }
+
+    const start = hiveUrl.lastIndexOf('/');
+    const end = hiveUrl.lastIndexOf('?');
+
+    const scriptName = hiveUrl.substring(start, end);
+    return scriptName;
   }
 }

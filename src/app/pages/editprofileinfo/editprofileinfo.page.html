@@ -3,7 +3,7 @@
   <ion-row class="card">
     <div class="cardImg">
       <div class="avatar" (click) = "editProfile()">
-       <img  *ngIf="avatar === ''" src="./assets/images/selectAvatar.svg" />
+       <img  *ngIf="avatar === ''" src="./assets/images/default-contact.svg" />
        <img  *ngIf="avatar != ''"  [src]="avatar"/>
        <img   class="eidtAvatar" src="./assets/images/eidtAvatar.svg"/>
       </div>
@@ -23,7 +23,7 @@
         <ion-input clearInput class="content-value" [placeholder]="'EditprofileinfoPage.inputDes'|translate" [(ngModel)] ="userDes"></ion-input>
       </ion-item>
 
-      <ion-item lines="none">
+      <!-- <ion-item lines="none">
         <ion-label position="stacked">{{ 'ProfiledetailPage.telephone' | translate }}</ion-label>
         <ion-input clearInput class="content-value" [placeholder]="'EditprofileinfoPage.inputTelephone'|translate" [(ngModel)] ="userTelephone"></ion-input>
       </ion-item>
@@ -31,12 +31,15 @@
       <ion-item lines="none">
         <ion-label position="stacked">{{ 'ProfiledetailPage.email' | translate }}</ion-label>
         <ion-input clearInput class="content-value" [placeholder]="'EditprofileinfoPage.inputEmail'|translate" [(ngModel)] ="userTelephone"></ion-input>
+      </ion-item> -->
+      <ion-item lines="none">
+        <ion-label position="stacked">{{ 'ProfiledetailPage.did' | translate }}</ion-label>
+        <ion-input [disabled]="true" class="content-value" >{{userDid}}</ion-input>
       </ion-item>
-
     </ion-list>
 
     <ion-row class="btn-row">
-      <ion-button (click)="clickEditProfile()" [disabled]="clickButton">
+      <ion-button (click)="updateProfile()" [disabled]="clickButton">
           <ion-label *ngIf="!clickButton"> {{'common.save'|translate}}</ion-label>
           <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
       </ion-button>

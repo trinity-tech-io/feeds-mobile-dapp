@@ -867,6 +867,7 @@ export const en = {
     inputName: 'Add Name',
     inputDes: 'Add Description',
     inputTelephone: 'Add Telephone',
-    inputEmail: 'Add Email'
+    inputEmail: 'Add Email',
+    notChange: 'No data changes'
   }
 };

@@ -1843,6 +1843,18 @@ export class HiveVaultHelper {
         });
     }
 
+    uploadDataWithScriptName(remotePath: string, data: string, callback: (process: number) => void): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const scriptName = SparkMD5.hash(data);
+                await this.hiveService.uploadFileWithScriptName(remotePath, data, callback, scriptName);
+                resolve(scriptName);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
     downloadFile(remotePath: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -2319,7 +2331,7 @@ export class HiveVaultHelper {
                 "did": did,
                 "name": name,
                 "description": description,
-                "avatar": avatar,
+                "avatar_url": avatar,
                 "updated_at": updatedAt,
             }
 
@@ -2364,14 +2376,14 @@ export class HiveVaultHelper {
     /** create profile end */
 
     /** update profile start */
-    private updateDataToProfileDB(did: string, name: string, description: string, avatar: string, updatedAt: number): Promise<UpdateResult> {
+    private updateDataToProfileDB(did: string, name: string, description: string, avatarHiveUrl: string, updatedAt: number): Promise<UpdateResult> {
         return new Promise(async (resolve, reject) => {
             try {
                 const doc =
                 {
                     "name": name,
                     "description": description,
-                    "avatar": avatar,
+                    "avatar_url": avatarHiveUrl,
                     "updated_at": updatedAt,
                 }
                 const option = new UpdateOptions(false, true)
@@ -2388,14 +2400,14 @@ export class HiveVaultHelper {
         })
     }
 
-    private async updateProfileData(name: string, description: string, avatar: string) {
+    private async updateProfileData(name: string, description: string, avatarHiveUrl: string) {
         const signinDid = (await this.dataHelper.getSigninData()).did;
         const updatedAt = UtilService.getCurrentTimeNum();
-        return await this.updateDataToProfileDB(signinDid, name, description, avatar, updatedAt);
+        return await this.updateDataToProfileDB(signinDid, name, description, avatarHiveUrl, updatedAt);
     }
 
-    updateProfile(name: string, description: string, avatar: string) {
-        return this.updateProfileData(name, description, avatar);
+    updateProfile(name: string, description: string, avatarHiveUrl: string) {
+        return this.updateProfileData(name, description, avatarHiveUrl);
     }
     /** update profile end */
 

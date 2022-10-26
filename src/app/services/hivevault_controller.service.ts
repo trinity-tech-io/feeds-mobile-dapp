@@ -2379,14 +2379,16 @@ export class HiveVaultController {
   updateUserProfile(did: string, name: string, description: string, avatar: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
+        const avatarHiveUrl = await this.uploadUserProfileAvatar(avatar);
+
         const originProfile = await this.getUserProfile(did);
 
-        const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatar);
-        if (avatarHiveURL != originProfile.avatar) {
-          await this.hiveVaultApi.delteFile(originProfile.avatar);
-        }
+        // const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatar);
+        // if (avatarHiveURL != originProfile.avatar) {
+        //   await this.hiveVaultApi.delteFile(originProfile.avatar);
+        // }
 
-        const result = await this.hiveVaultApi.updateSelfProfile(name, description, avatarHiveURL);
+        const result = await this.hiveVaultApi.updateSelfProfile(name, description, avatarHiveUrl);
 
         if (!result) {
           Logger.error(TAG, 'Update profile result null');
@@ -2401,7 +2403,7 @@ export class HiveVaultController {
           resolvedBio: originProfile.resolvedBio,
           displayName: originProfile.displayName,
           name: name,
-          avatar: avatar,
+          avatar: avatarHiveUrl,
           bio: description
         }
 
@@ -2481,5 +2483,19 @@ export class HiveVaultController {
 
   diffProfile(originProfile: FeedsData.UserProfile, newProfile: FeedsData.UserProfile): boolean {
     return _.isEqual(originProfile, newProfile);
+  }
+
+  uploadUserProfileAvatar(avatarData: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const scriptName = await this.hiveVaultApi.uploadDataWithScriptName(Config.FEEDS_HIVE_CUSTOM_AVATAR_PATH, avatarData, (process: number) => { });
+        const hiveUrl = UtilService.createHiveUrl(selfDid, scriptName);
+        resolve(hiveUrl);
+      } catch (error) {
+        Logger.error(TAG, 'Upload profile avatar error', error);
+        reject(error);
+      }
+    });
   }
 }

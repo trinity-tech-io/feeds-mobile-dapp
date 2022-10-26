@@ -53,6 +53,8 @@ export class Config {
     public static readonly SQL_VERSION330: number = 30300;
     public static readonly SQL_VERSION: number = 30301; //30302
 
+    public static readonly FEEDS_HIVE_DATA_PATH = 'feeds/data/';
+    public static readonly FEEDS_HIVE_CUSTOM_AVATAR_PATH = 'feeds/avatar/custom';
     public static changeApi(api: string) {
         if (api == 'elastos.io') {
             Config.BASE_API = Config.ELASTOS_API;

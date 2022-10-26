@@ -261,8 +261,8 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.uploadProfile(name, description, avatarAddress);
   }
 
-  updateSelfProfile(name: string, description: string, avatarAddress: string) {
-    return this.hiveVaultHelper.updateProfile(name, description, avatarAddress);
+  updateSelfProfile(name: string, description: string, avatarHiveUrl: string) {
+    return this.hiveVaultHelper.updateProfile(name, description, avatarHiveUrl);
   }
 
   queryProfile(targetDid: string) {
@@ -271,5 +271,9 @@ export class HiveVaultApi {
 
   delteFile(remotePath: string) {
     return this.hiveVaultHelper.deleteFile(remotePath);
+  }
+
+  uploadDataWithScriptName(remotePath: string, data: string, callback: (process: number) => void): Promise<string> {
+    return this.hiveVaultHelper.uploadDataWithScriptName(remotePath, data, callback);
   }
 }
