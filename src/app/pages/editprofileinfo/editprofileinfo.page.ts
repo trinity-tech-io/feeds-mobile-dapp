@@ -68,6 +68,9 @@ export class EditprofileinfoPage implements OnInit {
       } else {
         this.avatar = await this.hiveVaultController.getUserAvatar();
       }
+      this.originUserName = this.userName;
+      this.originUserDes = this.userDes;
+      this.originUserAvatar = this.avatar;
     } catch (error) {
     }
   }

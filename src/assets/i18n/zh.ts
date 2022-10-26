@@ -342,7 +342,7 @@ export const zh = {
     following: '已订阅',
     searchFeeds: '搜索',
     confirmTitle: '取消请求',
-    des:'无法连接频道'
+    des: '无法连接频道'
   },
   ChannelsPage: {
     feeds: '频道',

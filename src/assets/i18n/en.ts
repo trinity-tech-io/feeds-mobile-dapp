@@ -344,7 +344,7 @@ export const en = {
     following: 'Subscribed',
     searchFeeds: 'Search',
     confirmTitle: 'Cancel Request',
-    des:'Failed to connect to the channel'
+    des: 'Failed to connect to the channel'
   },
   ChannelsPage: {
     feeds: 'Channel',

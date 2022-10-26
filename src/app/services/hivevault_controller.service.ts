@@ -2775,7 +2775,6 @@ export class HiveVaultController {
         const selfDid = (await this.dataHelper.getSigninData()).did;
         const scriptName = await this.hiveVaultApi.uploadDataWithScriptName(Config.FEEDS_HIVE_CUSTOM_AVATAR_PATH, avatarData, (process: number) => { });
         const hiveUrl = UtilService.createHiveUrl(selfDid, scriptName);
-
         resolve(hiveUrl);
       } catch (error) {
         Logger.error(TAG, 'Upload profile avatar error', error);

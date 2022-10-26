@@ -63,7 +63,6 @@ export class ProfiledetailPage implements OnInit {
   public hidePictureMenuComponent: boolean = false;
   public isSupportGif: boolean = false;
   public isProfileSame: boolean = false;
-
   constructor(
     private zone: NgZone,
     private native: NativeService,
