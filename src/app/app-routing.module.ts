@@ -215,23 +215,23 @@ const routes: Routes = [
   },
   {
     path: 'connections',
-    loadChildren: () => import('./pages/connections/connections.module').then( m => m.ConnectionsPageModule)
+    loadChildren: () => import('./pages/connections/connections.module').then(m => m.ConnectionsPageModule)
   },
   {
     path: 'userlist',
-    loadChildren: () => import('./pages/userlist/userlist.module').then( m => m.UserlistPageModule)
+    loadChildren: () => import('./pages/userlist/userlist.module').then(m => m.UserlistPageModule)
   },
   {
     path: 'editprofileinfo',
-    loadChildren: () => import('./pages/editprofileinfo/editprofileinfo.module').then( m => m.EditprofileinfoPageModule)
+    loadChildren: () => import('./pages/editprofileinfo/editprofileinfo.module').then(m => m.EditprofileinfoPageModule)
   },
   {
     path: 'userprofile',
-    loadChildren: () => import('./pages/userprofile/userprofile.module').then( m => m.UserprofilePageModule)
+    loadChildren: () => import('./pages/userprofile/userprofile.module').then(m => m.UserprofilePageModule)
   },
   {
     path: 'userprofileinfo',
-    loadChildren: () => import('./pages/userprofileinfo/userprofileinfo.module').then( m => m.UserprofileinfoPageModule)
+    loadChildren: () => import('./pages/userprofileinfo/userprofileinfo.module').then(m => m.UserprofileinfoPageModule)
   },
 ];
 
