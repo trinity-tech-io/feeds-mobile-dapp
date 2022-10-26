@@ -335,7 +335,6 @@ export class HiveVaultResultParse {
       /**
       */
       const profiles = result;
-      let parseResult: FeedsData.SubscribedChannelV3[] = [];
       if (!profiles || profiles.length == 0) {
         return null;
       }
@@ -344,7 +343,7 @@ export class HiveVaultResultParse {
         did: profiles[0].did,
         name: profiles[0].name,
         description: profiles[0].description,
-        avatar: profiles[0].avatar
+        avatar: profiles[0].avatar_url
       }
       return profileResult;
     } catch (error) {

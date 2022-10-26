@@ -18,7 +18,7 @@ import { TitleBarService } from 'src/app/services/TitleBarService';
 })
 export class EditprofileinfoPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-  private userDid: string = '';
+  public userDid: string = '';
   public userName: string = '';
   public userDes: string = '';
   public userTelephone = '';
@@ -28,6 +28,10 @@ export class EditprofileinfoPage implements OnInit {
   public isSupportGif: boolean = false;
   public lightThemeType: number = 3;
   public clickButton: boolean = false;
+
+  private originUserName: string = '';
+  private originUserDes: string = '';
+  private originUserAvatar: string = '';
 
   constructor(
     private translate: TranslateService,
@@ -44,25 +48,52 @@ export class EditprofileinfoPage implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((params: any) => {
-      this.userDid= params.userDid;
+      this.userDid = params.userDid;
     });
+    this.initProfileInfo();
   }
 
   ionViewWillEnter() {
-   this.theme.setTheme1();
-   this.initTitle();
-   this.initProfileInfo();
+    this.theme.setTheme1();
+    this.initTitle();
+    this.onAvatarDataChangedListener();
   }
 
-  async initProfileInfo() {
+  async onAvatarDataChangedListener() {
     try {
       let croppedImage = this.dataHelper.getClipProfileIamge();
       if (croppedImage != '') {
         this.avatar = croppedImage;
-        await this.saveAvatar();
       } else {
         this.avatar = await this.hiveVaultController.getUserAvatar();
       }
+    } catch (error) {
+    }
+    this.handleImages()
+  }
+
+  async initProfileInfo() {
+    try {
+      this.dataHelper.setClipProfileIamge("");
+
+      let signInData = await this.dataHelper.getSigninData();
+      let nickname = signInData['nickname'] || '';
+      if (nickname != '' && nickname != 'Information not provided') {
+        this.userName = nickname;
+      } else {
+        this.userName = signInData['name'] || '';
+      }
+      this.userDes = signInData['description'] || '';
+      this.userDid = signInData['did'];
+      let croppedImage = this.dataHelper.getClipProfileIamge();
+      if (croppedImage != '') {
+        this.avatar = croppedImage;
+      } else {
+        this.avatar = await this.hiveVaultController.getUserAvatar();
+      }
+      this.originUserName = this.userName;
+      this.originUserDes = this.userDes;
+      this.originUserAvatar = this.avatar;
     } catch (error) {
 
     }
@@ -103,7 +134,6 @@ export class EditprofileinfoPage implements OnInit {
     this.editImage();
   }
 
-
   async editImage() {
     this.hidePictureMenuComponent = true;
   }
@@ -134,50 +164,44 @@ export class EditprofileinfoPage implements OnInit {
     );
   }
 
-  async saveAvatar() {
-    await this.native.showLoading('common.waitMoment');
+  saveAvatar(avatar: string) {
     try {
-      await this.hiveService.uploadScriptWithString("custome", this.avatar)
-      this.native.hideLoading()
       this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
       this.dataHelper.setClipProfileIamge("");
     } catch (error) {
-      this.avatar = await this.hiveVaultController.getUserAvatar();
-      this.dataHelper.setClipProfileIamge("");
-      this.native.hideLoading();
       this.native.toast('common.saveFailed');
+      throw new Error(error);
     }
   }
 
-  clickEditProfile() {
-    if(this.checkParams()){
-
+  async updateProfile() {
+    if (this.checkParams()) {
+      await this.native.showLoading('common.waitMoment');
+      try {
+        // await this.hiveVaultController.updateUserProfile(this.userDid, this.userName, this.userDes, this.avatar);
+        this.saveAvatar(this.avatar);
+      } catch (error) {
+      } finally {
+        this.native.hideLoading()
+      }
+    } else {
+      this.native.toastWarn('EditprofileinfoPage.notChange');
     }
   }
 
-  checkParams(){
-
-    if(this.userName === ''){
-      this.native.toastWarn('EditprofileinfoPage.inputName');
-      return false;
+  checkParams() {
+    let isChanged = false;
+    if (this.userName != this.originUserName) {
+      isChanged = true;
+    }
+    if (this.userDes != this.originUserDes) {
+      isChanged = true;
     }
 
-    if(this.userDes === ''){
-      this.native.toastWarn('EditprofileinfoPage.inputDes');
-      return false;
+    if (this.avatar != this.originUserAvatar) {
+      isChanged = true;
     }
 
-    if(this.userTelephone === ''){
-      this.native.toastWarn('EditprofileinfoPage.inputTelephone');
-      return false;
-    }
-
-    if(this.userEmail === ''){
-      this.native.toastWarn('EditprofileinfoPage.inputEmail');
-      return false;
-    }
-
-    return true;
+    return isChanged;
   }
-
 }

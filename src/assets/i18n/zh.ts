@@ -979,6 +979,7 @@ export const zh = {
     inputName: '添加名字',
     inputDes: '添加描述',
     inputTelephone: '添加手机号',
-    inputEmail: '添加邮箱'
+    inputEmail: '添加邮箱',
+    notChange: '数据未发生变化'
   }
 };

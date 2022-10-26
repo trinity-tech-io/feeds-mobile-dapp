@@ -259,6 +259,11 @@ export class HiveService {
     return scriptRunner.uploadFile(transactionId, data)
   }
 
+  async uploadFileWithScriptName(path: string, data: Buffer | string, callback: (process: number) => void, script_name?: string) {
+    const fileService = await this.getFilesService()
+    return await fileService.upload(path, data, callback, true, script_name);
+  }
+
   async downloadEssAvatarTransactionId(avatarParam: string, avatarScriptName: string, targetDid: string, tarAppDID: string) {
     try {
       if (avatarParam === null || avatarParam === undefined) {
