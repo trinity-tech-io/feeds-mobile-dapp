@@ -204,4 +204,16 @@ export class EditprofileinfoPage implements OnInit {
 
     return isChanged;
   }
+
+  hidePictureMenu(data: any) {
+    let buttonType = data['buttonType'];
+    switch (buttonType) {
+      case 'photolibary':
+        this.hidePictureMenuComponent = false;
+        break;
+      case 'cancel':
+        this.hidePictureMenuComponent = false;
+        break;
+    }
+  }
 }
