@@ -53,7 +53,8 @@ export class MyApp {
   public loadingCurNumber: string = null;
   public loadingMaxNumber: string = null;
   public userDidDisplay: string = '';
-
+  private isReady: boolean = false;
+  private receivedIntentList: IntentPlugin.ReceivedIntent[] = [];
   constructor(
     private actionSheetController: ActionSheetController,
     private modalController: ModalController,
@@ -262,7 +263,7 @@ export class MyApp {
             this.dataHelper.setNetworkStatus(FeedsData.ConnState.connected);
           },
         );
-        this.initDisclaimer();
+        this.initPages();
         this.initConnector();
         this.initIpfs();
         this.initAssist();
@@ -271,7 +272,12 @@ export class MyApp {
         this.intentService.addIntentListener(
           (intent: IntentPlugin.ReceivedIntent) => {
             this.intentService.onMessageReceived(intent);
-            this.intentService.dispatchIntent(intent);
+            if (this.isReady) {
+              this.intentService.dispatchIntent(intent);
+            } else {
+              this.receivedIntentList.push(intent);
+            }
+
           },
         );
       }).then(async () => {
@@ -408,10 +414,16 @@ export class MyApp {
       .catch(err => { });
   }
 
-  initDisclaimer() {
+  initPages() {
+    this.appService.initTranslateConfig();
     this.appService.init();
 
-    this.appService.initializeApp();
+    this.appService.initializeApp().then(() => {
+      this.isReady = true;
+      this.receivedIntentList.forEach((intent: IntentPlugin.ReceivedIntent) => {
+        this.intentService.dispatchIntent(intent);
+      });
+    });
   }
 
   initIpfs() {
@@ -451,7 +463,7 @@ export class MyApp {
 
   async confirm(that: any) {
     if (this.popover != null) {
-       await this.popover.dismiss();
+      await this.popover.dismiss();
     }
     try {
       await that.dataHelper.removeData("feeds.initHive");
@@ -532,7 +544,7 @@ export class MyApp {
         this.dataHelper.setChannelPublicStatusList({});
         this.dataHelper.setChannelCollectionPageList([]);
         this.dataHelper.setChannelContractInfoList({});
-        this.dataHelper.saveData("feeds.contractInfo.list",{});
+        this.dataHelper.saveData("feeds.contractInfo.list", {});
         this.globalService.restartApp();
       })
       .catch(err => {
