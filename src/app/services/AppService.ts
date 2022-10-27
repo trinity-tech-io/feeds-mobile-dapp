@@ -29,7 +29,6 @@ export class AppService {
   }
 
   handleBack() {
-
     if (this.router.url === "/tabs/search" || this.router.url === "/tabs/profile") {
       navigator['app'].exitApp();
     } else if (this.router.url === "/tabs/home" ||
@@ -41,77 +40,52 @@ export class AppService {
     }
   }
 
-
-
   initTranslateConfig() {
     this.languageService.initTranslateConfig();
   }
 
-
-
-  initializeApp() {
-    this.feedService.initSignInDataAsync(signInData => {
-      this.feedService.loadData().then(() => {
-        this.initData(signInData);
+  initializeApp(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.feedService.initSignInDataAsync(signInData => {
+        this.feedService.loadData().then(async () => {
+          await this.initData(signInData);
+          resolve();
+        });
       });
-    });
+    })
   }
 
-  initData(signInData: SignInData) {
-    if (
-      signInData == null ||
-      signInData == undefined ||
-      UtilService.getCurrentTimeNum() > signInData.expiresTS
-    ) {
-      this.dataHelper.setHiveAuthStatus(null);
-      this.native.setRootRouter(['/signin']);
-      this.splashScreen.hide();
-      return;
-    }
-
-
-    this.dataHelper.loadData("feeds.initHive").then((result) => {
-      let isInitHive = result || null;
-      if (isInitHive === null) {
-        this.dataHelper.setHiveAuthStatus(0);
-        //此处切换成galleriahive 页面
+  initData(signInData: SignInData): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (
+        signInData == null ||
+        signInData == undefined ||
+        UtilService.getCurrentTimeNum() > signInData.expiresTS
+      ) {
+        this.dataHelper.setHiveAuthStatus(null);
         this.native.setRootRouter(['/signin']);
-
         this.splashScreen.hide();
         return;
-      } else {
-        this.dataHelper.setHiveAuthStatus(null);
-        const syncHiveData = UtilService.generateHiveSyncCompleteObj();
-        this.dataHelper.setSyncHiveData(syncHiveData);
-        this.native.setRootRouter(['/tabs/home']);
-        this.feedService.updateSignInDataExpTime(signInData);
-        this.splashScreen.hide();
-
-        // this.dataHelper.loadData("feeds.syncHiveData").then((syncHiveData: any) => {
-        //   if (syncHiveData === null) {
-        //     this.events.publish(FeedsEvent.PublishType.initHiveData);
-        //     let syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" }
-        //     this.dataHelper.setSyncHiveData(syncHiveData);
-        //     this.native.setRootRouter(['/tabs/home']);
-        //     this.feedService.updateSignInDataExpTime(signInData);
-        //     this.splashScreen.hide();
-        //   } else {
-        //     if (syncHiveData.status === 6) {
-        //       this.dataHelper.setSyncHiveData(syncHiveData);
-        //       this.native.setRootRouter(['/tabs/home']);
-        //       this.feedService.updateSignInDataExpTime(signInData);
-        //       this.splashScreen.hide();
-        //     } else {
-        //       let syncHiveData = { status: 0, describe: "GalleriahivePage.preparingData" }
-        //       this.dataHelper.setSyncHiveData(syncHiveData);
-        //       this.events.publish(FeedsEvent.PublishType.initHiveData);
-        //       this.native.setRootRouter(['/tabs/home']);
-        //       this.feedService.updateSignInDataExpTime(signInData);
-        //       this.splashScreen.hide();
-        //     }
-        //   }
-        // })
       }
+      this.dataHelper.loadData("feeds.initHive").then((result) => {
+        let isInitHive = result || null;
+        if (isInitHive === null) {
+          this.dataHelper.setHiveAuthStatus(0);
+          //此处切换成galleriahive 页面
+          this.native.setRootRouter(['/signin']);
+
+          this.splashScreen.hide();
+          return;
+        } else {
+          this.dataHelper.setHiveAuthStatus(null);
+          const syncHiveData = UtilService.generateHiveSyncCompleteObj();
+          this.dataHelper.setSyncHiveData(syncHiveData);
+          this.native.setRootRouter(['/tabs/home']);
+          this.feedService.updateSignInDataExpTime(signInData);
+          this.splashScreen.hide();
+        }
+        resolve();
+      });
     });
   }
 
