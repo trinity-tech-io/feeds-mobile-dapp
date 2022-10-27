@@ -69,7 +69,6 @@ export class EditprofileinfoPage implements OnInit {
       }
     } catch (error) {
     }
-    this.handleImages()
   }
 
   async initProfileInfo() {
@@ -77,46 +76,65 @@ export class EditprofileinfoPage implements OnInit {
       this.dataHelper.setClipProfileIamge("");
 
       let signInData = await this.dataHelper.getSigninData();
+      this.userDid = signInData.did;
+      const userProfile: FeedsData.UserProfile = await this.hiveVaultController.getUserProfile(this.userDid);
+
       let nickname = signInData['nickname'] || '';
       if (nickname != '' && nickname != 'Information not provided') {
-        this.userName = nickname;
+        this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || nickname;
       } else {
-        this.userName = signInData['name'] || '';
+        this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || signInData['name'] || '';
       }
-      this.userDes = signInData['description'] || '';
-      this.userDid = signInData['did'];
-      let croppedImage = this.dataHelper.getClipProfileIamge();
-      if (croppedImage != '') {
-        this.avatar = croppedImage;
-      } else {
-        this.avatar = await this.hiveVaultController.getUserAvatar();
+      this.userDes = userProfile.bio || userProfile.resolvedBio || signInData['description'] || '';
+
+      // let croppedImage = this.dataHelper.getClipProfileIamge();
+      // if (croppedImage != '') {
+      //   this.avatar = croppedImage;
+      // } else {
+      //   this.avatar = await this.hiveVaultController.getUserAvatar();
+      // }
+
+      if (!userProfile.name && !userProfile.bio && !userProfile.avatar) {
+        this.hiveVaultController.getRemoteUserProfileWithSave(this.userDid).then((userProfile: FeedsData.UserProfile) => {
+
+        });
       }
+
+      const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
+      await this.setAvatarUI(this.userDid, avatarUrl);
+
       this.originUserName = this.userName;
       this.originUserDes = this.userDes;
       this.originUserAvatar = this.avatar;
     } catch (error) {
-
     }
-    this.handleImages()
   }
 
-  handleImages() {
-    let imgUri = "";
-    if (this.avatar.indexOf('feeds:imgage:') > -1) {
-      imgUri = this.avatar.replace('feeds:imgage:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    } else if (this.avatar.indexOf('feeds:image:') > -1) {
-      imgUri = this.avatar.replace('feeds:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    } else if (this.avatar.indexOf('pasar:image:') > -1) {
-      imgUri = this.avatar.replace('pasar:image:', '');
-      imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-    }
-    else {
-      imgUri = this.avatar;
-    }
-    return imgUri;
+  setAvatarUI(userDid: string, avatarUrl: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      if (avatarUrl) {
+        let fileName: string = userDid.replace('did:elastos:', '');
+        this.hiveVaultController.getV3HiveUrlData(userDid, avatarUrl, fileName)
+          .then((image) => {
+            this.setUserAvatar(userDid, image);
+          }).catch((err) => {
+            this.setUserAvatar(userDid);
+          }).finally(() => {
+            resolve('FINISH');
+          })
+      } else {
+        this.setUserAvatar(userDid);
+        resolve('FINISH');
+      }
+    });
   }
+
+  setUserAvatar(userDid: string, avatar = './assets/images/default-contact.svg') {
+    // if (!this.pageItemMap[userDid])
+    //   this.pageItemMap[userDid] = this.generatePageItem(userDid);
+    this.avatar = avatar;
+  }
+
 
   ionViewWillLeave() {
     this.theme.restTheme();
@@ -164,9 +182,10 @@ export class EditprofileinfoPage implements OnInit {
     );
   }
 
+  //TODO
   saveAvatar(avatar: string) {
     try {
-      this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
+      // this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
       this.dataHelper.setClipProfileIamge("");
     } catch (error) {
       this.native.toast('common.saveFailed');
@@ -178,7 +197,7 @@ export class EditprofileinfoPage implements OnInit {
     if (this.checkParams()) {
       await this.native.showLoading('common.waitMoment');
       try {
-        // await this.hiveVaultController.updateUserProfile(this.userDid, this.userName, this.userDes, this.avatar);
+        await this.hiveVaultController.updateUserProfile(this.userDid, this.userName, this.userDes, this.avatar);
         this.saveAvatar(this.avatar);
       } catch (error) {
       } finally {
@@ -197,11 +216,9 @@ export class EditprofileinfoPage implements OnInit {
     if (this.userDes != this.originUserDes) {
       isChanged = true;
     }
-
     if (this.avatar != this.originUserAvatar) {
       isChanged = true;
     }
-
     return isChanged;
   }
 

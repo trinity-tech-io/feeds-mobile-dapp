@@ -9,8 +9,14 @@ let TAG: string = 'Feeds-DIDHelperService';
 @Injectable()
 export class DIDHelperService {
   constructor(private translate: TranslateService) {
-    // const currentNet = "MainNet".toLowerCase();
-    // DIDBackend.initialize(new DefaultDIDAdapter(currentNet))
+  }
+
+  init(): string {
+    const currentNet = "MainNet".toLowerCase();
+    if (!DIDBackend.isInitialized()) {
+      DIDBackend.initialize(new DefaultDIDAdapter(currentNet))
+    }
+    return currentNet;
   }
 
   resolveDidDocument(didString: string): Promise<DIDDocument> {
@@ -268,7 +274,7 @@ export class DIDHelperService {
 
         resolve(resultObj);
       } catch (error) {
-        Logger.error(TAG, 'Parse jwt error', error);
+        Logger.error(TAG, 'Resolve Name And Avatar From Did Document error', error);
         reject(error);
       }
     });
@@ -286,7 +292,7 @@ export class DIDHelperService {
 
         resolve(resultObj);
       } catch (error) {
-        Logger.error(TAG, 'Parse jwt error', error);
+        Logger.error(TAG, 'Resolve User Profile error', error);
         reject(error);
       }
     });

@@ -209,13 +209,13 @@ export class StandardAuthService {
         jwtResult = await this.didHelperService.parseJWT(authChallengeJwttoken);
         Logger.log(TAG, 'JWT json result is', JSON.stringify(jwtResult));
       } catch (error) {
-        Logger.warn(TAG, 'Parse JWT error,', error)
+        Logger.warn(TAG, 'Generate HiveAuth Presentation JWT Parse JWT error,', error)
         reject(error);
       }
 
       Logger.log(TAG, 'Parse JWT Result is', jwtResult)
       if (!jwtResult) {
-        reject('Parse jwt error, parse result null')
+        reject('Generate HiveAuth Presentation JWT Parse jwt error, parse result null')
         return;
       }
 
