@@ -331,7 +331,6 @@ export class HiveVaultResultParse {
 
   public static parseProfileResult(result: any): { did: string, name: string, description: string, avatar: string } {
     try {
-      console.log('parseProfileResult====>', result);
       /**
       */
       const profiles = result;

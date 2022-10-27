@@ -274,7 +274,6 @@ export class IntentService {
   }
 
   async dispatchIntent(receivedIntent: IntentPlugin.ReceivedIntent) {
-
     const signinData = await this.dataHelper.getSigninData();
     if (!signinData) {
       Logger.log(TAG, "Not signin");

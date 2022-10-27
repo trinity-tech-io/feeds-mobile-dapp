@@ -2465,4 +2465,48 @@ export class HiveVaultHelper {
         });
     }
     /** delete File end*/
+
+    // /** query public channel start*/
+    // private registerQueryPublicChannelScripting(forceCreate: boolean = false): Promise<string> {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //             const channelType='public';
+    //             let executablefilter = { "type": "public" }
+    //             let options = { "projection": { "_id": false }, "limit": 100 }
+    //             const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_CHANNELS, executablefilter, options).setOutput(true)
+    //             await this.hiveService.registerScript(forceCreate, HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, executable, null, false)
+    //             resolve("SUCCESS")
+    //         } catch (error) {
+    //             Logger.error(TAG, "registerQueryChannelInfo error", error)
+    //             reject(await this.handleError(error))
+    //         }
+    //     })
+    // }
+
+    // private callQueryChannelInfo(targetDid: string, channelId: string) {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //             let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_CHANNEL_INFO, { "channel_id": channelId })
+    //             resolve(result)
+    //         } catch (error) {
+    //             Logger.error(TAG, 'Call query channel info Scripting error:', error)
+    //             reject(error)
+    //         }
+    //     })
+    // }
+
+    // queryChannelInfo(targetDid: string, channelId: string): Promise<any> {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //             const result = await this.callQueryChannelInfo(targetDid, channelId);
+    //             resolve(result);
+    //         } catch (error) {
+    //             Logger.error(TAG, 'Query channnel info error', error);
+    //             reject(error);
+    //         }
+    //     });
+    // }
+    // queryPublicChannelByUser() {
+
+    // }
 }

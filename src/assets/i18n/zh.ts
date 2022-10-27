@@ -403,6 +403,7 @@ export const zh = {
     profileDetails: '档案详情',
     name: '名称',
     did: 'DID身份码',
+    description: '个人描述',
     telephone: '号码',
     email: '邮箱',
     location: '国家/地区',
@@ -864,7 +865,7 @@ export const zh = {
     inputDes: '添加描述',
     inputTelephone: '添加手机号',
     inputEmail: '添加邮箱',
-    notChange: '数据未发生变化'
+    notChange: '资料未发生变化'
   },
   UserprofilePage: {
     title: '用户档案',

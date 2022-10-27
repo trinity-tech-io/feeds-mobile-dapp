@@ -406,6 +406,7 @@ export const en = {
     profileDetails: 'Profile Details',
     name: 'Name',
     did: 'DID',
+    description: 'Description',
     telephone: 'Phone Number',
     email: 'Email',
     location: 'Location',

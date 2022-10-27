@@ -35,8 +35,8 @@ export class ProfiledetailPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public developerMode: boolean = false;
   public avatar: string = '';
-  public name = '';
-  public description = '';
+  public userName = '';
+  public userDescription = '';
   public did = '';
   public gender = '';
   public telephone = '';
@@ -63,6 +63,7 @@ export class ProfiledetailPage implements OnInit {
   public hidePictureMenuComponent: boolean = false;
   public isSupportGif: boolean = false;
   public isProfileSame: boolean = false;
+
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -92,7 +93,12 @@ export class ProfiledetailPage implements OnInit {
     this.profileDetails = [];
     this.profileDetails.push({
       type: 'ProfiledetailPage.name',
-      details: this.name,
+      details: this.userName,
+    });
+
+    this.profileDetails.push({
+      type: 'ProfiledetailPage.description',
+      details: this.userDescription,
     });
 
     this.profileDetails.push({
@@ -149,11 +155,11 @@ export class ProfiledetailPage implements OnInit {
     let signInData = await this.dataHelper.getSigninData();
     let nickname = signInData['nickname'] || '';
     if (nickname != '' && nickname != 'Information not provided') {
-      this.name = nickname;
+      this.userName = nickname;
     } else {
-      this.name = signInData['name'] || '';
+      this.userName = signInData['name'] || '';
     }
-    this.description = signInData['description'] || '';
+    this.userDescription = signInData['description'] || '';
     this.userDid = signInData['did'];
     this.did = this.feedService.rmDIDPrefix(signInData['did'] || '');
     this.telephone = signInData['telephone'] || '';

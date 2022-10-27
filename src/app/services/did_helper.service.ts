@@ -274,7 +274,7 @@ export class DIDHelperService {
 
         resolve(resultObj);
       } catch (error) {
-        Logger.error(TAG, 'Parse jwt error', error);
+        Logger.error(TAG, 'Resolve Name And Avatar From Did Document error', error);
         reject(error);
       }
     });
@@ -292,7 +292,7 @@ export class DIDHelperService {
 
         resolve(resultObj);
       } catch (error) {
-        Logger.error(TAG, 'Parse jwt error', error);
+        Logger.error(TAG, 'Resolve User Profile error', error);
         reject(error);
       }
     });

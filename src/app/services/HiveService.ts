@@ -10,7 +10,6 @@ import { Events } from 'src/app/services/events.service';
 import { Config } from './config';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
 
-
 @Injectable()
 export class HiveService {
   public static CREATEALLCollECTION = "feeds_createALLCollections" // 本地标识是否创建了Collection
