@@ -36,7 +36,7 @@
     "svelte-i18n": "^3.3.9"
   },
   "peerDependencies": {
-    "@elastosfoundation/elastos-connectivity-sdk-cordova": "^2.0.0"
+    "@elastosfoundation/elastos-connectivity-sdk-cordova": "2.0.2"
   },
   "devDependencies": {
     "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.8",
