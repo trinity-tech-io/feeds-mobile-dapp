@@ -12,12 +12,13 @@ import { PopupProvider } from 'src/app/services/popup';
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
 import { DataHelper } from 'src/app/services/DataHelper';
-import _ from 'lodash';
+import _, { result } from 'lodash';
 import { Params, ActivatedRoute } from '@angular/router';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import { FeedService } from 'src/app/services/FeedService';
 import SparkMD5 from 'spark-md5';
+import { IntentService } from 'src/app/services/IntentService';
 
 const SUCCESS = 'success';
 const SKIP = 'SKIP';
@@ -58,6 +59,7 @@ export class GalleriachannelPage implements OnInit {
   public tippingAddress: string = "";
   private realFile: string = null;
   private displayName: string = "";
+  private signature: string = "";
   constructor(
     private translate: TranslateService,
     private event: Events,
@@ -71,7 +73,8 @@ export class GalleriachannelPage implements OnInit {
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
     private ipfsService: IPFSService,
-    private feedService: FeedService
+    private feedService: FeedService,
+    private intentService: IntentService
   ) { }
 
   ngOnInit() {
@@ -133,12 +136,31 @@ export class GalleriachannelPage implements OnInit {
   }
 
   async mint() {
-    if (!this.checkParms()) {
-      // show params error
-      return;
-    }
 
-    await this.doMint();
+   this.channelEntry = UtilService.generateFeedsQrCodeString(this.destDid,this.channelId);
+   let signData = {data:this.channelEntry};
+   let signResult = await this.intentService.didsign(signData);
+   if(signResult === null){
+    this.native.toastWarn("GalleriachannelPage.signatureError")
+       return;
+   }
+  let data = signResult['result'] || null;
+  if(data === null){
+    this.native.toastWarn("GalleriachannelPage.signatureError")
+    return;
+  }
+  let signature = data['signature'] || null;
+  if(signature === null){
+    this.native.toastWarn("GalleriachannelPage.signatureError")
+    return;
+  }
+  this.signature = signature;
+  if (!this.checkParms()) {
+    // show params error
+    return;
+  }
+
+  await this.doMint();
   }
 
   clearMintSid() {
@@ -468,7 +490,7 @@ export class GalleriachannelPage implements OnInit {
             "banner": "",
             "ownerDid": this.destDid,
             "channelEntry": this.channelEntry,
-            "signature": ""
+            "signature": this.signature
         }
         }
 

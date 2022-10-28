@@ -568,4 +568,22 @@ export class IntentService {
       Logger.error(TAG, 'Nav to bid page error', error);
     }
   }
+
+  didsign(params: any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+          try {
+            let url = 'https://did.elastos.net/didsign';
+            Logger.log(TAG, 'Call intent didsign result is params', params, url);
+           let res = await intentManager.sendIntent(url, params);
+           if (res) {
+            resolve(res);
+            return;
+            }
+            reject(null);
+          } catch (error) {
+            Logger.log(TAG, 'Call intent didsign result is params', error);
+            reject(null);
+          }
+    });
+  }
 }
