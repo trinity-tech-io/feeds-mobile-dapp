@@ -261,6 +261,7 @@ export class PostdetailPage implements OnInit {
       this.infiniteScroll.disabled = false;
     }
     this.initOwnCommentObj();
+    this.handleUserAvatars(this.captainCommentList);
     this.refreshLikeAndCommentV2(this.captainCommentList);
     //this.totalData = this.sortCommentList();
   }
@@ -293,6 +294,7 @@ export class PostdetailPage implements OnInit {
       this.captainCommentList = this.totalData;
     }
     this.initOwnCommentObj();
+    this.handleUserAvatars(this.captainCommentList);
     this.refreshLikeAndCommentV2(this.captainCommentList);
   }
 
@@ -827,6 +829,7 @@ export class PostdetailPage implements OnInit {
         this.captainCommentList = this.captainCommentList.concat(data.items);
       }
       this.initOwnCommentObj();
+      this.handleUserAvatars(this.captainCommentList);
       this.refreshLikeAndCommentV2(data.items);
       clearTimeout(sid);
       event.target.complete();
