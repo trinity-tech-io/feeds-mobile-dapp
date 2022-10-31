@@ -1229,6 +1229,8 @@ export class HiveVaultController {
             reject(error);
           }
           return;
+        } else {
+
         }
 
         resolve(result);
