@@ -9,6 +9,8 @@ let TAG: string = 'Feeds-HiveService';
 import { Events } from 'src/app/services/events.service';
 import { Config } from './config';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
+import { base64ImageToBuffer } from 'src/app/services/picture.helpers';
+import { UtilService } from './utilService';
 
 @Injectable()
 export class HiveService {
@@ -259,9 +261,11 @@ export class HiveService {
     return scriptRunner.uploadFile(transactionId, data)
   }
 
-  async uploadFileWithScriptName(path: string, data: Buffer | string, callback: (process: number) => void, script_name?: string) {
+  async uploadFileWithScriptName(path: string, base64Img: string, callback: (process: number) => void, script_name?: string) {
     const fileService = await this.getFilesService()
-    return await fileService.upload(path, data, callback, true, script_name);
+    const rmHeadImg = UtilService.removeBase64Header(base64Img);
+    const buffer = base64ImageToBuffer(rmHeadImg);
+    return await fileService.upload(path, buffer, callback, true, script_name);
   }
 
   async downloadEssAvatarTransactionId(avatarParam: string, avatarScriptName: string, targetDid: string, tarAppDID: string) {
@@ -343,10 +347,10 @@ export class HiveService {
     }
   }
 
-  async uploadScriptWithString(remotePath: string, img: any) {
+  async uploadScriptWithString(remotePath: string, base64Img: string) {
     try {
       const fileService = await this.getFilesService()
-      return await fileService.upload(remotePath, Buffer.from(img, 'utf8'))
+      return await fileService.upload(remotePath, Buffer.from(base64Img, 'utf8'))
     }
     catch (error) {
       Logger.error(TAG, "uploadScriptWithString error: ", error);

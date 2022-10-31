@@ -188,8 +188,8 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.downloadEssAvatar(avatarParam, avatarScriptName, tarDID, tarAppDID);
   }
 
-  downloadEssAvatarFromHiveUrl(hiveUrl: string, targetDid: string): Promise<string> {
-    return this.hiveVaultHelper.downloadEssAvatarFromHiveUrl(hiveUrl, targetDid);
+  downloadAvatarFromHiveUrl(hiveUrl: string, targetDid: string): Promise<string> {
+    return this.hiveVaultHelper.downloadAvatarFromHiveUrl(hiveUrl, targetDid);
   }
 
   uploadMediaDataWithString(data: string): Promise<string> {

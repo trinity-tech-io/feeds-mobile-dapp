@@ -1781,9 +1781,8 @@ export class HiveVaultHelper {
     }
     /** download essential avatar end */
 
-    /** download essential avatar from hiveurl start */
-    private downloadEssAvatarDataFromHiveUrl(hiveUrl: string, targetDid: string): Promise<string> {
-
+    /** download avatar from hiveurl start */
+    private downloadAvatarDataFromHiveUrl(hiveUrl: string, targetDid: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
             try {
                 const result = await this.hiveService.downloadFileByHiveUrl(hiveUrl, targetDid);
@@ -1802,10 +1801,10 @@ export class HiveVaultHelper {
         });
     }
 
-    downloadEssAvatarFromHiveUrl(hiveUrl: string, targetDid: string): Promise<string> {
-        return this.downloadEssAvatarDataFromHiveUrl(hiveUrl, targetDid);
+    downloadAvatarFromHiveUrl(hiveUrl: string, targetDid: string): Promise<string> {
+        return this.downloadAvatarDataFromHiveUrl(hiveUrl, targetDid);
     }
-    /** download essential avatar from hiveurl end */
+    /** download avatar from hiveurl end */
 
     uploadMediaDataWithString(data: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
@@ -2381,6 +2380,7 @@ export class HiveVaultHelper {
             try {
                 const doc =
                 {
+                    "did": did,
                     "name": name,
                     "description": description,
                     "avatar_url": avatarHiveUrl,

@@ -267,7 +267,7 @@ export class ProfiledetailPage implements OnInit {
     let fileBase64 = data["fileBase64"] || "";
     if (fileBase64 != "") {
       this.native.navigateForward(['editimage'], '');
-      this.dataHelper.setClipProfileIamge(fileBase64);
+      this.dataHelper.setClipImage(fileBase64);
     }
   }
 
@@ -281,7 +281,7 @@ export class ProfiledetailPage implements OnInit {
         let imgBase64 = imageUrl || "";
         if (imgBase64 != "") {
           this.native.navigateForward(['editimage'], '');
-          this.dataHelper.setClipProfileIamge(imgBase64);
+          this.dataHelper.setClipImage(imgBase64);
         }
       },
       err => { },
