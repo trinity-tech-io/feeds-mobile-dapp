@@ -969,20 +969,20 @@ export class HiveVaultController {
       }
 
       let userDid = signinData.did;
-      let avatar = await this.dataHelper.loadUserAvatar(userDid);
-      if (avatar) {
-        resolve(avatar);
+      let userProfile: FeedsData.UserProfile = await this.getUserProfile(userDid);
+      const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar;
+      if (!avatarHiveUrl) {
+        resolve('assets/images/default-contact.svg');
         return;
       }
-      const loadKey = UtilService.getESSAvatarKey(userDid);
-      let essavatar = await this.dataHelper.loadUserAvatar(loadKey);
 
-      if (essavatar) {
-        resolve(essavatar)
-        return
+      const avatar = await this.getV3HiveUrlData(avatarHiveUrl);
+      if (!avatar) {
+        resolve('assets/images/default-contact.svg');
+        return;
       }
 
-      resolve('./assets/images/did-default-avatar.svg');
+      resolve(avatar);
       return;
     });
   }
