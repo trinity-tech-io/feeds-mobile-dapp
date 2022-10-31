@@ -987,5 +987,8 @@ export const en = {
   },
   UserprofilePage: {
     title: 'User Profile',
+  },
+  UserprofileinfoPage: {
+    title: 'User Profile Details'
   }
 };

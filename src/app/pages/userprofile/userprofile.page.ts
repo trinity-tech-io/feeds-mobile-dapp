@@ -388,7 +388,7 @@ export class UserprofilePage implements OnInit {
   }
 
   editProfile() {
-    this.native.navigateForward(['/menu/profiledetail'], {});
+    this.native.navigateForward(['/userprofileinfo'], { queryParams: { 'userDid': this.userDid } });
   }
 
   initUserProfile(userDid: string) {
