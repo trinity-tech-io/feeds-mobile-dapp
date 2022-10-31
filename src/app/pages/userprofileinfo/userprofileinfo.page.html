@@ -1,17 +1,11 @@
 <app-titlebar [lightThemeType]="lightThemeType"></app-titlebar>
-<!-- <div *ngIf="connectionStatus == 1" class="offline-header"></div> -->
 <ion-content class="bg">
   <ion-row class="card">
     <div class="cardImg">
-      <div class="avatar">
-       <img
-       *ngIf="avatar != ''"
-       class="customizeAvatar"
-       [src]="avatar"/>
-       <!-- <img   class="eidtAvatar" src="./assets/images/eidtAvatar.svg"/> -->
+        <div class="avatar">
+       <img  *ngIf="avatar === ''" src="./assets/images/defaultAvatar.svg" />
+       <img  *ngIf="avatar != ''"  [src]="avatar"/>
       </div>
-
-
       <div class="cardTitle">{{userName}}</div>
     </div>
   </ion-row>
@@ -30,12 +24,3 @@
     </div>
   </ion-grid>
 </ion-content>
-<!---------------- ADD picture menu---------------->
-<app-picturemenu
- *ngIf="hidePictureMenuComponent"
- [isSupportGif] = "isSupportGif"
- (openCamera) = "openCamera()"
- (openGallery)= "openGallery($event)"
- (hidePictureMenu)="hidePictureMenu($event)"
->
-</app-picturemenu>

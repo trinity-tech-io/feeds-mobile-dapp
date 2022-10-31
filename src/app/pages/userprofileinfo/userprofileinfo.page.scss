@@ -1,0 +1,213 @@
+.bg{
+    --background:linear-gradient(180deg, #000000 0%, #A067FF 99.09%);
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    height: 200px;
+
+    .cardImg{
+        position: absolute;
+        width: 100%;
+        display: flex;
+        top: 20px;
+        justify-content: center;
+        .avatar{
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border-radius: 60px;
+        background-color: #161C24;
+        border: 2px solid transparent;
+        background-clip: padding-box, border-box;
+        background-origin: padding-box, border-box;
+        background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+        img{
+            width: 80px;
+            height: 80px;
+            border-radius: 60px;
+            object-fit: cover;
+            overflow: hidden;
+        }
+
+        .eidtAvatar{
+          width: 36px;
+          height: 36px;
+          top: 59px;
+          position: absolute;
+          left: calc(50% + 14px);
+        }
+        }
+    }
+
+    .cardTitle{
+        position: absolute;
+        width: 100%;
+        display: flex;
+        top: 104px;
+        justify-content: center;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 25px;
+        color: #FFFFFF;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .connectWallet{
+        display: flex;
+        position: absolute;
+        width: 150px;
+        height: 35px;
+        background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+        border-radius: 20px;
+        justify-content: center;
+        align-items: center;
+        top: 128px;
+    }
+
+    .card-subtitle{
+        display: flex;
+        position: absolute;
+        width: 170px;
+        height: 35px;
+        background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+        border-radius: 20px;
+        justify-content: center;
+        align-items: center;
+        top: 128px;
+
+        span {
+            font-style: normal;
+            font-weight: 700;
+            font-size: 15px;
+            color: #FFFFFF;
+            margin-left: 17px;
+        }
+
+        img {
+            margin-left: 8px;
+            vertical-align:middle;
+            margin-left:5px;
+            width: 18px;
+            height: 21.33px;
+        }
+    }
+  }
+
+  .container {
+    overflow: auto;
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 200px);
+    background: #161c24;
+    border-radius: 40px 40px 0px 0px;
+
+    .detail-row {
+
+        padding-top: 10px;
+        padding-bottom:0px;
+        ion-col {
+          padding: 0;
+        }
+
+        .left-col {
+          padding: 0 10px;
+          h1, h2 {
+            margin: 0;
+          }
+
+          h1 {
+            width:100%;
+            font-size: 15px;
+            font-weight:700;
+            font-style: normal;
+            color: #000000;
+            text-transform: capitalize;
+            margin-bottom: 5px;
+            margin-left: 15px;
+            margin-top: 20px;
+          }
+
+          h2 {
+            margin: 5px 0 0;
+            padding: 5px 20px 10px 10px;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 15px;
+            color: #C4C4C4;
+            background-color: #161C24;
+            width: 100%;
+            border-bottom: 1px solid #323B45;
+            border-radius: 0px;
+          }
+        }
+
+        .right-col {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+        }
+    }
+
+    .btns {
+      margin-top: 20px;
+
+      .btn-row {
+        width: 100%;
+        margin-top: 0px;
+
+        ion-button {
+          width: 95%;
+        }
+      }
+
+      .delete-row {
+        margin-top:0px;
+      }
+    }
+  }
+
+  .darkContainer {
+  overflow: auto;
+  .bottomBorder {
+    border-bottom: 1px solid #323B45;
+  }
+
+  .detail-row .removeBorder {
+    border-bottom: none;
+  }
+
+  .detail-row{
+    .left-col {
+      h1 {
+        width:100%;
+        font-size: 15px;
+        font-weight:700;
+        font-style: normal;
+        color: #ffffff;
+        text-transform: capitalize;
+        margin-bottom: 5px;
+        margin-left: 2px;
+      }
+
+      h2 {
+        margin: 5px 0 0;
+        padding: 5px 20px 10px 10px;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        background-color: #161C24;
+        color: #C4C4C4;
+        width: 100%;
+        border-bottom: 1px solid #323B45;
+        border-radius: 0px;
+      }
+    }
+  }
+
+  }

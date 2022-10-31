@@ -869,5 +869,8 @@ export const zh = {
   },
   UserprofilePage: {
     title: '用户档案',
+  },
+  UserprofileinfoPage: {
+    title: '用户档案详情'
   }
 };

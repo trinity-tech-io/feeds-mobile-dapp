@@ -222,6 +222,10 @@ const routes: Routes = [
     path: 'userprofile',
     loadChildren: () => import('./pages/userprofile/userprofile.module').then( m => m.UserprofilePageModule)
   },
+  {
+    path: 'userprofileinfo',
+    loadChildren: () => import('./pages/userprofileinfo/userprofileinfo.module').then( m => m.UserprofileinfoPageModule)
+  },
 ];
 
 @NgModule({
