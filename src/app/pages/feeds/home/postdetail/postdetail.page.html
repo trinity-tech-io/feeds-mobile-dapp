@@ -158,7 +158,7 @@
         <ion-col class="img-col" size="2.5" sizeMd="1" sizeLg="1">
           <div class="feedAvatar">
           <img *ngIf="comment.destDid === comment.createrDid && channelAvatar != ''" class="comment-avatar" style="border: none;" [src]="channelAvatar">
-          <img *ngIf="comment.destDid != comment.createrDid" class="comment-avatar" src='./assets/images/default-contact.svg'>
+          <img *ngIf="comment.destDid != comment.createrDid" class="comment-avatar" src={{userAvatarMap[comment.createrDid]}}>
           </div>
         </ion-col>
         <ion-col class="content-col" size="8" sizeMd="8" sizeLg="8">
@@ -233,7 +233,7 @@
           <ion-col class="img-col" size="2.5" sizeMd="1" sizeLg="1">
             <div class="feedAvatar">
             <img *ngIf="replyComment.destDid === replyComment.createrDid" class="comment-avatar" style="border: none;" [src]="channelAvatar">
-            <img *ngIf="replyComment.destDid != replyComment.createrDid" class="comment-avatar" src='./assets/images/default-contact.svg'>
+            <img *ngIf="replyComment.destDid != replyComment.createrDid" class="comment-avatar" src={{userAvatarMap[comment.createrDid]}}>
             </div>
           </ion-col>
           <ion-col class="content-col" size="7" sizeMd="7" sizeLg="7">

@@ -960,7 +960,7 @@ export class HiveVaultController {
     });
   }
 
-  getUserAvatar(): Promise<string> {
+  getUserAvatar(userDid: string = ''): Promise<string> {
     return new Promise(async (resolve, reject) => {
       let signinData = await this.dataHelper.getSigninData();
       if (signinData == null || signinData == undefined) {
@@ -968,7 +968,9 @@ export class HiveVaultController {
         return;
       }
 
-      let userDid = signinData.did;
+      if (!userDid) {
+        userDid = signinData.did;
+      }
       let userProfile: FeedsData.UserProfile = await this.getUserProfile(userDid);
       const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar;
       if (!avatarHiveUrl) {

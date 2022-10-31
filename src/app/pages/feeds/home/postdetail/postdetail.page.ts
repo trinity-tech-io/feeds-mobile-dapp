@@ -131,6 +131,7 @@ export class PostdetailPage implements OnInit {
   private postCommentList: FeedsData.CommentV3[] = [];
   private isInitUserNameMap: any = {};
   private userNameMap: any = {};
+  public userAvatarMap: { [userDid: string]: string } = {};
   private isloadingLikeMap: any = {};
   private isLoadingLike = false;
   public channelOwnerName: string = '';
@@ -227,6 +228,7 @@ export class PostdetailPage implements OnInit {
       this.infiniteScroll.disabled = false;
     }
     this.initOwnCommentObj();
+    this.handleUserAvatars(this.captainCommentList);
     this.refreshLikeAndCommentV2(this.captainCommentList);
     //this.totalData = this.sortCommentList();
   }
@@ -259,6 +261,7 @@ export class PostdetailPage implements OnInit {
       this.captainCommentList = this.totalData;
     }
     this.initOwnCommentObj();
+    this.handleUserAvatars(this.captainCommentList);
     this.refreshLikeAndCommentV2(this.captainCommentList);
   }
 
@@ -787,7 +790,6 @@ export class PostdetailPage implements OnInit {
   }
 
   loadData(event: any) {
-
     let sid = setTimeout(() => {
       this.pageSize++;
       let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
@@ -798,6 +800,7 @@ export class PostdetailPage implements OnInit {
         this.captainCommentList = this.captainCommentList.concat(data.items);
       }
       this.initOwnCommentObj();
+      this.handleUserAvatars(this.captainCommentList);
       this.refreshLikeAndCommentV2(data.items);
       clearTimeout(sid);
       event.target.complete();
@@ -1441,6 +1444,31 @@ export class PostdetailPage implements OnInit {
 
   checkFollowStatus(destDid: string, channelId: string): Promise<boolean> {
     return this.dataHelper.checkSubscribedStatus(destDid, channelId);
+  }
+
+  handleUserAvatars(newList: []) {
+    newList.forEach((comment: FeedsData.CommentV3) => {
+      this.setCommentUserAvatar(comment);
+      const replyList: FeedsData.CommentV3[] = this.replyCommentsMap[comment.commentId]
+      if (!replyList) {
+        console.log(comment.commentId + 'reply list null');
+        return;
+      }
+
+      replyList.forEach((reply: FeedsData.CommentV3) => {
+        this.setCommentUserAvatar(reply);
+      })
+    });
+
+  }
+
+  setCommentUserAvatar(comment: FeedsData.CommentV3) {
+    if (!this.userAvatarMap[comment.createrDid]) {
+      this.userAvatarMap[comment.createrDid] = './assets/images/default-contact.svg';
+      this.hiveVaultController.getUserAvatar(comment.createrDid).then((userAvatar: string) => {
+        this.userAvatarMap[comment.createrDid] = userAvatar;
+      });
+    }
   }
 }
 
