@@ -164,18 +164,9 @@
       <ion-row class="post-row">
         <ion-col size="0.5"></ion-col>
         <ion-col class="img-col" size="2.5" sizeMd="1" sizeLg="1">
-          <div
-            [ngClass]="{'feedAvatar': comment.destDid === comment.createrDid, 'feedAvatar1': comment.destDid != comment.createrDid}"
-          >
-          <img
-          *ngIf="comment.destDid === comment.createrDid && channelAvatar != ''"
-          style="border: none;"
-          class="customizeAvatar"
-          [src]="channelAvatar">
-          <img
-          *ngIf="comment.destDid != comment.createrDid"
-          class="customizeAvatar"
-          src='./assets/images/did-default-avatar.svg'>
+          <div [ngClass]="{'feedAvatar': comment.destDid === comment.createrDid, 'feedAvatar1': comment.destDid != comment.createrDid}">
+          <img *ngIf="comment.destDid === comment.createrDid && channelAvatar != ''" class="customizeAvatar" style="border: none;" [src]="channelAvatar">
+          <img *ngIf="comment.destDid != comment.createrDid" class="customizeAvatar" src={{userAvatarMap[comment.createrDid]}}>
           </div>
         </ion-col>
         <ion-col class="content-col" size="8" sizeMd="8" sizeLg="8">
@@ -248,18 +239,9 @@
         <ion-row class="post-row">
           <ion-col size="1"></ion-col>
           <ion-col class="img-col" size="2.5" sizeMd="1" sizeLg="1">
-            <div
-            [ngClass]="{'feedAvatar': replyComment.destDid === replyComment.createrDid, 'feedAvatar1': replyComment.destDid != replyComment.createrDid}"
-            >
-            <img
-            *ngIf="replyComment.destDid === replyComment.createrDid && channelAvatar != ''"
-            style="border: none;"
-            class="customizeAvatar"
-            [src]="channelAvatar">
-            <img
-            *ngIf="replyComment.destDid != replyComment.createrDid"
-            class="customizeAvatar"
-            src='./assets/images/did-default-avatar.svg'>
+            <div [ngClass]="{'feedAvatar': replyComment.destDid === replyComment.createrDid, 'feedAvatar1': replyComment.destDid != replyComment.createrDid}">
+            <img *ngIf="replyComment.destDid === replyComment.createrDid" class="comment-avatar" style="border: none;" [src]="channelAvatar">
+            <img *ngIf="replyComment.destDid != replyComment.createrDid" class="comment-avatar" src={{userAvatarMap[comment.createrDid]}}>
             </div>
           </ion-col>
           <ion-col class="content-col" size="7.5" sizeMd="7" sizeLg="7">

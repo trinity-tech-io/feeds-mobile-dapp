@@ -133,6 +133,7 @@ export class PostdetailPage implements OnInit {
   private postCommentList: FeedsData.CommentV3[] = [];
   private isInitUserNameMap: any = {};
   private userNameMap: any = {};
+  public userAvatarMap: { [userDid: string]: string } = {};
   private isloadingLikeMap: any = {};
   private isLoadingLike = false;
   public channelOwnerName: string = '';
@@ -204,7 +205,7 @@ export class PostdetailPage implements OnInit {
     this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMap(this.postId, this.hideDeletedComments);
     this.initRelyCommentExtradata();
     try {
-      this.getChannelPublicStatus(this.destDid,this.channelId);
+      this.getChannelPublicStatus(this.destDid, this.channelId);
     } catch (error) {
 
     }
@@ -227,21 +228,21 @@ export class PostdetailPage implements OnInit {
 
   handleChannelAvatar(channelAvatarUri: string) {
     let fileName: string = channelAvatarUri.split("@")[0];
-    if(this.channelAvatar === ''){
+    if (this.channelAvatar === '') {
       this.channelAvatar = './assets/images/loading.svg';
     }
     this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
       .then((result) => {
         result = result || '';
-        if(result != ''){
+        if (result != '') {
           this.channelAvatar = result;
-        }else {
-          if(this.channelAvatar === './assets/images/loading.svg'){
+        } else {
+          if (this.channelAvatar === './assets/images/loading.svg') {
             this.channelAvatar = "./assets/images/profile-0.svg";
           }
         }
       }).catch((err) => {
-        if(this.channelAvatar === './assets/images/loading.svg'){
+        if (this.channelAvatar === './assets/images/loading.svg') {
           this.channelAvatar = "./assets/images/profile-0.svg";
         }
       })
@@ -259,6 +260,7 @@ export class PostdetailPage implements OnInit {
       this.infiniteScroll.disabled = false;
     }
     this.initOwnCommentObj();
+    this.handleUserAvatars(this.captainCommentList);
     this.refreshLikeAndCommentV2(this.captainCommentList);
     //this.totalData = this.sortCommentList();
   }
@@ -291,6 +293,7 @@ export class PostdetailPage implements OnInit {
       this.captainCommentList = this.totalData;
     }
     this.initOwnCommentObj();
+    this.handleUserAvatars(this.captainCommentList);
     this.refreshLikeAndCommentV2(this.captainCommentList);
   }
 
@@ -824,7 +827,6 @@ export class PostdetailPage implements OnInit {
   }
 
   loadData(event: any) {
-
     let sid = setTimeout(() => {
       this.pageSize++;
       let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
@@ -835,6 +837,7 @@ export class PostdetailPage implements OnInit {
         this.captainCommentList = this.captainCommentList.concat(data.items);
       }
       this.initOwnCommentObj();
+      this.handleUserAvatars(this.captainCommentList);
       this.refreshLikeAndCommentV2(data.items);
       clearTimeout(sid);
       event.target.complete();
@@ -1589,6 +1592,31 @@ export class PostdetailPage implements OnInit {
           this.handleDisplayNameMap[userDid] = name;
         }
       }).catch(() => {
+      })
+    }
+  }
+
+  handleUserAvatars(newList: []) {
+    newList.forEach((comment: FeedsData.CommentV3) => {
+      this.setCommentUserAvatar(comment);
+      const replyList: FeedsData.CommentV3[] = this.replyCommentsMap[comment.commentId]
+      if (!replyList) {
+        console.log(comment.commentId + 'reply list null');
+        return;
+      }
+
+      replyList.forEach((reply: FeedsData.CommentV3) => {
+        this.setCommentUserAvatar(reply);
+      })
+    });
+
+  }
+
+  setCommentUserAvatar(comment: FeedsData.CommentV3) {
+    if (!this.userAvatarMap[comment.createrDid]) {
+      this.userAvatarMap[comment.createrDid] = './assets/images/default-contact.svg';
+      this.hiveVaultController.getUserAvatar(comment.createrDid).then((userAvatar: string) => {
+        this.userAvatarMap[comment.createrDid] = userAvatar;
       });
     }
   }
