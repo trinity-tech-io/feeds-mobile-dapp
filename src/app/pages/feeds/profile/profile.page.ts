@@ -341,6 +341,9 @@ export class ProfilePage implements OnInit {
 
   async addProflieEvent() {
     this.updateWalletAddress(null);
+    this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
+      this.initTitleBar();
+    });
     this.events.subscribe(FeedsEvent.PublishType.clickDisconnectWallet, () => {
       this.walletAddress = '';
       this.walletAddressStr = '';
@@ -647,6 +650,7 @@ export class ProfilePage implements OnInit {
 
     this.events.unsubscribe(FeedsEvent.PublishType.nftUpdatePrice);
     this.events.unsubscribe(FeedsEvent.PublishType.clickDisconnectWallet);
+    this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.postImgMap = {};
     this.postTime = {};
     this.clearDownStatus();
