@@ -145,29 +145,29 @@ export class NftavatarlistPage implements OnInit {
     let imgUri = "";
     let kind = "";
     let size = "";
-    if(version === "1"){
-       size = item["originAssetSize"];
-       if (!size)
-       size = '0';
-       imgUri = item['asset'] || "";
-      if(parseInt(size) > 5 * 1024 * 1024) {
-      imgUri = item['thumbnail'];
+    if (version === "1") {
+      size = item["originAssetSize"];
+      if (!size)
+        size = '0';
+      imgUri = item['asset'] || "";
+      if (parseInt(size) > 5 * 1024 * 1024) {
+        imgUri = item['thumbnail'];
       }
-    }else if(version === "2"){
+    } else if (version === "2") {
       let jsonData = item['data'] || "";
-       kind = jsonData["kind"];
-        size = jsonData["size"];
-        if (!size)
+      kind = jsonData["kind"];
+      size = jsonData["size"];
+      if (!size)
         size = '0';
       if (jsonData != "") {
-        imgUri  = jsonData['image'] || "";
+        imgUri = jsonData['image'] || "";
       }
-      if(parseInt(size) > 5 * 1024 * 1024) {
+      if (parseInt(size) > 5 * 1024 * 1024) {
         imgUri = item['thumbnail'];
       }
     }
 
-    this.dataHelper.setClipProfileIamge(imgUri);
+    this.dataHelper.setClipImage(imgUri);
     this.native.pop();
   }
 
@@ -177,7 +177,7 @@ export class NftavatarlistPage implements OnInit {
     let thumbnailUri = "";
     let kind = "";
     let size = "";
-    if(version === "1"){
+    if (version === "1") {
       thumbnailUri = item['thumbnail'] || "";
       kind = item["kind"];
       size = item["originAssetSize"];
@@ -186,22 +186,22 @@ export class NftavatarlistPage implements OnInit {
       if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
         thumbnailUri = item['asset'] || "";
       }
-    }else if(version === "2"){
+    } else if (version === "2") {
       let jsonData = item['data'] || "";
       if (jsonData != "") {
         thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
         if (!size)
-        size = '0';
-      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-        thumbnailUri = jsonData['image'] || "";
-      }
+          size = '0';
+        if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+          thumbnailUri = jsonData['image'] || "";
+        }
       } else {
         thumbnailUri = "";
       }
     }
-    if(thumbnailUri === ""){
+    if (thumbnailUri === "") {
       return;
     }
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {
@@ -219,7 +219,7 @@ export class NftavatarlistPage implements OnInit {
     let thumbnailUri = "";
     let kind = "";
     let size = "";
-    if(version === "1"){
+    if (version === "1") {
       thumbnailUri = item['thumbnail'] || "";
       kind = item["kind"];
       size = item["originAssetSize"];
@@ -228,22 +228,22 @@ export class NftavatarlistPage implements OnInit {
       if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
         thumbnailUri = item['asset'] || "";
       }
-    }else if(version === "2"){
+    } else if (version === "2") {
       let jsonData = item['data'] || "";
       if (jsonData != "") {
         thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
         if (!size)
-        size = '0';
-      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-        thumbnailUri = jsonData['image'] || "";
-      }
+          size = '0';
+        if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+          thumbnailUri = jsonData['image'] || "";
+        }
       } else {
         thumbnailUri = "";
       }
     }
-    if(thumbnailUri === ""){
+    if (thumbnailUri === "") {
       return;
     }
     if (thumbnailUri.indexOf('feeds:imgage:') > -1) {

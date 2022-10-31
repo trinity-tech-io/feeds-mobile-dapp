@@ -23,9 +23,9 @@ export class EditimagePage implements OnInit {
     private events: Events,
     private titleBarService: TitleBarService,
     private dataHelper: DataHelper
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   ionViewWillEnter() {
     this.isOPenRightMenu = false;
@@ -36,7 +36,7 @@ export class EditimagePage implements OnInit {
       this.isOPenRightMenu = true;
     });
     this.initTitle();
-    this.headPortrait = this.dataHelper.getClipProfileIamge();
+    this.headPortrait = this.dataHelper.getClipImage();
   }
 
   initTitle() {
@@ -55,9 +55,9 @@ export class EditimagePage implements OnInit {
       null,
       null,
     );
-    let croppedImage = this.dataHelper.getClipProfileIamge();
+    let croppedImage = this.dataHelper.getClipImage();
     if (this.headPortrait === croppedImage && !this.isOPenRightMenu) {
-      this.dataHelper.setClipProfileIamge('');
+      this.dataHelper.setClipImage('');
     }
   }
 
@@ -66,7 +66,7 @@ export class EditimagePage implements OnInit {
   }
 
   finish() {
-    this.dataHelper.setClipProfileIamge(this.croppedImage);
+    this.dataHelper.setClipImage(this.croppedImage);
     this.nativeService.pop();
   }
 }

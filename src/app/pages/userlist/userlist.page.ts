@@ -81,13 +81,13 @@ export class UserlistPage implements OnInit {
   setAvatarUI(userDid: string, avatarUrl: string) {
     if (avatarUrl) {
       let fileName: string = userDid.replace('did:elastos:', '');
-      this.hiveVaultController.getV3HiveUrlData(userDid, avatarUrl, fileName)
+      this.hiveVaultController.getV3HiveUrlData(avatarUrl)
         .then((image) => {
           this.setUserAvatar(userDid, image);
         }).catch((err) => {
-           this.setUserAvatar(userDid);
+          this.setUserAvatar(userDid);
         })
-    }else{
+    } else {
       this.setUserAvatar(userDid);
     }
   }
@@ -149,7 +149,7 @@ export class UserlistPage implements OnInit {
         let arr = newId.split("-");
         let userDid: string = arr[0];
         let isLoad = this.isLoadUsers[userDid] || ''
-        if(isLoad === ''){
+        if (isLoad === '') {
           this.isLoadUsers[userDid] = "loaded"
           this.setPageItemData(userDid);
         }
@@ -166,7 +166,7 @@ export class UserlistPage implements OnInit {
       this.pageItemMap[userDid].name = UtilService.shortenAddress(simpleDid);
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
         this.setUserNameAndAvatarUI(userProfile);
-      }).catch(err=>{
+      }).catch(err => {
         this.setUserAvatar(userDid);
       });
     }
@@ -262,7 +262,7 @@ export class UserlistPage implements OnInit {
   }
 
   clickSubscription(userDid: string) {
-    this.native.navigateForward(['/userprofile'],{ queryParams: { 'userDid': userDid } });
+    this.native.navigateForward(['/userprofile'], { queryParams: { 'userDid': userDid } });
   }
 }
 

@@ -74,41 +74,41 @@ export class ProfileimagePage implements OnInit {
     private titleBarService: TitleBarService,
     private ipfsService: IPFSService,
     private camera: CameraService,
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   ionViewWillEnter() {
     this.initTitle();
     this.select = this.dataHelper.getSelsectIndex();
-    let clipProfileIamge = this.dataHelper.getClipProfileIamge();
+    let clipProfileIamge = this.dataHelper.getClipImage();
     if (clipProfileIamge != '') {
       this.select = 0;
       this.selectedAvatar = clipProfileIamge;
-      this.dataHelper.setClipProfileIamge('');
+      this.dataHelper.setClipImage('');
     } else {
       this.selectedAvatar =
         this.dataHelper.getProfileIamge() || 'assets/images/profile-1.svg';
     }
     // Check if an uploaded avatar exists. If so, select it and have it displayed
     if (this.selectedAvatar.indexOf('data:image') === -1 &&
-        this.selectedAvatar.indexOf('feeds:imgage:') === -1 &&
-        this.selectedAvatar.indexOf('feeds:image:') === -1 &&
-        this.selectedAvatar.indexOf('pasar:image:') === -1
-        ) {
+      this.selectedAvatar.indexOf('feeds:imgage:') === -1 &&
+      this.selectedAvatar.indexOf('feeds:image:') === -1 &&
+      this.selectedAvatar.indexOf('pasar:image:') === -1
+    ) {
       this.uploadedAvatar = null;
     } else {
       let imgUri = "";
       if (this.selectedAvatar.indexOf('feeds:imgage:') > -1) {
         imgUri = this.selectedAvatar.replace('feeds:imgage:', '');
         imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      }else if(this.selectedAvatar.indexOf('feeds:image:') > -1){
+      } else if (this.selectedAvatar.indexOf('feeds:image:') > -1) {
         imgUri = this.selectedAvatar.replace('feeds:image:', '');
         imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      }else if(this.selectedAvatar.indexOf('pasar:image:') > -1){
+      } else if (this.selectedAvatar.indexOf('pasar:image:') > -1) {
         imgUri = this.selectedAvatar.replace('pasar:image:', '');
         imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
-      }else{
+      } else {
         imgUri = this.selectedAvatar;
       }
       this.uploadedAvatar = imgUri;
@@ -120,7 +120,7 @@ export class ProfileimagePage implements OnInit {
     this.native.handleTabsEvents()
   }
 
-  ionViewDidEnter() {}
+  ionViewDidEnter() { }
 
   initTitle() {
     this.titleBarService.setTitle(
@@ -164,10 +164,10 @@ export class ProfileimagePage implements OnInit {
 
   openGallery(data: any) {
     this.hidePictureMenuComponent = false;
-    let fileBase64  = data["fileBase64"] || "";
-    if(fileBase64 != ""){
+    let fileBase64 = data["fileBase64"] || "";
+    if (fileBase64 != "") {
       this.native.navigateForward(['editimage'], '');
-      this.dataHelper.setClipProfileIamge(fileBase64);
+      this.dataHelper.setClipImage(fileBase64);
     }
   }
 
@@ -179,18 +179,18 @@ export class ProfileimagePage implements OnInit {
       (imageUrl: any) => {
         this.hidePictureMenuComponent = false;
         let imgBase64 = imageUrl || "";
-        if(imgBase64 != ""){
+        if (imgBase64 != "") {
           this.native.navigateForward(['editimage'], '');
-          this.dataHelper.setClipProfileIamge(imgBase64);
+          this.dataHelper.setClipImage(imgBase64);
         }
       },
-      err => {},
+      err => { },
     );
   }
 
   hidePictureMenu(data: any) {
     let buttonType = data['buttonType'];
-    switch(buttonType) {
+    switch (buttonType) {
       case 'photolibary':
         this.hidePictureMenuComponent = false;
         break;

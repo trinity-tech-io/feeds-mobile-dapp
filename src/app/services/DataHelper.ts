@@ -2159,11 +2159,11 @@ export class DataHelper {
   }
 
   ////clipProfileIamge
-  setClipProfileIamge(clipProfileIamge: string) {
+  setClipImage(clipProfileIamge: string) {
     this.clipProfileIamge = clipProfileIamge;
   }
 
-  getClipProfileIamge() {
+  getClipImage() {
     return this.clipProfileIamge;
   }
 

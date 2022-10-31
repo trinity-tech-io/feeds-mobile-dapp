@@ -913,15 +913,33 @@ export class UtilService {
     return 'hive://' + targetDid + '@' + Config.APPLICATION_DID + '/' + scriptName + '?params={"empty":0}';
   }
 
-  public static getScriptName(hiveUrl: string) {
+  public static parseScriptNameFromHiveUrl(hiveUrl: string) {
     if (!hiveUrl) {
       return '';
     }
 
-    const start = hiveUrl.lastIndexOf('/');
+    const start = hiveUrl.lastIndexOf('/') + 1;
     const end = hiveUrl.lastIndexOf('?');
 
     const scriptName = hiveUrl.substring(start, end);
     return scriptName;
+  }
+
+  public static parseTargetDidFromHiveUrl(hiveUrl: string) {
+    if (!hiveUrl) {
+      return '';
+    }
+
+    const tmpUrl = hiveUrl.replace('hive://', '');
+
+
+    const end = tmpUrl.indexOf('@');
+
+    const targetDid = tmpUrl.substring(0, end);
+    return targetDid;
+  }
+
+  public static removeBase64Header(base64Img: string) {
+    return base64Img.replace(/^data:image\/png;base64,|^data:image\/jpeg;base64,|^data:image\/jpg;base64,|^data:image\/bmp;base64,/, '');
   }
 }

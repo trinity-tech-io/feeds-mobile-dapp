@@ -1015,7 +1015,7 @@ export class HiveVaultController {
   downloadEssAvatarFromHiveUrl(hiveUrl: string, targetDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const rawImage = await this.hiveVaultApi.downloadEssAvatarFromHiveUrl(hiveUrl, targetDid);
+        const rawImage = await this.hiveVaultApi.downloadAvatarFromHiveUrl(hiveUrl, targetDid);
         if (!rawImage) {
           resolve(null)
           return
@@ -1108,30 +1108,32 @@ export class HiveVaultController {
     });
   }
 
-  getV3HiveUrlData(destDid: string, hiveUrl: string, fileName: string): Promise<string> {
+  getV3HiveUrlData(hiveUrl: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!destDid || !fileName || !hiveUrl) {
+        if (!hiveUrl) {
           resolve('');
           return;
         }
 
-        const result = await this.fileHelperService.getV3Data(fileName);
-        if (result && result != '') {
+        const scriptName = UtilService.parseScriptNameFromHiveUrl(hiveUrl);
+        const result = await this.fileHelperService.getV3Data(scriptName);
+        if (result) {
           resolve(result);
           return;
         }
-
-
         if (!result) {
           try {
-            const downloadResult = await this.hiveVaultApi.downloadEssAvatarFromHiveUrl(hiveUrl, destDid);
-            await this.fileHelperService.saveV3Data(fileName, downloadResult);
+            const targetDid = UtilService.parseTargetDidFromHiveUrl(hiveUrl);
+            const downloadResult = await this.hiveVaultApi.downloadAvatarFromHiveUrl(hiveUrl, targetDid);
+            await this.fileHelperService.saveV3Data(scriptName, downloadResult);
             resolve(downloadResult);
           } catch (error) {
             reject(error);
           }
           return;
+        } else {
+
         }
         resolve('')
       } catch (error) {
@@ -2380,16 +2382,14 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const avatarHiveUrl = await this.uploadUserProfileAvatar(avatar);
+        if (!avatarHiveUrl) {
+          Logger.error(TAG, 'Update avatar result null');
+          reject('Update avatar result null');
+          return;
+        }
 
         const originProfile = await this.getUserProfile(did);
-
-        // const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatar);
-        // if (avatarHiveURL != originProfile.avatar) {
-        //   await this.hiveVaultApi.delteFile(originProfile.avatar);
-        // }
-
         const result = await this.hiveVaultApi.updateSelfProfile(name, description, avatarHiveUrl);
-
         if (!result) {
           Logger.error(TAG, 'Update profile result null');
           reject('Update profile result null');
@@ -2406,8 +2406,9 @@ export class HiveVaultController {
           avatar: avatarHiveUrl,
           bio: description
         }
-
-        this.dataHelper.addUserProfile(userProfile);
+        const scriptName = UtilService.parseScriptNameFromHiveUrl(avatarHiveUrl);
+        await this.fileHelperService.saveV3Data(scriptName, avatar);
+        await this.dataHelper.addUserProfile(userProfile);
         resolve(userProfile)
       } catch (error) {
         Logger.error(TAG, 'Update profile error', error);
@@ -2419,14 +2420,18 @@ export class HiveVaultController {
   getRemoteUserProfileWithoutSave(userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
-
         const result = await this.hiveVaultApi.queryProfile(userDid);
         if (!result) {
           Logger.error(TAG, 'Get remote result null');
           resolve(null);
           return;
         }
-        const profile = HiveVaultResultParse.parseProfileResult(result);
+        const profile = HiveVaultResultParse.parseProfileResult(result.find_message.items);
+        if (!profile) {
+          Logger.error(TAG, 'Get remote profile result null');
+          resolve(null);
+          return;
+        }
         const originProfile = await this.getUserProfile(userDid);
         const userProfile: FeedsData.UserProfile = {
           did: userDid,
@@ -2449,7 +2454,6 @@ export class HiveVaultController {
   getRemoteUserProfileWithSave(userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
-
         const profile = await this.getRemoteUserProfileWithoutSave(userDid);
         if (!profile) {
           Logger.error(TAG, 'Get remote user profile result null');
@@ -2491,6 +2495,7 @@ export class HiveVaultController {
         const selfDid = (await this.dataHelper.getSigninData()).did;
         const scriptName = await this.hiveVaultApi.uploadDataWithScriptName(Config.FEEDS_HIVE_CUSTOM_AVATAR_PATH, avatarData, (process: number) => { });
         const hiveUrl = UtilService.createHiveUrl(selfDid, scriptName);
+
         resolve(hiveUrl);
       } catch (error) {
         Logger.error(TAG, 'Upload profile avatar error', error);

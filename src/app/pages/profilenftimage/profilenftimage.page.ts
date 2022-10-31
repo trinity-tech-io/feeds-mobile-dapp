@@ -122,7 +122,7 @@ export class ProfilenftimagePage implements OnInit {
       let thumbnailUri = "";
       let kind = "";
       let size = "";
-      if(version === "1"){
+      if (version === "1") {
         thumbnailUri = item['thumbnail'] || "";
         kind = item["kind"];
         size = item["originAssetSize"];
@@ -131,22 +131,22 @@ export class ProfilenftimagePage implements OnInit {
         if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
           thumbnailUri = item['asset'] || "";
         }
-      }else if(version === "2"){
+      } else if (version === "2") {
         let jsonData = item['data'] || "";
         if (jsonData != "") {
           thumbnailUri = jsonData['thumbnail'] || "";
           kind = jsonData["kind"];
           size = jsonData["size"];
           if (!size)
-          size = '0';
-        if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-          thumbnailUri = jsonData['image'] || "";
-        }
+            size = '0';
+          if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+            thumbnailUri = jsonData['image'] || "";
+          }
         } else {
           thumbnailUri = "";
         }
       }
-      if(thumbnailUri === ""){
+      if (thumbnailUri === "") {
         return;
       }
 
@@ -174,8 +174,8 @@ export class ProfilenftimagePage implements OnInit {
     } else {
       let version = item['version'] || "1";
       let imgUri = "";
-      let size  = "";
-      if(version === "1"){
+      let size = "";
+      if (version === "1") {
         imgUri = item['asset'] || "";
         size = item["originAssetSize"];
         if (!size)
@@ -183,16 +183,16 @@ export class ProfilenftimagePage implements OnInit {
         if (parseInt(size) > 5 * 1024 * 1024) {
           imgUri = item['thumbnail'] || "";
         }
-      }else if(version === "2"){
+      } else if (version === "2") {
         let jsonData = item['data'] || "";
         if (jsonData != "") {
           imgUri = jsonData['image'] || "";
           size = jsonData["size"];
           if (!size)
-          size = '0';
-        if (parseInt(size) > 5 * 1024 * 1024) {
-          imgUri = jsonData['thumbnail'] || "";
-        }
+            size = '0';
+          if (parseInt(size) > 5 * 1024 * 1024) {
+            imgUri = jsonData['thumbnail'] || "";
+          }
         } else {
           imgUri = "";
         }
@@ -209,7 +209,7 @@ export class ProfilenftimagePage implements OnInit {
         imgUri = this.ipfsService.getNFTGetUrl() + imgUri;
       }
       this.native.navigateForward(['editimage'], { replaceUrl: true });
-      this.dataHelper.setClipProfileIamge(imgUri);
+      this.dataHelper.setClipImage(imgUri);
     }
 
   }
@@ -233,7 +233,7 @@ export class ProfilenftimagePage implements OnInit {
     let thumbnailUri = "";
     let kind = "";
     let size = "";
-    if(version === "1"){
+    if (version === "1") {
       thumbnailUri = item['thumbnail'] || "";
       kind = item["kind"];
       size = item["originAssetSize"];
@@ -242,22 +242,22 @@ export class ProfilenftimagePage implements OnInit {
       if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
         thumbnailUri = item['asset'] || "";
       }
-    }else if(version === "2"){
+    } else if (version === "2") {
       let jsonData = item['data'] || "";
       if (jsonData != "") {
         thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
         if (!size)
-        size = '0';
-      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-        thumbnailUri = jsonData['image'] || "";
-      }
+          size = '0';
+        if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+          thumbnailUri = jsonData['image'] || "";
+        }
       } else {
         thumbnailUri = "";
       }
     }
-    if(thumbnailUri === ""){
+    if (thumbnailUri === "") {
       return;
     }
 
@@ -277,7 +277,7 @@ export class ProfilenftimagePage implements OnInit {
     let thumbnailUri = "";
     let kind = "";
     let size = "";
-    if(version === "1"){
+    if (version === "1") {
       thumbnailUri = item['thumbnail'] || "";
       kind = item["kind"];
       size = item["originAssetSize"];
@@ -286,22 +286,22 @@ export class ProfilenftimagePage implements OnInit {
       if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
         thumbnailUri = item['asset'] || "";
       }
-    }else if(version === "2"){
+    } else if (version === "2") {
       let jsonData = item['data'] || "";
       if (jsonData != "") {
         thumbnailUri = jsonData['thumbnail'] || "";
         kind = jsonData["kind"];
         size = jsonData["size"];
         if (!size)
-        size = '0';
-      if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
-        thumbnailUri = jsonData['image'] || "";
-      }
+          size = '0';
+        if (kind === "gif" && parseInt(size) <= 5 * 1024 * 1024) {
+          thumbnailUri = jsonData['image'] || "";
+        }
       } else {
         thumbnailUri = "";
       }
     }
-    if(thumbnailUri === ""){
+    if (thumbnailUri === "") {
       return;
     }
 
@@ -309,10 +309,10 @@ export class ProfilenftimagePage implements OnInit {
       thumbnailUri = thumbnailUri.replace('feeds:imgage:', '');
     } else if (thumbnailUri.indexOf('feeds:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('feeds:image:', '');
-    }  else if (thumbnailUri.indexOf('pasar:image:') > -1) {
+    } else if (thumbnailUri.indexOf('pasar:image:') > -1) {
       thumbnailUri = thumbnailUri.replace('pasar:image:', '');
     }
-    return "profileNftImagePage-post-"+thumbnailUri;
+    return "profileNftImagePage-post-" + thumbnailUri;
   }
 
   ionScroll() {

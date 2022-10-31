@@ -10,6 +10,7 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
+import { UtilService } from 'src/app/services/utilService';
 
 @Component({
   selector: 'app-editprofileinfo',
@@ -61,7 +62,7 @@ export class EditprofileinfoPage implements OnInit {
 
   async onAvatarDataChangedListener() {
     try {
-      let croppedImage = this.dataHelper.getClipProfileIamge();
+      let croppedImage = this.dataHelper.getClipImage();
       if (croppedImage != '') {
         this.avatar = croppedImage;
       } else {
@@ -73,7 +74,7 @@ export class EditprofileinfoPage implements OnInit {
 
   async initProfileInfo() {
     try {
-      this.dataHelper.setClipProfileIamge("");
+      this.dataHelper.setClipImage("");
 
       let signInData = await this.dataHelper.getSigninData();
       this.userDid = signInData.did;
@@ -87,19 +88,13 @@ export class EditprofileinfoPage implements OnInit {
       }
       this.userDes = userProfile.bio || userProfile.resolvedBio || signInData['description'] || '';
 
-      // let croppedImage = this.dataHelper.getClipProfileIamge();
-      // if (croppedImage != '') {
-      //   this.avatar = croppedImage;
-      // } else {
-      //   this.avatar = await this.hiveVaultController.getUserAvatar();
-      // }
-
       if (!userProfile.name && !userProfile.bio && !userProfile.avatar) {
         this.hiveVaultController.getRemoteUserProfileWithSave(this.userDid).then((userProfile: FeedsData.UserProfile) => {
-
+          if (!userProfile) {
+            this.setAvatarUI(userProfile.did, userProfile.avatar);
+          }
         });
       }
-
       const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
       await this.setAvatarUI(this.userDid, avatarUrl);
 
@@ -113,8 +108,7 @@ export class EditprofileinfoPage implements OnInit {
   setAvatarUI(userDid: string, avatarUrl: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       if (avatarUrl) {
-        let fileName: string = userDid.replace('did:elastos:', '');
-        this.hiveVaultController.getV3HiveUrlData(userDid, avatarUrl, fileName)
+        this.hiveVaultController.getV3HiveUrlData(avatarUrl)
           .then((image) => {
             this.setUserAvatar(userDid, image);
           }).catch((err) => {
@@ -130,8 +124,6 @@ export class EditprofileinfoPage implements OnInit {
   }
 
   setUserAvatar(userDid: string, avatar = './assets/images/default-contact.svg') {
-    // if (!this.pageItemMap[userDid])
-    //   this.pageItemMap[userDid] = this.generatePageItem(userDid);
     this.avatar = avatar;
   }
 
@@ -161,7 +153,7 @@ export class EditprofileinfoPage implements OnInit {
     let fileBase64 = data["fileBase64"] || "";
     if (fileBase64 != "") {
       this.native.navigateForward(['editimage'], '');
-      this.dataHelper.setClipProfileIamge(fileBase64);
+      this.dataHelper.setClipImage(fileBase64);
     }
   }
 
@@ -175,7 +167,7 @@ export class EditprofileinfoPage implements OnInit {
         let imgBase64 = imageUrl || "";
         if (imgBase64 != "") {
           this.native.navigateForward(['editimage'], '');
-          this.dataHelper.setClipProfileIamge(imgBase64);
+          this.dataHelper.setClipImage(imgBase64);
         }
       },
       err => { },
@@ -183,10 +175,9 @@ export class EditprofileinfoPage implements OnInit {
   }
 
   //TODO
-  saveAvatar(avatar: string) {
+  cleanClipImage(avatar: string) {
     try {
-      // this.dataHelper.saveUserAvatar(this.userDid, this.avatar);
-      this.dataHelper.setClipProfileIamge("");
+      this.dataHelper.setClipImage("");
     } catch (error) {
       this.native.toast('common.saveFailed');
       throw new Error(error);
@@ -198,7 +189,7 @@ export class EditprofileinfoPage implements OnInit {
       await this.native.showLoading('common.waitMoment');
       try {
         await this.hiveVaultController.updateUserProfile(this.userDid, this.userName, this.userDes, this.avatar);
-        this.saveAvatar(this.avatar);
+        this.cleanClipImage(this.avatar);
       } catch (error) {
       } finally {
         this.native.hideLoading()
@@ -208,7 +199,7 @@ export class EditprofileinfoPage implements OnInit {
     }
   }
 
-  checkParams() {
+  checkParams(): boolean {
     let isChanged = false;
     if (this.userName != this.originUserName) {
       isChanged = true;
