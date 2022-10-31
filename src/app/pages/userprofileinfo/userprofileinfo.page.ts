@@ -81,12 +81,12 @@ export class UserprofileinfoPage implements OnInit {
       type: 'ProfiledetailPage.name',
       details: this.userName,
     });
-   console.log("=========",this.userDescription);
-   let description = this.userDescription || '';
-   if(description === ''){
+    console.log("=========", this.userDescription);
+    let description = this.userDescription || '';
+    if (description === '') {
       description = this.translate.instant('DIDdata.NoDescription');
-   }
-   console.log("=========",description);
+    }
+    console.log("=========", description);
 
     this.profileDetails.push({
       type: 'ProfiledetailPage.description',
