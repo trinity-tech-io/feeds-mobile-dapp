@@ -1118,5 +1118,6 @@ declare namespace FeedsData {
     tokenUri: string,
     channelEntry: string
     ownerAddr: string
+    signature: string
   }
 }

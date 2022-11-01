@@ -56,6 +56,7 @@ export class EidtchannelPage implements OnInit {
   public isShowUpdateContratct: boolean = false;
   private updateChannelSid: NodeJS.Timer = null;
   private popoverDialog: any = null;
+  private signature: string = "";
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -105,6 +106,7 @@ export class EidtchannelPage implements OnInit {
       this.dataHelper.setChannelContractInfoList(channelContractInfoList);
       this.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
       this.tippingAddress =  this.channelContratctInfo.receiptAddr;
+      this.signature = this.channelContratctInfo.signature;
       this.oldTippingAddress = this.tippingAddress;
       this.isShowTippingAddress = true;
       if(this.channelContratctInfo.cname != this.displayName ||
@@ -406,7 +408,8 @@ export class EidtchannelPage implements OnInit {
            tokenId: '',
            tokenUri: '',
            channelEntry: '',
-           ownerAddr: ''
+           ownerAddr: '',
+           signature: ''
          };
         channelContratctInfo.tokenId = tokenInfo[0];
         channelContratctInfo.tokenUri = tokenInfo[1];
@@ -418,6 +421,7 @@ export class EidtchannelPage implements OnInit {
           .nftGet(this.ipfsService.getNFTGetUrl() + uri);
         channelContratctInfo.description = result.description;
         channelContratctInfo.cname = result.data.cname;
+        channelContratctInfo.signature = result.data.signature;
         let avatarUri = result.data.avatar.replace('feeds:image:', '');
         let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl()+avatarUri);
         let avatarBase64 = await UtilService.blobToDataURL(avatar);
@@ -593,7 +597,7 @@ export class EidtchannelPage implements OnInit {
             "banner": "",
             "ownerDid": this.destDid,
             "channelEntry": UtilService.generateFeedsQrCodeString(this.destDid,this.channelId),
-            "signature": ""
+            "signature": this.signature
         }
         }
 

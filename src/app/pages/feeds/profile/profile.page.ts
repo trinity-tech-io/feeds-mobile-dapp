@@ -2603,7 +2603,8 @@ export class ProfilePage implements OnInit {
       tokenId: '',
       tokenUri: '',
       channelEntry: '',
-      ownerAddr: ''
+      ownerAddr: '',
+      signature: ''
     };
     channelNft.tokenId = channelInfo[0];
     channelNft.tokenUri = channelInfo[1];
@@ -2615,6 +2616,7 @@ export class ProfilePage implements OnInit {
       .nftGet(this.ipfsService.getNFTGetUrl() + uri);
     channelNft.description = result.description;
     channelNft.cname = result.data.cname;
+    channelNft.signature = result.data.signature;
     let avatarUri = result.data.avatar.replace('feeds:image:', '');
     let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl() + avatarUri);
     let avatarBase64 = await UtilService.blobToDataURL(avatar);

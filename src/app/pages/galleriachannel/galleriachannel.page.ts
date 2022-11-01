@@ -235,7 +235,8 @@ export class GalleriachannelPage implements OnInit {
             tokenId: '',
             tokenUri: '',
             channelEntry: '',
-            ownerAddr: ''
+            ownerAddr: '',
+            signature: ''
           };
           channelContratctInfo.description = this.nftDescription;
           channelContratctInfo.cname = this.displayName;
@@ -244,6 +245,7 @@ export class GalleriachannelPage implements OnInit {
           channelContratctInfo.ownerAddr = this.ownerAddr;
           channelContratctInfo.tokenUri = this.tokenUri;
           channelContratctInfo.tokenId = this.getTokenId();
+          channelContratctInfo.signature = this.signature;
           let hash = SparkMD5.hash(this.realFile);
           channelContratctInfo.avatar = hash;
           let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
