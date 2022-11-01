@@ -27,7 +27,7 @@ export class Config {
         20: Config.CONTRACT_URI
     }
     /** MainNet IPFS */
-    public static IPFS_SERVER: string = 'https://ipfs.trinity-feeds.app/';
+    public static IPFS_SERVER: string = 'https://ipfs.pasarprotocol.io/';
     /** MainNet ASSIST */
     public static ASSIST_SERVER: string = 'https://assist.trinity-feeds.app/';
     /** TestNet contract */
@@ -42,7 +42,7 @@ export class Config {
         21: Config.CONTRACT_TEST_URI
     }
     /** TestNet IPFS */
-    public static IPFS_TEST_SERVER: string = 'https://ipfs-test.trinity-feeds.app/';
+    public static IPFS_TEST_SERVER: string = 'https://ipfs-test.pasarprotocol.io/';
 
     public static readonly scriptVersion = "3.3.0";
 

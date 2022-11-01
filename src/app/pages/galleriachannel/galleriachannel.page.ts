@@ -12,7 +12,7 @@ import { PopupProvider } from 'src/app/services/popup';
 import { Logger } from 'src/app/services/logger';
 import { Config } from 'src/app/services/config';
 import { DataHelper } from 'src/app/services/DataHelper';
-import _, { result } from 'lodash';
+import _ from 'lodash';
 import { Params, ActivatedRoute } from '@angular/router';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
@@ -157,7 +157,7 @@ export class GalleriachannelPage implements OnInit {
   }
   let iss = data["iss"] || null;
   if(iss != this.destDid ){
-    this.native.toastWarn("GalleriachannelPage.signatureError")
+    this.native.toastWarn("GalleriachannelPage.signatureError1")
     return;
   }
   this.signature = signature;

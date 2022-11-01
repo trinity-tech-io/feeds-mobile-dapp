@@ -940,7 +940,8 @@ export const en = {
     mintSuccessDesc: 'Congratulations, you channel collectible has been created successfully.',
     mintSuccessDesc1: 'Congratulations, you channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
     publishSameDataFailed: 'Failed to publish to Explore Feeds：Explore Feeds has same channel data',
-    signatureError: 'Failed to sign data, please try again'
+    signatureError: 'Failed to sign data, please try again',
+    signatureError1: 'Make sure that the DID of the Essentials login is the same as the DID of the Feeds login.'
   },
   ScanPage: {
     title: 'Scanner',

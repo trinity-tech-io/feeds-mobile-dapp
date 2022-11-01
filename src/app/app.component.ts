@@ -427,13 +427,13 @@ export class MyApp {
   }
 
   initIpfs() {
-    let ipfsBaseUrl = localStorage.getItem("selectedIpfsNetwork") || ''
-    if (ipfsBaseUrl === '') {
-      ipfsBaseUrl = Config.defaultIPFSApi();
-      localStorage.setItem("selectedIpfsNetwork", ipfsBaseUrl);
-    }
+    // let ipfsBaseUrl = localStorage.getItem("selectedIpfsNetwork") || ''
+    // if (ipfsBaseUrl === '') {
+    //   ipfsBaseUrl = Config.defaultIPFSApi();
+    //   localStorage.setItem("selectedIpfsNetwork", ipfsBaseUrl);
+    // }
 
-    ApiUrl.setIpfs(ipfsBaseUrl);
+    ApiUrl.setIpfs(Config.IPFS_SERVER);
     this.globalService.refreshBaseNFTIPSFUrl();
   }
 
