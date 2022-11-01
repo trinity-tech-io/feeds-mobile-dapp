@@ -149,8 +149,14 @@ export class GalleriachannelPage implements OnInit {
     this.native.toastWarn("GalleriachannelPage.signatureError")
     return;
   }
+
   let signature = data['signature'] || null;
   if(signature === null){
+    this.native.toastWarn("GalleriachannelPage.signatureError")
+    return;
+  }
+  let iss = data["iss"] || null;
+  if(iss != this.destDid ){
     this.native.toastWarn("GalleriachannelPage.signatureError")
     return;
   }

@@ -1,6 +1,6 @@
 export class Config {
     public static APPLICATION_DID = 'did:elastos:iqtWRVjz7gsYhyuQEb1hYNNmWQt1Z9geXg';
-    public static TRINITY_API = 'trinity-tech.cn';
+    public static TRINITY_API = 'trinity-tech.io';
     public static ELASTOS_API = 'elastos.io';
 
     public static ELASTOS_BRIDGE = 'https://walletconnect.elastos.net/v2';
