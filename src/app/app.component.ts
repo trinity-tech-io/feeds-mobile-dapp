@@ -88,7 +88,7 @@ export class MyApp {
     this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, async () => {
       document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
       try {
-        if(this.avatar === ''){
+        if (this.avatar === '') {
           this.avatar = './assets/images/loading.svg';
         }
         await this.getAvatar();
@@ -305,7 +305,7 @@ export class MyApp {
             this.native.hideLoading();
           }
         }
-        this.hiveVaultController.refreshAvatar().catch(() => { });
+        // this.hiveVaultController.refreshAvatar().catch(() => { });
         this.hiveVaultController.initRegisterScript(false).catch((error) => { console.log("initRegisterScript error === ", error) })
         resolve('FINISH');
       } catch (error) {
@@ -528,13 +528,13 @@ export class MyApp {
 
     userName = userName || '';
     let originUserName = (await this.dataHelper.getSigninData()).name || '';
-    if(userName === ''){
+    if (userName === '') {
       let des = that.translate.instant('ConfirmdialogComponent.des') + originUserName + that.translate.instant('ConfirmdialogComponent.des1');
       that.native.toastWarn(des);
       return false;
     }
 
-    if(originUserName != userName){
+    if (originUserName != userName) {
       let des = that.translate.instant('ConfirmdialogComponent.des') + originUserName + that.translate.instant('ConfirmdialogComponent.des1');
       that.native.toastWarn(des);
       return false;
@@ -583,8 +583,8 @@ export class MyApp {
   }
 
   async disconnectWallet() {
-  let accountAddress = this.nftContractControllerService.getAccountAddress() || '';
-    if(accountAddress != ''){
+    let accountAddress = this.nftContractControllerService.getAccountAddress() || '';
+    if (accountAddress != '') {
       try {
         await this.walletConnectControllerService.disconnect();
       } catch (error) {

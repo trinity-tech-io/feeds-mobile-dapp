@@ -8,6 +8,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { UtilService } from './utilService';
 import { Events } from 'src/app/services/events.service';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 const TAG: string = 'AppService';
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,7 @@ export class AppService {
     private dataHelper: DataHelper,
     private events: Events,
     private splashScreen: SplashScreen,
+    private hiveVaultController: HiveVaultController
   ) { }
 
   init() {
@@ -83,6 +85,8 @@ export class AppService {
           this.native.setRootRouter(['/tabs/home']);
           this.feedService.updateSignInDataExpTime(signInData);
           this.splashScreen.hide();
+
+          this.hiveVaultController.syncSelfProfileWithRemote();
         }
         resolve();
       });

@@ -87,14 +87,6 @@ export class EditprofileinfoPage implements OnInit {
         this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || signInData['name'] || '';
       }
       this.userDes = userProfile.bio || userProfile.resolvedBio || signInData['description'] || '';
-
-      if (!userProfile.name && !userProfile.bio && !userProfile.avatar) {
-        this.hiveVaultController.getRemoteUserProfileWithSave(this.userDid).then((userProfile: FeedsData.UserProfile) => {
-          if (!userProfile) {
-            this.setAvatarUI(userProfile.did, userProfile.avatar);
-          }
-        });
-      }
       const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
       await this.setAvatarUI(this.userDid, avatarUrl);
 

@@ -329,9 +329,16 @@ export class HiveVaultResultParse {
   }
   /** parse backup subscribed channel result end */
 
-  public static parseProfileResult(result: any): { did: string, name: string, description: string, avatar: string } {
+  public static parseProfileResult(result: any): { did: string, name: string, description: string, avatar: string, updatedAt: number } {
     try {
       /**
+       * avatar_url: "hive://did:elastos:iXB82Mixxx@did:elastos:iqtWRVjzxxx/4255689d13e5dxx?params={"empty":0}"
+       * created: 1667136921
+       * description: "Trinity tech developer"
+       * did: "did:elastos:iXB82Mixxx"
+       * modified: 1667136921
+       * name: "WangRan"
+       * updated_at: 1667136921129
       */
       const profiles = result;
       if (!profiles || profiles.length == 0) {
@@ -342,7 +349,8 @@ export class HiveVaultResultParse {
         did: profiles[0].did,
         name: profiles[0].name,
         description: profiles[0].description,
-        avatar: profiles[0].avatar_url
+        avatar: profiles[0].avatar_url,
+        updatedAt: profiles[0].updated_at
       }
       return profileResult;
     } catch (error) {

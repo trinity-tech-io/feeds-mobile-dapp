@@ -1949,8 +1949,6 @@ export class HiveVaultHelper {
                 Logger.log('Call script result is', result);
                 resolve(result);
             } catch (error) {
-                Logger.error(TAG, 'callScript error:', error);
-                //reject(this.handleError(error))
                 reject(error);
             }
         });
@@ -2345,7 +2343,7 @@ export class HiveVaultHelper {
         })
     }
 
-    private insertSelfProfileData(name: string, description: string, avatarAddress: string): Promise<{ did: string, name: string, description: string, avatar: string }> {
+    private insertSelfProfileData(name: string, description: string, avatarAddress: string): Promise<{ did: string, name: string, description: string, avatar: string, updatedAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const signinDid = (await this.dataHelper.getSigninData()).did;
@@ -2356,7 +2354,8 @@ export class HiveVaultHelper {
                         did: signinDid,
                         name: name,
                         description: description,
-                        avatar: avatarAddress
+                        avatar: avatarAddress,
+                        updatedAt: updatedAt
                     }
                     resolve(insertResult);
                 }
@@ -2369,7 +2368,7 @@ export class HiveVaultHelper {
         });
     }
 
-    uploadProfile(name: string, description: string, avatarAddress: string): Promise<{ did: string, name: string, description: string, avatar: string }> {
+    uploadProfile(name: string, description: string, avatarAddress: string): Promise<{ did: string, name: string, description: string, avatar: string, updatedAt: number }> {
         return this.insertSelfProfileData(name, description, avatarAddress);
     }
     /** create profile end */
@@ -2400,10 +2399,24 @@ export class HiveVaultHelper {
         })
     }
 
-    private async updateProfileData(name: string, description: string, avatarHiveUrl: string) {
-        const signinDid = (await this.dataHelper.getSigninData()).did;
-        const updatedAt = UtilService.getCurrentTimeNum();
-        return await this.updateDataToProfileDB(signinDid, name, description, avatarHiveUrl, updatedAt);
+    private async updateProfileData(name: string, description: string, avatarHiveUrl: string): Promise<{ updatedAt: number }> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const signinDid = (await this.dataHelper.getSigninData()).did;
+                const updatedAt = UtilService.getCurrentTimeNum();
+                const result = await this.updateDataToProfileDB(signinDid, name, description, avatarHiveUrl, updatedAt);
+                if (!result) {
+                    const errorMsg = 'Update profile result null';
+                    Logger.error(TAG, errorMsg);
+                    reject(errorMsg)
+                }
+                resolve({ updatedAt: updatedAt });
+            } catch (error) {
+                Logger.error(TAG, 'Update profile error', error)
+                reject(error);
+            }
+        });
+
     }
 
     updateProfile(name: string, description: string, avatarHiveUrl: string) {
@@ -2433,7 +2446,7 @@ export class HiveVaultHelper {
                 let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_PROFILE, { "did": targetDid })
                 resolve(result)
             } catch (error) {
-                Logger.error(TAG, 'Call query profile Scripting error:', error)
+                // Logger.error(TAG, 'Call query profile Scripting error:', error)
                 reject(error)
             }
         })
@@ -2445,7 +2458,7 @@ export class HiveVaultHelper {
                 const result = await this.callQueryProfile(targetDid);
                 resolve(result);
             } catch (error) {
-                Logger.error(TAG, 'Query profile error', error);
+                // Logger.error(TAG, 'Query profile error', error);
                 reject(error);
             }
         });
@@ -2459,7 +2472,7 @@ export class HiveVaultHelper {
                 const result = await this.hiveService.deleteFile(remotePath);
                 resolve(result);
             } catch (error) {
-                Logger.error(TAG, 'Query profile error', error);
+                Logger.error(TAG, 'Delete file error', error);
                 reject(error);
             }
         });

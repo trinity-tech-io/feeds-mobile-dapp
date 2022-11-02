@@ -482,6 +482,11 @@ export class ProfilePage implements OnInit {
     if (avatar === null || this.avatar === './assets/images/loading.svg') {
       this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
     }
+    // this.updateUserAvatar();
+    // let avatar = this.avatar || null;
+    // if (avatar === null) {
+    //   this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
+    // }
 
     this.events.subscribe(FeedsEvent.PublishType.updateLikeList, list => {
       this.zone.run(() => {
@@ -722,7 +727,7 @@ export class ProfilePage implements OnInit {
   }
 
   async doRefresh(event: any) {
-    this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
+    // this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         try {

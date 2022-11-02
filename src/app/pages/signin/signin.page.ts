@@ -151,7 +151,7 @@ export class SigninPage implements OnInit {
         }
       }).catch((err) => {
         this.authorizationStatus = null;
-        if(err != "common.didSigninError1"){
+        if (err != "common.didSigninError1") {
           this.native.toastWarn(err);
         }
       });
@@ -184,6 +184,7 @@ export class SigninPage implements OnInit {
     this.dataHelper.setSyncHiveData(syncHiveData);
     this.dataHelper.saveData("feeds.initHive", "1");
     this.native.setRootRouter(['/tabs/home']);
+    this.hiveVaultController.syncSelfProfileWithRemote();
   }
 
   async TryButton() {

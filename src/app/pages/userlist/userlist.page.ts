@@ -80,7 +80,6 @@ export class UserlistPage implements OnInit {
 
   setAvatarUI(userDid: string, avatarUrl: string) {
     if (avatarUrl) {
-      let fileName: string = userDid.replace('did:elastos:', '');
       this.hiveVaultController.getV3HiveUrlData(avatarUrl)
         .then((image) => {
           this.setUserAvatar(userDid, image);
@@ -255,14 +254,18 @@ export class UserlistPage implements OnInit {
   private syncDidDocumentProfileFromList(usersDidList: string[]) {
     for (let index = 0; index < usersDidList.length; index++) {
       const userdid: string = usersDidList[index];
-      this.hiveVaultController.syncUserProfileFromDidDocument(userdid).then((userProfile: FeedsData.UserProfile) => {
+      this.hiveVaultController.getUserProfile(userdid).then((userProfile: FeedsData.UserProfile) => {
         this.setUserNameAndAvatarUI(userProfile);
       });
+      // this.hiveVaultController.syncUserProfileFromDidDocument(userdid).then((userProfile: FeedsData.UserProfile) => {
+      //   this.setUserNameAndAvatarUI(userProfile);
+      // });
     }
   }
 
   syncRemoteUserProfile(userDidList: string[]) {
-    this.syncDidDocumentProfileFromList(userDidList);
+    // this.syncDidDocumentProfileFromList(userDidList);
+
   }
 
   clickSubscription(userDid: string) {
