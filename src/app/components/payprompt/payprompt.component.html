@@ -43,12 +43,12 @@
     </ion-col>
   </ion-row>
 
-  <ion-row (click)="advancedSettings()" >
+  <!-- <ion-row (click)="advancedSettings()" >
     <ion-col size="12" style="text-align:center;">
          <p class="Advancedsettings" *ngIf="!isAdvancedSetting">{{'common.advancedSettings'|translate}} <img src="./assets/images/bottom-arrow.svg" *ngIf="!isAdvancedSetting"/></p>
          <p class="Advancedsettings" *ngIf="isAdvancedSetting">{{'common.normalSettings'|translate}} <img src="./assets/images/top-arrow.svg" *ngIf="isAdvancedSetting"/></p>
     </ion-col>
-  </ion-row>
+  </ion-row> -->
 
   <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode" style="margin-top:20px;">
     <ion-col class="btn cancel2 ion-activatable ripple" size="5.6" (click)="cancel()">

@@ -20,7 +20,7 @@ export class PaypromptComponent implements OnInit {
   public memo: string = '';
   public defalutMemo: string = 'like the post';
   public title: string = '';
-  public disableMemo: boolean = false;
+  public disableMemo: boolean = true;
   public isAdvancedSetting: boolean = false;
   public destDid: string = '';
   public channelId: string = null;
