@@ -285,7 +285,7 @@
           <ion-label>{{ commentNumMap[post.postId] }}</ion-label>
         </ion-col>
         <ion-col (click)="clickDashang(post.destDid, post.channelId, post.postId)" *ngIf="isAndroid">
-          <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
+          <img src="/assets/images/tip.svg" *ngIf="!theme.darkMode">
           <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
         </ion-col>
         <ion-col (click)="navToPostDetail(post.destDid, post.channelId, post.postId,$event)">
