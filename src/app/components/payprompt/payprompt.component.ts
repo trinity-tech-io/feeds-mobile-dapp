@@ -7,8 +7,10 @@ import { Events } from '../../services/events.service';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
 import { Config } from 'src/app/services/config';
-
+import { Logger } from 'src/app/services/logger';
+const TAG: string = 'PaypromptComponent';
 @Component({
   selector: 'app-payprompt',
   templateUrl: './payprompt.component.html',
@@ -38,6 +40,7 @@ export class PaypromptComponent implements OnInit {
     private hiveVaultController: HiveVaultController,
     private nftContractControllerService: NFTContractControllerService,
     private events: Events,
+    private ipfsService: IPFSService,
     public theme: ThemeService,
     public zone: NgZone,
   ) { }
@@ -177,44 +180,53 @@ export class PaypromptComponent implements OnInit {
   }
 
   async handleTipping() {
-     let textObj = {
-      "isLoading": true,
-      "loadingTitle": 'common.waitMoment',
-      "loadingText": 'common.makeTipping',
-      "loadingCurNumber": '1',
-      "loadingMaxNumber": '1'
-    }
-    this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
-    this.tippingChannelSid = setTimeout(() => {
-      this.nftContractControllerService.getChannelTippingContractService().cancelTippingProcess();
-      textObj.isLoading = false;
-      this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
-      this.clearTippingChannelSid();
-      this.popupProvider.showSelfCheckDialog('common.burningNFTSTimeoutDesc');
-    }, Config.WAIT_TIME_BURN_NFTS);
+    let textObj = {
+     "isLoading": true,
+     "loadingTitle": 'common.waitMoment',
+     "loadingText": 'common.uploadingData',
+     "loadingCurNumber": '1',
+     "loadingMaxNumber": '2'
+   }
+   this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
+   this.tippingChannelSid = setTimeout(() => {
+     this.nftContractControllerService.getChannelTippingContractService().cancelTippingProcess();
+     textObj.isLoading = false;
+     this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
+     this.clearTippingChannelSid();
+     this.popupProvider.showSelfCheckDialog('common.burningNFTSTimeoutDesc');
+   }, Config.WAIT_TIME_BURN_NFTS);
 
-    let channelId = '0x'+this.channelId;
-    let postId = '0x'+this.postId;
-    let tippingAmount = this.nftContractControllerService.transToWei(
-      this.amount.toString(),
-    );
-    let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
-
-    this.nftContractControllerService.getChannelTippingContractService()
-      .makeTipping(channelId, postId, '0x0000000000000000000000000000000000000000',tippingAmount,this.memo,walletAdress)
-      .then(() => {
-        this.nftContractControllerService.getChannelTippingContractService().cancelTippingProcess();
-        this.native.toast("common.tippingSucess");
-        textObj.isLoading = false;
-        this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
-        this.clearTippingChannelSid();
-      }).catch(() => {
-        textObj.isLoading = false;
-        this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
-        this.clearTippingChannelSid();
-        this.native.toastWarn("commont.tippingFailed");
-      });
-  }
+   let channelId = '0x'+this.channelId;
+   let postId = '0x'+this.postId;
+   let tippingAmount = this.nftContractControllerService.transToWei(
+     this.amount.toString(),
+   );
+   let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
+   this.uploadData()
+   .then(async (result) => {
+     Logger.log(TAG, 'Upload Result', result);
+     textObj.loadingCurNumber = "1";
+     textObj.loadingText = "common.uploadDataSuccess";
+     this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
+     let senderUri = result.jsonHash;
+     textObj.loadingCurNumber = "2";
+     textObj.loadingText = "common.makeTipping";
+     this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
+     return this.nftContractControllerService.getChannelTippingContractService()
+     .makeTipping(channelId, postId, '0x0000000000000000000000000000000000000000',tippingAmount,senderUri,this.memo,walletAdress);
+   }).then(() => {
+       this.nftContractControllerService.getChannelTippingContractService().cancelTippingProcess();
+       this.native.toast("common.tippingSucess");
+       textObj.isLoading = false;
+       this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
+       this.clearTippingChannelSid();
+     }).catch(() => {
+       textObj.isLoading = false;
+       this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
+       this.clearTippingChannelSid();
+       this.native.toastWarn("common.tippingFailed");
+     });
+ }
 
   clearTippingChannelSid(){
     if(this.tippingChannelSid != null){
@@ -222,4 +234,49 @@ export class PaypromptComponent implements OnInit {
         this.tippingChannelSid = null;
     }
   }
+
+  sendIpfsJSON(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let signInData = await this.dataHelper.getSigninData();
+      let did = signInData.did || '';
+      let name = signInData.name || '';
+      let description = signInData.description || '';
+
+      let ipfsJSON = {
+        "did": did,
+        "name": name,
+        "description": description
+      }
+      let formData = new FormData();
+      formData.append('', JSON.stringify(ipfsJSON));
+      Logger.log(TAG, 'Send json, formdata length is', formData.getAll('').length);
+      this.ipfsService
+        .nftPost(formData)
+        .then(result => {
+          //{"Name":"blob","Hash":"QmaxWgjheueDc1XW2bzDPQ6qnGi9UKNf23EBQSUAu4GHGF","Size":"17797"};
+          Logger.log(TAG, 'Json data is', JSON.stringify(result));
+          let hash = result['Hash'] || null;
+          if (hash != null) {
+            let jsonHash = 'feeds:json:' + hash;
+            resolve(jsonHash);
+          }
+        })
+        .catch(err => {
+          Logger.error(TAG, 'Send Json data error', err);
+          reject('upload json error');
+        });
+    });
+  }
+
+  uploadData(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      this.sendIpfsJSON().then((jsonHash) => {
+          resolve({ jsonHash: jsonHash });
+        })
+        .catch((error) => {
+          reject('upload file error');
+        });
+    });
+  }
+
 }

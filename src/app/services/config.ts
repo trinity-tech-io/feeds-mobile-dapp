@@ -35,9 +35,8 @@ export class Config {
     public static STICKER_TEST_ADDRESS: string = '0xed1978c53731997f4DAfBA47C9b07957Ef6F3961';
     public static PASAR_TEST_ADDRESS: string = '0x2652d10A5e525959F7120b56f2D7a9cD0f6ee087';
     public static DIAMOND_TEST_ADDRESS: string = '';
-    //public static CHANNEL_TEST_ADDRESS: string = '0x38D3fE3C53698fa836Ba0c1e1DD8b1d8584127A7';
-    public static CHANNEL_TEST_ADDRESS: string = '0x530b57b762dbc1d25c7a9167BFf81B040378979f';
-    public static CHANNEL_TEST_TIPPTING_PAYMENT_ADDRESS = '0xe31a727184919DA9aDe687E18501122FF81841cb';
+    public static CHANNEL_TEST_ADDRESS: string = '0x38D3fE3C53698fa836Ba0c1e1DD8b1d8584127A7';
+    public static CHANNEL_TEST_TIPPTING_PAYMENT_ADDRESS = '0x2Aa04F7F470350036812F50a5067Ab835EB1a7dE';
     public static CONTRACT_TEST_URI = 'https://api-testnet.' + Config.BASE_API + '/eth';
     public static CONTRACT_TEST_CHAINID: number = 21;
     public static CONTRACT_TEST_RPC = {
