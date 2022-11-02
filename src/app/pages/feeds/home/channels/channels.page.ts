@@ -1698,15 +1698,19 @@ export class ChannelsPage implements OnInit {
       Logger.log(TAG, "tokenId:", tokenId);
       tokenId = UtilService.hex2dec(tokenId);
       Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      await this.native.showLoading("common.waitMoment");
       let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
       Logger.log(TAG, "tokenInfo:", tokenInfo);
       if (tokenInfo[0] != '0') {
+        this.native.hideLoading();
         channelTippingAddressMap[channelId] = tokenInfo[3];
         this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
         return channelTippingAddressMap[channelId];
       }
+      this.native.hideLoading();
       return null;
     } catch (error) {
+      this.native.hideLoading();
       return null;
     }
   }
