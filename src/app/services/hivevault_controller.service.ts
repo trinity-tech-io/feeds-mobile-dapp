@@ -2415,6 +2415,47 @@ export class HiveVaultController {
   getUserProfileFromLocal(userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
+        const localProfile = await this.getLocalUserProfile(userDid);
+        if (!localProfile) {
+          resolve(null);
+          return;
+        }
+        resolve(localProfile);
+
+        try {
+          if (!localProfile.updatedAt || localProfile.updatedAt == 0)
+            this.getRemoteUserProfileWithSave(userDid);
+        } catch (error) {
+        }
+
+        try {
+          if (!localProfile.resolvedName && !localProfile.resolvedBio && !localProfile.resolvedAvatar)
+            this.syncUserProfileFromDidDocument(userDid);
+        } catch (error) {
+        }
+
+        // try {
+        //   const remoteProfile = await this.getRemoteUserProfileWithSave(userDid);
+        //   if (remoteProfile) {
+        //     resolve(remoteProfile);
+        //     return;
+        //   }
+        // } catch (error) {
+        // }
+
+
+        // const newLocalProfile = await this.getLocalUserProfile(userDid);
+        // resolve(newLocalProfile);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+
+  getLocalUserProfile(userDid: string): Promise<FeedsData.UserProfile> {
+    return new Promise(async (resolve, reject) => {
+      try {
         const user: FeedsData.UserProfile = await this.dataHelper.getUserProfileData(userDid);
         if (!user) {
           const displayName = await this.dataHelper.getDisplayNameByUserDid(userDid);
@@ -2673,6 +2714,7 @@ export class HiveVaultController {
           bio: profile.description,
           updatedAt: profile.updatedAt
         }
+
         resolve(userProfile);
       } catch (error) {
         Logger.warn(TAG, 'Cant get remote profile', userDid);
