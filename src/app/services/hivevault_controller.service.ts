@@ -2160,7 +2160,7 @@ export class HiveVaultController {
         const key = UtilService.generateDIDLocalVersion(userDid);
         localStorage.setItem(key, localVersion)
       } catch (error) {
-        console.log(error)
+        Logger.warn(error);
       }
     } else if (localVersion === '' && Config.scriptVersion === lasterVersion) {
       localVersion = Config.scriptVersion
@@ -2223,32 +2223,21 @@ export class HiveVaultController {
           resolve(null);
           return;
         }
-        resolve(localProfile);
+
+        try {
+          if (!localProfile.resolvedName && !localProfile.resolvedBio && !localProfile.resolvedAvatar) {
+            const profile = await this.syncUserProfileFromDidDocument(userDid);
+            resolve(profile);
+          }
+        } catch (error) {
+        }
 
         try {
           if (!localProfile.updatedAt || localProfile.updatedAt == 0)
             this.getRemoteUserProfileWithSave(userDid);
         } catch (error) {
         }
-
-        try {
-          if (!localProfile.resolvedName && !localProfile.resolvedBio && !localProfile.resolvedAvatar)
-            this.syncUserProfileFromDidDocument(userDid);
-        } catch (error) {
-        }
-
-        // try {
-        //   const remoteProfile = await this.getRemoteUserProfileWithSave(userDid);
-        //   if (remoteProfile) {
-        //     resolve(remoteProfile);
-        //     return;
-        //   }
-        // } catch (error) {
-        // }
-
-
-        // const newLocalProfile = await this.getLocalUserProfile(userDid);
-        // resolve(newLocalProfile);
+        resolve(localProfile);
       } catch (error) {
         reject(error);
       }
