@@ -88,11 +88,11 @@ export class MyApp {
 
     this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
       document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
-      this.getAvatar();
-      let avatar = this.avatar || null;
-      if (avatar === null) {
-        this.hiveVaultController.refreshAvatar().then(async () => { await this.getAvatar(); }).catch(async () => { await this.getAvatar(); });
-      }
+      // this.getAvatar();
+      // let avatar = this.avatar || null;
+      // if (avatar === null) {
+      //   this.hiveVaultController.refreshAvatar().then(async () => { await this.getAvatar(); }).catch(async () => { await this.getAvatar(); });
+      // }
       this.initProfileData();
     })
 
@@ -301,7 +301,7 @@ export class MyApp {
             this.native.hideLoading();
           }
         }
-        this.hiveVaultController.refreshAvatar().catch(() => { });
+        // this.hiveVaultController.refreshAvatar().catch(() => { });
         this.hiveVaultController.initRegisterScript(false).catch((error) => { console.log("initRegisterScript error === ", error) })
         resolve('FINISH');
       } catch (error) {

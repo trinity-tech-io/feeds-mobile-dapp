@@ -200,8 +200,8 @@ export class ProfilePage implements OnInit {
   public isLoadingMyFeeds: boolean = true;
   private setMyFeedsSid: any = null;
   private channelPublicStatusList: any = {};
-  public  pageName: string = "profile";
-  public  isOwner: boolean = true;
+  public pageName: string = "profile";
+  public isOwner: boolean = true;
 
   constructor(
     private elmRef: ElementRef,
@@ -468,10 +468,10 @@ export class ProfilePage implements OnInit {
     this.description = signInData['description'] || '';
     // let userDid = signInData['did'] || '';
     this.updateUserAvatar();
-    let avatar = this.avatar || null;
-    if (avatar === null) {
-      this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
-    }
+    // let avatar = this.avatar || null;
+    // if (avatar === null) {
+    //   this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
+    // }
 
     this.events.subscribe(FeedsEvent.PublishType.updateLikeList, list => {
       this.zone.run(() => {
@@ -711,7 +711,7 @@ export class ProfilePage implements OnInit {
   }
 
   async doRefresh(event: any) {
-    this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
+    // this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         try {
@@ -2286,7 +2286,7 @@ export class ProfilePage implements OnInit {
       if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid + "-" + postItem.channelId + "-myFeeds-"+this.pageName;
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-myFeeds-" + this.pageName;
       let exit = this.myFeedsObserver[postGridId] || null;
       if (exit != null) {
         continue;
@@ -2370,7 +2370,7 @@ export class ProfilePage implements OnInit {
       if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-like-'+this.pageName;
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.postId + "-" + postItem.content.mediaType + '-like-' + this.pageName;
       let exit = this.myLikeObserver[postGridId] || null;
       if (exit != null) {
         continue;

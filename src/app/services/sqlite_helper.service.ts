@@ -1172,7 +1172,7 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'create table if not exists ' + this.TABLE_USER
           + '('
-          + 'did VARCHAR(64) UNIQUE, resolved_name VARCHAR(64), resolved_avatar TEXT, resolved_bio TEXT, display_name VARCHAR(64), name VARCHAR(64), avatar TEXT, bio TEXT'
+          + 'did VARCHAR(64) UNIQUE, resolved_name VARCHAR(64), resolved_avatar TEXT, resolved_bio TEXT, display_name VARCHAR(64), name VARCHAR(64), avatar TEXT, bio TEXT, updated_at REAL(64)'
           + ')';
 
         const result = await this.executeSql(dbUserDid, statement);
@@ -1189,10 +1189,10 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_USER
-          + '(did, resolved_name, resolved_avatar, resolved_bio, display_name, name, avatar, bio) VALUES'
-          + '(?,?,?,?,?,?,?,?)';
+          + '(did, resolved_name, resolved_avatar, resolved_bio, display_name, name, avatar, bio, updated_at) VALUES'
+          + '(?,?,?,?,?,?,?,?,?)';
 
-        const params = [user.did, user.resolvedName, user.avatar, user.resolvedBio, user.displayName, user.avatar, user.bio];
+        const params = [user.did, user.resolvedName, user.avatar, user.resolvedBio, user.displayName, user.avatar, user.bio, user.updatedAt];
 
         const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Insert users data result is', result);
@@ -1208,8 +1208,8 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_USER
-          + ' SET resolved_name=?, resolved_avatar=?, resolved_bio=?, display_name=?, name=?, avatar=?, bio=? WHERE did=?';
-        const params = [user.resolvedName, user.resolvedAvatar, user.resolvedBio, user.displayName, user.name, user.avatar, user.bio, user.did];
+          + ' SET resolved_name=?, resolved_avatar=?, resolved_bio=?, display_name=?, name=?, avatar=?, bio=?, updated_at=? WHERE did=?';
+        const params = [user.resolvedName, user.resolvedAvatar, user.resolvedBio, user.displayName, user.name, user.avatar, user.bio, user.updatedAt, user.did];
         const result = await this.executeSql(dbUserDid, statement, params);
 
         Logger.log(TAG, 'update users data result: ', result)
@@ -1743,6 +1743,7 @@ export class FeedsSqliteHelper {
       const name = element['name'];
       const avatar = element['avatar'];
       const bio = element['bio'];
+      const updatedAt = element['updated_at'];
 
       let user: FeedsData.UserProfile = {
         did: did,
@@ -1752,7 +1753,8 @@ export class FeedsSqliteHelper {
         displayName: displayName,
         name: name,
         avatar: avatar,
-        bio: bio
+        bio: bio,
+        updatedAt: updatedAt
       }
       list.push(user);
     }

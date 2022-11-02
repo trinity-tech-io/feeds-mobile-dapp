@@ -2218,6 +2218,47 @@ export class HiveVaultController {
   getUserProfile(userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
+        const localProfile = await this.getLocalUserProfile(userDid);
+        if (!localProfile) {
+          resolve(null);
+          return;
+        }
+        resolve(localProfile);
+
+        try {
+          if (!localProfile.updatedAt || localProfile.updatedAt == 0)
+            this.getRemoteUserProfileWithSave(userDid);
+        } catch (error) {
+        }
+
+        try {
+          if (!localProfile.resolvedName && !localProfile.resolvedBio && !localProfile.resolvedAvatar)
+            this.syncUserProfileFromDidDocument(userDid);
+        } catch (error) {
+        }
+
+        // try {
+        //   const remoteProfile = await this.getRemoteUserProfileWithSave(userDid);
+        //   if (remoteProfile) {
+        //     resolve(remoteProfile);
+        //     return;
+        //   }
+        // } catch (error) {
+        // }
+
+
+        // const newLocalProfile = await this.getLocalUserProfile(userDid);
+        // resolve(newLocalProfile);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+
+  getLocalUserProfile(userDid: string): Promise<FeedsData.UserProfile> {
+    return new Promise(async (resolve, reject) => {
+      try {
         const user: FeedsData.UserProfile = await this.dataHelper.getUserProfileData(userDid);
         if (!user) {
           const displayName = await this.dataHelper.getDisplayNameByUserDid(userDid);
@@ -2229,7 +2270,8 @@ export class HiveVaultController {
             displayName: displayName,
             name: '',
             avatar: '',
-            bio: ''
+            bio: '',
+            updatedAt: 0
           }
           this.dataHelper.addUserProfile(newUser);
           resolve(newUser);
@@ -2246,7 +2288,8 @@ export class HiveVaultController {
             displayName: displayName,
             name: user.name,
             avatar: user.avatar,
-            bio: user.bio
+            bio: user.bio,
+            updatedAt: user.updatedAt
           }
           this.dataHelper.addUserProfile(newUser);
           resolve(newUser);
@@ -2276,7 +2319,7 @@ export class HiveVaultController {
         const userProfile = await this.didHelper.resolveUserProfile(userDid);
 
         if (!userProfile) {
-          const originUserProfile = await this.dataHelper.getUserProfileData(userDid) || null;
+          const originUserProfile = await this.getLocalUserProfile(userDid) || null;
           resolve(originUserProfile);
           Logger.warn(TAG, 'Resolve user profile result is null');
           return;
@@ -2286,18 +2329,20 @@ export class HiveVaultController {
         const resolvedName = userProfile.name;
         const resolvedDescrpition = userProfile.description;
 
-        let originUserProfile = await this.dataHelper.getUserProfileData(userDid) || null;
+        let originUserProfile = await this.getLocalUserProfile(userDid) || null;
 
         let originName = '';
         let originDisplayName = '';
         let originAvatar = '';
         let originBio = '';
+        let originUpdatedAt = 0;
 
         if (originUserProfile) {
           originName = originUserProfile.name;
           originDisplayName = originUserProfile.displayName;
           originAvatar = originUserProfile.avatar;
           originBio = originUserProfile.bio;
+          originUpdatedAt = originUserProfile.updatedAt
         }
 
         const newUserProfile: FeedsData.UserProfile = {
@@ -2308,12 +2353,13 @@ export class HiveVaultController {
           displayName: originDisplayName,
           name: originName,
           avatar: originAvatar,
-          bio: originBio
+          bio: originBio,
+          updatedAt: originUpdatedAt
         }
-        this.dataHelper.addUserProfile(newUserProfile);
+        await this.dataHelper.addUserProfile(newUserProfile);
         resolve(newUserProfile);
       } catch (error) {
-
+        reject(error);
       }
     });
   }
@@ -2370,7 +2416,8 @@ export class HiveVaultController {
           displayName: originProfile.displayName,
           name: result.name,
           avatar: result.avatar,
-          bio: result.description
+          bio: result.description,
+          updatedAt: result.updatedAt
         }
 
         this.dataHelper.addUserProfile(userProfile);
@@ -2390,7 +2437,7 @@ export class HiveVaultController {
           return;
         }
 
-        const originProfile = await this.getUserProfile(did);
+        const originProfile = await this.getLocalUserProfile(did);
         const result = await this.hiveVaultApi.updateSelfProfile(name, description, avatarHiveUrl);
         if (!result) {
           Logger.error(TAG, 'Update profile result null');
@@ -2406,7 +2453,8 @@ export class HiveVaultController {
           displayName: originProfile.displayName,
           name: name,
           avatar: avatarHiveUrl,
-          bio: description
+          bio: description,
+          updatedAt: result.updatedAt
         }
         const scriptName = UtilService.parseScriptNameFromHiveUrl(avatarHiveUrl);
         await this.fileHelperService.saveV3Data(scriptName, avatar);
@@ -2434,7 +2482,7 @@ export class HiveVaultController {
           resolve(null);
           return;
         }
-        const originProfile = await this.getUserProfile(userDid);
+        const originProfile = await this.getLocalUserProfile(userDid);
         const userProfile: FeedsData.UserProfile = {
           did: userDid,
           resolvedName: originProfile.resolvedName,
@@ -2443,11 +2491,13 @@ export class HiveVaultController {
           displayName: originProfile.displayName,
           name: profile.name,
           avatar: profile.avatar,
-          bio: profile.description
+          bio: profile.description,
+          updatedAt: profile.updatedAt
         }
+
         resolve(userProfile);
       } catch (error) {
-        Logger.error(TAG, 'Update profile error', error);
+        Logger.warn(TAG, 'Cant get remote profile', userDid);
         reject(error);
       }
     });
@@ -2465,21 +2515,56 @@ export class HiveVaultController {
         this.dataHelper.addUserProfile(profile);
         resolve(profile);
       } catch (error) {
-        Logger.error(TAG, 'Update profile error', error);
+        Logger.warn(TAG, 'Cant Get remote user profile', userDid);
         reject(error);
       }
     });
-
   }
 
-  diffRemoteProfile(userDid: string): Promise<boolean> {
+  syncSelfProfileWithRemote(): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
+      const userDid: string = (await this.dataHelper.getSigninData()).did;
       try {
-        const originProfile = await this.getUserProfile(userDid);
-        const remoteProfile = await this.getRemoteUserProfileWithoutSave(userDid);
+        let remoteProfile = null;
+        try {
+          remoteProfile = await this.getRemoteUserProfileWithoutSave(userDid);
+        } catch (error) {
+        }
 
-        const diffResult = _.isEqual(originProfile, remoteProfile);
-        resolve(diffResult);
+        try {
+          await this.syncUserProfileFromDidDocument(userDid);
+        } catch (error) {
+        }
+
+        const localUserProfile = await this.getLocalUserProfile(userDid);
+        if (!remoteProfile || !remoteProfile.updatedAt) {
+          const name = localUserProfile.name || localUserProfile.resolvedName || localUserProfile.displayName;
+          const description = localUserProfile.bio || localUserProfile.resolvedBio;
+          const avatar = localUserProfile.avatar || localUserProfile.resolvedAvatar;
+
+          if (!name || !description || !avatar) {
+            const result = await this.updateUserProfile(userDid, name, description, avatar);
+            const userProfile: FeedsData.UserProfile = {
+              did: result.did,
+              resolvedName: result.resolvedName,
+              resolvedAvatar: result.resolvedAvatar,
+              resolvedBio: result.resolvedBio,
+              displayName: result.displayName,
+              name: result.name,
+              avatar: result.avatar,
+              bio: description,
+              updatedAt: localUserProfile.updatedAt
+            }
+            this.dataHelper.addUserProfile(userProfile);
+            resolve(userProfile);
+            return;
+          }
+          resolve(localUserProfile);
+          return;
+        }
+
+        this.dataHelper.addUserProfile(remoteProfile);
+        resolve(remoteProfile);
       } catch (error) {
         Logger.error(TAG, 'Update profile error', error);
         reject(error);
@@ -2487,6 +2572,15 @@ export class HiveVaultController {
     });
   }
 
+  refreshAllDidDocument(userDidList: string[]) {
+    userDidList.forEach(userDid => {
+      this.syncUserProfileFromDidDocument(userDid);
+    });
+  }
+
+  refreshAllDidDocumentFromSubscriptionList() {
+
+  }
   diffProfile(originProfile: FeedsData.UserProfile, newProfile: FeedsData.UserProfile): boolean {
     return _.isEqual(originProfile, newProfile);
   }
