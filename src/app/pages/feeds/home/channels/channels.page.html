@@ -56,7 +56,7 @@
 
     <!-- <ion-row *ngIf="tippingAddress!=''" class="elaAdressRow">
       <ion-col size="1.5" style="text-align: right;">
-        <img [src]="!theme.darkMode ? './assets/images/dashang.svg' : './assets/images/darkmode/tip.svg'">
+        <img [src]="!theme.darkMode ? './assets/images/tip.svg' : './assets/images/darkmode/tip.svg'">
       </ion-col>
       <ion-col size="10.5" class="elaAdress" style="text-align: left;">
         {{tippingAddress}}
@@ -220,7 +220,7 @@
           <ion-label>{{ commentNumMap[post.postId] }}</ion-label>
         </ion-col>
         <ion-col (click)="clickDashang(post.destDid, post.channelId, post.postId)" *ngIf="followStatus&&isAndroid">
-          <img src="/assets/images/dashang.svg" *ngIf="!theme.darkMode">
+          <img src="/assets/images/tip.svg" *ngIf="!theme.darkMode">
           <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
         </ion-col>
         <ion-col (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">

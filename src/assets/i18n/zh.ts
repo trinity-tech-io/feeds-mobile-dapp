@@ -222,7 +222,7 @@ export const zh = {
     twitterError3: '无法解析twitter服务地址，请检查网络后重试',
     unableUnsubscribe: '无法取消订阅自己的频道',
     channelError: '请使用公开此频道时所用的钱包',
-    makeTipping: '正在打赏，请稍后',
+    makeTipping: '正在打赏，请稍候',
     tippingFailed: '打赏失败',
     tippingSucess: '打赏成功'
   },
