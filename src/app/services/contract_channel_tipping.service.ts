@@ -55,14 +55,15 @@ export class ChannelTippingContractService {
     postId: string,
     paidToken: string,
     amount: string,
+    senderUri: string,
     memo: string,
     walletAddress: string
   ): Promise<any>{
     return new Promise(async (resolve, reject) => {
           try {
-            Logger.log(TAG, 'burn params ', channelId, postId, paidToken, amount, memo);
+            Logger.log(TAG, 'burn params ', channelId, postId, paidToken, amount, senderUri, memo);
             const makeTippingdata = this.channelTippingContract.methods
-              .makeTipping(channelId, postId, paidToken, amount, memo)
+              .makeTipping(channelId, postId, paidToken, amount, senderUri, memo)
               .encodeABI();
             let transactionParams = await this.createTxParams(makeTippingdata,amount);
             Logger.log(TAG,
@@ -71,7 +72,7 @@ export class ChannelTippingContractService {
               transactionParams,
             );
             this.channelTippingContract.methods
-              .makeTipping(channelId, postId, paidToken, amount, memo)
+              .makeTipping(channelId, postId, paidToken, amount, senderUri, memo)
               .send(transactionParams)
               .on('transactionHash', hash => {
               Logger.log(TAG, 'makeTipping process, transactionHash is', hash);
