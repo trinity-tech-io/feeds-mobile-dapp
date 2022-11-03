@@ -148,6 +148,10 @@ export class PostdetailPage implements OnInit {
   public channelPublicStatusList: any = {};
   public createrDid: string = '';
   private isClickDashang: boolean = true;
+  /**post tip count*/
+  public postTipCountMap: any = {};
+  private isLoadingPostTipCountMap: any = {};
+
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -273,6 +277,8 @@ export class PostdetailPage implements OnInit {
       this.userNameList[key] = item.destDid;
       this.checkCommentIsMine(item, ownerDid);
     });
+
+    this.getPostTipCount(this.channelId, this.postId);
 
     //this.captainCommentList = _.cloneDeep(captainCommentList);
   }
@@ -406,6 +412,11 @@ export class PostdetailPage implements OnInit {
       });
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.updatePostTipCount, (item: any) => {
+      let postId = item.postId;
+      this.postTipCountMap[postId] = item.postTipCount;
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (deletePostEventData: FeedsData.PostV3) => {
       Logger.log(TAG, 'Received deletePostFinish event');
       this.zone.run(async () => {
@@ -493,6 +504,7 @@ export class PostdetailPage implements OnInit {
     }
 
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.updatePostTipCount);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deleteCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.pinPostFinish);
@@ -828,6 +840,7 @@ export class PostdetailPage implements OnInit {
       this.removeCaptainCommentObserverList();
       this.dataHelper.setChannelPublicStatusList({});
       this.isInitUserNameMap = {};
+      this.isLoadingPostTipCountMap = {};
       this.initData(true);
       event.target.complete();
     } catch (error) {
@@ -1237,7 +1250,7 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
-    if(tippingAddress != ''){
+    if (tippingAddress != '') {
       let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
       if (walletAdress === "") {
         this.isClickDashang = true;
@@ -1711,6 +1724,30 @@ export class PostdetailPage implements OnInit {
     } catch (error) {
       this.native.hideLoading();
       return null;
+    }
+  }
+
+  getPostTipCount(channelId: string, postId: string) {
+    let isLoad = this.isLoadingPostTipCountMap[postId] || "";
+    if (isLoad === "") {
+      this.isLoadingPostTipCountMap[postId] = "loading";
+      let postTipCountMap = this.dataHelper.getPostTipCountMap() || {};
+      let postTipCount = postTipCountMap[postId] || '';
+      if (postTipCount === '') {
+        this.nftContractControllerService
+          .getChannelTippingContractService()
+          .getPosTippingCount(channelId, postId).then((postTipCont: any) => {
+            this.postTipCountMap[postId] = postTipCont;
+            postTipCountMap[postId] = postTipCont;
+            this.dataHelper.setPostTipCountMap(postTipCountMap);
+          }).catch((err) => {
+            this.postTipCountMap[postId] = 0;
+            postTipCountMap[postId] = 0;
+            this.dataHelper.setPostTipCountMap(postTipCountMap);
+          });
+      } else {
+        this.postTipCountMap[postId] = postTipCount;
+      }
     }
   }
 

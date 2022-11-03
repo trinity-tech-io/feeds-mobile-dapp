@@ -217,6 +217,12 @@ export class PaypromptComponent implements OnInit {
    }).then(() => {
        this.nftContractControllerService.getChannelTippingContractService().cancelTippingProcess();
        this.native.toast("common.tippingSucess");
+       let postTipCountMap= this.dataHelper.getPostTipCountMap() || {};
+       let postTipCount = postTipCountMap[this.postId] || 0;
+       let newPostTipCount =  parseInt(postTipCount) + 1;
+       postTipCountMap[this.postId] = newPostTipCount;
+       this.dataHelper.setPostTipCountMap(postTipCountMap);
+       this.events.publish(FeedsEvent.PublishType.updatePostTipCount,{postId:this.postId,postTipCount:newPostTipCount});
        textObj.isLoading = false;
        this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
        this.clearTippingChannelSid();

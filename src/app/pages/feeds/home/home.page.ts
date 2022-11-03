@@ -190,6 +190,9 @@ export class HomePage implements OnInit {
   private channelPublicStatusList: any = {};
   public createrDid: string = '';
   private isClickDashang: boolean = true;
+  /**post tip count*/
+  public postTipCountMap: any = {};
+  private isLoadingPostTipCountMap: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -515,6 +518,11 @@ export class HomePage implements OnInit {
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.updatePostTipCount, (item: any) => {
+      let postId = item.postId;
+      this.postTipCountMap[postId] = item.postTipCount;
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
       this.zone.run(() => {
         this.refreshPostList(false);
@@ -634,6 +642,7 @@ export class HomePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.nftCancelOrder);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.updatePostTipCount);
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
 
@@ -972,6 +981,7 @@ export class HomePage implements OnInit {
       this.postMap = {};
       this.channelMap = {};
       this.dataHelper.setChannelPublicStatusList({});
+      this.isLoadingPostTipCountMap = {};
       this.removeObserveList();
       await this.initPostListData(true);
     } catch (error) {
@@ -1762,7 +1772,7 @@ export class HomePage implements OnInit {
       return;
     }
 
-    if(tippingAddress != ''){
+    if (tippingAddress != '') {
       let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
       if (walletAdress === "") {
         this.isClickDashang = true;
@@ -2435,6 +2445,7 @@ export class HomePage implements OnInit {
         }
         this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
         this.getDisplayName(destDid, channelId, destDid);
+        this.getPostTipCount(channelId, postId);
         if (mediaType === '1') {
           this.handlePostImgV2(destDid, channelId, postId);
         }
@@ -2604,6 +2615,30 @@ export class HomePage implements OnInit {
     } catch (error) {
       this.native.hideLoading();
       return null;
+    }
+  }
+
+  getPostTipCount(channelId: string, postId: string) {
+    let isLoad = this.isLoadingPostTipCountMap[postId] || "";
+    if (isLoad === "") {
+      this.isLoadingPostTipCountMap[postId] = "loading";
+      let postTipCountMap = this.dataHelper.getPostTipCountMap() || {};
+      let postTipCount = postTipCountMap[postId] || '';
+      if (postTipCount === '') {
+        this.nftContractControllerService
+          .getChannelTippingContractService()
+          .getPosTippingCount(channelId, postId).then((postTipCont: any) => {
+            this.postTipCountMap[postId] = postTipCont;
+            postTipCountMap[postId] = postTipCont;
+            this.dataHelper.setPostTipCountMap(postTipCountMap);
+          }).catch((err) => {
+            this.postTipCountMap[postId] = 0;
+            postTipCountMap[postId] = 0;
+            this.dataHelper.setPostTipCountMap(postTipCountMap);
+          });
+      } else {
+        this.postTipCountMap[postId] = postTipCount;
+      }
     }
   }
 }

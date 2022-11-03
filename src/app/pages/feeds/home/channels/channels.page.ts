@@ -147,6 +147,10 @@ export class ChannelsPage implements OnInit {
   public createrDid: string = '';
   private isClickDashang: boolean = true;
 
+  /**post tip count*/
+  public postTipCountMap: any = {};
+  private isLoadingPostTipCountMap: any = {};
+
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -495,6 +499,11 @@ export class ChannelsPage implements OnInit {
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.updatePostTipCount, (item: any) => {
+      let postId = item.postId;
+      this.postTipCountMap[postId] = item.postTipCount;
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.deletePostFinish, (deletePostEventData: any) => {
       this.zone.run(async () => {
         await this.native.showLoading('common.waitMoment');
@@ -568,6 +577,7 @@ export class ChannelsPage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.updatePostTipCount);
     this.events.unsubscribe(FeedsEvent.PublishType.channelRightMenu);
 
     this.events.unsubscribe(FeedsEvent.PublishType.pinPostFinish);
@@ -775,6 +785,7 @@ export class ChannelsPage implements OnInit {
       this.postMap = {};
       this.pinnedPostMap = {};
       this.isLoadPinnedPost = {};
+      this.isLoadingPostTipCountMap = {};
       this.isRefresh = true;
       event.target.disabled = false;
       this.removeObserveList();
@@ -1420,7 +1431,7 @@ export class ChannelsPage implements OnInit {
       return;
     }
 
-    if(tippingAddress != ''){
+    if (tippingAddress != '') {
       let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
       if (walletAdress === "") {
         this.isClickDashang = true;
@@ -1488,17 +1499,7 @@ export class ChannelsPage implements OnInit {
         // }
         let intersectionRatio = changes[0].intersectionRatio;
 
-        // let boundingClientRect = changes[0].boundingClientRect;
-        // console.log("======boundingClientRect========",boundingClientRect);
-
-        // let rootBounds = changes[0].rootBounds;
-        // console.log("======rootBoundst========",rootBounds);
-
-        // let intersectionRect = changes[0].intersectionRect;
-        // console.log("======intersectionRect========",intersectionRect);
-
         if (intersectionRatio === 0) {
-          //console.log("======newId leave========", newId);
           return;
         }
 
@@ -1508,6 +1509,7 @@ export class ChannelsPage implements OnInit {
         let postId: string = arr[2];
         let mediaType: string = arr[3];
         this.handlePinnedPost(destDid, channelId, postId);
+        this.getPostTipCount(channelId, postId);//tip count
         if (mediaType === '1') {
           this.handlePostImgV2(destDid, channelId, postId);
         }
@@ -1529,8 +1531,6 @@ export class ChannelsPage implements OnInit {
         CommonPageService.handlePostCommentData(
           destDid, channelId, postId, this.hiveVaultController,
           this.isInitComment, this.commentNumMap);
-        //console.log("======intersectionRatio1========",typeof(changes[0]));
-        //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
       });
 
       this.observerList[postGridId].observe(item);
@@ -1712,6 +1712,30 @@ export class ChannelsPage implements OnInit {
     } catch (error) {
       this.native.hideLoading();
       return null;
+    }
+  }
+
+  getPostTipCount(channelId: string, postId: string) {
+    let isLoad = this.isLoadingPostTipCountMap[postId] || "";
+    if (isLoad === "") {
+      this.isLoadingPostTipCountMap[postId] = "loading";
+      let postTipCountMap = this.dataHelper.getPostTipCountMap() || {};
+      let postTipCount = postTipCountMap[postId] || '';
+      if (postTipCount === '') {
+        this.nftContractControllerService
+          .getChannelTippingContractService()
+          .getPosTippingCount(channelId, postId).then((postTipCont: any) => {
+            this.postTipCountMap[postId] = postTipCont;
+            postTipCountMap[postId] = postTipCont;
+            this.dataHelper.setPostTipCountMap(postTipCountMap);
+          }).catch((err) => {
+            this.postTipCountMap[postId] = 0;
+            postTipCountMap[postId] = 0;
+            this.dataHelper.setPostTipCountMap(postTipCountMap);
+          });
+      } else {
+        this.postTipCountMap[postId] = postTipCount;
+      }
     }
   }
 

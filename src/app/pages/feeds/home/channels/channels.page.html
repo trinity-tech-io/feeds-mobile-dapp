@@ -226,6 +226,7 @@
         <ion-col (click)="clickDashang(post.destDid, post.channelId, post.postId)" *ngIf="followStatus&&isAndroid">
           <img src="/assets/images/tip.svg" *ngIf="!theme.darkMode">
           <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
+          <ion-label>{{  postTipCountMap[post.postId] }}</ion-label>
         </ion-col>
         <ion-col (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
           <ion-label class="status" *ngIf="post.status === 2" style="right: 10px;">{{ 'common.edit' | translate}} </ion-label>
