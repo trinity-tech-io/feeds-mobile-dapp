@@ -276,4 +276,8 @@ export class HiveVaultApi {
   uploadDataWithScriptName(remotePath: string, data: string, callback: (process: number) => void): Promise<string> {
     return this.hiveVaultHelper.uploadDataWithScriptName(remotePath, data, callback);
   }
+
+  queryOwnedChannelsByTargetDid(targetDid: string) {
+    return this.hiveVaultHelper.queryOwnedChannelsByTargetDid(targetDid);
+  }
 }

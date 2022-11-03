@@ -70,6 +70,8 @@ export class HiveVaultHelper {
     public static readonly QUERY_PUBLIC_POST_BY_CHANNEL = "query_public_post_by_channel";
 
     public static readonly SCRIPT_QUERY_PROFILE = "script_query_profile";
+
+    public static readonly SCRIPTV1_QUERY_OWNEDCHANNELS = "script_query_profile_channels_by_targetdid";
     private buyStorageSpaceDialog: any = null;
     constructor(
         private hiveService: HiveService,
@@ -129,7 +131,8 @@ export class HiveVaultHelper {
                 const p28 = this.registerQuerySubscriptionInfoByUserDIDAndChannelIdScripting();
 
                 const p29 = this.registerQueryProfileScripting();
-                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29] as const
+                const p30 = this.registerQueryOwnedChannelsScripting();
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
                 }, reason => {
@@ -2522,4 +2525,49 @@ export class HiveVaultHelper {
     // queryPublicChannelByUser() {
 
     // }
+
+    /** query owned channels by targetDid start*/
+    private registerQueryOwnedChannelsScripting(forceCreate: boolean = false): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const channelType = 'public';
+                let executablefilter = { "type": channelType }
+                let options = {
+                    "projection": { "_id": false },
+                    "sort": { "updated_at": -1 }
+                }
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_CHANNELS, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(forceCreate, HiveVaultHelper.SCRIPTV1_QUERY_OWNEDCHANNELS, executable, null, false)
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(TAG, "Register query owned channels scripting error", error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    private queryOwnedChannels(targetDid: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPTV1_QUERY_OWNEDCHANNELS, {})
+                resolve(result)
+            } catch (error) {
+                Logger.error(TAG, 'Call query owned channels error:', error)
+                reject(error)
+            }
+        })
+    }
+
+    queryOwnedChannelsByTargetDid(targetDid: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await this.queryOwnedChannels(targetDid);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'query owned channels error', error);
+                reject(error);
+            }
+        });
+    }
+    /** query owned channels by targetDid end*/
 }
