@@ -989,6 +989,24 @@ export class HiveVaultController {
     });
   }
 
+  getUserAvatarFromHiveUrl(avatarHiveUrl: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      if (!avatarHiveUrl) {
+        resolve('assets/images/default-contact.svg');
+        return;
+      }
+
+      const avatar = await this.getV3HiveUrlData(avatarHiveUrl);
+      if (!avatar) {
+        resolve('assets/images/default-contact.svg');
+        return;
+      }
+
+      resolve(avatar);
+      return;
+    });
+  }
+
   downloadEssAvatar(avatarParam: string, avatarScriptName: string, tarDID: string, tarAppDID: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2234,7 +2252,7 @@ export class HiveVaultController {
 
         try {
           if (!localProfile.updatedAt || localProfile.updatedAt == 0)
-            this.getRemoteUserProfileWithSave(userDid);
+            this.getRemoteUserProfileWithSave(userDid).catch(() => { });
         } catch (error) {
         }
         resolve(localProfile);
@@ -2244,6 +2262,24 @@ export class HiveVaultController {
     });
   }
 
+  getUserProfilePageItem(userDid: string): Promise<{ name: string, description: string, avatarHiveUrl: string }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userProfile = await this.getUserProfile(userDid);
+        if (!userProfile) {
+          resolve({ name: '', description: '', avatarHiveUrl: '' })
+          return;
+        }
+
+        const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
+        const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar;
+        const description = userProfile.bio || userProfile.resolvedBio;
+        resolve({ name: name, description: description, avatarHiveUrl: avatarHiveUrl });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 
   getLocalUserProfile(userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
@@ -2267,7 +2303,7 @@ export class HiveVaultController {
           return;
         }
 
-        if (user && !user.displayName) {
+        if (!user.displayName) {
           const displayName = await this.dataHelper.getDisplayNameByUserDid(userDid);
           const newUser: FeedsData.UserProfile = {
             did: userDid,
@@ -2305,20 +2341,20 @@ export class HiveVaultController {
   syncUserProfileFromDidDocument(userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
-        const userProfile = await this.didHelper.resolveUserProfile(userDid);
+        const resolvedResult = await this.didHelper.resolveUserProfile(userDid);
 
-        if (!userProfile) {
+        if (!resolvedResult) {
           const originUserProfile = await this.getLocalUserProfile(userDid) || null;
           resolve(originUserProfile);
           Logger.warn(TAG, 'Resolve user profile result is null');
           return;
         }
 
-        const resolvedAvatar = userProfile.avatar;
-        const resolvedName = userProfile.name;
-        const resolvedDescrpition = userProfile.description;
+        const resolvedAvatar = resolvedResult.avatar;
+        const resolvedName = resolvedResult.name;
+        const resolvedDescrpition = resolvedResult.description;
 
-        let originUserProfile = await this.getLocalUserProfile(userDid) || null;
+        const originUserProfile = await this.getLocalUserProfile(userDid) || null;
 
         let originName = '';
         let originDisplayName = '';
@@ -2396,7 +2432,7 @@ export class HiveVaultController {
         const avatarHiveURL = await this.hiveVaultApi.uploadMediaDataWithString(avatar);
         const result = await this.hiveVaultApi.uploadSelfProfile(name, description, avatarHiveURL);
 
-        const originProfile = await this.dataHelper.getUserProfileData(did);
+        const originProfile = await this.getUserProfile(did);
         const userProfile: FeedsData.UserProfile = {
           did: did,
           resolvedName: originProfile.resolvedName,
@@ -2408,7 +2444,6 @@ export class HiveVaultController {
           bio: result.description,
           updatedAt: result.updatedAt
         }
-
         this.dataHelper.addUserProfile(userProfile);
         resolve(userProfile)
       } catch (error) {
@@ -2532,20 +2567,8 @@ export class HiveVaultController {
           const avatar = localUserProfile.avatar || localUserProfile.resolvedAvatar;
 
           if (!name || !description || !avatar) {
-            const result = await this.updateUserProfile(userDid, name, description, avatar);
-            const userProfile: FeedsData.UserProfile = {
-              did: result.did,
-              resolvedName: result.resolvedName,
-              resolvedAvatar: result.resolvedAvatar,
-              resolvedBio: result.resolvedBio,
-              displayName: result.displayName,
-              name: result.name,
-              avatar: result.avatar,
-              bio: description,
-              updatedAt: localUserProfile.updatedAt
-            }
-            this.dataHelper.addUserProfile(userProfile);
-            resolve(userProfile);
+            const updatedProfile = await this.updateUserProfile(userDid, name, description, avatar);
+            resolve(updatedProfile);
             return;
           }
           resolve(localUserProfile);

@@ -1192,7 +1192,7 @@ export class FeedsSqliteHelper {
           + '(did, resolved_name, resolved_avatar, resolved_bio, display_name, name, avatar, bio, updated_at) VALUES'
           + '(?,?,?,?,?,?,?,?,?)';
 
-        const params = [user.did, user.resolvedName, user.avatar, user.resolvedBio, user.displayName, user.avatar, user.bio, user.updatedAt];
+        const params = [user.did, user.resolvedName, user.avatar, user.resolvedBio, user.displayName, user.name, user.avatar, user.bio, user.updatedAt];
 
         const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Insert users data result is', result);
