@@ -4404,6 +4404,11 @@ export class DataHelper {
   addUserProfile(newUser: FeedsData.UserProfile): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
+        if (!newUser) {
+          resolve(false);
+          return;
+        }
+
         let isNew: boolean = false;
         let originUser: FeedsData.UserProfile = await this.getUserProfileData(newUser.did) || null;
         if (!originUser) {

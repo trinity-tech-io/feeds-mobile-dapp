@@ -82,11 +82,11 @@ export class EditprofileinfoPage implements OnInit {
 
       let nickname = signInData['nickname'] || '';
       if (nickname != '' && nickname != 'Information not provided') {
-        this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || nickname;
+        this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName;
       } else {
-        this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || signInData['name'] || '';
+        this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || '';
       }
-      this.userDes = userProfile.bio || userProfile.resolvedBio || signInData['description'] || '';
+      this.userDes = userProfile.bio || userProfile.resolvedBio || '';
       const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
       await this.setAvatarUI(this.userDid, avatarUrl);
 
