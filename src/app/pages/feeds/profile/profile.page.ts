@@ -636,7 +636,7 @@ export class ProfilePage implements OnInit {
 
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
-
+    this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.tabSendPost);

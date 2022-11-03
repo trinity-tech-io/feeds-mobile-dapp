@@ -565,7 +565,7 @@ export class ChannelsPage implements OnInit {
 
     this.events.unsubscribe(FeedsEvent.PublishType.unsubscribeFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
-
+    this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.channelRightMenu);
 
     this.events.unsubscribe(FeedsEvent.PublishType.pinPostFinish);
