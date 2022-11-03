@@ -152,6 +152,8 @@ export class UserprofilePage implements OnInit {
   public channelAvatar = null;
   public channelName = null;
 
+  private userOwnedchannels: FeedsData.ChannelV3[] = [];
+
   constructor(
     private translate: TranslateService,
     private titleBarService: TitleBarService,
@@ -220,7 +222,7 @@ export class UserprofilePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.channelsDataUpdate, () => {
       this.zone.run(() => {
-        this.initMyFeeds();
+        // this.initUserOwnedChannels();
       });
     });
 
@@ -329,20 +331,20 @@ export class UserprofilePage implements OnInit {
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         try {
+          // const did = (await this.dataHelper.getSigninData()).did;
+          // const selfchannels = await this.hiveVaultController.syncSelfChannel(did);
 
-          const did = (await this.dataHelper.getSigninData()).did;
-          const selfchannels = await this.hiveVaultController.syncSelfChannel(did);
-
-          for (let index = 0; index < selfchannels.length; index++) {
-            const selfchannel = selfchannels[index];
-            await this.hiveVaultController.querySubscriptionChannelById(selfchannel.destDid, selfchannel.channelId);
-          }
-          await this.hiveVaultController.syncSubscribedChannelFromBackup();
-          this.isLoadSubscriptionV3Num = {};
-          this.isLoadChannelNameMap = {};
-          this.removeMyFeedsObserveList();
-          this.dataHelper.setChannelPublicStatusList({});
-          await this.initMyFeeds(selfchannels);
+          // for (let index = 0; index < selfchannels.length; index++) {
+          //   const selfchannel = selfchannels[index];
+          //   await this.hiveVaultController.querySubscriptionChannelById(selfchannel.destDid, selfchannel.channelId);
+          // }
+          // await this.hiveVaultController.syncSubscribedChannelFromBackup();
+          // this.isLoadSubscriptionV3Num = {};
+          // this.isLoadChannelNameMap = {};
+          // this.removeMyFeedsObserveList();
+          // this.dataHelper.setChannelPublicStatusList({});
+          const userOwnedchannels = await this.hiveVaultController.queryUserOwnedChannels(this.userDid);
+          await this.initUserOwnedChannels(userOwnedchannels);
           event.target.complete();
         } catch (error) {
           event.target.complete();
@@ -406,7 +408,10 @@ export class UserprofilePage implements OnInit {
         this.closeFullSrceenPost();
         this.removeMyFeedsObserveList();
         this.clearRefreshImageSid();
-        this.initMyFeeds();
+
+        if (!this.userOwnedchannels || this.userOwnedchannels.length == 0)
+          this.userOwnedchannels = await this.hiveVaultController.queryUserOwnedChannels(this.userDid);
+        await this.initUserOwnedChannels(this.userOwnedchannels);
         break;
       case 'ProfilePage.myLikes':
         this.removeLikeObserveList();
@@ -496,7 +501,7 @@ export class UserprofilePage implements OnInit {
     }
   }
 
-  async initMyFeeds(channels?: FeedsData.ChannelV3[]) {
+  async initUserOwnedChannels(channels: FeedsData.ChannelV3[]) {
     try {
       let newChannels = channels || null;
       if (newChannels != null) {
@@ -505,18 +510,19 @@ export class UserprofilePage implements OnInit {
           return -item.createdAt;
         });
         this.channels = newChannels;
-      } else {
-        let newSelfChannels = await this.dataHelper.getSelfChannelListV3() || [];
-        newSelfChannels = _.sortBy(newSelfChannels, (item: FeedsData.ChannelV3) => {
-          return -item.createdAt;
-        });
-        this.channels = _.uniqWith(newSelfChannels, _.isEqual) || [];
       }
+      // else {
+      //   let newSelfChannels = await this.dataHelper.getSelfChannelListV3() || [];
+      //   newSelfChannels = _.sortBy(newSelfChannels, (item: FeedsData.ChannelV3) => {
+      //     return -item.createdAt;
+      //   });
+      //   this.channels = _.uniqWith(newSelfChannels, _.isEqual) || [];
+      // }
       this.isLoadingMyFeeds = false;
       this.myFeedsSum = this.channels.length;
       this.refreshMyFeedsVisibleareaImageV2(this.channels);
-      let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
-      this.followers = followedList.length;
+      // let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
+      // this.followers = followedList.length;
     } catch (error) {
       this.isLoadingMyFeeds = false;
     }

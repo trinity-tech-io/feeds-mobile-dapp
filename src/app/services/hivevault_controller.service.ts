@@ -2611,4 +2611,25 @@ export class HiveVaultController {
       }
     });
   }
+
+  queryUserOwnedChannels(userDid: string): Promise<FeedsData.ChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryOwnedChannelsByTargetDid(userDid);
+        if (!result) {
+          resolve(null);
+          return;
+        }
+        const channelList = await this.handleChannelResult(userDid, result.find_message.items);
+        if (!channelList || channelList.length == 0) {
+          resolve(null);
+          return;
+        }
+        resolve(channelList);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
 }
