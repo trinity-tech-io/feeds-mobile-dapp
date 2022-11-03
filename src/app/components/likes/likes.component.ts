@@ -51,6 +51,8 @@ export class LikesComponent implements OnInit {
   @Input() postTime: any = {};
   @Input() isLoadingLike: boolean = true;
   @Input() channelPublicStatusList: any = {};
+  @Input() postTipCountMap: any = {};
+
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();
@@ -356,7 +358,7 @@ export class LikesComponent implements OnInit {
       return;
     }
 
-    if(tippingAddress != ''){
+    if (tippingAddress != '') {
       let walletAdress: string = this.nftContractControllerService.getAccountAddress() || '';
       if (walletAdress === "") {
         this.isClickDashang = true;

@@ -58,52 +58,52 @@ export class ChannelTippingContractService {
     senderUri: string,
     memo: string,
     walletAddress: string
-  ): Promise<any>{
+  ): Promise<any> {
     return new Promise(async (resolve, reject) => {
-          try {
-            Logger.log(TAG, 'burn params ', channelId, postId, paidToken, amount, senderUri, memo);
-            const makeTippingdata = this.channelTippingContract.methods
-              .makeTipping(channelId, postId, paidToken, amount, senderUri, memo)
-              .encodeABI();
-            let transactionParams = await this.createTxParams(makeTippingdata,amount);
+      try {
+        Logger.log(TAG, 'burn params ', channelId, postId, paidToken, amount, senderUri, memo);
+        const makeTippingdata = this.channelTippingContract.methods
+          .makeTipping(channelId, postId, paidToken, amount, senderUri, memo)
+          .encodeABI();
+        let transactionParams = await this.createTxParams(makeTippingdata, amount);
+        Logger.log(TAG,
+          'Calling smart contract through wallet connect',
+          makeTippingdata,
+          transactionParams,
+        );
+        this.channelTippingContract.methods
+          .makeTipping(channelId, postId, paidToken, amount, senderUri, memo)
+          .send(transactionParams)
+          .on('transactionHash', hash => {
+            Logger.log(TAG, 'makeTipping process, transactionHash is', hash);
+          })
+          .on('receipt', receipt => {
+            Logger.log(TAG, 'makeTipping process, receipt is', receipt);
+          })
+          .on('confirmation', (confirmationNumber, receipt) => {
             Logger.log(TAG,
-              'Calling smart contract through wallet connect',
-              makeTippingdata,
-              transactionParams,
+              'makeTipping process, confirmation is',
+              confirmationNumber,
+              receipt,
             );
-            this.channelTippingContract.methods
-              .makeTipping(channelId, postId, paidToken, amount, senderUri, memo)
-              .send(transactionParams)
-              .on('transactionHash', hash => {
-              Logger.log(TAG, 'makeTipping process, transactionHash is', hash);
-              })
-              .on('receipt', receipt => {
-                Logger.log(TAG, 'makeTipping process, receipt is', receipt);
-              })
-              .on('confirmation', (confirmationNumber, receipt) => {
-                Logger.log(TAG,
-                  'makeTipping process, confirmation is',
-                  confirmationNumber,
-                  receipt,
-                );
-              })
-              .on('error', (error, receipt) => {
-                Logger.error(TAG, 'makeTipping process, error is', error, receipt);
-                if(typeof(error) === 'object'){
-                  let message: string = error['message'] || '';
-                  if(message != '' && message.indexOf('Errored or cancelled') > -1 || message.indexOf('User rejected the transaction') > -1){
-                    reject(error);
-                  }
-                }
-              });
+          })
+          .on('error', (error, receipt) => {
+            Logger.error(TAG, 'makeTipping process, error is', error, receipt);
+            if (typeof (error) === 'object') {
+              let message: string = error['message'] || '';
+              if (message != '' && message.indexOf('Errored or cancelled') > -1 || message.indexOf('User rejected the transaction') > -1) {
+                reject(error);
+              }
+            }
+          });
 
-              this.checkTippingState(walletAddress,(info)=>{
-                 resolve(info);
-              });
-          } catch (error) {
-            Logger.error(TAG, 'burn error', error);
-            reject(error);
-          }
+        this.checkTippingState(walletAddress, (info) => {
+          resolve(info);
+        });
+      } catch (error) {
+        Logger.error(TAG, 'burn error', error);
+        reject(error);
+      }
     });
   }
 
@@ -147,14 +147,14 @@ export class ChannelTippingContractService {
     });
   }
 
-  cancelTippingProcess(){
+  cancelTippingProcess() {
     if (!this.checkTippingInterval) return;
     clearInterval(this.checkTippingInterval);
   }
 
-  async checkTippingState(walletAddress: string,callback: (tokenInfo: any) => void){
-     let balance = await this.getBalance(walletAddress);
-     this.checkTippingInterval= setInterval(async () => {
+  async checkTippingState(walletAddress: string, callback: (tokenInfo: any) => void) {
+    let balance = await this.getBalance(walletAddress);
+    this.checkTippingInterval = setInterval(async () => {
       if (!this.checkTippingInterval) return;
       let curBalance = await this.getBalance(walletAddress);
       if (curBalance < balance) {
@@ -169,16 +169,29 @@ export class ChannelTippingContractService {
         clearInterval(this.checkTippingInterval);
         this.checkTippingInterval = null;
       }
-     },Config.CHECK_STATUS_INTERVAL_TIME);
+    }, Config.CHECK_STATUS_INTERVAL_TIME);
   }
 
 
-  async getBalance(walletAddress: string){
+  async getBalance(walletAddress: string) {
     try {
       let balance = await this.web3.eth.getBalance(walletAddress);
       let balance1 = this.web3.utils.fromWei(balance, 'ether');
       return balance1;
     } catch (error) {
     }
+  }
+
+  async getPosTippingCount(channelId: string, postId: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        channelId = '0x' + channelId;
+        postId = '0x' + postId;
+        let postCount = await this.channelTippingContract.methods.tippingCount(channelId, postId).call();
+        resolve(postCount);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }

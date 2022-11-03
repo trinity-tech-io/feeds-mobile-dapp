@@ -197,11 +197,14 @@ export class ProfilePage implements OnInit {
   public isFullPost: boolean = false;
   public isLoadingLike: boolean = true;
   public isLoadingMyFeeds: boolean = true;
-  private setMyFeedsSid: any = null;
   private channelPublicStatusList: any = {};
   public createrDid: string = '';
   public pageName: string = "profile";
   public isOwner: boolean = true;
+
+  /**post tip count*/
+  public postTipCountMap: any = {};
+  private isLoadingPostTipCountMap: any = {};
 
   constructor(
     private elmRef: ElementRef,
@@ -479,6 +482,11 @@ export class ProfilePage implements OnInit {
       this.commentNumMap[postId] = this.commentNumMap[postId] + 1;
     });
 
+    this.events.subscribe(FeedsEvent.PublishType.updatePostTipCount, (item: any) => {
+      let postId = item.postId;
+      this.postTipCountMap[postId] = item.postTipCount;
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.editPostFinish, () => {
       this.zone.run(() => {
         this.refreshLikeList();
@@ -626,6 +634,7 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);
+    this.events.unsubscribe(FeedsEvent.PublishType.updatePostTipCount);
     this.events.unsubscribe(FeedsEvent.PublishType.updateTitle);
     this.events.unsubscribe(FeedsEvent.PublishType.openRightMenu);
     this.events.unsubscribe(FeedsEvent.PublishType.tabSendPost);
@@ -2418,6 +2427,7 @@ export class ProfilePage implements OnInit {
 
         }
         this.getDisplayName(destDid, channelId, destDid);
+        this.getPostTipCount(channelId, postId);
         this.handlePostAvatarV2(destDid, channelId);
         if (mediaType === '1') {
           this.handlePostImgV2(destDid, channelId, postId);
@@ -2704,5 +2714,29 @@ export class ProfilePage implements OnInit {
 
   setUserName(userDid: string, userName: string = 'common.unknown') {
     this.name = userName;
+  }
+
+  getPostTipCount(channelId: string, postId: string) {
+    let isLoad = this.isLoadingPostTipCountMap[postId] || "";
+    if (isLoad === "") {
+      this.isLoadingPostTipCountMap[postId] = "loading";
+      let postTipCountMap = this.dataHelper.getPostTipCountMap() || {};
+      let postTipCount = postTipCountMap[postId] || '';
+      if (postTipCount === '') {
+        this.nftContractControllerService
+          .getChannelTippingContractService()
+          .getPosTippingCount(channelId, postId).then((postTipCont: any) => {
+            this.postTipCountMap[postId] = postTipCont;
+            postTipCountMap[postId] = postTipCont;
+            this.dataHelper.setPostTipCountMap(postTipCountMap);
+          }).catch((err) => {
+            this.postTipCountMap[postId] = 0;
+            postTipCountMap[postId] = 0;
+            this.dataHelper.setPostTipCountMap(postTipCountMap);
+          });
+      } else {
+        this.postTipCountMap[postId] = postTipCount;
+      }
+    }
   }
 }
