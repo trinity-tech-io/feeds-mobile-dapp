@@ -42,8 +42,8 @@ export class UserprofileinfoPage implements OnInit {
 
   initProfile(userDid: string) {
     this.hiveVaultController.getUserProfilePageItem(userDid).then(async (pageItem: { name: string, description: string, avatarHiveUrl: string }) => {
-      this.userName = pageItem.name;
-      this.userDescription = pageItem.description;
+      this.userName = pageItem.name || ' ';
+      this.userDescription = pageItem.description || ' ';
       this.avatar = await this.hiveVaultController.getUserAvatarFromHiveUrl(pageItem.avatarHiveUrl);
       this.collectData();
     }).catch(() => {
