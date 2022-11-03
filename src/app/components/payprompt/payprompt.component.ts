@@ -243,6 +243,7 @@ export class PaypromptComponent implements OnInit {
       let description = signInData.description || '';
 
       let ipfsJSON = {
+        "version": "1",
         "did": did,
         "name": name,
         "description": description
