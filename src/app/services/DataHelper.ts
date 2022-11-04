@@ -16,6 +16,7 @@ declare let didManager: DIDPlugin.DIDManager;
 
 @Injectable()
 export class DataHelper {
+  private postTipListMap: any = {};
   private postTipCountMap: any = {};
   private channelTippingAddressMap: any = {};
   private channelContractInfoList: any = {};
@@ -4727,5 +4728,13 @@ export class DataHelper {
 
   getPostTipCountMap() {
     return this.postTipCountMap;
+  }
+
+  setPostTipListMap(postTipListMap: any) {
+    this.postTipListMap = postTipListMap;
+  }
+
+  getPostTipListMap() {
+    return this.postTipListMap;
   }
 }

@@ -878,5 +878,10 @@ export const zh = {
   },
   UserprofileinfoPage: {
     title: '用户档案详情'
+  },
+  PosttiplistPage: {
+    title: '微说打赏列表',
+    tip: '打赏',
+    allempty: '还没有人打赏'
   }
 };

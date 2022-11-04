@@ -194,4 +194,18 @@ export class ChannelTippingContractService {
       }
     });
   }
+
+
+  async getPosTippingList(channelId: string, postId: string, startIndex: number, conut: number): Promise<any>{
+    return new Promise(async (resolve, reject) => {
+      try {
+        channelId = '0x'+channelId;
+        postId = '0x'+postId;
+        let postCount = await this.channelTippingContract.methods.getTipping(channelId, postId, startIndex, conut).call();
+        resolve(postCount);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 }

@@ -235,7 +235,11 @@ const routes: Routes = [
   },
   {
     path: 'userprofileinfo',
-    loadChildren: () => import('./pages/userprofileinfo/userprofileinfo.module').then( m => m.UserprofileinfoPageModule)
+    loadChildren: () => import('./pages/userprofileinfo/userprofileinfo.module').then(m => m.UserprofileinfoPageModule)
+  },
+  {
+    path: 'posttiplist',
+    loadChildren: () => import('./pages/posttiplist/posttiplist.module').then(m => m.PosttiplistPageModule)
   },
 ];
 

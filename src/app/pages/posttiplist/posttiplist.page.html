@@ -1,0 +1,70 @@
+<app-titlebar></app-titlebar>
+<ion-content>
+<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
+<ion-refresher-content
+    class="refresh"
+    pullingText="{{'common.releaseToRefresh'|translate}}"
+    spinner="src/assets/images/arrow-dropdown.svg"
+    refreshingSpinner="circles"
+    refreshingText="{{'common.beingRefresh'|translate}}" >
+</ion-refresher-content>
+</ion-refresher>
+
+ <!-- first loading -->
+ <ion-row *ngIf="isLoading" style="margin-top:23px;">
+    <ion-col size="12" class="loading">
+    <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>
+    <img *ngIf="theme.darkMode" class="loadingIcon" src="./assets/images/darkmode/nftloading.gif"/>
+    </ion-col>
+    <ion-col size="12" class="loading">
+    <p>{{'common.beingRefresh'|translate}}</p>
+    </ion-col>
+</ion-row>
+
+
+<div *ngIf="postTipList.length === 0 && !isLoading" class="new-empty-container">
+    <img src="./assets/images/profile-no-channel.svg">
+    <h1 style="margin-top: 20px;">{{ 'PosttiplistPage.allempty' | translate }}</h1>
+    <p>{{ 'UserlistPage.emptyDes' | translate }}</p>
+</div>
+
+<ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="postTipList.length > 0">
+    <ion-item
+    *ngFor="let tipItem of postTipList"
+    class="channelCollectionFeeds"
+    lines="none">
+    <ion-row class="channel-row ion-activatable ripple" id = {{tipItem.did}}-userList-tip
+    >
+      <ion-col
+        size="2.8"
+        class="left-col"
+        (click)="clickSubscription(tipItem.did)"
+      >
+        <div  class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+        <img [src] = "pageItemMap[tipItem.did].avatar" *ngIf="pageItemMap[tipItem.did] != null && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].avatar != null && pageItemMap[tipItem.did].avatar != undefined && pageItemMap[tipItem.did].avatar != ''">
+      </div>
+      </ion-col>
+      <ion-col
+        size="9.2"
+        class="middle-col"
+        (click)="clickSubscription(tipItem.did)"
+      >
+
+      <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="pageItemMap[tipItem.did] === '' || pageItemMap[tipItem.did] === undefined || pageItemMap[tipItem.did].name === '' || pageItemMap[tipItem.did].name === undefined">
+        ......
+      </ion-label>
+      <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].name != '' && pageItemMap[tipItem.did].name != undefined">
+        {{ pageItemMap[tipItem.did].name | translate }}
+      </ion-label>
+      <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].name != '' && pageItemMap[tipItem.did].name != undefined">
+        {{ 'PosttiplistPage.tip' | translate }}: {{tipItem.amount}} ELA
+      </ion-label>
+      <div class="displayName" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].description != '' && pageItemMap[tipItem.did].description != undefined">
+        {{  pageItemMap[tipItem.did].description }}
+      </div>
+      </ion-col>
+      <ion-ripple-effect></ion-ripple-effect>
+    </ion-row>
+    </ion-item>
+    </ion-list>
+</ion-content>
