@@ -1788,6 +1788,10 @@ export class HomePage implements OnInit {
     this.isClickDashang = true;
   }
 
+  clickDashangList(channelId: string, postId: string) {
+      this.native.navigateForward(['/posttiplist'],{ queryParams: { "channelId": channelId, "postId": postId }});
+  }
+
   retry(destDid: string, channelId: string, postId: string) {
     //重新发送Post
   }

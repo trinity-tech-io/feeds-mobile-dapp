@@ -11,6 +11,20 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { Config } from 'src/app/services/config';
 import { Logger } from 'src/app/services/logger';
 const TAG: string = 'PaypromptComponent';
+type postTipItem = {
+  channelId : string,
+  postId: string,
+  paidFrom: string,
+  paidTo: string,
+  paidToken : string,
+  amount: string,
+  senderUri: string,
+  memo: string,
+  did: string,
+  version: string,
+  name: string,
+  description: string
+};
 @Component({
   selector: 'app-payprompt',
   templateUrl: './payprompt.component.html',
@@ -214,14 +228,43 @@ export class PaypromptComponent implements OnInit {
      this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
      return this.nftContractControllerService.getChannelTippingContractService()
      .makeTipping(channelId, postId, '0x0000000000000000000000000000000000000000',tippingAmount,senderUri,this.memo,walletAdress);
-   }).then(() => {
+   }).then(async () => {
        this.nftContractControllerService.getChannelTippingContractService().cancelTippingProcess();
        this.native.toast("common.tippingSucess");
+
        let postTipCountMap= this.dataHelper.getPostTipCountMap() || {};
        let postTipCount = postTipCountMap[this.postId] || 0;
        let newPostTipCount =  parseInt(postTipCount) + 1;
        postTipCountMap[this.postId] = newPostTipCount;
        this.dataHelper.setPostTipCountMap(postTipCountMap);
+
+
+       let signInData = await this.dataHelper.getSigninData();
+       let did = signInData.did || '';
+       let name = signInData.name || '';
+       let description = signInData.description || '';
+
+       let item: postTipItem = {
+        channelId: this.channelId,
+        postId: this.channelId,
+        paidFrom: '',
+        paidTo: '',
+        paidToken: '',
+        amount: this.amount,
+        senderUri: '',
+        memo: '',
+        did: did,
+        version: '1',
+        name: name,
+        description: description
+       };
+
+      let postTipListMap = this.dataHelper.getPostTipListMap() || {};
+      let list =  postTipListMap[this.postId] || [];
+       list.unshift(item);
+       postTipListMap[this.postId] = list;
+       this.dataHelper.setPostTipListMap(postTipListMap);
+
        this.events.publish(FeedsEvent.PublishType.updatePostTipCount,{postId:this.postId,postTipCount:newPostTipCount});
        textObj.isLoading = false;
        this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);

@@ -882,5 +882,10 @@ export const en = {
   },
   UserprofileinfoPage: {
     title: 'User Profile Details'
+  },
+  PosttiplistPage: {
+    title: 'Post Tip List',
+    tip: 'Tipping',
+    allempty: 'No one has tipping yet'
   }
 };
