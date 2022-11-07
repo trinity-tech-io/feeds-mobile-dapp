@@ -86,8 +86,23 @@ export class MyApp {
     this.initializeApp();
     this.initProfileData();
 
-    this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
+    this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, async () => {
       document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
+
+      if (!this.avatar) {
+        const userDid = (await this.dataHelper.getSigninData()).did
+        if (userDid) {
+          this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+            if (userProfile) {
+              const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar || '';
+              this.hiveVaultController.getV3HiveUrlData(avatarHiveUrl).then((base64Image: string) => {
+                this.avatar = base64Image;
+              }).catch(() => { });
+            }
+          }).catch(() => { });
+        }
+      }
+
       // this.getAvatar();
       // let avatar = this.avatar || null;
       // if (avatar === null) {

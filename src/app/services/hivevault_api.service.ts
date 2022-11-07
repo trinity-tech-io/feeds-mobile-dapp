@@ -280,4 +280,24 @@ export class HiveVaultApi {
   queryOwnedChannelsByTargetDid(targetDid: string) {
     return this.hiveVaultHelper.queryOwnedChannelsByTargetDid(targetDid);
   }
+
+  insertSubscribedChannel(targetDid: string, channelId: string, channelName: string, channelDisplayName: string,
+    channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string) {
+    return this.hiveVaultHelper.insertSubscribedChannel(targetDid, channelId, channelName, channelDisplayName,
+      channelIntro, channelAvatar, channelType, channelCategory);
+  }
+
+  updateSubscribedChannel(targetDid: string, channelId: string, subscribedAt: number, channelName: string, channelDisplayName: string,
+    channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string) {
+    return this.hiveVaultHelper.updateSubscribedChannel(targetDid, channelId, subscribedAt, channelName, channelDisplayName,
+      channelIntro, channelAvatar, channelType, channelCategory);
+  }
+
+  removeSubscribedChannel(targetDid: string, channelId: string) {
+    return this.hiveVaultHelper.removeSubscribedChannel(targetDid, channelId);
+  }
+
+  querySubscribedChannelsByUserDid(targetDid: string) {
+    return this.hiveVaultHelper.querySubscribedChannelsByUserDid(targetDid);
+  }
 }

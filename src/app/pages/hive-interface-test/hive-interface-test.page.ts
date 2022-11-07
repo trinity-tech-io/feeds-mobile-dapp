@@ -408,6 +408,126 @@ export class HiveInterfaceTestPage implements OnInit {
     // this.tmpPostList = postList;
   }
 
+  // {
+  //   "document": [
+  //     {
+  //       "target_did": "targetDid",
+  //       "channel_id": "channelId",
+  //       "subscribed_at": 1667805833731,
+  //       "updated_at": 1667805833731,
+  //       "name": "channelName",
+  //       "display_name": "channelDisplayName",
+  //       "intro": "channelIntro",
+  //       "avatar": "channelAvatar",
+  //       "type": "channelType",
+  //       "category": "channelCategory"
+  //     }
+  //   ],
+  //   "options": {
+  //     "bypass_document_validation": false,
+  //     "ordered": true,
+  //     "timestamp": true
+  //   }
+  // }
+  insertSubscribedChannel() {
+    this.hiveVaultApi.insertSubscribedChannel("targetDid", "channelId", "channelName", "channelDisplayName",
+      "channelIntro", "channelAvatar", "channelType", "channelCategory");
+  }
+
+  // {
+  //   "filter": {
+  //     "target_did": "targetDid1",
+  //     "channel_id": "channelId1"
+  //   },
+  //   "update": {
+  //     "$set": {
+  //       "target_did": "targetDid1",
+  //       "channel_id": "channelId1",
+  //       "subscribed_at": 1,
+  //       "updated_at": 1667806148590,
+  //       "name": "channelName1",
+  //       "display_name": "channelDisplayName",
+  //       "intro": "channelIntro",
+  //       "avatar": "channelAvatar",
+  //       "type": "channelType",
+  //       "category": "channelCategory"
+  //     }
+  //   },
+  //   "options": {
+  //     "bypass_document_validation": false,
+  //     "upsert": true
+  //   }
+  // }
+  updateSubscribedChannel() {
+    this.hiveVaultApi.updateSubscribedChannel("targetDid1", "channelId1", 1, "channelName1", "channelDisplayName",
+      "channelIntro", "channelAvatar", "channelType", "channelCategory");
+  }
+
+  removeSubscribedChannel() {
+    this.hiveVaultApi.removeSubscribedChannel("targetDid1", "channelId1");
+  }
+
+
+  // {
+  //   "find_message": {
+  //     "total": 1,
+  //     "items": [
+  //       {
+  //         "target_did": "targetDid",
+  //         "channel_id": "channelId",
+  //         "subscribed_at": 1667805833731,
+  //         "updated_at": 1667805833731,
+  //         "name": "channelName",
+  //         "display_name": "channelDisplayName",
+  //         "intro": "channelIntro",
+  //         "avatar": "channelAvatar",
+  //         "type": "channelType",
+  //         "category": "channelCategory",
+  //         "created": 1667805834,
+  //         "modified": 1667805834
+  //       }
+  //     ]
+  //   }
+  // }
+
+  // {
+  //   "find_message": {
+  //     "total": 2,
+  //     "items": [
+  //       {
+  //         "channel_id": "channelId1",
+  //         "target_did": "targetDid1",
+  //         "avatar": "channelAvatar",
+  //         "category": "channelCategory",
+  //         "created": 1667806149,
+  //         "display_name": "channelDisplayName",
+  //         "intro": "channelIntro",
+  //         "modified": 1667806149,
+  //         "name": "channelName1",
+  //         "subscribed_at": 1,
+  //         "type": "channelType",
+  //         "updated_at": 1667806148590
+  //       },
+  //       {
+  //         "target_did": "targetDid",
+  //         "channel_id": "channelId",
+  //         "subscribed_at": 1667805833731,
+  //         "updated_at": 1667805833731,
+  //         "name": "channelName",
+  //         "display_name": "channelDisplayName",
+  //         "intro": "channelIntro",
+  //         "avatar": "channelAvatar",
+  //         "type": "channelType",
+  //         "category": "channelCategory",
+  //         "created": 1667805834,
+  //         "modified": 1667805834
+  //       }
+  //     ]
+  //   }
+  // }
+  querySubscribedChannelsByTargetDid() {
+    this.hiveVaultApi.querySubscribedChannelsByUserDid("did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR");
+  }
   // queryPublicPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
   //   return this.hiveVaultController.queryPublicPostById(targetDid, channelId, postId);
   // }
