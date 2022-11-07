@@ -23,6 +23,7 @@ export class HiveVaultHelper {
     public static readonly TABLE_LIKES = "likes";
     public static readonly TABLE_BACKUP_SUBSCRIBEDCHANNEL = "backup_subscribed_channel";
     public static readonly TABLE_PROFILE = "profile";
+    public static readonly TABLE_SUBSCRIBED_CHANNELS = "subscribed_channels";
 
     // public static readonly SCRIPT_ALLPOST = "script_allpost_name";
     public static readonly SCRIPT_SPECIFIED_POST = "script_specified_post_name";
@@ -72,6 +73,8 @@ export class HiveVaultHelper {
     public static readonly SCRIPT_QUERY_PROFILE = "script_query_profile";
 
     public static readonly SCRIPTV1_QUERY_OWNEDCHANNELS = "script_query_profile_channels_by_targetdid";
+    public static readonly SCRIPT_QUERY_SUBSCRIBED_CHANNELS = "script_query_subscribed_channels_by_targetdid";
+
     private buyStorageSpaceDialog: any = null;
     constructor(
         private hiveService: HiveService,
@@ -132,7 +135,8 @@ export class HiveVaultHelper {
 
                 const p29 = this.registerQueryProfileScripting();
                 const p30 = this.registerQueryOwnedChannelsScripting();
-                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30] as const
+                const p31 = this.registerQuerySubscribedChannelsScripting();
+                const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31] as const
                 Promise.all(array).then(values => {
                     resolve('FINISH');
                 }, reason => {
@@ -282,7 +286,8 @@ export class HiveVaultHelper {
             const p6 = this.createCollection(HiveVaultHelper.TABLE_LIKES);
             const p7 = this.createCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
             const p8 = this.createCollection(HiveVaultHelper.TABLE_PROFILE);
-            const array = [p1, p2, p3, p4, p5, p6, p7, p8] as const
+            const p9 = this.createCollection(HiveVaultHelper.TABLE_SUBSCRIBED_CHANNELS);
+            const array = [p1, p2, p3, p4, p5, p6, p7, p8, p9] as const
             Promise.all(array).then(values => {
                 resolve('true');
             }, async reason => {
@@ -307,6 +312,7 @@ export class HiveVaultHelper {
                 await this.deleteCollection(HiveVaultHelper.TABLE_BACKUP_SUBSCRIBEDCHANNEL);
                 await this.deleteCollection(HiveVaultHelper.TABLE_FEEDS_SCRIPTING);
                 await this.deleteCollection(HiveVaultHelper.TABLE_PROFILE);
+                await this.deleteCollection(HiveVaultHelper.TABLE_SUBSCRIBED_CHANNELS);
                 resolve("true")
             } catch (error) {
                 Logger.error(TAG, 'delete Collections error', error);
@@ -2393,10 +2399,10 @@ export class HiveVaultHelper {
                 let update = { "$set": doc };
 
                 const updateResult = await this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_PROFILE, filter, update, option);
-                Logger.log(TAG, 'update channel result', updateResult)
+                Logger.log(TAG, 'update profile to db result', updateResult)
                 resolve(updateResult)
             } catch (error) {
-                Logger.error(TAG, 'updateDataToChannelDB error', error)
+                Logger.error(TAG, 'update profile to db error', error)
                 reject(await this.handleError(error))
             }
         })
@@ -2565,6 +2571,189 @@ export class HiveVaultHelper {
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'query owned channels error', error);
+                reject(error);
+            }
+        });
+    }
+    /** query owned channels by targetDid end*/
+
+    /** insert subscribed channel start */
+    private insertDataToSubscribedChannelDB(targetDid: string, channelId: string, updatedAt: number, channelName: string, channelDisplayName: string,
+        channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            const doc = {
+                "target_did": targetDid,
+                "channel_id": channelId,
+                "updated_at": updatedAt,
+
+                "name": channelName,
+                "display_name": channelDisplayName,
+                "intro": channelIntro,
+                "avatar": channelAvatar,
+                "type": channelType,
+                "category": channelCategory,
+            }
+
+            try {
+                const insertResult = this.hiveService.insertDBData(HiveVaultHelper.TABLE_SUBSCRIBED_CHANNELS, doc);
+                Logger.log(TAG, 'Insert data to subscribed channel db result', insertResult);
+                resolve('FINISH');
+            } catch (error) {
+                Logger.error(TAG, 'Insert data to subscribed channel db error', error);
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    insertSubscribedChannel(targetDid: string, channelId: string, updatedAt: number, channelName: string, channelDisplayName: string,
+        channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string): Promise<string> {
+        return this.insertDataToSubscribedChannelDB(targetDid, channelId, updatedAt, channelName, channelDisplayName,
+            channelIntro, channelAvatar, channelType, channelCategory);
+    }
+    /** insert subscribed channel end */
+
+    /** update subscribed channel start */
+    private updateSubscribedChannelDB(targetDid: string, channelId: string, updatedAt: number, channelName: string, channelDisplayName: string,
+        channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string): Promise<UpdateResult> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const doc =
+                {
+                    "target_did": targetDid,
+                    "channel_id": channelId,
+                    "updated_at": updatedAt,
+
+                    "name": channelName,
+                    "display_name": channelDisplayName,
+                    "intro": channelIntro,
+                    "avatar": channelAvatar,
+                    "type": channelType,
+                    "category": channelCategory,
+                }
+                const option = new UpdateOptions(false, true)
+                let filter = { "target_did": targetDid, "channel_id": channelId };
+                let update = { "$set": doc };
+
+                const updateResult = await this.hiveService.updateOneDBData(HiveVaultHelper.TABLE_SUBSCRIBED_CHANNELS, filter, update, option);
+                Logger.log(TAG, 'Update subscribed channel db result', updateResult)
+                resolve(updateResult)
+            } catch (error) {
+                Logger.error(TAG, 'Update subscribed channel db error', error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    private async updateSubscribedChannelData(targetDid: string, channelId: string, channelName: string, channelDisplayName: string,
+        channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string): Promise<{ updatedAt: number }> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const updatedAt = UtilService.getCurrentTimeNum();
+                const result = await this.updateSubscribedChannelDB(targetDid, channelId, updatedAt, channelName, channelDisplayName,
+                    channelIntro, channelAvatar, channelType, channelCategory);
+                if (!result) {
+                    const errorMsg = 'Update profile result null';
+                    Logger.error(TAG, errorMsg);
+                    reject(errorMsg)
+                }
+                resolve({ updatedAt: updatedAt });
+            } catch (error) {
+                Logger.error(TAG, 'Update profile error', error)
+                reject(error);
+            }
+        });
+
+    }
+
+    updateSubscribedChannel(targetDid: string, channelId: string, channelName: string, channelDisplayName: string,
+        channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string) {
+        return this.updateSubscribedChannelData(targetDid, channelId, channelName, channelDisplayName,
+            channelIntro, channelAvatar, channelType, channelCategory);
+    }
+    /** update subscribed channel end */
+
+    /** remove subscribed channel start */
+    private removeSubscribedChannelDB(targetDid: string, channelId: string): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            const filter = {
+                "target_did": targetDid,
+                "channel_id": channelId
+            };
+
+            try {
+                const result = this.hiveService.deleateOneDBData(HiveVaultHelper.TABLE_SUBSCRIBED_CHANNELS, filter);
+                Logger.log(TAG, 'Remove subscribed channel db result', result);
+                resolve('FINISH');
+            } catch (error) {
+                Logger.error(TAG, 'Remove subscribed channel db error', error);
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    removeSubscribedChannel(targetDid: string, channelId: string): Promise<string> {
+        return this.removeSubscribedChannelDB(targetDid, channelId);
+    }
+    /** remove subscribed channel end */
+
+
+    // /** query subscribed channel start */
+    // private querySubscribedChannelDB(): Promise<any> {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //             const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_SUBSCRIBED_CHANNELS, {});
+    //             Logger.log(TAG, 'Query bsc db result', result);
+    //             resolve(result);
+    //         } catch (error) {
+    //             Logger.error(TAG, 'Query bsc db error', error);
+    //             reject(await this.handleError(error))
+    //         }
+    //     })
+    // }
+
+    // querySubscribedChannelsFromDB(): Promise<any> {
+    //     return this.querySubscribedChannelDB();
+    // }
+    // /** query subscribed channel end */
+
+    /** query subscribed channels by targetDid start*/
+    private registerQuerySubscribedChannelsScripting(forceCreate: boolean = false): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let executablefilter = {}
+                let options = {
+                    "projection": { "_id": false },
+                    "sort": { "updated_at": -1 }
+                }
+                const executable = new FindExecutable("find_message", HiveVaultHelper.TABLE_SUBSCRIBED_CHANNELS, executablefilter, options).setOutput(true)
+                await this.hiveService.registerScript(forceCreate, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIBED_CHANNELS, executable, null, false)
+                resolve("SUCCESS")
+            } catch (error) {
+                Logger.error(TAG, "Register query subscribed channels scripting error", error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
+    private querySubscribedChannels(targetDid: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIBED_CHANNELS, {})
+                resolve(result)
+            } catch (error) {
+                Logger.error(TAG, 'Call query subscribed channels error:', error)
+                reject(error)
+            }
+        })
+    }
+
+    querySubscribedChannelsByTargetDid(targetDid: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await this.querySubscribedChannels(targetDid);
+                resolve(result);
+            } catch (error) {
+                Logger.error(TAG, 'query subscribed channels error', error);
                 reject(error);
             }
         });
