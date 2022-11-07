@@ -383,7 +383,7 @@ export class HomePage implements OnInit {
     });
 
 
-    this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (channel: FeedsData.SubscribedChannelV3) => {
+    this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, (channel: FeedsData.BackupSubscribedChannelV3) => {
       Logger.log(TAG, "revice unfollowFeedsFinish event");
       this.zone.run(async () => {
         this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();

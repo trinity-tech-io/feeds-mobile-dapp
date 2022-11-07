@@ -287,7 +287,7 @@ export class HiveVaultResultParse {
 
 
   /** parse backup subscribed channel result start */
-  public static parseBackupSubscribedChannelResult(result: any): FeedsData.SubscribedChannelV3[] {
+  public static parseBackupSubscribedChannelResult(result: any): FeedsData.BackupSubscribedChannelV3[] {
     try {
       /**
       *{
@@ -309,13 +309,13 @@ export class HiveVaultResultParse {
       *}
       */
       const subscribedChannels = result;
-      let parseResult: FeedsData.SubscribedChannelV3[] = [];
+      let parseResult: FeedsData.BackupSubscribedChannelV3[] = [];
       if (!subscribedChannels || subscribedChannels.length == 0) {
         return [];
       }
 
       subscribedChannels.forEach(subscribedChannel => {
-        const subscribed: FeedsData.SubscribedChannelV3 = {
+        const subscribed: FeedsData.BackupSubscribedChannelV3 = {
           destDid: subscribedChannel.target_did,
           channelId: subscribedChannel.channel_id,
         }
@@ -353,6 +353,48 @@ export class HiveVaultResultParse {
         updatedAt: profiles[0].updated_at
       }
       return profileResult;
+    } catch (error) {
+      Logger.error(TAG, 'Parse profile data result error', error);
+    }
+  }
+
+  public static parseSubscribedChannelResult(result: any): FeedsData.SubscribedChannelV3[] {
+    try {
+      /**
+       * "target_did": targetDid,
+       * "channel_id": channelId,
+       * "subscribed_at": subscribedAt,
+       * "updated_at": updatedAt,
+
+       * "channel_name": channelName,
+       * "channel_display_name": channelDisplayName,
+       * "channel_intro": channelIntro,
+       * "channel_avatar": channelAvatar,
+       * "channel_type": channelType,
+       * "channel_category": channelCategory,
+      */
+      const subscribedChannels = result;
+      let parseResult: FeedsData.SubscribedChannelV3[] = [];
+      if (!subscribedChannels || subscribedChannels.length == 0) {
+        return null;
+      }
+      subscribedChannels.forEach(subscribedChannel => {
+        const subscribed: FeedsData.SubscribedChannelV3 = {
+          targetDid: subscribedChannel.target_did || '',
+          channelId: subscribedChannel.channel_id || '',
+          subscribedAt: subscribedChannel.subscribed_at || 0,
+          updatedAt: subscribedChannel.updated_at || 0,
+
+          channelName: subscribedChannel.channel_name || '',
+          channelDisplayName: subscribedChannel.channel_display_name || '',
+          channelIntro: subscribedChannel.channel_intro || '',
+          channelAvatar: subscribedChannel.channel_avatar || '',
+          channelType: subscribedChannel.channel_type || '',
+          channelCategory: subscribedChannel.channel_category || '',
+        }
+        parseResult.push(subscribed);
+      });
+      return parseResult;
     } catch (error) {
       Logger.error(TAG, 'Parse profile data result error', error);
     }

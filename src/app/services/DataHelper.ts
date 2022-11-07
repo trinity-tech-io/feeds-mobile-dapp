@@ -33,7 +33,7 @@ export class DataHelper {
   private originalPasarListGrid: boolean = false;
   private elaUsdPrice: string = "";
   public channelsMapV3: { [key: string]: FeedsData.ChannelV3 } = {};
-  public subscribedChannelMapV3: { [key: string]: FeedsData.SubscribedChannelV3 } = {};
+  public subscribedChannelMapV3: { [key: string]: FeedsData.BackupSubscribedChannelV3 } = {};
   public postMapV3: { [key: string]: FeedsData.PostV3 } = {};
   public commentsMapV3: { [key: string]: FeedsData.CommentV3 } = {};
   public likeMapV3: { [key: string]: FeedsData.LikeV3 } = {};
@@ -2925,7 +2925,7 @@ export class DataHelper {
   }
   //// New data type
 
-  addSubscribedChannels(newSubscribedChannels: FeedsData.SubscribedChannelV3[]): Promise<string> {
+  addSubscribedChannels(newSubscribedChannels: FeedsData.BackupSubscribedChannelV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       for (let index = 0; index < newSubscribedChannels.length; index++) {
         const subscibedChannel = newSubscribedChannels[index];
@@ -2935,14 +2935,14 @@ export class DataHelper {
     });
   }
 
-  addSubscribedChannel(newSubscribedChannel: FeedsData.SubscribedChannelV3): Promise<string> {
+  addSubscribedChannel(newSubscribedChannel: FeedsData.BackupSubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!newSubscribedChannel) {
           resolve('FINISH');
           return;
         }
-        let originSubscribedChannel: FeedsData.SubscribedChannelV3 = await this.getSubscribedChannelV3ByKey(newSubscribedChannel.destDid, newSubscribedChannel.channelId);
+        let originSubscribedChannel: FeedsData.BackupSubscribedChannelV3 = await this.getSubscribedChannelV3ByKey(newSubscribedChannel.destDid, newSubscribedChannel.channelId);
         if (!originSubscribedChannel) {
           try {
             await this.addSubscribedChannelV3(newSubscribedChannel);
@@ -2967,7 +2967,7 @@ export class DataHelper {
   }
 
   // subscribedChannelV3 本地存储订阅列表
-  addSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3): Promise<string> {
+  addSubscribedChannelV3(subscribedChannel: FeedsData.BackupSubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -2980,7 +2980,7 @@ export class DataHelper {
     });
   }
 
-  removeSubscribedChannelV3(subscribedChannel: FeedsData.SubscribedChannelV3) {
+  removeSubscribedChannelV3(subscribedChannel: FeedsData.BackupSubscribedChannelV3) {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -3006,7 +3006,7 @@ export class DataHelper {
     });
   }
 
-  getSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
+  getSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -3020,7 +3020,7 @@ export class DataHelper {
     })
   }
 
-  resetSubscribedChannelV3(subscribedChannels: FeedsData.SubscribedChannelV3[]): Promise<string> {
+  resetSubscribedChannelV3(subscribedChannels: FeedsData.BackupSubscribedChannelV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         await this.cleanSubscribedChannelData();
@@ -3033,7 +3033,7 @@ export class DataHelper {
     });
   }
 
-  private async filterSubscribedChannelV3(list: FeedsData.SubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.SubscribedChannelV3[]> {
+  private async filterSubscribedChannelV3(list: FeedsData.BackupSubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const signinDid = (await this.getSigninData()).did;
@@ -3063,7 +3063,7 @@ export class DataHelper {
   }
 
 
-  getSubscribedChannelV3ByKey(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
+  getSubscribedChannelV3ByKey(destDid: string, channelId: string): Promise<FeedsData.BackupSubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -4501,13 +4501,13 @@ export class DataHelper {
   checkSubscribedStatus(destDid: string, channelId: string): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
-        let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+        let subscribedChannel: FeedsData.BackupSubscribedChannelV3[] = await this.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
         if (subscribedChannel.length === 0) {
           resolve(false);
           return;
         }
 
-        let channelIndex = _.find(subscribedChannel, (item: FeedsData.SubscribedChannelV3) => {
+        let channelIndex = _.find(subscribedChannel, (item: FeedsData.BackupSubscribedChannelV3) => {
           return item.destDid === destDid && item.channelId === channelId;
         }) || '';
         if (channelIndex === '') {

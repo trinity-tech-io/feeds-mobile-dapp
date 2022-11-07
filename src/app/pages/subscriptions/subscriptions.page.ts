@@ -52,7 +52,7 @@ export class SubscriptionsPage implements OnInit {
   public pageSize = 1;
   public pageNumber = 10;
   public totalSubscribedChannelList: any = [];
-  public totalNum:number = 0;
+  public totalNum: number = 0;
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -152,7 +152,7 @@ export class SubscriptionsPage implements OnInit {
 
   }
 
-  async getFollowedChannelList(subscribedChannel: FeedsData.SubscribedChannelV3[]) {
+  async getFollowedChannelList(subscribedChannel: FeedsData.BackupSubscribedChannelV3[]) {
     let list = [];
     for (let item of subscribedChannel) {
       let destDid = item.destDid;

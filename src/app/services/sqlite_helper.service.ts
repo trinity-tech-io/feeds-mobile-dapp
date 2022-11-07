@@ -578,7 +578,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+  insertSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.BackupSubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_SUBSCRIPTION_CHANNEL
@@ -597,7 +597,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscribedChannelData(dbUserDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
+  querySubscribedChannelData(dbUserDid: string): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL;
@@ -611,7 +611,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscribedChannelDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
+  querySubscribedChannelDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?';
@@ -628,7 +628,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+  deleteSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.BackupSubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?'
@@ -1551,7 +1551,7 @@ export class FeedsSqliteHelper {
     return num;
   }
 
-  parseSubscriptionChannelData(result: any): FeedsData.SubscribedChannelV3[] {
+  parseSubscriptionChannelData(result: any): FeedsData.BackupSubscribedChannelV3[] {
     Logger.log(TAG, 'Parse subscription channel result from sql, result is', result);
     if (!result) {
       return [];
@@ -1559,7 +1559,7 @@ export class FeedsSqliteHelper {
     let list = [];
     for (let index = 0; index < result.rows.length; index++) {
       const element = result.rows.item(index);
-      let subscribedChannel: FeedsData.SubscribedChannelV3 = {
+      let subscribedChannel: FeedsData.BackupSubscribedChannelV3 = {
         destDid: element['dest_did'],
         channelId: element['channel_id']
       }

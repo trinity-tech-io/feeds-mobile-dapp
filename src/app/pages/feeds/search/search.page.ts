@@ -147,7 +147,7 @@ export class SearchPage implements OnInit {
 
     this.events.subscribe(
       FeedsEvent.PublishType.unsubscribeFinish,
-      (channel: FeedsData.SubscribedChannelV3) => {
+      (channel: FeedsData.BackupSubscribedChannelV3) => {
         this.zone.run(() => {
           let channelId = channel.channelId;
           this.subscribedChannelMap[channelId] = undefined;

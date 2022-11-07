@@ -378,7 +378,7 @@ export class MenuService {
             this.hiveVaultController.unSubscribeChannel(
               destDid, channelId
             ).then(async (result) => {
-              let channel: FeedsData.SubscribedChannelV3 = {
+              let channel: FeedsData.BackupSubscribedChannelV3 = {
                 destDid: destDid,
                 channelId: channelId
               };

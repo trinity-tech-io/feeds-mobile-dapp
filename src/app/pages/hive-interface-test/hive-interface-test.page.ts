@@ -526,7 +526,7 @@ export class HiveInterfaceTestPage implements OnInit {
   //   }
   // }
   querySubscribedChannelsByTargetDid() {
-    this.hiveVaultApi.querySubscribedChannelsByUserDid("did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR");
+    this.hiveVaultController.querySubscribedChannelData("did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR");
   }
   // queryPublicPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
   //   return this.hiveVaultController.queryPublicPostById(targetDid, channelId, postId);

@@ -353,7 +353,7 @@ export class HiveVaultController {
   }
 
   //TODO be improve user link
-  querySubscriptionChannelById(targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3[]> {
+  querySubscriptionChannelById(targetDid: string, channelId: string): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.querySubscrptionInfoByChannelId(targetDid, channelId);
@@ -402,7 +402,7 @@ export class HiveVaultController {
     });
   }
 
-  getSelfSubscriptionChannel(targetDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
+  getSelfSubscriptionChannel(targetDid: string): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.dataHelper.getSigninData()).did;
@@ -418,10 +418,10 @@ export class HiveVaultController {
           resolve([]);
           return;
         }
-        let subscibedChannelList: FeedsData.SubscribedChannelV3[] = [];
+        let subscibedChannelList: FeedsData.BackupSubscribedChannelV3[] = [];
         for (let index = 0; index < subscriptions.length; index++) {
           const subscription = subscriptions[index];
-          const subscibedChannel: FeedsData.SubscribedChannelV3 = {
+          const subscibedChannel: FeedsData.BackupSubscribedChannelV3 = {
             destDid: subscription.destDid,
             channelId: subscription.channelId
           }
@@ -461,7 +461,7 @@ export class HiveVaultController {
           return;
         }
 
-        const newSubscribedChannel: FeedsData.SubscribedChannelV3 = {
+        const newSubscribedChannel: FeedsData.BackupSubscribedChannelV3 = {
           destDid: subscriptions[0].destDid,
           channelId: subscriptions[0].channelId
         }
@@ -836,7 +836,7 @@ export class HiveVaultController {
     });
   }
 
-  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string = ''): Promise<FeedsData.SubscribedChannelV3> {
+  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string = ''): Promise<FeedsData.BackupSubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         let userName = '';
@@ -854,7 +854,7 @@ export class HiveVaultController {
           Logger.error(TAG, errorMsg);
           reject(errorMsg);
         }
-        let subscribedChannel: FeedsData.SubscribedChannelV3 = {
+        let subscribedChannel: FeedsData.BackupSubscribedChannelV3 = {
           destDid: targetDid,
           channelId: channelId
         }
@@ -1379,7 +1379,7 @@ export class HiveVaultController {
     });
   }
 
-  unSubscribeChannel(destDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
+  unSubscribeChannel(destDid: string, channelId: string): Promise<FeedsData.BackupSubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
 
@@ -1388,7 +1388,7 @@ export class HiveVaultController {
 
 
         if (result) {
-          const subscribedChannel: FeedsData.SubscribedChannelV3 = {
+          const subscribedChannel: FeedsData.BackupSubscribedChannelV3 = {
             destDid: destDid,
             channelId: channelId
           }
@@ -1951,7 +1951,7 @@ export class HiveVaultController {
     });
   }
 
-  syncSubscribedChannelFromBackup(): Promise<FeedsData.SubscribedChannelV3[]> {
+  syncSubscribedChannelFromBackup(): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const subcribedChannelsList = await this.queryBackupSubscribedChannel();
@@ -1969,7 +1969,7 @@ export class HiveVaultController {
     });
   }
 
-  private queryBackupSubscribedChannel(): Promise<FeedsData.SubscribedChannelV3[]> {
+  private queryBackupSubscribedChannel(): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryBackupData();
@@ -2626,6 +2626,65 @@ export class HiveVaultController {
           return;
         }
         resolve(channelList);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
+  addSubscribedChannelData(targetDid: string, channelId: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.insertSubscribedChannel(targetDid, channelId, '', '', '', '', '', '');
+        if (!result) {
+          resolve(null);
+          return;
+        }
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
+  updateSubscribedChannelData(targetDid: string, channelId: string, subscribedAt: number, channelName: string, channelDisplayName: string,
+    channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.updateSubscribedChannel(targetDid, channelId, subscribedAt, channelName, channelDisplayName,
+          channelIntro, channelAvatar, channelType, channelCategory);
+        if (!result) {
+          resolve(null);
+          return;
+        }
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
+
+
+  querySubscribedChannelData(userDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.querySubscribedChannelsByUserDid(userDid);
+        if (!result) {
+          resolve([]);
+          return;
+        }
+
+        const subscribedChannelList = HiveVaultResultParse.parseSubscribedChannelResult(result.find_message.items)
+        if (!subscribedChannelList) {
+          resolve([]);
+          return;
+        }
+
+        resolve(subscribedChannelList);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
