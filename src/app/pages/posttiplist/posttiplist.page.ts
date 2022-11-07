@@ -40,6 +40,9 @@ export class PosttiplistPage implements OnInit {
   private userObserver: any = {};
   private isLoadUsers: any = {};
   public  isLoading: boolean = true;
+  private pageNumber = 10;
+  private pageSize = 1;
+  private isMaxConut: boolean = false;
   constructor(
     public theme: ThemeService,
     private translate: TranslateService,
@@ -55,11 +58,6 @@ export class PosttiplistPage implements OnInit {
     this.activatedRoute.queryParams.subscribe(async (params: any) => {
       this.channelId = params.channelId;
       this.postId = params.postId;
-      try {
-       this.maxCount = await this.nftContractControllerService.getChannelTippingContractService().getPosTippingCount(this.channelId, this.postId);
-      } catch (error) {
-
-      }
     });
   }
 
@@ -226,9 +224,23 @@ export class PosttiplistPage implements OnInit {
       try {
       let postTipList = postTipListMap[this.postId] || '';
       if(postTipList === ''){
+        this.pageSize = 1;
+        this.maxCount = await this.nftContractControllerService.getChannelTippingContractService().getPosTippingCount(this.channelId, this.postId);
+        let count = 0;
+        if(this.maxCount > this.pageNumber){
+           this.startIndex = this.maxCount - this.pageNumber;
+           count = this.pageNumber;
+           this.pageSize++;
+           this.isMaxConut = false;
+        }else{
+           count = this.maxCount;
+           this.startIndex = 0;
+           this.isMaxConut = true;
+        }
+        console.log("===============",this.maxCount,this.startIndex,count)
         let list =  await this.nftContractControllerService
         .getChannelTippingContractService()
-        .getPosTippingList(this.channelId, this.postId,this.startIndex,this.maxCount);
+        .getPosTippingList(this.channelId, this.postId,this.startIndex,count);
         this.postTipList = await this.handleList(list);
         postTipListMap[this.postId] = this.postTipList;
         this.dataHelper.setPostTipListMap(postTipListMap);
@@ -237,6 +249,7 @@ export class PosttiplistPage implements OnInit {
       }
 
       } catch (error) {
+
       }
   }
 
@@ -314,6 +327,37 @@ syncDidDocumentProfileFromList(usersDidList: postTipItem[]) {
       this.setUserNameAndAvatarUI(userProfile);
     });
   }
+}
+
+loadData(event: any) {
+  let sId = setTimeout(async () => {
+    if (this.isMaxConut) {
+      event.target.complete();
+      clearTimeout(sId);
+      return;
+    }
+    let count = 0;
+    if(this.maxCount > this.pageSize*this.pageNumber){
+      this.startIndex = this.maxCount - this.pageSize*this.pageNumber;
+      count = this.pageNumber;
+      this.pageSize++;
+      this.isMaxConut = false;
+    }else{
+      count = this.maxCount - (this.pageSize - 1)*this.pageNumber;
+      this.startIndex = 0;
+      this.isMaxConut = true;
+    }
+    console.log("===============",this.maxCount,this.startIndex,count)
+    let newLoadedList =  await this.nftContractControllerService
+    .getChannelTippingContractService()
+    .getPosTippingList(this.channelId, this.postId,this.startIndex,count);
+    let newPostTipList = await this.handleList(newLoadedList);
+    this.postTipList = this.postTipList.concat(newPostTipList);
+    this.syncRemoteUserProfile(newPostTipList);
+    this.initUserObserVerList(newPostTipList);
+    event.target.complete();
+    clearTimeout(sId);
+  }, 500);
 }
 
 }
