@@ -55,7 +55,7 @@ export class SubscriptionsPage implements OnInit {
   public pageSize = 1;
   public pageNumber = 10;
   public totalSubscribedChannelList: any = [];
-  public totalNum:number = 0;
+  public totalNum: number = 0;
   public channelPublicStatusList: any = {};
   constructor(
     private titleBarService: TitleBarService,
@@ -158,7 +158,7 @@ export class SubscriptionsPage implements OnInit {
 
   }
 
-  async getFollowedChannelList(subscribedChannel: FeedsData.SubscribedChannelV3[]) {
+  async getFollowedChannelList(subscribedChannel: FeedsData.BackupSubscribedChannelV3[]) {
     let list = [];
     for (let item of subscribedChannel) {
       let destDid = item.destDid;
@@ -347,7 +347,7 @@ export class SubscriptionsPage implements OnInit {
         avatarUri = channel.avatar;
       }
       let followAvatar = this.followAvatarMap[id] || '';
-      if(followAvatar === ''){
+      if (followAvatar === '') {
         this.followAvatarMap[id] = './assets/images/loading.svg';
       }
       let fileName: string = avatarUri.split("@")[0];
@@ -358,14 +358,14 @@ export class SubscriptionsPage implements OnInit {
             this.followingIsLoadimage[id] = '13';
             this.followAvatarMap[id] = srcData;
           } else {
-            if(this.followAvatarMap[id] === './assets/images/loading.svg'){
+            if (this.followAvatarMap[id] === './assets/images/loading.svg') {
               this.followAvatarMap[id] = './assets/images/profile-0.svg';
             }
             this.followingIsLoadimage[id] = '13';
           }
         });
       }).catch((err) => {
-        if(this.followAvatarMap[id] === './assets/images/loading.svg'){
+        if (this.followAvatarMap[id] === './assets/images/loading.svg') {
           this.followAvatarMap[id] = './assets/images/profile-0.svg';
         }
       });

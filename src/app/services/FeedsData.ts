@@ -1075,9 +1075,23 @@ declare namespace FeedsData {
     status: FeedsData.PostCommentStatus.available | FeedsData.PostCommentStatus.deleted
   }
 
-  type SubscribedChannelV3 = {// 本地存储订阅列表模型
+  type BackupSubscribedChannelV3 = {// 本地存储订阅列表模型
     destDid: string,// 订阅channel的创建者的did
     channelId: string
+  }
+
+  type SubscribedChannelV3 = {// 本地存储订阅列表模型
+    targetDid: string,
+    channelId: string,
+    subscribedAt: number,
+    updatedAt: number,
+
+    channelName: string,
+    channelDisplayName: string,
+    channelIntro: string,
+    channelAvatar: string,
+    channelType: string,
+    channelCategory: string
   }
 
   type TwitterToken = {

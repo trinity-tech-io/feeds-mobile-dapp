@@ -2587,12 +2587,12 @@ export class HiveVaultHelper {
                 "subscribed_at": subscribedAt,
                 "updated_at": updatedAt,
 
-                "name": channelName,
-                "display_name": channelDisplayName,
-                "intro": channelIntro,
-                "avatar": channelAvatar,
-                "type": channelType,
-                "category": channelCategory,
+                "channel_name": channelName,
+                "channel_display_name": channelDisplayName,
+                "channel_intro": channelIntro,
+                "channel_avatar": channelAvatar,
+                "channel_type": channelType,
+                "channel_category": channelCategory,
             }
 
             try {
@@ -2627,12 +2627,12 @@ export class HiveVaultHelper {
                     "subscribed_at": subscribedAt,
                     "updated_at": updatedAt,
 
-                    "name": channelName,
-                    "display_name": channelDisplayName,
-                    "intro": channelIntro,
-                    "avatar": channelAvatar,
-                    "type": channelType,
-                    "category": channelCategory,
+                    "channel_name": channelName,
+                    "channel_display_name": channelDisplayName,
+                    "channel_intro": channelIntro,
+                    "channel_avatar": channelAvatar,
+                    "channel_type": channelType,
+                    "channel_category": channelCategory,
                 }
                 const option = new UpdateOptions(false, true)
                 let filter = { "target_did": targetDid, "channel_id": channelId };
@@ -2699,26 +2699,6 @@ export class HiveVaultHelper {
         return this.removeSubscribedChannelDB(targetDid, channelId);
     }
     /** remove subscribed channel end */
-
-
-    // /** query subscribed channel start */
-    // private querySubscribedChannelDB(): Promise<any> {
-    //     return new Promise(async (resolve, reject) => {
-    //         try {
-    //             const result = this.hiveService.queryDBData(HiveVaultHelper.TABLE_SUBSCRIBED_CHANNELS, {});
-    //             Logger.log(TAG, 'Query bsc db result', result);
-    //             resolve(result);
-    //         } catch (error) {
-    //             Logger.error(TAG, 'Query bsc db error', error);
-    //             reject(await this.handleError(error))
-    //         }
-    //     })
-    // }
-
-    // querySubscribedChannelsFromDB(): Promise<any> {
-    //     return this.querySubscribedChannelDB();
-    // }
-    // /** query subscribed channel end */
 
     /** query subscribed channels by targetDid start*/
     private registerQuerySubscribedChannelsScripting(forceCreate: boolean = false): Promise<string> {
