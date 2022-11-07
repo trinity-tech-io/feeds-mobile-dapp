@@ -67,6 +67,7 @@ export class PosttiplistPage implements OnInit {
     this.initTitle();
     let postTipListMap = this.dataHelper.getPostTipListMap() || {};
     await this.getPostTipList(postTipListMap);
+    this.syncRemoteUserProfile(this.postTipList);
     this.isLoading = false;
     this.removeObserveList();
     this.initUserObserVerList(this.postTipList);
@@ -290,6 +291,7 @@ doRefresh(event: any) {
   let sId = setTimeout(async () => {
     try {
       await this.getPostTipList({});
+      this.syncRemoteUserProfile(this.postTipList);
       this.removeObserveList();
       this.isLoadUsers = {};
       this.initUserObserVerList(this.postTipList);
@@ -298,6 +300,20 @@ doRefresh(event: any) {
     event.target.complete();
     clearTimeout(sId);
   }, 200)
+}
+
+syncRemoteUserProfile(userDidList:  postTipItem[]) {
+  this.syncDidDocumentProfileFromList(userDidList);
+}
+
+syncDidDocumentProfileFromList(usersDidList: postTipItem[]) {
+  for (let index = 0; index < usersDidList.length; index++) {
+    let postTipItem:postTipItem = usersDidList[index];
+    const userdid: string = postTipItem.did;
+    this.hiveVaultController.syncUserProfileFromDidDocument(userdid).then((userProfile: FeedsData.UserProfile) => {
+      this.setUserNameAndAvatarUI(userProfile);
+    });
+  }
 }
 
 }
