@@ -88,16 +88,22 @@ export class MyApp {
     this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, async () => {
       document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
       try {
-        if (this.avatar === '') {
+        if (!this.avatar) {
           this.avatar = './assets/images/loading.svg';
-        }
-        await this.getAvatar();
-      } catch (error) {
 
-      }
-      let avatar = this.avatar || null;
-      if (avatar === null || this.avatar === './assets/images/loading.svg') {
-        this.hiveVaultController.refreshAvatar().then(async () => { await this.getAvatar(); }).catch(async () => { await this.getAvatar(); });
+          const userDid = (await this.dataHelper.getSigninData()).did
+          if (userDid) {
+            this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+              if (userProfile) {
+                const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar || '';
+                this.hiveVaultController.getV3HiveUrlData(avatarHiveUrl).then((base64Image: string) => {
+                  this.avatar = base64Image;
+                }).catch(() => { });
+              }
+            }).catch(() => { });
+          }
+        }
+      } catch (error) {
       }
       this.initProfileData();
     })
