@@ -34,9 +34,9 @@ export class PaypromptComponent implements OnInit {
   public elaAddress: string = '';
   public amount: any = '';
   public memo: string = '';
-  public defalutMemo: string = 'like the post';
+  public defalutMemo: string = '';
   public title: string = '';
-  public disableMemo: boolean = true;
+  public disableMemo: boolean = false;
   public isAdvancedSetting: boolean = false;
   public destDid: string = '';
   public channelId: string = null;
@@ -74,7 +74,7 @@ export class PaypromptComponent implements OnInit {
     }
     this.amount = this.navParams.get('amount') || "";
     this.elaAddress = this.navParams.get('elaAddress');
-    this.memo = this.defalutMemo = this.navParams.get('defalutMemo') || "like the post";
+    this.memo = this.defalutMemo = this.navParams.get('defalutMemo') || "";
     this.title = this.navParams.get('title');
 
     if (this.defalutMemo != '') {
@@ -290,7 +290,9 @@ export class PaypromptComponent implements OnInit {
       let did = signInData.did || '';
       let name = signInData.name || '';
       let description = signInData.description || '';
-
+      if( description === '暂无个人简介和兴趣爱好信息' || description === 'Add Description'){
+        description = '';
+      }
       let ipfsJSON = {
         "version": "1",
         "did": did,
