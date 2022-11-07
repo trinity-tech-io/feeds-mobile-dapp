@@ -46,16 +46,18 @@
 
   .cardTitle{
       position: absolute;
-      width: 100%;
-      display: flex;
+      width: 95%;
+      text-align: center;
       top: 104px;
-      justify-content: center;
       font-style: normal;
       font-weight: 700;
       font-size: 25px;
       color: #FFFFFF;
-      white-space:nowrap;
-      text-overflow: ellipsis;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:2;
   }
 
   .connectWallet{
