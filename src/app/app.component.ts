@@ -27,6 +27,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 // import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
 import { TwitterService } from 'src/app/services/TwitterService';
+import { MorenameComponent } from './components/morename/morename.component';
 
 let TAG: string = 'app-component';
 @Component({
@@ -816,4 +817,5 @@ export class MyApp {
   }
 
   preventDefault(e: any) { e.preventDefault(); };
+
 }

@@ -711,8 +711,10 @@ export class SearchPage implements OnInit {
         const scanResult = ScannerHelper.parseScannerResult(tokenURI);
         const feedsUrl = scanResult.feedsUrl;
         try {
-          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-          channelCollectionPageList.push(channelInfo);
+          let channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId) || null;
+          if(channelInfo != null){
+            channelCollectionPageList.push(channelInfo);
+          }
         } catch (error) {
           this.isLoading = false;
         }
@@ -755,8 +757,10 @@ export class SearchPage implements OnInit {
         const scanResult = ScannerHelper.parseScannerResult(tokenURI);
         const feedsUrl = scanResult.feedsUrl;
         try {
-          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
-          channelCollectionPageList.push(channelInfo);
+          let channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId) || null;
+          if(channelInfo != null){
+            channelCollectionPageList.push(channelInfo);
+          }
         } catch (error) {
           this.isLoading = false;
         }

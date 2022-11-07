@@ -48,8 +48,10 @@
     font-weight: 700;
     font-size: 25px;
     color: #FFFFFF;
-    white-space: normal;
+    width: 62%;
+    white-space: nowrap;
     text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .did {
