@@ -44,7 +44,7 @@
     <img *ngIf="theme.darkMode" src="assets/images/darkmode/guanbi.svg" style="margin-top: 11px;"/>
   </ion-col>
 </ion-row>
-<ion-content [ngClass]="{'contentTop':tabType==='feeds'}"   (ionScrollEnd)="ionScroll()" [scrollEvents]="true">
+<ion-content [ngClass]="{'contentTop':tabType==='feeds'}"   (ionScroll)="ionScroll()" [scrollEvents]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5">
     <ion-refresher-content
       class="refresh"
