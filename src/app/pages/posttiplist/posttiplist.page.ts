@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
@@ -237,7 +238,6 @@ export class PosttiplistPage implements OnInit {
            this.startIndex = 0;
            this.isMaxConut = true;
         }
-        console.log("===============",this.maxCount,this.startIndex,count)
         let list =  await this.nftContractControllerService
         .getChannelTippingContractService()
         .getPosTippingList(this.channelId, this.postId,this.startIndex,count);
@@ -316,7 +316,8 @@ doRefresh(event: any) {
 }
 
 syncRemoteUserProfile(userDidList:  postTipItem[]) {
-  this.syncDidDocumentProfileFromList(userDidList);
+  let newUserDidList = _.uniqBy(userDidList,"did");
+  this.syncDidDocumentProfileFromList(newUserDidList);
 }
 
 syncDidDocumentProfileFromList(usersDidList: postTipItem[]) {
@@ -331,7 +332,7 @@ syncDidDocumentProfileFromList(usersDidList: postTipItem[]) {
 
 loadData(event: any) {
   let sId = setTimeout(async () => {
-    if (this.isMaxConut) {
+    if (this.isMaxConut || this.maxCount === 0) {
       event.target.complete();
       clearTimeout(sId);
       return;
@@ -347,7 +348,6 @@ loadData(event: any) {
       this.startIndex = 0;
       this.isMaxConut = true;
     }
-    console.log("===============",this.maxCount,this.startIndex,count)
     let newLoadedList =  await this.nftContractControllerService
     .getChannelTippingContractService()
     .getPosTippingList(this.channelId, this.postId,this.startIndex,count);
