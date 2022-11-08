@@ -2970,7 +2970,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const result = await this.sqliteHelper.insertSubscribedChannelData(selfDid, subscribedChannel);
+        const result = await this.sqliteHelper.insertBackupSubscribedChannelData(selfDid, subscribedChannel);
         resolve(result);
       } catch (error) {
         Logger.error(TAG, 'Add subscribed channel error', error);
@@ -2983,7 +2983,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const result = await this.sqliteHelper.deleteSubscribedChannelData(selfDid, subscribedChannel);
+        const result = await this.sqliteHelper.deleteBackupSubscribedChannelData(selfDid, subscribedChannel);
         resolve(result);
       } catch (error) {
         Logger.error(TAG, 'Remove subscribed channel error', error);
@@ -2996,7 +2996,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const result = await this.sqliteHelper.cleanSubscribedChannelData(selfDid);
+        const result = await this.sqliteHelper.cleanBackupSubscribedChannelData(selfDid);
         resolve(result);
       } catch (error) {
         Logger.error(TAG, 'Remove subscribed channel error', error);
@@ -3009,7 +3009,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        let subscribedList = await this.sqliteHelper.querySubscribedChannelData(selfDid);
+        let subscribedList = await this.sqliteHelper.queryBackupSubscribedChannelData(selfDid);
         const resultList = await this.filterSubscribedChannelV3(subscribedList, subscribedChannelType);
         resolve(resultList);
       } catch (error) {
@@ -3066,7 +3066,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        let queryList = await this.sqliteHelper.querySubscribedChannelDataByChannelId(selfDid, channelId)
+        let queryList = await this.sqliteHelper.queryBackupSubscribedChannelDataByChannelId(selfDid, channelId)
         resolve(queryList[0])
       } catch (error) {
         reject(error);

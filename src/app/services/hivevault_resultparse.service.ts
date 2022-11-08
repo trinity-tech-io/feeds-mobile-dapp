@@ -358,7 +358,7 @@ export class HiveVaultResultParse {
     }
   }
 
-  public static parseSubscribedChannelResult(result: any): FeedsData.SubscribedChannelV3[] {
+  public static parseSubscribedChannelResult(userDid: string, result: any): FeedsData.SubscribedChannelV3[] {
     try {
       /**
        * "target_did": targetDid,
@@ -380,6 +380,7 @@ export class HiveVaultResultParse {
       }
       subscribedChannels.forEach(subscribedChannel => {
         const subscribed: FeedsData.SubscribedChannelV3 = {
+          userDid: userDid,
           targetDid: subscribedChannel.target_did || '',
           channelId: subscribedChannel.channel_id || '',
           subscribedAt: subscribedChannel.subscribed_at || 0,

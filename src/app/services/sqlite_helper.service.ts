@@ -21,6 +21,8 @@ export class FeedsSqliteHelper {
   private readonly TABLE_USER: string = 'users';
   // private readonly TABLE_PINPOST: string = 'pinpost';
 
+  private readonly TABLE_SUBSCRIBED_CHANNELS: string = 'subscribed_channels';
+
   public isOpen: boolean = false;
   private limitNum: number = 30;
 
@@ -116,14 +118,15 @@ export class FeedsSqliteHelper {
       try {
         const p1 = this.createPostTable(dbUserDid);
         const p2 = this.createChannelTable(dbUserDid);
-        const p3 = this.createSubscribedChannelTable(dbUserDid);
+        const p3 = this.createBackupSubscribedChannelTable(dbUserDid);
         const p4 = this.createSubscriptionTable(dbUserDid);
         const p5 = this.createCommentTable(dbUserDid);
         const p6 = this.createLikeTable(dbUserDid);
         // const p7 = this.createPinPostTable(dbUserDid);
         const p7 = this.createUserTable(dbUserDid);
+        const p8 = this.createSubscribedChannelTable(dbUserDid);
         Promise.all(
-          [p1, p2, p3, p4, p5, p6, p7]
+          [p1, p2, p3, p4, p5, p6, p7, p8]
         );
 
         this.storageService.set(FeedsData.PersistenceKey.sqlversion, Config.SQL_VERSION);
@@ -561,7 +564,7 @@ export class FeedsSqliteHelper {
   }
 
   // subscription channel 本地存储使用
-  private createSubscribedChannelTable(dbUserDid: string): Promise<any> {
+  private createBackupSubscribedChannelTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'create table if not exists ' + this.TABLE_SUBSCRIPTION_CHANNEL
@@ -578,7 +581,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.BackupSubscribedChannelV3): Promise<string> {
+  insertBackupSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.BackupSubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_SUBSCRIPTION_CHANNEL
@@ -597,12 +600,12 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscribedChannelData(dbUserDid: string): Promise<FeedsData.BackupSubscribedChannelV3[]> {
+  queryBackupSubscribedChannelData(dbUserDid: string): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL;
         const result = await this.executeSql(dbUserDid, statement);
-        const subscribedChannelList = this.parseSubscriptionChannelData(result);
+        const subscribedChannelList = this.parseBackupSubscriptionChannelData(result);
         resolve(subscribedChannelList);
       } catch (error) {
         Logger.error(TAG, 'query subscriptionChannel Data error', error);
@@ -611,13 +614,13 @@ export class FeedsSqliteHelper {
     });
   }
 
-  querySubscribedChannelDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.BackupSubscribedChannelV3[]> {
+  queryBackupSubscribedChannelDataByChannelId(dbUserDid: string, channelId: string): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?';
         const params = [channelId];
         const result = await this.executeSql(dbUserDid, statement, params);
-        const subscriptionChannelList = this.parseSubscriptionChannelData(result);
+        const subscriptionChannelList = this.parseBackupSubscriptionChannelData(result);
 
         Logger.log(TAG, 'query subscribed channel data by channel id result is', subscriptionChannelList);
         resolve(subscriptionChannelList);
@@ -628,7 +631,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.BackupSubscribedChannelV3): Promise<string> {
+  deleteBackupSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.BackupSubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL + ' WHERE channel_id=?'
@@ -643,7 +646,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  cleanSubscribedChannelData(dbUserDid: string,): Promise<string> {
+  cleanBackupSubscribedChannelData(dbUserDid: string,): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIPTION_CHANNEL;
@@ -1164,8 +1167,6 @@ export class FeedsSqliteHelper {
     });
   }
 
-
-
   //User
   private createUserTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
@@ -1235,6 +1236,143 @@ export class FeedsSqliteHelper {
       }
     });
   }
+
+  // subscribed channel 本地存储使用
+  private createSubscribedChannelTable(dbUserDid: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'create table if not exists ' + this.TABLE_SUBSCRIBED_CHANNELS
+          + '('
+          + 'user_did VARCHAR(64), target_did VARCHAR(64), channel_id VARCHAR(64), subscribed_at REAL(64), updated_at REAL(64), '
+          + 'channel_name VARCHAR(64), channel_display_name VARCHAR(64), channel_intro VARCHAR(64), channel_avatar TEXT, channel_type VARCHAR(64), channel_category VARCHAR(64),'
+          + ')';
+        const result = await this.executeSql(dbUserDid, statement);
+        Logger.log(TAG, 'Create subscribed channel table result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Create subscriptionChannel table error', error);
+        reject(error);
+      }
+    });
+  }
+
+  insertSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'INSERT INTO ' + this.TABLE_SUBSCRIBED_CHANNELS
+          + '(user_did, target_did, channel_id, subscribed_at, updated_at, channel_name, channel_display_name, channel_intro, channel_avatar, channel_type, channel_category) VALUES'
+          + '(?,?,?,?,?,?,?,?,?,?,?)';
+
+        const params = [subscribedChannelV3.userDid, subscribedChannelV3.targetDid, subscribedChannelV3.channelId, subscribedChannelV3.subscribedAt, subscribedChannelV3.updatedAt,
+        subscribedChannelV3.channelName, subscribedChannelV3.channelDisplayName, subscribedChannelV3.channelIntro, subscribedChannelV3.channelAvatar, subscribedChannelV3.channelType, subscribedChannelV3.channelCategory];
+
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Insert subscription Data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Insert subscriptionChannel table date error', error);
+        reject(error);
+      }
+    });
+  }
+
+
+  updateSubscribedChannelData(dbUserDid: string, subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'UPDATE ' + this.TABLE_SUBSCRIBED_CHANNELS
+          + ' SET subscribed_at=?, updated_at=?, channel_name=?, channel_display_name=?, channel_intro=?, channel_avatar=?, channel_type=?, channel_category=? WHERE user_did=? and target_did=? and channel_id=?';
+        const params = [subscribedChannelV3.subscribedAt, subscribedChannelV3.updatedAt,
+        subscribedChannelV3.channelName, subscribedChannelV3.channelDisplayName, subscribedChannelV3.channelIntro, subscribedChannelV3.channelAvatar, subscribedChannelV3.channelType, subscribedChannelV3.channelCategory,
+        subscribedChannelV3.userDid, subscribedChannelV3.targetDid, subscribedChannelV3.channelId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+
+        Logger.log(TAG, 'update subscribed channel data result: ', result)
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'update subscribed channel data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryAllSubscribedChannelData(dbUserDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIBED_CHANNELS;
+        const result = await this.executeSql(dbUserDid, statement);
+        const subscribedChannelList = this.parseSubscribedChannelData(result);
+        resolve(subscribedChannelList);
+      } catch (error) {
+        Logger.error(TAG, 'Query subscribed channel data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  querySubscribedChannelDataByUserDid(dbUserDid: string, userDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIBED_CHANNELS + ' WHERE user_did=?';
+        const params = [userDid];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const subscriptionChannelList = this.parseSubscribedChannelData(result);
+
+        Logger.log(TAG, 'Query subscribed channel data by user result is', subscriptionChannelList);
+        resolve(subscriptionChannelList);
+      } catch (error) {
+        Logger.error(TAG, 'Query subscribed channel data by user error', error);
+        reject(error);
+      }
+    });
+  }
+
+  deleteSubscribedChannelDataById(dbUserDid: string, subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIBED_CHANNELS + ' WHERE user_did=? and target_did=? and channel_id=?'
+        const params = [subscribedChannelV3.userDid, subscribedChannelV3.targetDid, subscribedChannelV3.channelId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Remove subscribed channel data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Remove subscribed channel data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  deleteSubscribedChannelDataByUser(dbUserDid: string, subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIBED_CHANNELS + ' WHERE user_did=?'
+        const params = [subscribedChannelV3.channelId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Remove subscribed channel data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Remove subscribed channel data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  cleanSubscribedChannelData(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIBED_CHANNELS;
+        const params = [];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Clean subscribed channel data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'delete subscriptionChannel Data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
 
   //pinpost
   // private createPinPostTable(dbUserDid: string): Promise<any> {
@@ -1551,7 +1689,7 @@ export class FeedsSqliteHelper {
     return num;
   }
 
-  parseSubscriptionChannelData(result: any): FeedsData.BackupSubscribedChannelV3[] {
+  parseBackupSubscriptionChannelData(result: any): FeedsData.BackupSubscribedChannelV3[] {
     Logger.log(TAG, 'Parse subscription channel result from sql, result is', result);
     if (!result) {
       return [];
@@ -1566,6 +1704,34 @@ export class FeedsSqliteHelper {
       list.push(subscribedChannel);
     }
     Logger.log(TAG, 'Parse subscription channel list from sql, list is', list);
+    return list;
+  }
+
+  parseSubscribedChannelData(result: any): FeedsData.SubscribedChannelV3[] {
+    Logger.log(TAG, 'Parse subscribed channel result from sql, result is', result);
+    if (!result) {
+      return [];
+    }
+    let list = [];
+    for (let index = 0; index < result.rows.length; index++) {
+      const element = result.rows.item(index);
+      let subscribedChannel: FeedsData.SubscribedChannelV3 = {
+        userDid: element['user_did'],
+        targetDid: element['target_did'],
+        channelId: element['channel_id'],
+        subscribedAt: element['subscribed_at'],
+        updatedAt: element['updated_at'],
+
+        channelName: element['channel_name'],
+        channelDisplayName: element['channel_display_name'],
+        channelIntro: element['channel_intro'],
+        channelAvatar: element['channel_avatar'],
+        channelType: element['channel_type'],
+        channelCategory: element['channel_category']
+      }
+      list.push(subscribedChannel);
+    }
+    Logger.log(TAG, 'Parse subscribed channel list from sql, list is', list);
     return list;
   }
 
@@ -1674,6 +1840,17 @@ export class FeedsSqliteHelper {
     });
   }
 
+  restoreSqlData340(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.createSubscribedChannelTable(dbUserDid);
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   restoreSqlData(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1686,15 +1863,20 @@ export class FeedsSqliteHelper {
           await this.restoreSqlData320(dbUserDid);
         }
 
-        if (sqlversion < Config.SQL_VERSION330 && sqlversion >= Config.SQL_VERSION320) {
+        if (sqlversion < Config.SQL_VERSION330 && sqlversion > 0) {
           await this.restoreSqlData330(dbUserDid);
+        }
+
+        if (sqlversion < Config.SQL_VERSION340 && sqlversion > 0) {
+          await this.restoreSqlData340(dbUserDid);
         }
 
         if (sqlversion == 0) {
           const restore311 = this.restoreSqlData311(dbUserDid);
           const restore320 = this.restoreSqlData320(dbUserDid);
           const restore330 = this.restoreSqlData330(dbUserDid);
-          await Promise.allSettled([restore311, restore320, restore330]);
+          const restore340 = this.restoreSqlData340(dbUserDid);
+          await Promise.allSettled([restore311, restore320, restore330， restore340]);
         }
 
         resolve('FINISH');
