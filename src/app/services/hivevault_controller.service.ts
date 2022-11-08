@@ -2667,8 +2667,6 @@ export class HiveVaultController {
     });
   }
 
-
-
   querySubscribedChannelData(userDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2678,7 +2676,7 @@ export class HiveVaultController {
           return;
         }
 
-        const subscribedChannelList = HiveVaultResultParse.parseSubscribedChannelResult(result.find_message.items)
+        const subscribedChannelList = HiveVaultResultParse.parseSubscribedChannelResult(userDid, result.find_message.items)
         if (!subscribedChannelList) {
           resolve([]);
           return;

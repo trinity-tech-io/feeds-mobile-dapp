@@ -1090,6 +1090,7 @@ declare namespace FeedsData {
   }
 
   type SubscribedChannelV3 = {// 本地存储订阅列表模型
+    userDid: string,
     targetDid: string,
     channelId: string,
     subscribedAt: number,
