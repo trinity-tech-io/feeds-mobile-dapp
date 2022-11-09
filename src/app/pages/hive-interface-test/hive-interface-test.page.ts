@@ -614,7 +614,7 @@ export class HiveInterfaceTestPage implements OnInit {
       channelType: "channelType1111",
       channelCategory: "channelCategory1111"
     }
-    this.sqliteHelper.deleteSubscribedChannelDataById(selfDid, subscribedChannelV3);
+    this.sqliteHelper.deleteSubscribedChannelDataById(selfDid, selfDid, "targetDid", "channelId",);
   }
 
   async deleteSubscribedChannelDataByUser() {
