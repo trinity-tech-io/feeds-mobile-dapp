@@ -4390,7 +4390,7 @@ export class DataHelper {
 
   setChannelCollectionPageList(channelCollectionPageList = []) {
     this.channelCollectionPageList = channelCollectionPageList;
-    this.saveData("feedsNetWork:specificChannelCollectionPageList", this.channelCollectionPageList);
+    this.saveData("feedsNetWork:channelCollectionPageList", this.channelCollectionPageList);
   }
 
   queryChannelPinPostData(channelId: string): Promise<FeedsData.PostV3> {
