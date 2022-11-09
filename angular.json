@@ -68,6 +68,7 @@
               "src/app/services/nftcontract_parsar.service",
               "src/app/services/nftcontract_diamond.service",
               "src/app/services/contract_channel.service",
+              "src/app/services/contract_channel_tipping.service",
               "@walletconnect/web3-provider",
               "typedarray-to-buffer",
               "libsodium-wrappers",
