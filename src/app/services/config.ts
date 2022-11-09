@@ -44,14 +44,15 @@ export class Config {
     /** TestNet IPFS */
     public static IPFS_TEST_SERVER: string = 'https://ipfs-test.pasarprotocol.io/';
 
-    public static readonly scriptVersion = "3.3.0";
+    public static readonly scriptVersion = "3.4.0";
 
     //30101 update channel sql -> add display_name
     //30200 update post sql -> add pin_status
     public static readonly SQL_VERSION311: number = 30101;
     public static readonly SQL_VERSION320: number = 30200;
     public static readonly SQL_VERSION330: number = 30300;
-    public static readonly SQL_VERSION: number = 30301; //30302
+    public static readonly SQL_VERSION340: number = 30400;
+    public static readonly SQL_VERSION: number = 30400;
 
     public static readonly FEEDS_HIVE_DATA_PATH = 'feeds/data/';
     public static readonly FEEDS_HIVE_CUSTOM_AVATAR_PATH = 'feeds/avatar/custom';
