@@ -2013,8 +2013,8 @@ export class HomePage implements OnInit {
   handelAndroidScroll(ponit: any) {
 
     if (ponit.scrollTop > 0) {
-        let isHide = this.homeTittleBar.style.display;
-        if(isHide === 'block'){
+        let isHide = this.homeTittleBar.style.display || '';
+        if(isHide === 'block' || isHide === ''){
           this.homeTittleBar.style.display = "none";
         }
     } else {
@@ -2027,8 +2027,8 @@ export class HomePage implements OnInit {
 
   handelIosScroll(ponit: any) {
     if (ponit.scrollTop > 0) {
-      let isHide = this.homeTittleBar.style.display;
-      if(isHide === 'block'){
+      let isHide = this.homeTittleBar.style.display || '';
+      if(isHide === 'block' || isHide === ''){
         this.homeTittleBar.style.display = "none";
       }
     } else {
