@@ -195,6 +195,8 @@ export class HomePage implements OnInit {
   /**post tip count*/
   public postTipCountMap: any = {};
   private isLoadingPostTipCountMap: any = {};
+  private isLoadingPostTipAdressMap: any = {};
+  private postTipAdressMap: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -984,6 +986,7 @@ export class HomePage implements OnInit {
       this.channelMap = {};
       this.dataHelper.setChannelPublicStatusList({});
       this.isLoadingPostTipCountMap = {};
+      this.isLoadingPostTipAdressMap = {};
       this.removeObserveList();
       await this.initPostListData(true);
     } catch (error) {
@@ -1789,7 +1792,7 @@ export class HomePage implements OnInit {
   }
 
   clickDashangList(channelId: string, postId: string) {
-      this.native.navigateForward(['/posttiplist'],{ queryParams: { "channelId": channelId, "postId": postId }});
+    this.native.navigateForward(['/posttiplist'], { queryParams: { "channelId": channelId, "postId": postId } });
   }
 
   retry(destDid: string, channelId: string, postId: string) {
@@ -2452,6 +2455,18 @@ export class HomePage implements OnInit {
         this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
         this.getDisplayName(destDid, channelId, destDid);
         this.getPostTipCount(channelId, postId);
+        let isLoadingPostTipAdress = this.isLoadingPostTipAdressMap[channelId] || '';
+        if (isLoadingPostTipAdress === '') {
+          this.isLoadingPostTipAdressMap[channelId] = "11";
+          this.getChannelTippingAddress(channelId, false).then((postTipAdress: string) => {
+            this.postTipAdressMap[channelId] = postTipAdress;
+          }).catch((err) => {
+            this.postTipAdressMap[channelId] = '';
+          });
+        }
+
+        this.getPostTipCount(channelId, postId);
+
         if (mediaType === '1') {
           this.handlePostImgV2(destDid, channelId, postId);
         }
@@ -2596,7 +2611,7 @@ export class HomePage implements OnInit {
   //   }
   // }
 
-  async getChannelTippingAddress(channelId: string) {
+  async getChannelTippingAddress(channelId: string, isLoad: boolean = true) {
     try {
       let channelTippingAddressMap = this.dataHelper.getChannelTippingAddressMap() || {};
       let channelTippingAddress = channelTippingAddressMap[channelId] || '';
@@ -2607,19 +2622,27 @@ export class HomePage implements OnInit {
       Logger.log(TAG, "tokenId:", tokenId);
       tokenId = UtilService.hex2dec(tokenId);
       Logger.log(TAG, "tokenIdHex2dec:", tokenId);
-      await this.native.showLoading("common.waitMoment");
+      if (isLoad) {
+        await this.native.showLoading("common.waitMoment");
+      }
       let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
       Logger.log(TAG, "tokenInfo:", tokenInfo);
       if (tokenInfo[0] != '0') {
-        this.native.hideLoading();
+        if (isLoad) {
+          this.native.hideLoading();
+        }
         channelTippingAddressMap[channelId] = tokenInfo[3];
         this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
         return channelTippingAddressMap[channelId];
       }
-      this.native.hideLoading();
+      if (isLoad) {
+        this.native.hideLoading();
+      }
       return null;
     } catch (error) {
-      this.native.hideLoading();
+      if (isLoad) {
+        this.native.hideLoading();
+      }
       return null;
     }
   }

@@ -171,7 +171,7 @@
         <ic-icon [icon]="chatIcon" [size]="24" style="padding-right: 8px"></ic-icon>
         <ion-label>{{ commentNumMap[post.postId] }}</ion-label>
       </ion-col>
-      <ion-col (click)="clickDashang(post.destDid, post.channelId, post.postId)" *ngIf="isAndroid">
+      <ion-col (click)="clickDashang(post.destDid, post.channelId, post.postId)" *ngIf="isAndroid && postTipAdressMap[post.channelId]">
         <img src="/assets/images/tip.svg" *ngIf="!theme.darkMode">
         <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
         <ion-label>{{  postTipCountMap[post.postId] }}</ion-label>
