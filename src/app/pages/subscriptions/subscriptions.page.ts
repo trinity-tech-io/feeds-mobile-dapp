@@ -138,7 +138,7 @@ export class SubscriptionsPage implements OnInit {
   async initFollowing() {
     try {
       this.pageSize = 1;
-      this.totalSubscribedChannelList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+      this.totalSubscribedChannelList = await this.dataHelper.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
       let pageData = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalSubscribedChannelList);
       let subscribedChannel = pageData.items;
       this.totalNum = subscribedChannel.length;
@@ -172,7 +172,7 @@ export class SubscriptionsPage implements OnInit {
 
   async doRefresh(event: any) {
     try {
-      let subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+      let subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
       let promiseList: Promise<any>[] = [];
       for (let index = 0; index < subscribedChannels.length; index++) {
         const subscribedChannel = subscribedChannels[index];

@@ -196,7 +196,7 @@ export class SearchPage implements OnInit {
 
   async filterChannelCollectionPageList(channelCollectionPageList = []) {
     let channelList = [];
-    let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+    let subscribedChannel = await this.dataHelper.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
     for (let index = 0; index < channelCollectionPageList.length; index++) {
       let channel: FeedsData.ChannelV3 = channelCollectionPageList[index];
       // let channelIndex = _.findIndex(subscribedChannel, (item) => {
@@ -213,7 +213,7 @@ export class SearchPage implements OnInit {
 
   async init() {
     try {
-      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+      let subscribedChannel = await this.dataHelper.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
       this.subscribedChannelMap = _.keyBy(subscribedChannel, (item: FeedsData.ChannelV3) => {
         return item.channelId;
       });
@@ -625,7 +625,7 @@ export class SearchPage implements OnInit {
   async getChannels(event = null) {
     try {
       let channelCollectionPageList = [];
-      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+      let subscribedChannel = await this.dataHelper.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
       let channelsCount = this.specificPublicChannels.length;
       for (let channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
         let channelUrl = this.specificPublicChannels[channelIndex];

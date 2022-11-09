@@ -256,7 +256,7 @@ export class ProfilePage implements OnInit {
       this.isLoadingMyFeeds = false;
       this.myFeedsSum = this.channels.length;
       this.refreshMyFeedsVisibleareaImageV2(this.channels);
-      let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
+      let followedList = await this.dataHelper.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
       this.followers = followedList.length;
     } catch (error) {
       this.isLoadingMyFeeds = false;

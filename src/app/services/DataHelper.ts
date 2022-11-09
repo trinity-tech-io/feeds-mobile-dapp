@@ -2925,27 +2925,27 @@ export class DataHelper {
   }
   //// New data type
 
-  addSubscribedChannels(newSubscribedChannels: FeedsData.BackupSubscribedChannelV3[]): Promise<string> {
+  addBackupSubscribedChannels(newSubscribedChannels: FeedsData.BackupSubscribedChannelV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       for (let index = 0; index < newSubscribedChannels.length; index++) {
         const subscibedChannel = newSubscribedChannels[index];
-        await this.addSubscribedChannel(subscibedChannel);
+        await this.addBackupSubscribedChannel(subscibedChannel);
       }
       resolve('FINISH');
     });
   }
 
-  addSubscribedChannel(newSubscribedChannel: FeedsData.BackupSubscribedChannelV3): Promise<string> {
+  addBackupSubscribedChannel(newSubscribedChannel: FeedsData.BackupSubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!newSubscribedChannel) {
           resolve('FINISH');
           return;
         }
-        let originSubscribedChannel: FeedsData.BackupSubscribedChannelV3 = await this.getSubscribedChannelV3ByKey(newSubscribedChannel.destDid, newSubscribedChannel.channelId);
+        let originSubscribedChannel: FeedsData.BackupSubscribedChannelV3 = await this.getBackupSubscribedChannelV3ByKey(newSubscribedChannel.destDid, newSubscribedChannel.channelId);
         if (!originSubscribedChannel) {
           try {
-            await this.addSubscribedChannelV3(newSubscribedChannel);
+            await this.addBackupSubscribedChannelV3(newSubscribedChannel);
           } catch (error) {
           }
         } else {
@@ -2955,8 +2955,8 @@ export class DataHelper {
             return;
           }
 
-          await this.removeSubscribedChannelV3(originSubscribedChannel);
-          await this.addSubscribedChannelV3(newSubscribedChannel)
+          await this.removeBackupSubscribedChannelV3(originSubscribedChannel);
+          await this.addBackupSubscribedChannelV3(newSubscribedChannel)
         }
         resolve('FINISH');
       } catch (error) {
@@ -2967,7 +2967,7 @@ export class DataHelper {
   }
 
   // subscribedChannelV3 本地存储订阅列表
-  addSubscribedChannelV3(subscribedChannel: FeedsData.BackupSubscribedChannelV3): Promise<string> {
+  addBackupSubscribedChannelV3(subscribedChannel: FeedsData.BackupSubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -2980,7 +2980,7 @@ export class DataHelper {
     });
   }
 
-  removeSubscribedChannelV3(subscribedChannel: FeedsData.BackupSubscribedChannelV3) {
+  removeBackupSubscribedChannelV3(subscribedChannel: FeedsData.BackupSubscribedChannelV3) {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -2993,7 +2993,7 @@ export class DataHelper {
     });
   }
 
-  cleanSubscribedChannelData(): Promise<string> {
+  cleanBackupSubscribedChannelData(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -3006,12 +3006,12 @@ export class DataHelper {
     });
   }
 
-  getSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.BackupSubscribedChannelV3[]> {
+  getBackupSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
         let subscribedList = await this.sqliteHelper.queryBackupSubscribedChannelData(selfDid);
-        const resultList = await this.filterSubscribedChannelV3(subscribedList, subscribedChannelType);
+        const resultList = await this.filterBackupSubscribedChannelV3(subscribedList, subscribedChannelType);
         resolve(resultList);
       } catch (error) {
         Logger.error(TAG, 'Get subscribed channel list error', error);
@@ -3020,11 +3020,11 @@ export class DataHelper {
     })
   }
 
-  resetSubscribedChannelV3(subscribedChannels: FeedsData.BackupSubscribedChannelV3[]): Promise<string> {
+  resetBackupSubscribedChannelV3(subscribedChannels: FeedsData.BackupSubscribedChannelV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.cleanSubscribedChannelData();
-        await this.addSubscribedChannels(subscribedChannels);
+        await this.cleanBackupSubscribedChannelData();
+        await this.addBackupSubscribedChannels(subscribedChannels);
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Reset subscribed channel error', error);
@@ -3033,7 +3033,7 @@ export class DataHelper {
     });
   }
 
-  private async filterSubscribedChannelV3(list: FeedsData.BackupSubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.BackupSubscribedChannelV3[]> {
+  private async filterBackupSubscribedChannelV3(list: FeedsData.BackupSubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const signinDid = (await this.getSigninData()).did;
@@ -3063,7 +3063,7 @@ export class DataHelper {
   }
 
 
-  getSubscribedChannelV3ByKey(destDid: string, channelId: string): Promise<FeedsData.BackupSubscribedChannelV3> {
+  getBackupSubscribedChannelV3ByKey(destDid: string, channelId: string): Promise<FeedsData.BackupSubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
@@ -4501,7 +4501,7 @@ export class DataHelper {
   checkSubscribedStatus(destDid: string, channelId: string): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
-        let subscribedChannel: FeedsData.BackupSubscribedChannelV3[] = await this.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+        let subscribedChannel: FeedsData.BackupSubscribedChannelV3[] = await this.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
         if (subscribedChannel.length === 0) {
           resolve(false);
           return;
