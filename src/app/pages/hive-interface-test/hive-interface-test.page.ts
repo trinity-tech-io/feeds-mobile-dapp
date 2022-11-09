@@ -528,15 +528,103 @@ export class HiveInterfaceTestPage implements OnInit {
   querySubscribedChannelsByTargetDid() {
     this.hiveVaultController.querySubscribedChannelData("did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR");
   }
-  // queryPublicPostById(targetDid: string, channelId: string, postId: string): Promise<any> {
-  //   return this.hiveVaultController.queryPublicPostById(targetDid, channelId, postId);
-  // }
 
-  // queryPublicPostByChannelId(targetDid: string, channelId: string): Promise<any> {
-  //   return this.hiveVaultHelper.queryPublicPostByChannelId(targetDid, channelId);
-  // }
 
-  // queryPublicPostRangeOfTime(targetDid: string, channelId: string, start: number, end: number): Promise<any> {
-  //   return this.hiveVaultHelper.queryPublicPostRangeOfTime(targetDid, channelId, start, end);
-  // }
+  async insertSubscribedChannelData() {
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const subscribedChannelV3: FeedsData.SubscribedChannelV3 = {
+      userDid: selfDid,
+      targetDid: "targetDid",
+      channelId: "channelId",
+      subscribedAt: 123,
+      updatedAt: 456,
+
+      channelName: "",
+      channelDisplayName: "",
+      channelIntro: "",
+      channelAvatar: "",
+      channelType: "",
+      channelCategory: ""
+    }
+    this.sqliteHelper.insertSubscribedChannelData(selfDid, subscribedChannelV3);
+
+
+    const subscribedChannelV32: FeedsData.SubscribedChannelV3 = {
+      userDid: "selfDid222",
+      targetDid: "targetDid222",
+      channelId: "channelId222",
+      subscribedAt: 123222,
+      updatedAt: 456222,
+
+      channelName: "",
+      channelDisplayName: "",
+      channelIntro: "",
+      channelAvatar: "",
+      channelType: "",
+      channelCategory: ""
+    }
+    this.sqliteHelper.insertSubscribedChannelData(selfDid, subscribedChannelV32);
+  }
+
+
+  async updateSubscribedChannelData() {
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const subscribedChannelV3: FeedsData.SubscribedChannelV3 = {
+      userDid: selfDid,
+      targetDid: "targetDid",
+      channelId: "channelId",
+      subscribedAt: 123,
+      updatedAt: 456,
+
+      channelName: "channelName111",
+      channelDisplayName: "channelDisplayName111",
+      channelIntro: "channelIntro111",
+      channelAvatar: "channelAvatar111",
+      channelType: "channelType1111",
+      channelCategory: "channelCategory1111"
+    }
+    this.sqliteHelper.updateSubscribedChannelData(selfDid, subscribedChannelV3)
+  }
+
+  async queryAllSubscribedChannelData() {
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const result = await this.sqliteHelper.queryAllSubscribedChannelData(selfDid);
+    console.log('queryAllSubscribedChannelData ====>', result);
+  }
+
+  async querySubscribedChannelDataByUserDid() {
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const result = await this.sqliteHelper.querySubscribedChannelDataByUserDid(selfDid, selfDid);
+    console.log('querySubscribedChannelDataByUserDid====>', result);
+  }
+
+  async deleteSubscribedChannelDataById() {
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const subscribedChannelV3: FeedsData.SubscribedChannelV3 = {
+      userDid: selfDid,
+      targetDid: "targetDid",
+      channelId: "channelId",
+      subscribedAt: 123,
+      updatedAt: 456,
+
+      channelName: "channelName111",
+      channelDisplayName: "channelDisplayName111",
+      channelIntro: "channelIntro111",
+      channelAvatar: "channelAvatar111",
+      channelType: "channelType1111",
+      channelCategory: "channelCategory1111"
+    }
+    this.sqliteHelper.deleteSubscribedChannelDataById(selfDid, subscribedChannelV3);
+  }
+
+  async deleteSubscribedChannelDataByUser() {
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    this.sqliteHelper.deleteSubscribedChannelDataByUser(selfDid, selfDid);
+  }
+
+  async cleanSubscribedChannelData() {
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    this.sqliteHelper.cleanSubscribedChannelData(selfDid);
+  }
+
 }
