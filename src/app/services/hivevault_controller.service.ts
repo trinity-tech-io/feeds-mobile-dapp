@@ -431,7 +431,7 @@ export class HiveVaultController {
           }
           subscibedChannelList.push(subscribedChannel);
         }
-        this.dataHelper.addSubscribedChannels(subscibedChannelList);
+        this.dataHelper.addBackupSubscribedChannels(subscibedChannelList);
         resolve(subscibedChannelList);
       } catch (error) {
         Logger.error(TAG, error);
