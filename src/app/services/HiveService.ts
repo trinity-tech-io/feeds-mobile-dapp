@@ -8,7 +8,8 @@ import { DataHelper } from 'src/app/services/DataHelper';
 let TAG: string = 'Feeds-HiveService';
 import { Events } from 'src/app/services/events.service';
 import { Config } from './config';
-import { reject } from 'lodash';
+import { DIDHelperService } from 'src/app/services/did_helper.service';
+
 
 @Injectable()
 export class HiveService {
@@ -29,18 +30,17 @@ export class HiveService {
     private fileService: FileService,
     private dataHelper: DataHelper,
     private events: Events,
+    private didHelperService: DIDHelperService
   ) {
   }
 
   public async creatAppContext(appInstanceDocumentString: string, userDidString: string): Promise<AppContext> {
     return new Promise(async (resolve, reject) => {
       try {
-
-        const currentNet = "MainNet".toLowerCase();
         HiveLogger.setDefaultLevel(HiveLogger.TRACE)
-        DIDBackend.initialize(new DefaultDIDAdapter(currentNet))
+        const rpcEndpoint: string = this.didHelperService.init();
         try {
-          AppContext.setupResolver(currentNet, HiveService.RESOLVE_CACHE)
+          AppContext.setupResolver(rpcEndpoint, HiveService.RESOLVE_CACHE)
         } catch (error) {
         }
         const rootDirEntry = await this.fileService.resolveLocalFileSystemURL()

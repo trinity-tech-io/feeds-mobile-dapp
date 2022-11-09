@@ -9,8 +9,14 @@ let TAG: string = 'Feeds-DIDHelperService';
 @Injectable()
 export class DIDHelperService {
   constructor(private translate: TranslateService) {
-    // const currentNet = "MainNet".toLowerCase();
-    // DIDBackend.initialize(new DefaultDIDAdapter(currentNet))
+  }
+
+  init(): string {
+    const currentNet = "MainNet".toLowerCase();
+    if (!DIDBackend.isInitialized()) {
+      DIDBackend.initialize(new DefaultDIDAdapter(currentNet))
+    }
+    return currentNet;
   }
 
   resolveDidDocument(didString: string): Promise<DIDDocument> {
