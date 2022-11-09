@@ -575,7 +575,7 @@ export class FeedsSqliteHelper {
         Logger.log(TAG, 'Create subscribed channel table result is', result);
         resolve('SUCCESS');
       } catch (error) {
-        Logger.error(TAG, 'Create subscriptionChannel table error', error);
+        Logger.error(TAG, 'Create backup subscriptionChannel table error', error);
         reject(error);
       }
     });
@@ -1244,7 +1244,7 @@ export class FeedsSqliteHelper {
         const statement = 'create table if not exists ' + this.TABLE_SUBSCRIBED_CHANNELS
           + '('
           + 'user_did VARCHAR(64), target_did VARCHAR(64), channel_id VARCHAR(64), subscribed_at REAL(64), updated_at REAL(64), '
-          + 'channel_name VARCHAR(64), channel_display_name VARCHAR(64), channel_intro VARCHAR(64), channel_avatar TEXT, channel_type VARCHAR(64), channel_category VARCHAR(64),'
+          + 'channel_name VARCHAR(64), channel_display_name VARCHAR(64), channel_intro VARCHAR(64), channel_avatar TEXT, channel_type VARCHAR(64), channel_category VARCHAR(64)'
           + ')';
         const result = await this.executeSql(dbUserDid, statement);
         Logger.log(TAG, 'Create subscribed channel table result is', result);
@@ -1342,11 +1342,11 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteSubscribedChannelDataByUser(dbUserDid: string, subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+  deleteSubscribedChannelDataByUser(dbUserDid: string, userDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_SUBSCRIBED_CHANNELS + ' WHERE user_did=?'
-        const params = [subscribedChannelV3.channelId];
+        const params = [userDid];
         const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Remove subscribed channel data result is', result);
         resolve('SUCCESS');
