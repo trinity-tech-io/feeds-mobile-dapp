@@ -1877,7 +1877,7 @@ export class FeedsSqliteHelper {
           const restore320 = this.restoreSqlData320(dbUserDid);
           const restore330 = this.restoreSqlData330(dbUserDid);
           const restore340 = this.restoreSqlData340(dbUserDid);
-          await Promise.allSettled([restore311, restore320, restore330， restore340]);
+          await Promise.allSettled([restore311, restore320, restore330, restore340]);
         }
 
         resolve('FINISH');
@@ -1887,7 +1887,6 @@ export class FeedsSqliteHelper {
       }
     });
   }
-
 
   parsePinPostData(result: any): { destDid: string, channelId: string, postId: string }[] {
     Logger.log(TAG, 'Parse pin post result from sql, result is', result);
@@ -1967,12 +1966,10 @@ export class FeedsSqliteHelper {
       } catch (error) {
       }
 
-
       try {
         await this.dropNewPostData(dbUserDid);
       } catch (error) {
       }
-
 
       try {
         await this.dropPostData(dbUserDid);
