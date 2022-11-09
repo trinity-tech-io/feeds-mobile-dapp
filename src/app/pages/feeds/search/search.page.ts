@@ -103,6 +103,7 @@ export class SearchPage implements OnInit {
   private startIndex: number = 0;
   private endIndex: number = 0;
   private pageSize: number = 9;
+  public  isShowClickMore: boolean = false;
   constructor(
     private nftContractControllerService: NFTContractControllerService,
     private feedService: FeedService,
@@ -231,6 +232,7 @@ export class SearchPage implements OnInit {
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
     } else {
+      this.isShowClickMore = false;
       this.channelCollectionPageList = await this.filterChannelCollectionPageList(channelCollectionPageList);
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.isLoading = false;
@@ -329,6 +331,7 @@ export class SearchPage implements OnInit {
 
   async doRefresh(event) {
     try {
+      this.isShowClickMore = false;
       this.totalNum = await this.nftContractControllerService.getChannel().totalSupply();
       this.channelCollectionPageList = await this.getChannelsV2(event);
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
@@ -719,6 +722,9 @@ export class SearchPage implements OnInit {
           this.isLoading = false;
         }
       }
+      if(channelCollectionPageList.length < 9 && this.startIndex != 0){
+            this.isShowClickMore = true;
+      }
       this.isLoading = false;
       if (event != null) {
         event.target.complete();
@@ -733,9 +739,12 @@ export class SearchPage implements OnInit {
   }
 
   async loadData(event: any) {
+    this.isShowClickMore = false;
     try {
       if (this.startIndex === 0) {
-        event.target.complete();
+        if(event != null){
+          event.target.complete();
+        }
         return;
       }
       let channelCollectionPageList = [];
@@ -792,6 +801,51 @@ export class SearchPage implements OnInit {
         this.native.toast_trans('common.unableUnsubscribe');
       }
     } catch (error) {
+    }
+  }
+
+  async clickMore() {
+    try {
+      if (this.startIndex === 0) {
+        return;
+      }
+      await this.native.showLoading("common.waitMoment")
+      let channelCollectionPageList = [];
+      this.endIndex = this.startIndex - 1;
+      if (this.startIndex - this.pageSize < 0) {
+        this.startIndex = 0;
+        this.isShowClickMore = false;
+      } else {
+        this.startIndex = this.startIndex - this.pageSize;
+      }
+
+      for (let channelIndex = this.endIndex; channelIndex >= this.startIndex; channelIndex--) {
+        let channel = [];
+        try {
+          channel = await this.nftContractControllerService.getChannel().channelByIndex(channelIndex);
+        } catch (error) {
+          continue;
+        }
+        let tokenURI = channel[2];
+        const scanResult = ScannerHelper.parseScannerResult(tokenURI);
+        const feedsUrl = scanResult.feedsUrl;
+        try {
+          let channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId) || null;
+          if(channelInfo != null){
+            channelCollectionPageList.push(channelInfo);
+          }
+        } catch (error) {
+          this.isLoading = false;
+        }
+      }
+      this.channelCollectionPageList = this.channelCollectionPageList.concat(channelCollectionPageList);
+      this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+      this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+      this.refreshChannelCollectionAvatar(channelCollectionPageList);
+      this.isShowClickMore = false;
+      this.native.hideLoading();
+    } catch (error) {
+      this.native.hideLoading();
     }
   }
 

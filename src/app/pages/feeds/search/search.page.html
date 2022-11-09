@@ -79,6 +79,7 @@
     <ion-ripple-effect></ion-ripple-effect>
   </ion-row>
 </ion-item>
+<ion-row class="clickMore" (click)="clickMore()" *ngIf="isShowClickMore">{{ 'SearchPage.des' | translate}}</ion-row>
 </ion-list>
 
 <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
