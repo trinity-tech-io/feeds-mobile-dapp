@@ -1678,7 +1678,6 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const sqlversion = await this.storageService.get(FeedsData.PersistenceKey.sqlversion) || 0;
-        console.log('Sql version is', sqlversion);
         if (sqlversion < Config.SQL_VERSION311 && sqlversion > 0) {
           await this.restoreSqlData311(dbUserDid);
         }

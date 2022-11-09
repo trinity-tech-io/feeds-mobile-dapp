@@ -4198,12 +4198,10 @@ export class DataHelper {
   getTwitterRefreshToken(userDid: string) {
     const key = userDid + TwitterApi.CLIENT_ID + "TWITTERTOKEN"
     const data = localStorage.getItem(key) || ''
-    console.log("getTwitterRefreshToken ======= ", data)
     if (data === '' || data === undefined) {
       return null // 标识 本地没有token
     }
     const tokenData = JSON.parse(data)
-    console.log("getTwitterRefreshToken tokenData ======= ", tokenData)
     let refreshToken = tokenData['refresh_token']
 
     return refreshToken
@@ -4278,7 +4276,6 @@ export class DataHelper {
   getRedditRefreshToken(userDid: string) {
     const key = userDid + RedditApi.CLIENT_ID + "REDDITTOKEN"
     const data = localStorage.getItem(key) || ''
-    console.log("getRedditRefreshToken ======= ", data)
     if (data === '' || data === undefined) {
       return null // 标识 本地没有token
     }
