@@ -2013,29 +2013,29 @@ export class HomePage implements OnInit {
   handelAndroidScroll(ponit: any) {
 
     if (ponit.scrollTop > 0) {
-      this.homeTittleBar.style.display = "none";
-      //this.homeTab.setAttribute("style", "top:0px;height:47px;line-height:37px;");
-      // let sort = this.elmRef.nativeElement.querySelector("#sort") || null;
-      // if (sort != null) {
-      //   sort.setAttribute("style", "top:93px;");
-      // }
+        let isHide = this.homeTittleBar.style.display;
+        if(isHide === 'block'){
+          this.homeTittleBar.style.display = "none";
+        }
     } else {
-      this.homeTittleBar.style.display = "block";
-      // this.homeTab.setAttribute("style", "top:46px;height:36px;");
-      // let sort = this.elmRef.nativeElement.querySelector("#sort") || null;
-      // if (sort != null) {
-      //   sort.setAttribute("style", "top:132px;");
-      // }
+      let isHide = this.homeTittleBar.style.display;
+      if(isHide === "none"){
+        this.homeTittleBar.style.display = "block";
+      }
     }
   }
 
   handelIosScroll(ponit: any) {
     if (ponit.scrollTop > 0) {
-      this.homeTittleBar.style.display = "none";
-      //this.homeTab.setAttribute("style", "top:0px;height:47px;line-height:37px;");
+      let isHide = this.homeTittleBar.style.display;
+      if(isHide === 'block'){
+        this.homeTittleBar.style.display = "none";
+      }
     } else {
-      this.homeTittleBar.style.display = "block";
-      //this.homeTab.setAttribute("style", "top:36px;height:34px;");
+      let isHide = this.homeTittleBar.style.display;
+      if(isHide === "none"){
+        this.homeTittleBar.style.display = "block";
+      }
     }
   }
 
