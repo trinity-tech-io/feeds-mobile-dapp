@@ -1327,6 +1327,24 @@ export class FeedsSqliteHelper {
     });
   }
 
+  querySubscribedChannelDataById(dbUserDid: string, userDid: string, targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIBED_CHANNELS + ' WHERE user_did=? and target_did=? and channel_id=?';
+        const params = [userDid, targetDid, channelId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const subscriptionChannelList = this.parseSubscribedChannelData(result);
+
+        Logger.log(TAG, 'Query subscribed channel data by user result is', subscriptionChannelList);
+        resolve(subscriptionChannelList[0]);
+      } catch (error) {
+        Logger.error(TAG, 'Query subscribed channel data by user error', error);
+        reject(error);
+      }
+    });
+  }
+
+
   deleteSubscribedChannelDataById(dbUserDid: string, subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {

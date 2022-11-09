@@ -186,7 +186,7 @@ export class SearchPage implements OnInit {
 
   async init() {
     try {
-      let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+      let subscribedChannel = await this.dataHelper.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
       this.subscribedChannelMap = _.keyBy(subscribedChannel, (item: FeedsData.ChannelV3) => {
         return item.channelId;
       });
@@ -212,11 +212,11 @@ export class SearchPage implements OnInit {
     } else {
       this.handleRefresherInfinite(true);
       try {
-      this.channelCollectionPageList = await this.filterChannelCollectionPageList(channelCollectionPageList);
-      this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
-      this.isLoading = false;
-      this.handleRefresherInfinite(false);
-      this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+        this.channelCollectionPageList = await this.filterChannelCollectionPageList(channelCollectionPageList);
+        this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+        this.isLoading = false;
+        this.handleRefresherInfinite(false);
+        this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
       } catch (error) {
         this.handleRefresherInfinite(false);
       }
@@ -461,7 +461,7 @@ export class SearchPage implements OnInit {
 
 
   clickChannelCollection(channelCollections: any) {
-    if(channelCollections.channelSource === 'hive'){
+    if (channelCollections.channelSource === 'hive') {
       this.native.navigateForward(['/channels', channelCollections.destDid, channelCollections.channelId], '');
       this.hiveVaultController.checkSubscriptionStatusFromRemote(channelCollections.destDid, channelCollections.channelId);
     }
@@ -516,7 +516,7 @@ export class SearchPage implements OnInit {
       if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.channelSource +'-search';
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.channelSource + '-search';
       let exit = this.searchObserver[postGridId] || null;
       if (exit != null) {
         continue;
@@ -570,62 +570,58 @@ export class SearchPage implements OnInit {
       this.searchIsLoadimage[id] = '11';
       let destDid = arr[0];
       let channelId = arr[1];
-      if(channelSource === "ipfs"){
-        let nenChannel = _.find(this.channelCollectionPageList,(item)=>{
-                  return item.channelId === channelId;
+      if (channelSource === "ipfs") {
+        let nenChannel = _.find(this.channelCollectionPageList, (item) => {
+          return item.channelId === channelId;
         }) || null;
-        if(nenChannel != null ){
-          if(nenChannel.avatar === ''){
+        if (nenChannel != null) {
+          if (nenChannel.avatar === '') {
             this.channelAvatarMap[id] = './assets/images/profile-0.svg';
-          }else{
-           let channelAvatar =  this.channelAvatarMap[id] || '';
-           if(channelAvatar === ''){
-            this.channelAvatarMap[id] = './assets/images/loading.svg';
-           }
-          let avatarUri = nenChannel.avatar.replace('feeds:image:', '');
-            UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl()+avatarUri)
-            .then(async (avatar)=>{
-              let srcData = avatar || "";
-              this.zone.run(async () => {
-                if (srcData != "") {
-                  if(avatar.type === "text/plain"){
-                    if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+          } else {
+            let channelAvatar = this.channelAvatarMap[id] || '';
+            if (channelAvatar === '') {
+              this.channelAvatarMap[id] = './assets/images/loading.svg';
+            }
+            let avatarUri = nenChannel.avatar.replace('feeds:image:', '');
+            UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl() + avatarUri)
+              .then(async (avatar) => {
+                let srcData = avatar || "";
+                this.zone.run(async () => {
+                  if (srcData != "") {
+                    if (avatar.type === "text/plain") {
+                      if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
+                        this.channelAvatarMap[id] = './assets/images/profile-0.svg'
+                      }
+                      this.searchIsLoadimage[id] = '13';
+                    }
+                  } else {
+                    if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
                       this.channelAvatarMap[id] = './assets/images/profile-0.svg'
                     }
                     this.searchIsLoadimage[id] = '13';
-                  }else{
-                    srcData = await UtilService.blobToDataURL(avatar);
-                    this.searchIsLoadimage[id] = '13';
-                    this.channelAvatarMap[id] = srcData;
                   }
-                } else {
-                  if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-                    this.channelAvatarMap[id] = './assets/images/profile-0.svg'
-                  }
-                  this.searchIsLoadimage[id] = '13';
+                });
+              }).catch(() => {
+                if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
+                  this.channelAvatarMap[id] = './assets/images/profile-0.svg'
                 }
               });
-            }).catch(()=>{
-              if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-                this.channelAvatarMap[id] = './assets/images/profile-0.svg'
-              }
-            });
           }
 
-        }else{
-          if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+        } else {
+          if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
             this.channelAvatarMap[id] = './assets/images/profile-0.svg'
           }
         }
 
-      }else{
+      } else {
         let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
         let avatarUri = "";
         if (channel != null) {
           avatarUri = channel.avatar;
         }
         let channelAvatar = this.channelAvatarMap[id] || '';
-        if(channelAvatar === ''){
+        if (channelAvatar === '') {
           this.channelAvatarMap[id] = './assets/images/loading.svg';
         }
         let fileName: string = avatarUri.split("@")[0];
@@ -636,14 +632,14 @@ export class SearchPage implements OnInit {
               this.searchIsLoadimage[id] = '13';
               this.channelAvatarMap[id] = srcData;
             } else {
-              if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-                 this.channelAvatarMap[id] === './assets/images/profile-0.svg';
+              if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
+                this.channelAvatarMap[id] === './assets/images/profile-0.svg';
               }
               this.searchIsLoadimage[id] = '13';
             }
           });
         }).catch((err) => {
-          if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+          if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
             this.channelAvatarMap[id] === './assets/images/profile-0.svg';
           }
         });
@@ -699,12 +695,12 @@ export class SearchPage implements OnInit {
         const scanResult = ScannerHelper.parseScannerResult(channelEntry);
         const feedsUrl = scanResult.feedsUrl;
         try {
-          let channelInfo:any = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId) || null;
-          if(channelInfo != null){
+          let channelInfo: any = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId) || null;
+          if (channelInfo != null) {
             channelInfo.channelSource = "hive";
             channelCollectionPageList.push(channelInfo);
-          }else{
-             let newChannelInfo = {
+          } else {
+            let newChannelInfo = {
               "destDid": feedsUrl.destDid,
               "channelId": feedsUrl.channelId,
               "name": "",
@@ -714,23 +710,23 @@ export class SearchPage implements OnInit {
               "tipping_address": "",
               "displayName": "",
               "channelSource": 'ipfs'
-          }
-             let tokenURI = channel[1];
-             newChannelInfo.tipping_address = channel[3];
-             let uri = tokenURI.replace('feeds:json:', '');
-             try {
-              let result:any = await this.ipfsService
-              .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+            }
+            let tokenURI = channel[1];
+            newChannelInfo.tipping_address = channel[3];
+            let uri = tokenURI.replace('feeds:json:', '');
+            try {
+              let result: any = await this.ipfsService
+                .nftGet(this.ipfsService.getNFTGetUrl() + uri);
               newChannelInfo.intro = result.description || '';
               newChannelInfo.displayName = result.data.cname || '';
-              newChannelInfo.avatar =  result.data.avatar || '';
-              } catch (error) {
-                newChannelInfo.intro = '';
-                newChannelInfo.displayName = '';
-                newChannelInfo.avatar =  '';
-             }
+              newChannelInfo.avatar = result.data.avatar || '';
+            } catch (error) {
+              newChannelInfo.intro = '';
+              newChannelInfo.displayName = '';
+              newChannelInfo.avatar = '';
+            }
             channelCollectionPageList.push(newChannelInfo);
-            if(this.startIndex > 0){
+            if (this.startIndex > 0) {
               this.startIndex = this.startIndex - 1;
             }
           }
@@ -754,7 +750,7 @@ export class SearchPage implements OnInit {
   async loadData(event: any) {
     try {
       if (this.startIndex === 0) {
-        if(event != null){
+        if (event != null) {
           event.target.complete();
         }
         return;
@@ -778,12 +774,12 @@ export class SearchPage implements OnInit {
         const scanResult = ScannerHelper.parseScannerResult(tokenURI);
         const feedsUrl = scanResult.feedsUrl;
         try {
-          let channelInfo:any = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId) || null;
-          if(channelInfo != null){
+          let channelInfo: any = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId) || null;
+          if (channelInfo != null) {
             channelInfo.channelSource = "hive";
             channelCollectionPageList.push(channelInfo);
-          }else{
-             let newChannelInfo = {
+          } else {
+            let newChannelInfo = {
               "destDid": feedsUrl.destDid,
               "channelId": feedsUrl.channelId,
               "name": "",
@@ -793,21 +789,21 @@ export class SearchPage implements OnInit {
               "tipping_address": "",
               "displayName": "",
               "channelSource": 'ipfs'
-          }
-             let tokenURI = channel[1];
-             newChannelInfo.tipping_address = channel[3];
-             let uri = tokenURI.replace('feeds:json:', '');
-             try {
-              let result:any = await this.ipfsService
-              .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+            }
+            let tokenURI = channel[1];
+            newChannelInfo.tipping_address = channel[3];
+            let uri = tokenURI.replace('feeds:json:', '');
+            try {
+              let result: any = await this.ipfsService
+                .nftGet(this.ipfsService.getNFTGetUrl() + uri);
               newChannelInfo.intro = result.description || '';
               newChannelInfo.displayName = result.data.cname || '';
-              newChannelInfo.avatar =  result.data.avatar || '';
-              } catch (error) {
-                newChannelInfo.intro = '';
-                newChannelInfo.displayName = '';
-                newChannelInfo.avatar =  '';
-             }
+              newChannelInfo.avatar = result.data.avatar || '';
+            } catch (error) {
+              newChannelInfo.intro = '';
+              newChannelInfo.displayName = '';
+              newChannelInfo.avatar = '';
+            }
             channelCollectionPageList.push(newChannelInfo);
           }
         } catch (error) {

@@ -34,7 +34,7 @@ export class HiveVaultController {
   syncAllPostWithTime(endTime: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        const subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
         if (subscribedChannels.length === 0) {
           resolve([]);
           return;
@@ -66,7 +66,7 @@ export class HiveVaultController {
   syncAllPost(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        const subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
         if (subscribedChannels.length === 0) {
           resolve([]);
           return;
@@ -98,7 +98,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         let commentList = [];
-        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        const subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
         if (!subscribedChannels) {
           resolve(commentList);
           return;
@@ -185,7 +185,7 @@ export class HiveVaultController {
   syncAllLikeData(): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        const subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
         let likeList = [];
         let likePromiseList: Promise<any>[] = [];
         for (let index = 0; index < subscribedChannels.length; index++) {
@@ -232,7 +232,7 @@ export class HiveVaultController {
   asyncGetAllChannelInfo(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        const subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
         for (let index = 0; index < subscribedChannels.length; index++) {
           const subscribedChannel = subscribedChannels[index];
           const destDid = subscribedChannel.destDid;
@@ -253,7 +253,7 @@ export class HiveVaultController {
   asyncGetAllPost(callback: (postNum: number) => void): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        const subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
         if (subscribedChannels.length === 0) {
           resolve('FINISH');
           return;
@@ -281,7 +281,7 @@ export class HiveVaultController {
   asyncGetAllComments(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        const subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
         if (!subscribedChannels) {
           resolve('FINISH');
           return;
@@ -307,7 +307,7 @@ export class HiveVaultController {
   asyncGetAllLikeData(): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        const subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
         let likeList = [];
         for (let index = 0; index < subscribedChannels.length; index++) {
           const subscribedChannel = subscribedChannels[index];
@@ -330,7 +330,7 @@ export class HiveVaultController {
   syncAllChannelInfo(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+        const subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
         let channelList = [];
         let promiseList: Promise<any>[] = [];
         for (let index = 0; index < subscribedChannels.length; index++) {
@@ -382,7 +382,7 @@ export class HiveVaultController {
 
   refreshSubscription(): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const subscribedChannels = await this.dataHelper.getSubscribedChannelV3List();
+      const subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
       let subscribedPromise: Promise<any>[] = [];
       for (let index = 0; index < subscribedChannels.length; index++) {
         const subscribedChannel = subscribedChannels[index];
@@ -427,7 +427,7 @@ export class HiveVaultController {
           }
           subscibedChannelList.push(subscibedChannel);
         }
-        this.dataHelper.addSubscribedChannels(subscibedChannelList);
+        this.dataHelper.addBackupSubscribedChannels(subscibedChannelList);
         resolve(subscibedChannelList);
       } catch (error) {
         Logger.error(TAG, error);
@@ -444,9 +444,9 @@ export class HiveVaultController {
         Logger.log(TAG, 'Check subscription status from remote result is', result);
 
         try {
-          const subscribedChannel = await this.dataHelper.getSubscribedChannelV3ByKey(targetDid, channelId);
+          const subscribedChannel = await this.dataHelper.getBackupSubscribedChannelV3ByKey(targetDid, channelId);
           if (subscribedChannel)
-            this.dataHelper.removeSubscribedChannelV3(subscribedChannel);
+            this.dataHelper.removeBackupSubscribedChannelV3(subscribedChannel);
         } catch (error) {
         }
 
@@ -466,7 +466,7 @@ export class HiveVaultController {
           channelId: subscriptions[0].channelId
         }
 
-        await this.dataHelper.addSubscribedChannelV3(newSubscribedChannel);
+        await this.dataHelper.addBackupSubscribedChannel(newSubscribedChannel);
         resolve(true);
       } catch (error) {
         Logger.error(TAG, error);
@@ -858,7 +858,7 @@ export class HiveVaultController {
           destDid: targetDid,
           channelId: channelId
         }
-        await this.dataHelper.addSubscribedChannel(subscribedChannel);
+        await this.dataHelper.addBackupSubscribedChannel(subscribedChannel);
         this.backupSubscribedChannel(targetDid, channelId);//async
 
         try {
@@ -1394,7 +1394,7 @@ export class HiveVaultController {
           }
 
           await this.dataHelper.removeChannelPostData(channelId);
-          await this.dataHelper.removeSubscribedChannelV3(subscribedChannel);
+          await this.dataHelper.removeBackupSubscribedChannelV3(subscribedChannel);
           this.removeBackupSubscribedChannel(destDid, channelId);
           resolve(subscribedChannel);
         } else {
@@ -1960,7 +1960,7 @@ export class HiveVaultController {
           return;
         }
 
-        await this.dataHelper.addSubscribedChannels(subcribedChannelsList);
+        await this.dataHelper.addBackupSubscribedChannels(subcribedChannelsList);
         resolve(subcribedChannelsList);
       } catch (error) {
         Logger.error(TAG, 'Query backup subscribed channel error', error);
@@ -1986,7 +1986,7 @@ export class HiveVaultController {
           return;
         }
 
-        await this.dataHelper.addSubscribedChannels(subscribedList);
+        await this.dataHelper.addBackupSubscribedChannels(subscribedList);
         resolve(subscribedList);
       } catch (error) {
         Logger.error(TAG, 'Query backup subscribed channel error', error);

@@ -695,7 +695,8 @@ export class UserprofilePage implements OnInit {
       tokenId: '',
       tokenUri: '',
       channelEntry: '',
-      ownerAddr: ''
+      ownerAddr: '',
+      signature: ''
     };
     channelNft.tokenId = channelInfo[0];
     channelNft.tokenUri = channelInfo[1];

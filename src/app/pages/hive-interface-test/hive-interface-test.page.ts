@@ -262,7 +262,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   async getSubscriptionChannel() {
-    const list = await this.dataHelper.getSubscribedChannelV3List();
+    const list = await this.dataHelper.getBackupSubscribedChannelV3List();
     console.log('list', list);
     list.forEach(element => {
       console.log('element = ', element);
