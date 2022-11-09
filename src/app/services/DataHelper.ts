@@ -4519,4 +4519,91 @@ export class DataHelper {
       }
     })
   }
+
+  //subscribed channel
+  addSubscribedChannel(newSubscribedChannel: FeedsData.SubscribedChannelV3): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!newSubscribedChannel) {
+          resolve(false);
+          return;
+        }
+
+        let isNew: boolean = false;
+        let originSubscribedChannel: FeedsData.SubscribedChannelV3 = await this.getSubscribedChannelByID(newSubscribedChannel) || null;
+        if (!originSubscribedChannel) {
+          try {
+            await this.addSubscribedChannelData(newSubscribedChannel);
+            isNew = true;
+          } catch (error) {
+          }
+        } else {
+          const isEqual = _.isEqual(newSubscribedChannel, originSubscribedChannel);
+          if (isEqual) {
+            resolve(isNew);
+            return;
+          }
+          await this.updateSubscribedChannel(newSubscribedChannel);
+        }
+        resolve(isNew);
+      } catch (error) {
+        Logger.error(TAG, 'Add subscribed channel data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  private addSubscribedChannelData(subscribedChannel: FeedsData.SubscribedChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.insertSubscribedChannelData(selfDid, subscribedChannel);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  private updateSubscribedChannel(subscribedChannel: FeedsData.SubscribedChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.updateSubscribedChannelData(selfDid, subscribedChannel);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  removeSubscribedChannelByID(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const userDid = subscribedChannelV3.userDid || '';
+        const targetDid = subscribedChannelV3.targetDid || '';
+        const channelId = subscribedChannelV3.channelId || '';
+        const result = await this.sqliteHelper.deleteSubscribedChannelDataById(selfDid, userDid, targetDid, channelId);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getSubscribedChannelByID(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<FeedsData.SubscribedChannelV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const userDid = subscribedChannelV3.userDid || '';
+        const targetDid = subscribedChannelV3.targetDid || '';
+        const channelId = subscribedChannelV3.channelId || '';
+        const result = await this.sqliteHelper.querySubscribedChannelDataById(selfDid, userDid, targetDid, channelId);
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 }
