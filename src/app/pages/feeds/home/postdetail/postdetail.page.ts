@@ -151,6 +151,7 @@ export class PostdetailPage implements OnInit {
   /**post tip count*/
   public postTipCountMap: any = {};
   private isLoadingPostTipCountMap: any = {};
+  private postTipAdressMap: any = {};
 
   constructor(
     private platform: Platform,
@@ -278,7 +279,13 @@ export class PostdetailPage implements OnInit {
       this.checkCommentIsMine(item, ownerDid);
     });
 
-    this.getPostTipCount(this.channelId, this.postId);
+
+    this.getChannelTippingAddress(this.channelId, false).then((postTipAdress: string) => {
+      this.postTipAdressMap[this.channelId] = postTipAdress;
+      this.getPostTipCount(this.channelId, this.postId);
+    }).catch((err) => {
+      this.postTipAdressMap[this.channelId] = '';
+    });
 
     //this.captainCommentList = _.cloneDeep(captainCommentList);
   }
@@ -1699,7 +1706,7 @@ export class PostdetailPage implements OnInit {
     this.native.navigateForward(['/userprofile'], { queryParams: { 'userDid': userDid } });
   }
 
-  async getChannelTippingAddress(channelId: string) {
+  async getChannelTippingAddress(channelId: string, isLoad: boolean = true) {
     try {
       let channelTippingAddressMap = this.dataHelper.getChannelTippingAddressMap() || {};
       let channelTippingAddress = channelTippingAddressMap[channelId] || '';
@@ -1710,19 +1717,27 @@ export class PostdetailPage implements OnInit {
       Logger.log(TAG, "tokenId:", tokenId);
       tokenId = UtilService.hex2dec(tokenId);
       Logger.log(TAG, "tokenIdHex2dec:", tokenId);
-      await this.native.showLoading("common.waitMoment");
+      if (isLoad) {
+        await this.native.showLoading("common.waitMoment");
+      }
       let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
       Logger.log(TAG, "tokenInfo:", tokenInfo);
       if (tokenInfo[0] != '0') {
-        this.native.hideLoading();
+        if (isLoad) {
+          this.native.hideLoading();
+        }
         channelTippingAddressMap[channelId] = tokenInfo[3];
         this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
         return channelTippingAddressMap[channelId];
       }
-      this.native.hideLoading();
+      if (isLoad) {
+        this.native.hideLoading();
+      }
       return null;
     } catch (error) {
-      this.native.hideLoading();
+      if (isLoad) {
+        this.native.hideLoading();
+      }
       return null;
     }
   }
@@ -1749,6 +1764,10 @@ export class PostdetailPage implements OnInit {
         this.postTipCountMap[postId] = postTipCount;
       }
     }
+  }
+
+  clickDashangList(channelId: string, postId: string) {
+    this.native.navigateForward(['/posttiplist'], { queryParams: { "channelId": channelId, "postId": postId } });
   }
 
 }

@@ -151,6 +151,9 @@ export class ChannelsPage implements OnInit {
   public postTipCountMap: any = {};
   private isLoadingPostTipCountMap: any = {};
 
+  private isLoadingPostTipAdressMap: any = {};
+  private postTipAdressMap: any = {};
+
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -785,6 +788,7 @@ export class ChannelsPage implements OnInit {
       this.postMap = {};
       this.pinnedPostMap = {};
       this.isLoadPinnedPost = {};
+      this.isLoadingPostTipAdressMap = {};
       this.isLoadingPostTipCountMap = {};
       this.isRefresh = true;
       event.target.disabled = false;
@@ -1509,7 +1513,16 @@ export class ChannelsPage implements OnInit {
         let postId: string = arr[2];
         let mediaType: string = arr[3];
         this.handlePinnedPost(destDid, channelId, postId);
-        this.getPostTipCount(channelId, postId);//tip count
+        let isLoadingPostTipAdress =  this.isLoadingPostTipAdressMap[channelId] || '';
+        if(isLoadingPostTipAdress === ''){
+             this.isLoadingPostTipAdressMap[channelId] = "11";
+             this.getChannelTippingAddress(channelId,false).then((postTipAdress: string)=>{
+                  this.postTipAdressMap[channelId] = postTipAdress;
+             }).catch((err)=>{
+              this.postTipAdressMap[channelId] = '';
+             });
+        }
+        this.getPostTipCount(channelId,postId);
         if (mediaType === '1') {
           this.handlePostImgV2(destDid, channelId, postId);
         }
@@ -1687,7 +1700,7 @@ export class ChannelsPage implements OnInit {
   }
 
 
-  async getChannelTippingAddress(channelId: string) {
+  async getChannelTippingAddress(channelId: string,isLoad: boolean = true) {
     try {
       let channelTippingAddressMap = this.dataHelper.getChannelTippingAddressMap() || {};
       let channelTippingAddress = channelTippingAddressMap[channelId] || '';
@@ -1698,19 +1711,27 @@ export class ChannelsPage implements OnInit {
       Logger.log(TAG, "tokenId:", tokenId);
       tokenId = UtilService.hex2dec(tokenId);
       Logger.log(TAG, "tokenIdHex2dec:", tokenId);
-      await this.native.showLoading("common.waitMoment");
+      if(isLoad){
+        await this.native.showLoading("common.waitMoment");
+      }
       let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
       Logger.log(TAG, "tokenInfo:", tokenInfo);
       if (tokenInfo[0] != '0') {
-        this.native.hideLoading();
+        if(isLoad){
+          this.native.hideLoading();
+        }
         channelTippingAddressMap[channelId] = tokenInfo[3];
         this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
         return channelTippingAddressMap[channelId];
       }
-      this.native.hideLoading();
+      if(isLoad){
+        this.native.hideLoading();
+      }
       return null;
     } catch (error) {
-      this.native.hideLoading();
+      if(isLoad){
+        this.native.hideLoading();
+      }
       return null;
     }
   }
@@ -1737,6 +1758,10 @@ export class ChannelsPage implements OnInit {
         this.postTipCountMap[postId] = postTipCount;
       }
     }
+  }
+
+  clickDashangList(channelId: string, postId: string) {
+    this.native.navigateForward(['/posttiplist'],{ queryParams: { "channelId": channelId, "postId": postId }});
   }
 
 }

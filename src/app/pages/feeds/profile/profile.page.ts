@@ -206,6 +206,10 @@ export class ProfilePage implements OnInit {
   public postTipCountMap: any = {};
   private isLoadingPostTipCountMap: any = {};
 
+
+  private isLoadingPostTipAdressMap: any = {};
+  private postTipAdressMap: any = {};
+
   constructor(
     private elmRef: ElementRef,
     public theme: ThemeService,
@@ -2427,7 +2431,16 @@ export class ProfilePage implements OnInit {
 
         }
         this.getDisplayName(destDid, channelId, destDid);
-        this.getPostTipCount(channelId, postId);
+        let isLoadingPostTipAdress =  this.isLoadingPostTipAdressMap[channelId] || '';
+        if(isLoadingPostTipAdress === ''){
+             this.isLoadingPostTipAdressMap[channelId] = "11";
+             this.getChannelTippingAddress(channelId,false).then((postTipAdress: string)=>{
+                  this.postTipAdressMap[channelId] = postTipAdress;
+             }).catch((err)=>{
+                  this.postTipAdressMap[channelId] = '';
+             });
+        }
+        this.getPostTipCount(channelId,postId);
         this.handlePostAvatarV2(destDid, channelId);
         if (mediaType === '1') {
           this.handlePostImgV2(destDid, channelId, postId);
@@ -2737,6 +2750,42 @@ export class ProfilePage implements OnInit {
       } else {
         this.postTipCountMap[postId] = postTipCount;
       }
+    }
+  }
+
+  async getChannelTippingAddress(channelId: string, isLoad: boolean = true) {
+    try {
+      let channelTippingAddressMap = this.dataHelper.getChannelTippingAddressMap() || {};
+      let channelTippingAddress = channelTippingAddressMap[channelId] || '';
+      if(channelTippingAddress != ''){
+        return channelTippingAddress;
+      }
+      let tokenId: string = "0x" + channelId;
+      Logger.log(TAG, "tokenId:", tokenId);
+      tokenId = UtilService.hex2dec(tokenId);
+      Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      if(isLoad){
+        await this.native.showLoading("common.waitMoment");
+      }
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      Logger.log(TAG, "tokenInfo:", tokenInfo);
+      if (tokenInfo[0] != '0') {
+        if(isLoad){
+          this.native.hideLoading();
+        }
+        channelTippingAddressMap[channelId] = tokenInfo[3];
+        this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
+        return channelTippingAddressMap[channelId];
+      }
+      if(isLoad){
+        this.native.hideLoading();
+      }
+      return null;
+    } catch (error) {
+      if(isLoad){
+        this.native.hideLoading();
+      }
+      return null;
     }
   }
 }

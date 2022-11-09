@@ -284,7 +284,7 @@
           <img src="/assets/images/darkmode/bubble-line.svg" *ngIf="theme.darkMode">
           <ion-label>{{ commentNumMap[post.postId] }}</ion-label>
         </ion-col>
-        <ion-col (click)="clickDashang(post.destDid, post.channelId, post.postId)" *ngIf="isAndroid" (press)="clickDashangList(post.channelId, post.postId)" [style.touch-action]="'pan-y'">
+        <ion-col (click)="clickDashang(post.destDid, post.channelId, post.postId)" *ngIf="isAndroid && postTipAdressMap[post.channelId]" (press)="clickDashangList(post.channelId, post.postId)" [style.touch-action]="'pan-y'">
           <img src="/assets/images/tip.svg" *ngIf="!theme.darkMode">
           <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
           <ion-label>{{  postTipCountMap[post.postId] }}</ion-label>

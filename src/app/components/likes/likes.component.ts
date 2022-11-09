@@ -51,7 +51,7 @@ export class LikesComponent implements OnInit {
   @Input() isLoadingLike: boolean = true;
   @Input() channelPublicStatusList: any = {};
   @Input() postTipCountMap: any = {};
-
+  @Input() postTipAdressMap: any = {};
   @Output() fromChild = new EventEmitter();
   @Output() commentParams = new EventEmitter();
   @Output() clickImage = new EventEmitter();
