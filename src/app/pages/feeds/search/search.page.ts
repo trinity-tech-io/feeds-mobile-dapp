@@ -842,7 +842,9 @@ export class SearchPage implements OnInit {
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
       this.refreshChannelCollectionAvatar(channelCollectionPageList);
-      this.isShowClickMore = false;
+      if(this.channelCollectionPageList >= 9 || this.startIndex === 0){
+        this.isShowClickMore = false;
+      }
       this.native.hideLoading();
     } catch (error) {
       this.native.hideLoading();
