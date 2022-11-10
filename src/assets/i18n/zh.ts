@@ -358,7 +358,7 @@ export const zh = {
     des1:
       '您订阅此频道的请求正被确认中，请耐心等待30秒左右。确认需要取消请求订阅该频道？',
     confirmTitle: '取消请求',
-    des:'点击加载更多'
+    des:'无法连接频道'
   },
   ChannelsPage: {
     feeds: '频道',

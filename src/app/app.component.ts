@@ -321,7 +321,7 @@ export class MyApp {
 
   initSpecificChannelCollectionPageList() {
     this.dataHelper
-      .loadData('feedsNetWork:channelCollectionPageList')
+      .loadData('feedsNetWork:newChannelCollectionPageList')
       .then(channelCollectionPageList => {
         if (channelCollectionPageList === null) {
           this.dataHelper.setChannelCollectionPageList([]);

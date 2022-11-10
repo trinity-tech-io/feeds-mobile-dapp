@@ -229,7 +229,9 @@ export class GalleriachannelPage implements OnInit {
                 return this.destDid === channel.destDid && this.channelId === channel.channelId;
           })
           if(channelIndex === -1 ){
-            channelCollectionPageList.unshift(this.channel);
+            let newChannel:any = this.channel;
+            newChannel.channelSource = "hive";
+            channelCollectionPageList.unshift(newChannel);
             this.dataHelper.setChannelCollectionPageList(channelCollectionPageList)
           }
           // add channelContracts Info Cache
