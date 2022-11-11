@@ -343,6 +343,19 @@ export class MyApp {
     connectivity.setApplicationDID(Config.APPLICATION_DID);
   }
 
+  initPostTipList() {
+    this.dataHelper
+      .loadData('feedsNetWork:post.tip.list')
+      .then(postTipList => {
+        if (postTipList === null) {
+          this.dataHelper.setPostTipListMap({});
+          return;
+        }
+        this.dataHelper.setPostTipListMap(postTipList);
+      })
+      .catch(err => { });
+  }
+
   initSpecificChannelCollectionPageList() {
     this.dataHelper
       .loadData('feedsNetWork:newChannelCollectionPageList')
