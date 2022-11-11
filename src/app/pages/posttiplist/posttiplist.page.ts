@@ -244,6 +244,7 @@ export class PosttiplistPage implements OnInit {
         this.postTipList = await this.handleList(list);
         postTipListMap[this.postId] = this.postTipList;
         this.dataHelper.setPostTipListMap(postTipListMap);
+        this.dataHelper.saveData("feedsNetWork:post.tip.list",postTipListMap);
       }else {
         this.postTipList = postTipList;
       }
@@ -353,6 +354,9 @@ loadData(event: any) {
     .getPosTippingList(this.channelId, this.postId,this.startIndex,count);
     let newPostTipList = await this.handleList(newLoadedList);
     this.postTipList = this.postTipList.concat(newPostTipList);
+    let postTipListMap = this.dataHelper.getPostTipListMap() || {};
+    postTipListMap[this.postId] = this.postTipList;
+    this.dataHelper.saveData("feedsNetWork:post.tip.list",postTipListMap);
     this.syncRemoteUserProfile(newPostTipList);
     this.initUserObserVerList(newPostTipList);
     event.target.complete();
