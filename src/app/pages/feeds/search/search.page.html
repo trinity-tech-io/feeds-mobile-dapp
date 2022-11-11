@@ -57,7 +57,7 @@
       class="middle-col"
       (click)="clickChannelCollection(channelCollection)"
     >
-      <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width: 160px;">{{channelCollection.displayName  || channelCollection.name }}</ion-label>
+      <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width: 160px;">{{channelCollection.displayName  || channelCollection.name || 'common.unknown' | translate }} </ion-label>
       <div class="displayName" *ngIf="handleDisplayNameMap[channelCollection.destDid] === '' || handleDisplayNameMap[channelCollection.destDid] === undefined">
         @......
       </div>

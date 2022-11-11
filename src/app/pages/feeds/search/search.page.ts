@@ -714,6 +714,9 @@ export class SearchPage implements OnInit {
                 newChannelInfo.avatar =  '';
              }
             channelCollectionPageList.push(newChannelInfo);
+            if(this.startIndex > 0){
+              this.startIndex = this.startIndex - 1;
+            }
           }
         } catch (error) {
           this.isLoading = false;
@@ -794,6 +797,8 @@ export class SearchPage implements OnInit {
         } catch (error) {
           this.isLoading = false;
         }
+
+
       }
       this.channelCollectionPageList = this.channelCollectionPageList.concat(channelCollectionPageList);
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
