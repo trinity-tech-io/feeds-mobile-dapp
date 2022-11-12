@@ -29,7 +29,7 @@
   <p>{{'common.beingRefresh'|translate}}</p>
   </ion-col>
   </ion-row>
-   <div>
+   <div [ngClass]="{'emptyHeight': followingList.length === 0}">
    <app-following
    *ngIf="!isLoading"
    [followingList] = "followingList"
