@@ -1535,12 +1535,7 @@ export class UserprofilePage implements OnInit {
           this.hiveVaultController.unSubscribeChannel(
             destDid, channelId
           ).then(async (result) => {
-            let channel: FeedsData.BackupSubscribedChannelV3 = {
-              destDid: destDid,
-              channelId: channelId
-            };
-            //await this.hiveVaultController.removePostListByChannel(destDid, channelId);
-            this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+            this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish);
             this.native.hideLoading();
           }).catch(() => {
             this.native.hideLoading();

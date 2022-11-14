@@ -84,8 +84,8 @@ export class HiveVaultApi {
   }
 
   /** Suscription */
-  async subscribeChannel(targetDid: string, channelId: string, displayName: string, updatedAt: number, status: number = FeedsData.PostCommentStatus.available): Promise<any> {
-    return await this.hiveVaultHelper.subscribeChannel(targetDid, channelId, displayName, updatedAt, status);
+  async subscribeChannel(targetDid: string, channelId: string, displayName: string, status: number = FeedsData.PostCommentStatus.available): Promise<{ createdAt: number, updatedAt: number }> {
+    return await this.hiveVaultHelper.subscribeChannel(targetDid, channelId, displayName, status);
   }
 
   updateSubscription(targetDid: string, channelId: string, status: number): Promise<{ updatedAt: number }> {
@@ -282,9 +282,9 @@ export class HiveVaultApi {
   }
 
   insertSubscribedChannel(targetDid: string, channelId: string, channelName: string, channelDisplayName: string,
-    channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string) {
+    channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string, subscribedAt: number, updatedAt: number) {
     return this.hiveVaultHelper.insertSubscribedChannel(targetDid, channelId, channelName, channelDisplayName,
-      channelIntro, channelAvatar, channelType, channelCategory);
+      channelIntro, channelAvatar, channelType, channelCategory, subscribedAt, updatedAt);
   }
 
   updateSubscribedChannel(targetDid: string, channelId: string, subscribedAt: number, channelName: string, channelDisplayName: string,
@@ -298,6 +298,6 @@ export class HiveVaultApi {
   }
 
   querySubscribedChannelsByUserDid(targetDid: string) {
-    return this.hiveVaultHelper.querySubscribedChannelsByUserDid(targetDid);
+    return this.hiveVaultHelper.querySubscribedChannelsByOwnerDid(targetDid);
   }
 }

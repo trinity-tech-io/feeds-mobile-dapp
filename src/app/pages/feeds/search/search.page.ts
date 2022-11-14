@@ -120,9 +120,9 @@ export class SearchPage implements OnInit {
 
     this.events.subscribe(
       FeedsEvent.PublishType.unsubscribeFinish,
-      (channel: FeedsData.BackupSubscribedChannelV3) => {
+      (result: { destDid: string, channelId: string }) => {
         this.zone.run(() => {
-          let channelId = channel.channelId;
+          let channelId = result.channelId;
           this.subscribedChannelMap[channelId] = undefined;
         });
       },
@@ -186,7 +186,7 @@ export class SearchPage implements OnInit {
 
   async init() {
     try {
-      let subscribedChannel = await this.dataHelper.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+      let subscribedChannel = await this.dataHelper.getSelfSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
       this.subscribedChannelMap = _.keyBy(subscribedChannel, (item: FeedsData.ChannelV3) => {
         return item.channelId;
       });

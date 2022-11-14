@@ -135,7 +135,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   subscribeChannel() {
-    this.hiveVaultApi.subscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'wangran', 0, 0);
+    this.hiveVaultApi.subscribeChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'channelId01', 'wangran', 0);
     // alert('subscribe');
   }
 
@@ -262,7 +262,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   async getSubscriptionChannel() {
-    const list = await this.dataHelper.getBackupSubscribedChannelV3List();
+    const list = await this.dataHelper.getSelfSubscribedChannelV3List();
     console.log('list', list);
     list.forEach(element => {
       console.log('element = ', element);
@@ -431,7 +431,7 @@ export class HiveInterfaceTestPage implements OnInit {
   // }
   insertSubscribedChannel() {
     this.hiveVaultApi.insertSubscribedChannel("targetDid", "channelId", "channelName", "channelDisplayName",
-      "channelIntro", "channelAvatar", "channelType", "channelCategory");
+      "channelIntro", "channelAvatar", "channelType", "channelCategory", 0, 0);
   }
 
   // {
@@ -526,7 +526,7 @@ export class HiveInterfaceTestPage implements OnInit {
   //   }
   // }
   querySubscribedChannelsByTargetDid() {
-    this.hiveVaultController.querySubscribedChannelData("did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR");
+    this.hiveVaultController.queryUserSubscribedChannels("did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR");
   }
 
 
@@ -600,20 +600,6 @@ export class HiveInterfaceTestPage implements OnInit {
 
   async deleteSubscribedChannelDataById() {
     const selfDid = (await this.dataHelper.getSigninData()).did;
-    const subscribedChannelV3: FeedsData.SubscribedChannelV3 = {
-      userDid: selfDid,
-      targetDid: "targetDid",
-      channelId: "channelId",
-      subscribedAt: 123,
-      updatedAt: 456,
-
-      channelName: "channelName111",
-      channelDisplayName: "channelDisplayName111",
-      channelIntro: "channelIntro111",
-      channelAvatar: "channelAvatar111",
-      channelType: "channelType1111",
-      channelCategory: "channelCategory1111"
-    }
     this.sqliteHelper.deleteSubscribedChannelDataById(selfDid, selfDid, "targetDid", "channelId",);
   }
 

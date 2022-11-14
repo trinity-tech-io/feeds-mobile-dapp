@@ -754,12 +754,14 @@ export class HiveVaultHelper {
         })
     }
 
-    private callSubscribeScripting(targetDid: string, channelId: string, userDisplayName: string, updatedAt: number, status: number): Promise<any> {
+    private callSubscribeScripting(targetDid: string, channelId: string, userDisplayName: string, status: number): Promise<{ createdAt: number, updatedAt: number }> {
         return new Promise(async (resolve, reject) => {
+            const createdAt = UtilService.getCurrentTimeNum();
+            const updatedAt = UtilService.getCurrentTimeNum();
             try {
                 const params = {
                     "channel_id": channelId,
-                    "created_at": UtilService.getCurrentTimeNum(),
+                    "created_at": createdAt,
                     "display_name": userDisplayName,
                     "updated_at": updatedAt,
                     "status": status
@@ -773,8 +775,8 @@ export class HiveVaultHelper {
         })
     }
 
-    async subscribeChannel(targetDid: string, channelId: string, displayName: string, updatedAt: number, status: number): Promise<any> {
-        return await this.callSubscribeScripting(targetDid, channelId, displayName, updatedAt, status);
+    async subscribeChannel(targetDid: string, channelId: string, displayName: string, status: number): Promise<{ createdAt: number, updatedAt: number }> {
+        return await this.callSubscribeScripting(targetDid, channelId, displayName, status);
     }
 
     registerUpdateSubscription(): Promise<string> {
@@ -2607,9 +2609,7 @@ export class HiveVaultHelper {
     }
 
     insertSubscribedChannel(targetDid: string, channelId: string, channelName: string, channelDisplayName: string,
-        channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string): Promise<string> {
-        const subscribedAt = UtilService.getCurrentTimeNum();
-        const updatedAt = UtilService.getCurrentTimeNum();
+        channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string, subscribedAt: number, updatedAt: number): Promise<string> {
         return this.insertDataToSubscribedChannelDB(targetDid, channelId, subscribedAt, updatedAt, channelName, channelDisplayName,
             channelIntro, channelAvatar, channelType, channelCategory);
     }
@@ -2731,10 +2731,10 @@ export class HiveVaultHelper {
         })
     }
 
-    querySubscribedChannelsByUserDid(userDid: string): Promise<any> {
+    querySubscribedChannelsByOwnerDid(ownerDid: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await this.querySubscribedChannels(userDid);
+                const result = await this.querySubscribedChannels(ownerDid);
                 resolve(result);
             } catch (error) {
                 Logger.error(TAG, 'query subscribed channels error', error);
