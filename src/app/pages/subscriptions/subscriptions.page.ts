@@ -19,6 +19,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import SparkMD5 from 'spark-md5';
+import { Router } from '@angular/router';
 const TAG: string = 'SubscriptionsPage';
 @Component({
   selector: 'app-subscriptions',
@@ -57,6 +58,7 @@ export class SubscriptionsPage implements OnInit {
   public totalSubscribedChannelList: any = [];
   public totalNum: number = 0;
   public channelPublicStatusList: any = {};
+  public pageType: string = '';
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -71,6 +73,7 @@ export class SubscriptionsPage implements OnInit {
     private keyboard: Keyboard,
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
+    private router: Router,
     public theme: ThemeService
   ) { }
 
@@ -81,6 +84,8 @@ export class SubscriptionsPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.addEvents();
+    let url: string = this.router.url;
+    this.pageType = url.replace("/", '');
     this.initFollowing();
   }
 
@@ -491,7 +496,7 @@ export class SubscriptionsPage implements OnInit {
       if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid + "-" + postItem.channelId + '-subscriptions';
+      let postGridId = postItem.destDid + "-" + postItem.channelId + '-' + this.pageType;
       let exit = this.follingObserver[postGridId] || null;
       if (exit != null) {
         continue;

@@ -720,7 +720,7 @@ export class UserprofilePage implements OnInit {
   }
 
   subsciptions() {
-    this.native.navigateForward(['subscriptions'], '');
+    this.native.navigateForward(['/userSubscriptions'], '');
   }
 
   async toPage(eventParm: any) {

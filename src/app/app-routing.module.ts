@@ -157,6 +157,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'userSubscriptions',
+    loadChildren: () =>
+      import('./pages/subscriptions/subscriptions.module').then(
+        m => m.SubscriptionsPageModule,
+      ),
+  },
+  {
     path: 'elastosapiprovider',
     loadChildren: () =>
       import('./pages/elastosapiprovider/elastosapiprovider.module').then(
