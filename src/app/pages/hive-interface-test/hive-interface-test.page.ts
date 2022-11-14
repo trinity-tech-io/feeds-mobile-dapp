@@ -589,13 +589,11 @@ export class HiveInterfaceTestPage implements OnInit {
   async queryAllSubscribedChannelData() {
     const selfDid = (await this.dataHelper.getSigninData()).did;
     const result = await this.sqliteHelper.queryAllSubscribedChannelData(selfDid);
-    console.log('queryAllSubscribedChannelData ====>', result);
   }
 
   async querySubscribedChannelDataByUserDid() {
     const selfDid = (await this.dataHelper.getSigninData()).did;
     const result = await this.sqliteHelper.querySubscribedChannelDataByUserDid(selfDid, selfDid);
-    console.log('querySubscribedChannelDataByUserDid====>', result);
   }
 
   async deleteSubscribedChannelDataById() {
