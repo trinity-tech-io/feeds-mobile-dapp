@@ -16,6 +16,7 @@ import { ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.serv
 import { IonRefresher } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { UtilService } from 'src/app/services/utilService';
+import { Router } from '@angular/router';
 const TAG: string = 'SubscriptionsPage';
 @Component({
   selector: 'app-subscriptions',
@@ -53,6 +54,7 @@ export class SubscriptionsPage implements OnInit {
   public pageNumber = 10;
   public totalSubscribedChannelList: any = [];
   public totalNum: number = 0;
+  public pageType: string = '';
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -65,6 +67,7 @@ export class SubscriptionsPage implements OnInit {
     private hiveVaultController: HiveVaultController,
     private popupProvider: PopupProvider,
     private keyboard: Keyboard,
+    private router: Router,
     public theme: ThemeService
   ) { }
 
@@ -75,6 +78,8 @@ export class SubscriptionsPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.addEvents();
+    let url: string = this.router.url;
+    this.pageType = url.replace("/",'');
     this.initFollowing();
   }
 
@@ -477,7 +482,7 @@ export class SubscriptionsPage implements OnInit {
       if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid + "-" + postItem.channelId + '-subscriptions';
+      let postGridId = postItem.destDid + "-" + postItem.channelId + '-'+this.pageType;
       let exit = this.follingObserver[postGridId] || null;
       if (exit != null) {
         continue;
