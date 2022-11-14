@@ -2332,6 +2332,23 @@ export class HiveVaultHelper {
         }
     }
 
+    deleteSelfProfile() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const signinDid = (await this.dataHelper.getSigninData()).did;
+                const filter = {
+                    "did": signinDid
+                }
+                const deleteResult = await this.hiveService.deleateOneDBData(HiveVaultHelper.TABLE_PROFILE, filter);
+                Logger.log(TAG, 'Delete profile db result', deleteResult);
+                resolve('FINISH')
+            } catch (error) {
+                Logger.error(TAG, 'Delete profile db error', error)
+                reject(await this.handleError(error))
+            }
+        })
+    }
+
     /** create profile start */
     private insertSelfProfileToProfileDB(did: string, name: string, description: string, avatar: string, updatedAt: number): Promise<any> {
         return new Promise(async (resolve, reject) => {

@@ -611,4 +611,10 @@ export class HiveInterfaceTestPage implements OnInit {
     this.sqliteHelper.cleanSubscribedChannelData(selfDid);
   }
 
+  async removeSelfProfile() {
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    await this.hiveVaultApi.deleteSelfProfile();
+    this.hiveVaultApi.queryProfile(selfDid);
+  }
+
 }

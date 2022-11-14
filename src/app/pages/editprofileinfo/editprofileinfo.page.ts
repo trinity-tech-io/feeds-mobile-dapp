@@ -87,7 +87,9 @@ export class EditprofileinfoPage implements OnInit {
         this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || '';
       }
       this.userDes = userProfile.bio || userProfile.resolvedBio || '';
+
       const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
+
       await this.setAvatarUI(this.userDid, avatarUrl);
 
       this.originUserName = this.userName;

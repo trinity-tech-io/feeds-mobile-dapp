@@ -4615,13 +4615,9 @@ export class DataHelper {
   getSelfSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log('input====>', subscribedChannelType);
         const selfDid = (await this.getSigninData()).did;
-        console.log('selfDid====>', selfDid);
         let subscribedList = await this.getSubscribedChannelByUser(selfDid);
-        console.log('subscribedList====>', subscribedList);
         const resultList = await this.filterSubscribedChannelV3(subscribedList, subscribedChannelType);
-        console.log('resultList====>', resultList);
 
         resolve(resultList);
       } catch (error) {
