@@ -1877,6 +1877,33 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         await this.createSubscribedChannelTable(dbUserDid);
+
+        let backupSubscribedChannels: FeedsData.BackupSubscribedChannelV3[] = [];
+        try {
+          backupSubscribedChannels = await this.queryBackupSubscribedChannelData(dbUserDid);
+        } catch (error) {
+        }
+
+        for (let index = 0; index < backupSubscribedChannels.length; index++) {
+          const backupSubscribedChannel = backupSubscribedChannels[index];
+
+          const subscribedChannel: FeedsData.SubscribedChannelV3 = {
+            userDid: dbUserDid,
+            targetDid: backupSubscribedChannel.destDid,
+            channelId: backupSubscribedChannel.channelId,
+            subscribedAt: 0,
+            updatedAt: 0,
+
+            channelName: '',
+            channelDisplayName: '',
+            channelIntro: '',
+            channelAvatar: '',
+            channelType: '',
+            channelCategory: ''
+          }
+          await this.insertSubscribedChannelData(dbUserDid, subscribedChannel);
+          await this.deleteBackupSubscribedChannelData(dbUserDid, backupSubscribedChannel);
+        }
         resolve('FINISH');
       } catch (error) {
         reject(error);

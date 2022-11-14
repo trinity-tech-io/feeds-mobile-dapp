@@ -4627,9 +4627,14 @@ export class DataHelper {
   getSelfSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
+        console.log('input====>', subscribedChannelType);
         const selfDid = (await this.getSigninData()).did;
+        console.log('selfDid====>', selfDid);
         let subscribedList = await this.getSubscribedChannelByUser(selfDid);
+        console.log('subscribedList====>', subscribedList);
         const resultList = await this.filterSubscribedChannelV3(subscribedList, subscribedChannelType);
+        console.log('resultList====>', resultList);
+
         resolve(resultList);
       } catch (error) {
         Logger.error(TAG, 'Get self subscribed channel list error', error);
@@ -4665,5 +4670,19 @@ export class DataHelper {
         reject(error);
       }
     });
+  }
+
+  resetOwnSubscribedChannel(subscibedChannelList: FeedsData.SubscribedChannelV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        await this.sqliteHelper.deleteSubscribedChannelDataByUser(selfDid, selfDid);
+        await this.addSubscribedChannels(subscibedChannelList);
+        resolve('FINISH');
+      } catch (error) {
+        Logger.error(TAG, 'Get self subscribed channel list error', error);
+        reject(error)
+      }
+    })
   }
 }

@@ -1984,18 +1984,77 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const ownerDid: string = (await this.dataHelper.getSigninData()).did;
-        const subcribedChannelsList = await this.querySubscribedChannelByOwnerFromRemote(ownerDid);
+        const subscribedChannelList = await this.restoreSubscibedChannelFromRemote(ownerDid) || [];
 
-        if (!subcribedChannelsList || subcribedChannelsList.length == 0) {
-          resolve([])
+        if (!subscribedChannelList || subscribedChannelList.length == 0) {
+          const newSubscribedChannelList = await this.restoreSubscribedChannelFromRemoteBackupSubscribedChannel(ownerDid);
+          resolve(newSubscribedChannelList);
           return;
         }
 
-        await this.dataHelper.addSubscribedChannels(subcribedChannelsList);
-        resolve(subcribedChannelsList);
+        resolve(subscribedChannelList);
       } catch (error) {
         Logger.error(TAG, 'Sync subscribed channel error', error);
         reject(error);
+      }
+    });
+  }
+
+  restoreSubscibedChannelFromRemote(ownerDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const subcribedChannelsList = await this.querySubscribedChannelByOwnerFromRemote(ownerDid);
+        if (!subcribedChannelsList || subcribedChannelsList.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        this.dataHelper.resetOwnSubscribedChannel(subcribedChannelsList);
+        resolve(subcribedChannelsList);
+      } catch (error) {
+        resolve([]);
+      }
+    });
+  }
+
+  restoreSubscribedChannelFromRemoteBackupSubscribedChannel(ownerDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const backupSubscribedChannels: FeedsData.BackupSubscribedChannelV3[] = await this.queryBackupSubscribedChannelFromRemote();
+        if (!backupSubscribedChannels || backupSubscribedChannels.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        let newSubcribedChannelList: FeedsData.SubscribedChannelV3[] = [];
+        for (let index = 0; index < backupSubscribedChannels.length; index++) {
+          const backupSubscribedChannel = backupSubscribedChannels[index];
+          const subscribedChannel: FeedsData.SubscribedChannelV3 = {
+            userDid: ownerDid,
+            targetDid: backupSubscribedChannel.destDid,
+            channelId: backupSubscribedChannel.channelId,
+            subscribedAt: 0,
+            updatedAt: 0,
+
+            channelName: '',
+            channelDisplayName: '',
+            channelIntro: '',
+            channelAvatar: '',
+            channelType: '',
+            channelCategory: ''
+          }
+          await this.updateSubscribedChannelDataToRemote(subscribedChannel);
+          newSubcribedChannelList.push(subscribedChannel);
+        }
+
+        if (!newSubcribedChannelList || newSubcribedChannelList.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        await this.dataHelper.resetOwnSubscribedChannel(newSubcribedChannelList);
+        resolve(newSubcribedChannelList);
+      } catch (error) {
       }
     });
   }
@@ -2194,6 +2253,8 @@ export class HiveVaultController {
     }
     else {
       // 不需要注册 return
+
+      await this.syncSubscribedChannelFromRemote();
       return
     }
     if (Config.scriptVersion !== lasterVersion) {
@@ -2218,6 +2279,8 @@ export class HiveVaultController {
       const key = UtilService.generateDIDLocalVersion(userDid);
       localStorage.setItem(key, localVersion)
     }
+
+    await this.syncSubscribedChannelFromRemote();
   }
 
   prepareHive(userDid: string, forceCreate: boolean): Promise<string> {
@@ -2695,12 +2758,11 @@ export class HiveVaultController {
     });
   }
 
-  updateSubscribedChannelDataToRemote(targetDid: string, channelId: string, subscribedAt: number, channelName: string, channelDisplayName: string,
-    channelIntro: string, channelAvatar: string, channelType: string, channelCategory: string) {
+  updateSubscribedChannelDataToRemote(subscribedChannel: FeedsData.SubscribedChannelV3) {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.updateSubscribedChannel(targetDid, channelId, subscribedAt, channelName, channelDisplayName,
-          channelIntro, channelAvatar, channelType, channelCategory);
+        const result = await this.hiveVaultApi.updateSubscribedChannel(subscribedChannel.targetDid, subscribedChannel.channelId, subscribedChannel.subscribedAt, subscribedChannel.channelName, subscribedChannel.channelDisplayName,
+          subscribedChannel.channelIntro, subscribedChannel.channelAvatar, subscribedChannel.channelType, subscribedChannel.channelCategory);
         if (!result) {
           resolve(null);
           return;
@@ -2725,6 +2787,31 @@ export class HiveVaultController {
         resolve(result);
       } catch (error) {
         Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
+  private queryBackupSubscribedChannelFromRemote(): Promise<FeedsData.BackupSubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryBackupData();
+        console.log(TAG, 'Query backup subscribed channel result is', result);
+        if (!result) {
+          resolve([])
+          return;
+        }
+
+        const subscribedList = HiveVaultResultParse.parseBackupSubscribedChannelResult(result);
+
+        if (!subscribedList || subscribedList.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        resolve(subscribedList);
+      } catch (error) {
+        Logger.error(TAG, 'Query backup subscribed channel error', error);
         reject(error);
       }
     });
