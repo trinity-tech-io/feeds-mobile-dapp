@@ -138,8 +138,8 @@ export class SubscriptionsPage implements OnInit {
   async initFollowing() {
     try {
       this.pageSize = 1;
-      this.totalSubscribedChannelList = await this.dataHelper.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
-      let pageData = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalSubscribedChannelList);
+      this.totalSubscribedChannelList = await this.dataHelper.getSelfSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL);
+      let pageData = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalSubscribedChannelList);//TOBE CHECK
       let subscribedChannel = pageData.items;
       this.totalNum = subscribedChannel.length;
       this.followingList = await this.getFollowedChannelList(subscribedChannel);
@@ -152,10 +152,10 @@ export class SubscriptionsPage implements OnInit {
 
   }
 
-  async getFollowedChannelList(subscribedChannel: FeedsData.BackupSubscribedChannelV3[]) {
+  async getFollowedChannelList(subscribedChannel: FeedsData.SubscribedChannelV3[]) {
     let list = [];
     for (let item of subscribedChannel) {
-      let destDid = item.destDid;
+      let destDid = item.targetDid;
       let channelId = item.channelId;
       let channel: any = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
 
@@ -172,15 +172,15 @@ export class SubscriptionsPage implements OnInit {
 
   async doRefresh(event: any) {
     try {
-      let subscribedChannels = await this.dataHelper.getBackupSubscribedChannelV3List();
+      let subscribedChannels = await this.dataHelper.getSelfSubscribedChannelV3List();
       let promiseList: Promise<any>[] = [];
       for (let index = 0; index < subscribedChannels.length; index++) {
         const subscribedChannel = subscribedChannels[index];
-        const querySubscriptionPromise = this.hiveVaultController.querySubscriptionChannelById(subscribedChannel.destDid, subscribedChannel.channelId).then(() => { }).catch(() => { });
+        const querySubscriptionPromise = this.hiveVaultController.querySubscriptionChannelById(subscribedChannel.targetDid, subscribedChannel.channelId).then(() => { }).catch(() => { });
         promiseList.push(querySubscriptionPromise);
       }
 
-      const syncSCPromise = this.hiveVaultController.syncSubscribedChannelFromBackup().then(() => { }).catch(() => { });
+      const syncSCPromise = this.hiveVaultController.syncSubscribedChannelFromRemote().then(() => { }).catch(() => { });
       promiseList.push(syncSCPromise);
 
       const syncChannelInfoPromise = this.hiveVaultController.syncAllChannelInfo().then(() => { }).catch(() => { });

@@ -256,7 +256,7 @@ export class ProfilePage implements OnInit {
       this.isLoadingMyFeeds = false;
       this.myFeedsSum = this.channels.length;
       this.refreshMyFeedsVisibleareaImageV2(this.channels);
-      let followedList = await this.dataHelper.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
+      let followedList = await this.dataHelper.getSelfSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
       this.followers = followedList.length;
     } catch (error) {
       this.isLoadingMyFeeds = false;
@@ -723,7 +723,7 @@ export class ProfilePage implements OnInit {
             const selfchannel = selfchannels[index];
             await this.hiveVaultController.querySubscriptionChannelById(selfchannel.destDid, selfchannel.channelId);
           }
-          await this.hiveVaultController.syncSubscribedChannelFromBackup();
+          await this.hiveVaultController.syncSubscribedChannelFromRemote();
           this.isLoadSubscriptionV3Num = {};
           this.isLoadChannelNameMap = {};
           this.removeMyFeedsObserveList();
@@ -1606,12 +1606,7 @@ export class ProfilePage implements OnInit {
           this.hiveVaultController.unSubscribeChannel(
             destDid, channelId
           ).then(async (result) => {
-            let channel: FeedsData.BackupSubscribedChannelV3 = {
-              destDid: destDid,
-              channelId: channelId
-            };
-            //await this.hiveVaultController.removePostListByChannel(destDid, channelId);
-            this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+            this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish);
             this.native.hideLoading();
           }).catch(() => {
             this.native.hideLoading();

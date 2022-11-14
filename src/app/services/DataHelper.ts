@@ -2993,18 +2993,18 @@ export class DataHelper {
     });
   }
 
-  cleanBackupSubscribedChannelData(): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const selfDid = (await this.getSigninData()).did;
-        const result = await this.sqliteHelper.cleanBackupSubscribedChannelData(selfDid);
-        resolve(result);
-      } catch (error) {
-        Logger.error(TAG, 'Remove subscribed channel error', error);
-        reject(error);
-      }
-    });
-  }
+  // cleanBackupSubscribedChannelData(): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       const selfDid = (await this.getSigninData()).did;
+  //       const result = await this.sqliteHelper.cleanBackupSubscribedChannelData(selfDid);
+  //       resolve(result);
+  //     } catch (error) {
+  //       Logger.error(TAG, 'Remove subscribed channel error', error);
+  //       reject(error);
+  //     }
+  //   });
+  // }
 
   getBackupSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
@@ -3020,18 +3020,18 @@ export class DataHelper {
     })
   }
 
-  resetBackupSubscribedChannelV3(subscribedChannels: FeedsData.BackupSubscribedChannelV3[]): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.cleanBackupSubscribedChannelData();
-        await this.addBackupSubscribedChannels(subscribedChannels);
-        resolve('FINISH');
-      } catch (error) {
-        Logger.error(TAG, 'Reset subscribed channel error', error);
-        reject(error)
-      }
-    });
-  }
+  // resetBackupSubscribedChannelV3(subscribedChannels: FeedsData.BackupSubscribedChannelV3[]): Promise<string> {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.cleanBackupSubscribedChannelData();
+  //       await this.addBackupSubscribedChannels(subscribedChannels);
+  //       resolve('FINISH');
+  //     } catch (error) {
+  //       Logger.error(TAG, 'Reset subscribed channel error', error);
+  //       reject(error)
+  //     }
+  //   });
+  // }
 
   private async filterBackupSubscribedChannelV3(list: FeedsData.BackupSubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
@@ -4501,14 +4501,14 @@ export class DataHelper {
   checkSubscribedStatus(destDid: string, channelId: string): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
-        let subscribedChannel: FeedsData.BackupSubscribedChannelV3[] = await this.getBackupSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+        let subscribedChannel: FeedsData.SubscribedChannelV3[] = await this.getSelfSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
         if (subscribedChannel.length === 0) {
           resolve(false);
           return;
         }
 
-        let channelIndex = _.find(subscribedChannel, (item: FeedsData.BackupSubscribedChannelV3) => {
-          return item.destDid === destDid && item.channelId === channelId;
+        let channelIndex = _.find(subscribedChannel, (item: FeedsData.SubscribedChannelV3) => {
+          return item.targetDid === destDid && item.channelId === channelId;
         }) || '';
         if (channelIndex === '') {
           resolve(false);
@@ -4521,6 +4521,16 @@ export class DataHelper {
   }
 
   //subscribed channel
+  addSubscribedChannels(newSubscribedChannels: FeedsData.SubscribedChannelV3[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      for (let index = 0; index < newSubscribedChannels.length; index++) {
+        const subscibedChannel = newSubscribedChannels[index];
+        await this.addSubscribedChannel(subscibedChannel);
+      }
+      resolve('FINISH');
+    });
+  }
+
   addSubscribedChannel(newSubscribedChannel: FeedsData.SubscribedChannelV3): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -4530,7 +4540,7 @@ export class DataHelper {
         }
 
         let isNew: boolean = false;
-        let originSubscribedChannel: FeedsData.SubscribedChannelV3 = await this.getSubscribedChannelByID(newSubscribedChannel) || null;
+        let originSubscribedChannel: FeedsData.SubscribedChannelV3 = await this.getSubscribedChannelByID(newSubscribedChannel.userDid, newSubscribedChannel.targetDid, newSubscribedChannel.channelId) || null;
         if (!originSubscribedChannel) {
           try {
             await this.addSubscribedChannelData(newSubscribedChannel);
@@ -4577,13 +4587,10 @@ export class DataHelper {
     });
   }
 
-  removeSubscribedChannelByID(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<string> {
+  removeSubscribedChannelByID(userDid: string, targetDid: string, channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const userDid = subscribedChannelV3.userDid || '';
-        const targetDid = subscribedChannelV3.targetDid || '';
-        const channelId = subscribedChannelV3.channelId || '';
         const result = await this.sqliteHelper.deleteSubscribedChannelDataById(selfDid, userDid, targetDid, channelId);
         resolve(result);
       } catch (error) {
@@ -4592,15 +4599,68 @@ export class DataHelper {
     });
   }
 
-  getSubscribedChannelByID(subscribedChannelV3: FeedsData.SubscribedChannelV3): Promise<FeedsData.SubscribedChannelV3> {
+  getSubscribedChannelByID(userDid: string, targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const userDid = subscribedChannelV3.userDid || '';
-        const targetDid = subscribedChannelV3.targetDid || '';
-        const channelId = subscribedChannelV3.channelId || '';
         const result = await this.sqliteHelper.querySubscribedChannelDataById(selfDid, userDid, targetDid, channelId);
         resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getSubscribedChannelByUser(userDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const subscribedList = await this.sqliteHelper.querySubscribedChannelDataByUserDid(selfDid, userDid);
+        resolve(subscribedList);
+      } catch (error) {
+        Logger.error(TAG, 'Get subscribed channel list error', error);
+        reject(error);
+      }
+    });
+  }
+
+  getSelfSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        let subscribedList = await this.getSubscribedChannelByUser(selfDid);
+        const resultList = await this.filterSubscribedChannelV3(subscribedList, subscribedChannelType);
+        resolve(resultList);
+      } catch (error) {
+        Logger.error(TAG, 'Get self subscribed channel list error', error);
+        reject(error)
+      }
+    })
+  }
+
+  private async filterSubscribedChannelV3(list: FeedsData.SubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const signinDid = (await this.getSigninData()).did;
+        switch (subscribedChannelType) {
+          case FeedsData.SubscribedChannelType.ALL_CHANNEL:
+            resolve(list);
+            return;
+          case FeedsData.SubscribedChannelType.MY_CHANNEL:
+            const myChannelList = _.filter(list, subscribedChannel => {
+              return subscribedChannel.targetDid == signinDid;
+            });
+            resolve(myChannelList);
+            return;
+          case FeedsData.SubscribedChannelType.OTHER_CHANNEL:
+            const otherChannelList = _.filter(list, subscribedChannel => {
+              return subscribedChannel.targetDid != signinDid;
+            });
+            resolve(otherChannelList);
+            return;
+          default:
+            return list;
+        }
       } catch (error) {
         reject(error);
       }
