@@ -395,7 +395,7 @@ export class HiveVaultController {
     });
   }
 
-  getSelfSubscriptionChannel(targetDid: string): Promise<FeedsData.BackupSubscribedChannelV3[]> {
+  getSelfSubscriptionChannel(targetDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.dataHelper.getSigninData()).did;
@@ -431,7 +431,7 @@ export class HiveVaultController {
           }
           subscibedChannelList.push(subscribedChannel);
         }
-        this.dataHelper.addBackupSubscribedChannels(subscibedChannelList);
+        this.dataHelper.addSubscribedChannels(subscibedChannelList);
         resolve(subscibedChannelList);
       } catch (error) {
         Logger.error(TAG, error);
@@ -903,7 +903,7 @@ export class HiveVaultController {
     });
   }
 
-  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string = ''): Promise<FeedsData.BackupSubscribedChannelV3> {
+  subscribeChannel(targetDid: string, channelId: string, userDisplayName: string = ''): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const signinData = await this.dataHelper.getSigninData();
@@ -2911,7 +2911,7 @@ export class HiveVaultController {
           resolve(null);
           return;
         }
-        resolve(result);
+        resolve(subscribedChannels);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
