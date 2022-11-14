@@ -265,6 +265,10 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.updateProfile(name, description, avatarHiveUrl);
   }
 
+  deleteSelfProfile() {
+    return this.hiveVaultHelper.deleteSelfProfile();
+  }
+
   queryProfile(targetDid: string) {
     return this.hiveVaultHelper.queryProfile(targetDid);
   }
