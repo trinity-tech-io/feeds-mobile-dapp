@@ -408,10 +408,14 @@ export class UserprofilePage implements OnInit {
         this.closeFullSrceenPost();
         this.removeMyFeedsObserveList();
         this.clearRefreshImageSid();
-
-        if (!this.userOwnedchannels || this.userOwnedchannels.length == 0)
+        try {
+          if (!this.userOwnedchannels || this.userOwnedchannels.length == 0)
           this.userOwnedchannels = await this.hiveVaultController.queryUserOwnedChannels(this.userDid);
         await this.initUserOwnedChannels(this.userOwnedchannels);
+        } catch (error) {
+          this.isLoadingMyFeeds = false;
+        }
+
         break;
       case 'ProfilePage.myLikes':
         this.removeLikeObserveList();
