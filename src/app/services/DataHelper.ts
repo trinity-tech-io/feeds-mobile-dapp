@@ -3356,6 +3356,7 @@ export class DataHelper {
       try {
         const selfDid = (await this.getSigninData()).did;
         const result = await this.sqliteHelper.queryChannelDataByChannelId(selfDid, channelId)
+        console.log('queryChannelDataByChannelId====>', result);
         resolve(result[0]);
       } catch (error) {
         reject(error);
@@ -4612,6 +4613,20 @@ export class DataHelper {
     });
   }
 
+  getAllSubscribedChannels(): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const subscribedList = await this.sqliteHelper.queryAllSubscribedChannelData(selfDid);
+        resolve(subscribedList);
+      } catch (error) {
+        Logger.error(TAG, 'Get subscribed channel list error', error);
+        reject(error);
+      }
+    });
+  }
+
+
   getSelfSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -4659,9 +4674,22 @@ export class DataHelper {
   resetOwnSubscribedChannel(subscibedChannelList: FeedsData.SubscribedChannelV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+
+
         const selfDid = (await this.getSigninData()).did;
+
+        const all = await this.sqliteHelper.queryAllSubscribedChannelData(selfDid);
+        console.log('all====>', all);
+
+
         await this.sqliteHelper.deleteSubscribedChannelDataByUser(selfDid, selfDid);
         await this.addSubscribedChannels(subscibedChannelList);
+
+
+
+        const all2 = await this.sqliteHelper.queryAllSubscribedChannelData(selfDid);
+
+        console.log('all2====>', all2);
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Get self subscribed channel list error', error);

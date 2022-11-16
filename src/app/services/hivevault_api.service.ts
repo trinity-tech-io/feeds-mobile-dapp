@@ -297,8 +297,8 @@ export class HiveVaultApi {
       channelIntro, channelAvatar, channelType, channelCategory);
   }
 
-  removeSubscribedChannel(targetDid: string, channelId: string) {
-    return this.hiveVaultHelper.removeSubscribedChannel(targetDid, channelId);
+  removeSubscribedChannelById(targetDid: string, channelId: string) {
+    return this.hiveVaultHelper.removeSubscribedChannelById(targetDid, channelId);
   }
 
   querySubscribedChannelsByUserDid(targetDid: string) {

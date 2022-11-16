@@ -464,7 +464,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   removeSubscribedChannel() {
-    this.hiveVaultApi.removeSubscribedChannel("targetDid1", "channelId1");
+    this.hiveVaultApi.removeSubscribedChannelById("targetDid", "channelId");
   }
 
 

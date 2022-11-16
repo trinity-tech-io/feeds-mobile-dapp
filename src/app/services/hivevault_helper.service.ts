@@ -2712,7 +2712,7 @@ export class HiveVaultHelper {
         })
     }
 
-    removeSubscribedChannel(targetDid: string, channelId: string): Promise<string> {
+    removeSubscribedChannelById(targetDid: string, channelId: string): Promise<string> {
         return this.removeSubscribedChannelDB(targetDid, channelId);
     }
     /** remove subscribed channel end */

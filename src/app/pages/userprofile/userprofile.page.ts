@@ -511,17 +511,15 @@ export class UserprofilePage implements OnInit {
         });
         this.channels = newChannels;
       }
-      // else {
-      //   let newSelfChannels = await this.dataHelper.getSelfChannelListV3() || [];
-      //   newSelfChannels = _.sortBy(newSelfChannels, (item: FeedsData.ChannelV3) => {
-      //     return -item.createdAt;
-      //   });
-      //   this.channels = _.uniqWith(newSelfChannels, _.isEqual) || [];
-      // }
       this.isLoadingMyFeeds = false;
       this.myFeedsSum = this.channels.length;
       this.refreshMyFeedsVisibleareaImageV2(this.channels);
       // let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
+      this.followers = 0;
+      this.hiveVaultController.queryUserSubscribedChannels(this.userDid).then((subscribedChannels: FeedsData.SubscribedChannelV3[]) => {
+        console.log('subscribedChannels====>', subscribedChannels);
+        this.followers = subscribedChannels.length;
+      }).catch((error) => { });
       // this.followers = followedList.length;
     } catch (error) {
       this.isLoadingMyFeeds = false;
