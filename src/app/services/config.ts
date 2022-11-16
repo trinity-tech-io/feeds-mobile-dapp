@@ -51,7 +51,7 @@ export class Config {
     public static readonly SQL_VERSION311: number = 30101;
     public static readonly SQL_VERSION320: number = 30200;
     public static readonly SQL_VERSION330: number = 30300;
-    public static readonly SQL_VERSION: number = 30300;
+    public static readonly SQL_VERSION: number = 30301;
 
     public static changeApi(api: string) {
         if (api == 'elastos.io') {
