@@ -19,7 +19,7 @@ import { UtilService } from 'src/app/services/utilService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import SparkMD5 from 'spark-md5';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 const TAG: string = 'SubscriptionsPage';
 @Component({
   selector: 'app-subscriptions',
@@ -74,11 +74,16 @@ export class SubscriptionsPage implements OnInit {
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     public theme: ThemeService
   ) { }
 
   ngOnInit() {
     //this.scanServiceStyle['right'] = (screen.width * 7.5) / 100 + 5 + 'px';
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      this.userDid = params.userDid;
+      this.pageType = params.pageType;
+    });
   }
 
   ionViewWillEnter() {

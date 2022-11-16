@@ -718,7 +718,7 @@ export class UserprofilePage implements OnInit {
   }
 
   subsciptions() {
-    this.native.navigateForward(['/userSubscriptions'], '');
+    this.native.navigateForward(['/userSubscriptions'], { queryParams: { "userDid":  this.userDid, "pageType": 'userSubscriptions'}});
   }
 
   async toPage(eventParm: any) {
