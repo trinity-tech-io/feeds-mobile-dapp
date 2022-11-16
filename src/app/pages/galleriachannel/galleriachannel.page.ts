@@ -352,7 +352,7 @@ export class GalleriachannelPage implements OnInit {
       'GalleriachannelPage.mintSuccess',
       des,
       this.bindingCompleted,
-      'finish.svg',
+      'finish.gif',
       'common.ok',
     );
 

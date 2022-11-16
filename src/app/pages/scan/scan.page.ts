@@ -258,7 +258,7 @@ async hideCamera() {
       des1,
       des2,
       this.ok,
-      'finish.svg',
+      'finish.gif',
       'common.ok',
     );
   }

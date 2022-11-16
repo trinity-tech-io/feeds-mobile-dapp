@@ -15,7 +15,7 @@ export class AlertdialogComponent implements OnInit {
   public imgagePath: string = '';
   public imgageDarkPath: string = '';
   public that: any;
-
+  public isShowHeight: boolean = false;
   constructor(public theme: ThemeService, private navParams: NavParams) {
     this.that = this.navParams.get('that');
     this.title =  this.navParams.get('title');
@@ -25,6 +25,9 @@ export class AlertdialogComponent implements OnInit {
     this.imgageName = this.navParams.get('imgageName');
     this.imgagePath = '/assets/images/' + this.imgageName;
     this.imgageDarkPath = '/assets/images/darkmode/' + this.imgageName;
+    if(this.imgageName === 'finish.gif'){
+        this.isShowHeight = true;
+    }
   }
 
   ngOnInit() {}

@@ -789,7 +789,7 @@ export class MintnftPage implements OnInit {
       'common.mintSuccess',
       'common.mintSuccessDesc',
       this.bindingCompleted,
-      'finish.svg',
+      'finish.gif',
       'common.ok',
     );
   }
