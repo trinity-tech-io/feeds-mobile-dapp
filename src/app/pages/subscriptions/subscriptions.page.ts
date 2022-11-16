@@ -16,7 +16,7 @@ import { ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.serv
 import { IonRefresher } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { UtilService } from 'src/app/services/utilService';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 const TAG: string = 'SubscriptionsPage';
 @Component({
   selector: 'app-subscriptions',
@@ -68,18 +68,21 @@ export class SubscriptionsPage implements OnInit {
     private popupProvider: PopupProvider,
     private keyboard: Keyboard,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     public theme: ThemeService
   ) { }
 
   ngOnInit() {
     this.scanServiceStyle['right'] = (screen.width * 7.5) / 100 + 5 + 'px';
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      this.userDid = params.userDid;
+      this.pageType = params.pageType;
+    });
   }
 
   ionViewWillEnter() {
     this.initTitle();
     this.addEvents();
-    let url: string = this.router.url;
-    this.pageType = url.replace("/",'');
     this.initFollowing();
   }
 

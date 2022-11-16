@@ -1844,7 +1844,7 @@ export class ProfilePage implements OnInit {
 
   subsciptions() {
     this.clearData(true);
-    this.native.navigateForward(['subscriptions'], '');
+    this.native.navigateForward(['/subscriptions'], { queryParams: { "userDid":  this.userDid, "pageType": 'subscriptions'}});
   }
 
   chanelCollections() {
