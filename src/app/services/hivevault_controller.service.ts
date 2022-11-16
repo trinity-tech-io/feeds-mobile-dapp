@@ -219,6 +219,7 @@ export class HiveVaultController {
   refreshHomeData(callback: (postNum: number) => void) {
     return new Promise(async (resolve, reject) => {
       try {
+        console.log('refreshHomeData====>');
         await this.syncSubscribedChannelFromRemote();
         await this.refreshSubscription();
         const did = (await this.dataHelper.getSigninData()).did;
@@ -392,6 +393,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       const selfDid = (await this.dataHelper.getSigninData()).did;
       const subscribedChannels = await this.dataHelper.getSubscribedChannelByUser(selfDid);
+      console.log('subscribedChannels====>', subscribedChannels);
       let subscribedPromise: Promise<any>[] = [];
       for (let index = 0; index < subscribedChannels.length; index++) {
         const subscribedChannel = subscribedChannels[index];
@@ -1980,14 +1982,20 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const ownerDid: string = (await this.dataHelper.getSigninData()).did;
+        console.log('restoreSubscibedChannelFromRemote====>');
         const subscribedChannelList = await this.restoreSubscibedChannelFromRemote(ownerDid) || [];
+        console.log('0000000000000====>', subscribedChannelList);
+        console.log('0000000000000====>', !subscribedChannelList);
+        console.log('0000000000000====>', subscribedChannelList.length);
 
         if (!subscribedChannelList || subscribedChannelList.length == 0) {
+          console.log('111111111111111111====>');
+
           const newSubscribedChannelList = await this.restoreSubscribedChannelFromRemoteBackupSubscribedChannel(ownerDid);
           resolve(newSubscribedChannelList);
           return;
         }
-
+        console.log('222222222222222====>');
         resolve(subscribedChannelList);
       } catch (error) {
         Logger.error(TAG, 'Sync subscribed channel error', error);
@@ -2005,7 +2013,7 @@ export class HiveVaultController {
           return;
         }
 
-        this.dataHelper.resetOwnSubscribedChannel(subcribedChannelsList);
+        await this.dataHelper.resetOwnSubscribedChannel(subcribedChannelsList);
         resolve(subcribedChannelsList);
       } catch (error) {
         resolve([]);
@@ -2017,6 +2025,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const backupSubscribedChannels: FeedsData.BackupSubscribedChannelV3[] = await this.queryBackupSubscribedChannelFromRemote();
+        console.log('backupSubscribedChannels====>', backupSubscribedChannels);
         if (!backupSubscribedChannels || backupSubscribedChannels.length == 0) {
           resolve([]);
           return;
@@ -2040,6 +2049,8 @@ export class HiveVaultController {
             channelCategory: ''
           }
           await this.updateSubscribedChannelDataToRemote(subscribedChannel);
+          console.log('updateSubscribedChannelDataToRemote====>', subscribedChannel);
+
           newSubcribedChannelList.push(subscribedChannel);
         }
 
@@ -2067,11 +2078,11 @@ export class HiveVaultController {
         }
 
         const subscribedChannelList = HiveVaultResultParse.parseSubscribedChannelResult(ownerDid, result.find_message.items);
+        console.log('aaaaaaaaaaa====>', subscribedChannelList);
         if (!subscribedChannelList || subscribedChannelList.length == 0) {
           resolve([]);
           return;
         }
-
         await this.dataHelper.addSubscribedChannels(subscribedChannelList);
         resolve(subscribedChannelList);
       } catch (error) {
@@ -2085,7 +2096,7 @@ export class HiveVaultController {
   removeSubscribedChannelFromRemote(userDid: string, targetDid: string, channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.hiveVaultApi.removeSubscribedChannel(targetDid, channelId);
+        await this.hiveVaultApi.removeSubscribedChannelById(targetDid, channelId);
         await this.dataHelper.removeSubscribedChannelByID(userDid, targetDid, channelId);
         resolve('FINISH');
       } catch (error) {
@@ -2778,7 +2789,7 @@ export class HiveVaultController {
   removeSubscribedChannelDataFromRemote(targetDid: string, channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const result = await this.hiveVaultApi.removeSubscribedChannel(targetDid, channelId);
+        const result = await this.hiveVaultApi.removeSubscribedChannelById(targetDid, channelId);
         if (!result) {
           resolve(null);
           return;
@@ -2810,6 +2821,20 @@ export class HiveVaultController {
         }
 
         resolve(subscribedList);
+      } catch (error) {
+        Logger.error(TAG, 'Query backup subscribed channel error', error);
+        reject(error);
+      }
+    });
+  }
+
+  getChannelV3ById(targetDid: string, channelId: string) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const localChannel = await this.dataHelper.getChannelV3ById(targetDid, channelId);
+        if (!localChannel) {
+
+        }
       } catch (error) {
         Logger.error(TAG, 'Query backup subscribed channel error', error);
         reject(error);

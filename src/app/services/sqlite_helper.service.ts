@@ -435,7 +435,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryChannelData(dbUserDid: string): Promise<FeedsData.ChannelV3[]> {
+  queryAllChannel(dbUserDid: string): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_CHANNEL_NEW;
@@ -1304,22 +1304,7 @@ export class FeedsSqliteHelper {
         const subscribedChannelList = this.parseSubscribedChannelData(result);
         resolve(subscribedChannelList);
       } catch (error) {
-        Logger.error(TAG, 'Query subscribed channel data error', error);
-        reject(error);
-      }
-    });
-  }
-
-  //TODO
-  querySubscribedChannelDataExceptUserDid(dbUserDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const statement = 'SELECT * FROM ' + this.TABLE_SUBSCRIBED_CHANNELS;
-        const result = await this.executeSql(dbUserDid, statement);
-        const subscribedChannelList = this.parseSubscribedChannelData(result);
-        resolve(subscribedChannelList);
-      } catch (error) {
-        Logger.error(TAG, 'Query subscribed channel data error', error);
+        Logger.error(TAG, 'Query all subscribed channel data error', error);
         reject(error);
       }
     });

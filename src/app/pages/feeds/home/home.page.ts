@@ -926,6 +926,7 @@ export class HomePage implements OnInit {
     switch (this.tabType) {
       case 'feeds':
         this.infiniteScroll.disabled = true;
+        console.log('doRefresh====>');
         this.hiveVaultController.refreshHomeData((newPostNum) => {
           this.newPostNumber += newPostNum;
         });
