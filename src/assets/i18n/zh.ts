@@ -937,7 +937,7 @@ export const zh = {
     checkingCollectibleResult: '等待创建的频道收藏品在合约中生效',
     mintSuccess: '创建频道收藏品成功',
     mintSuccessDesc: '恭喜您，创建频道收藏品成功',
-    mintSuccessDesc1: '恭喜您，创建频道收藏品成功，建议删除临时中心化广场上的频道展示',
+    //mintSuccessDesc1: '恭喜您，创建频道收藏品成功，建议删除临时中心化广场上的频道展示',
     // publishSameDataFailed: '公开频道失败：探索频道中已有相同的频道',
     publishSameDataFailed: '公开频道失败：请重新连接钱包后再操作',
     signatureError: '签名数据失败，请重试',

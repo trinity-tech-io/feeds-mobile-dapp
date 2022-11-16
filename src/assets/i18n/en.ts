@@ -939,7 +939,7 @@ export const en = {
     checkingCollectibleResult: 'Waiting for the Channel Collectible to take effect in the contract',
     mintSuccess: 'Channel NFT Collectible created',
     mintSuccessDesc: 'Congratulations, your channel collectible has been created successfully.',
-    mintSuccessDesc1: 'Congratulations, your channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
+    //mintSuccessDesc1: 'Congratulations, your channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
     // publishSameDataFailed: 'Failed to publish to Explore Feeds：Explore Feeds has same channel data',
     publishSameDataFailed: 'Failed to publish to Explore Feeds：Please reconnect the wallet before you operate',
     signatureError: 'Failed to sign data, please try again',
