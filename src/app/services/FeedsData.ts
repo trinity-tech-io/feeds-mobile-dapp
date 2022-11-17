@@ -819,15 +819,6 @@ declare namespace FeedsData {
     syncMode: SyncMode
   }
 
-  type WhiteItem = {
-    index: number,
-    name: string,
-    description: string,
-    address: string,
-    social: [],
-    avatar: string
-  }
-
   type OrderStateAndNFTItem = {
     state: OrderState,
     item: NFTItem

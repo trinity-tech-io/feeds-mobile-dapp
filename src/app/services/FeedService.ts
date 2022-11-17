@@ -72,7 +72,6 @@ export class Avatar {
 
 @Injectable()
 export class FeedService {
-  private whiteListData: FeedsData.WhiteItem[] = [];
   private nftFirstdisclaimer: string = "";
   public elaUsdPrice: string = "";
   public selsectNftImage: string = "";
@@ -5880,13 +5879,6 @@ export class FeedService {
   //   });
   // }
 
-  getWhiteListData() {
-    return this.whiteListData;
-  }
-
-  setWhiteListData(whiteListData: FeedsData.WhiteItem[]) {
-    this.whiteListData = whiteListData;
-  }
 
   async getDidUri() {
     const signinData = this.getSignInData();

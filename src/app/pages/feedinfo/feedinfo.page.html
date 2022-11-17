@@ -54,7 +54,7 @@
   </div>
   <ion-row class="detail-row removeBorder" *ngIf="qrcodeString!=null">
     <ion-col size="12" class="left-col">
-        <h1  style="text-align:center">{{'DiscoverfeedinfoPage.feedsQrcode'|translate}}</h1>
+        <h1  style="text-align:center">{{'FeedinfoPage.feedsQrcode'|translate}}</h1>
         <div class="qr-container" style="margin-top:10px;" (click)="showPreviewQrcode(qrcodeString)" (press)="menuMore(qrcodeString)" [style.touch-action]="'pan-y'">
           <div class="qrcode">
             <qrcode [qrdata]="qrcodeString" [size]="150" [level]="'M'" allowEmptyString="true"></qrcode>

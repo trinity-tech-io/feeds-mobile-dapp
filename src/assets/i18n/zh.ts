@@ -30,7 +30,6 @@ export const zh = {
     des4: '您的捐款将寄至ELA地址：',
     amountError: '请输入正确的数额',
     waitMoment: '请稍候...',
-    // issuecredentialError: '颁发凭证出错，请检查二维码或重试',
     save: '保存',
     channel: '频道',
     image: '图片',
@@ -69,14 +68,12 @@ export const zh = {
     loadingLastestComment: '正在加载最新评论',
     showless: '显示更少',
     showmore: '显示更多',
-    // didnotrelease: 'DID发布上链后，Feeds才能正常运行',
     unknown: '未知',
     channelAlreadyAdded: '您已经订阅了此频道',
     notFollowYet: '未订阅',
     httperror: '服务异常，稍候再试',
     textcopied: '文本已拷贝',
     connectionError1: '此频道目前离线，稍候再试',
-    // emptyElaAddressDes: '还未设置',
     qRcodePreview: '二维码预览图',
     details: '详情',
     sending: '发送中',
@@ -305,7 +302,8 @@ export const zh = {
     createCollectible: '创建收藏品',
     allempty: '没有发现收藏品',
     emptyDes: '创建一个收藏品或从 Pasar 简版市场购买一个！',
-    exploreMarketplace: '探索市场'
+    exploreMarketplace: '探索市场',
+    connectWallet: '连接钱包',
   },
   MyfeedsComponent: {
     allempty: '没有找到频道',
@@ -340,23 +338,6 @@ export const zh = {
     follow: '订阅',
     following: '已订阅',
     searchFeeds: '搜索',
-    status0: '连接中',
-    status1: '连接中',
-    status2: '连接中',
-    status3: '连接中',
-    status4: '等待',
-    status5: '连接中',
-    status6: '等待',
-    status7: '等待',
-    status8: '登录出错',
-    status9: '等待',
-    status10: '等待',
-    status11: '订阅频道出错',
-    status12: '等待',
-    status14: '已请求',
-    discover: '进入广场探索 Feeds',
-    des1:
-      '您订阅此频道的请求正被确认中，请耐心等待30秒左右。确认需要取消请求订阅该频道？',
     confirmTitle: '取消请求',
     des:'无法连接频道'
   },
@@ -458,6 +439,7 @@ export const zh = {
   },
   PostdetailPage: {
     postview: '微说详情',
+    replyingto: '回复给',
   },
   AddServerPage: {
     tipMsg: 'URL地址可能错误',
@@ -466,38 +448,6 @@ export const zh = {
     serverAlreadyAdded: '该Feeds出版号已经在您的订阅列表中了',
     scanimg: '导入二维码图片',
     tipMsg1: '未发现二维码',
-  },
-  ServerInfoPage: {
-    title: '出版号详情',
-    online: '在线',
-    users: '用户',
-    offline: '离线',
-    name: '源名称',
-    owner: '拥有者',
-    introduction: '简要介绍',
-    did: 'DID身份码',
-    deleteFeedSource: '删除出版号',
-    DeletethisFeedSource: '删除这个Feeds出版号',
-    cancel: '取消',
-    RemovethisFeedSource: '移除这个Feeds出版号',
-    removeserver: '已移除Feeds出版号',
-    feedsSourceQRCode: '出版号二维码',
-    public: '私密',
-    replyingto: '回复给',
-    containedfeeds: '包含的频道列表',
-    version: '版本',
-    beingPublic: '公开',
-    des1: '开启开发者模式后，可以选择公开频道或公开测试频道',
-    des2: '测试频道',
-    des3: '公开频道',
-    feedsSourceQRCodeDes:
-      '该二维码仅限于发布者自己使用，可用于在其他设备上绑定出版号',
-    elaaddress: 'ELA地址',
-    serverName: 'Feeds出版号名称',
-    serverDes: 'Feeds出版号描述',
-    inputName: '请输入Feeds出版号名称',
-    inputServerDes: '请输入Feeds出版号描述',
-    inputElaAddress: '请输入ELA地址',
   },
   CreatenewpostPage: {
     post: '发布',
@@ -545,7 +495,6 @@ export const zh = {
   },
   GalleriahivePage: {
     title: '登录 Hive 中',
-    //titleSuccess: '登录 Hive 成功',
     description:
       '正在等待 Essentials 授权登录 Hive， 请稍候....',
     buttonTitle: '开始',
@@ -657,7 +606,6 @@ export const zh = {
     des1: '清空数据成功',
     hidedeletepost: '显示已删除的微说',
     hidedeletecomment: '显示已删除的评论',
-    // hideOfflinefeed: '仅显示在线状态的频道',
     on: '开',
     off: '关',
     'language-setting': '语言',
@@ -697,22 +645,11 @@ export const zh = {
     connections: '连接',
     connectionsDes: '管理帐户连接'
   },
-  // DiscoverfeedPage: {
-  //   title: '探索广场',
-  //   emptyDes: '还没有公开的频道',
-  // },
-  DiscoverfeedinfoPage: {
-    title: '频道详情',
-    feeds: '名称',
-    follow: '订阅',
-    unfollow: '订阅中',
-    processing: '订阅确认中',
-    feedsQrcode: '频道二维码',
-  },
   FeedinfoPage: {
     title: '频道详情',
     feeds: '频道',
     updatetime: '更新时间',
+    feedsQrcode: '频道二维码'
   },
   CommentlistPage: {
     title: '评论详情',
@@ -837,61 +774,12 @@ export const zh = {
     details: '详情',
     sale: '出售'
   },
-  // ConfirmationPage: {
-  //   title: '确认',
-  //   bidDes: '您的出价已经定好了！',
-  //   purchaseDes: '您已购买成功！',
-  //   ok: '好',
-  //   bidPlaced: '已出价！',
-  //   congratulations: '恭喜！',
-  // },
   ExplorefeedsPage: {
     pasar: 'Pasar 简版',
-    // explorefeeds: '探索 Feeds',
-    // hotBids: '热门竞标',
-    // latest: '最近',
-    // new: '最新',
-    // channels: '频道',
-    // viewall: '查看全部',
   },
-  // CurrencyviewallPage: {
-  //   title: 'Pasar (NFT市场)',
-  // },
   LearnmorePage: {
     title: '了解更多',
     next: '下一步',
-    skip: '跳过',
-  },
-  // IntroducePage: {
-  //   title: '绑定服务',
-  //   des: '1/6',
-  //   des1: '什么是Feeds服务？',
-  //   des2: '一个用于将数据存储在本地设备中的服务节点。 您可以从Feeds',
-  //   des3: '网站',
-  //   des4: '中下载最新版本。 您需要安装并运行Feeds服务来接收QR码，以便绑定出版号。',
-  //   des5: '这是Feeds的工作方式：拥有出版号的用户可以发布微说，创建收藏品等；',
-  //   des6: '如果没有出版号，用户只能阅读微说，而不能发布或编辑微说。',
-  //   des7: '什么是出版号？',
-  //   des8: '将数据绑定到Feeds服务的帐户。想象一下，如果您是图书出版商，则有权在市场上编写、编辑和出版图书，而普通读者只能在书店中阅读和浏览图书。',
-  //   next: '好',
-  //   info: '#信息',
-  //   back: '返回',
-  // },
-  // LearnpublisheraccountPage: {
-  //   title: '绑定服务',
-  //   hello: '#hello',
-  //   des: '了解出版号',
-  //   createNewPublisherAccount: '创建新的出版号',
-  //   bindExistingPublisherAccount: '绑定现有的出版号',
-  //   continueWithoutPublisherAccount: '跳过出版号，请继续',
-  // },
-  WalletteachPage: {
-    title: '钱包',
-    wallet: '#钱包',
-    connectWallet: '连接钱包',
-    introduce1:
-      '连接钱包可在 Feeds 上充分享受 Elastos 智能合约链（ESC）功能。用户现在也可以在市场（也称为 Pasar ）上交易不可替代代币（NFT）。',
-    introduce2: '连接钱包',
     skip: '跳过',
   },
   NftdisclaimerComponent: {
@@ -910,9 +798,6 @@ export const zh = {
   },
   NftavatarlistPage: {
     title: '收藏品头像'
-  },
-  WhitelistPage: {
-    title: '已验证原创者'
   },
   AssistpasarPage: {
     title: 'Assist Pasar API',
@@ -937,7 +822,6 @@ export const zh = {
     checkingCollectibleResult: '等待创建的频道收藏品在合约中生效',
     mintSuccess: '创建频道收藏品成功',
     mintSuccessDesc: '恭喜您，创建频道收藏品成功',
-    //mintSuccessDesc1: '恭喜您，创建频道收藏品成功，建议删除临时中心化广场上的频道展示',
     // publishSameDataFailed: '公开频道失败：探索频道中已有相同的频道',
     publishSameDataFailed: '公开频道失败：请重新连接钱包后再操作',
     signatureError: '签名数据失败，请重试',

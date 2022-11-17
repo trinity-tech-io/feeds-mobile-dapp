@@ -607,8 +607,8 @@ export class AssetdetailsPage implements OnInit {
 
   async handleCreatorAddress(creatorAddress: string) {
     return new Promise((resolve, reject) => {
-      let whiteListData: FeedsData.WhiteItem[] = this.feedService.getWhiteListData();
-      let whiteListItem = _.find(whiteListData, (item: FeedsData.WhiteItem) => {
+      let whiteListData: [] = [];
+      let whiteListItem = _.find(whiteListData, (item: any) => {
         return item.address === creatorAddress;
       }) || "";
       if (whiteListItem != "") {

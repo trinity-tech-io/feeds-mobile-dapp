@@ -20,28 +20,5 @@
         <img *ngIf="curApiProviderName === provider.name"  src="assets/images/darkmode/settings/duihao.svg"/>
       </ion-col>
   </ion-row>
-
-  <!-- IPFS
-  <ion-row class="section">
-    <ion-col size="12" class="title-col">
-      <h1>IPFS</h1>
-    </ion-col>
-  </ion-row>
-
-  <ion-row *ngFor="let ipfs of availableIpfsNetworkTemplates" class="section" (click)="selectIpfs(ipfs)">
-    <ion-col size="2" class="left-col">
-      <img *ngIf="ipfs.name == 'ipfs0.trinity-feeds.app'"  src="assets/images/darkmode/apiProviders/01.svg"/>
-      <img *ngIf="ipfs.name == 'ipfs1.trinity-feeds.app'"  src="assets/images/darkmode/apiProviders/02.svg"/>
-      <img *ngIf="ipfs.name == 'ipfs2.trinity-feeds.app'"  src="assets/images/darkmode/apiProviders/03.svg"/>
-    </ion-col>
-    <ion-col size="7" class="title-col">
-      <h2>{{ ipfs.name }}</h2>
-      <h3>{{ ipfs.description |  translate }}</h3>
-    </ion-col>
-    <ion-col size="3" class="arrow-col">
-      <img *ngIf="selectedIpfsNetwork === ipfs.key"  src="assets/images/darkmode/settings/duihao.svg"/>
-    </ion-col>
-   </ion-row>
-  -->
 </ion-grid>
 </ion-content>

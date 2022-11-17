@@ -24,7 +24,6 @@ export class DataHelper {
   // TODO new add
   private selsectIndex = 1;
   private collectibleStatus: any = {};
-  private whiteListData: FeedsData.WhiteItem[] = [];
   private discoverfeeds: any = [];
   private currentChannel: any = null;
   private selsectNftImage: string = "";
@@ -4053,14 +4052,6 @@ export class DataHelper {
 
   setDiscoverfeeds(discoverfeeds: any) {
     return (this.discoverfeeds = discoverfeeds);
-  }
-
-  getWhiteListData() {
-    return this.whiteListData;
-  }
-
-  setWhiteListData(whiteListData: FeedsData.WhiteItem[]) {
-    this.whiteListData = whiteListData;
   }
 
   getCollectibleStatus() {

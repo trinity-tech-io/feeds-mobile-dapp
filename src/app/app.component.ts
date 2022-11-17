@@ -760,18 +760,6 @@ export class MyApp {
     });
   }
 
-  ajaxGetWhiteList(isLoading: boolean) {
-    this.httpService.ajaxGet(ApiUrl.getWhiteList, isLoading).then((result: any) => {
-      if (result.code === 200) {
-        const whiteListData = result.data || [];
-        this.dataHelper.setWhiteListData(whiteListData);
-        this.dataHelper.saveData("feeds.WhiteList", whiteListData);
-      }
-    }).catch((err) => {
-
-    });
-  }
-
   // initSql(userDid: string): Promise<string> {
   //   return new Promise(async (resolve, reject) => {
   //     try {

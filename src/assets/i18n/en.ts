@@ -30,7 +30,6 @@ export const en = {
     des4: 'Your donation will be sent to this ELA address:',
     amountError: 'Incorrect amount',
     waitMoment: 'Please wait...',
-    // issuecredentialError: 'There was an error issuing the certificate. Please check the QR code or try again',
     save: 'Save',
     channel: 'Channel',
     image: 'Image',
@@ -69,14 +68,12 @@ export const en = {
     loadingLastestComment: 'Loading latest comments',
     showless: 'show less',
     showmore: 'show more',
-    // didnotrelease: 'Feeds will work normally after a DID is published on-chain',
     unknown: 'Unknown',
     channelAlreadyAdded: 'You have already subscribed to this channel',
     notFollowYet: 'Subscribe',
     httperror: 'Service exception, try again later',
     textcopied: 'Copied to clipboard',
     connectionError1: 'This channel is currently offline. Try again later.',
-    // emptyElaAddressDes: 'Not set yet',
     qRcodePreview: 'QR code Preview',
     details: 'Details',
     sending: 'sending',
@@ -306,7 +303,8 @@ export const en = {
     createCollectible: 'Create Collectibles',
     allempty: 'No collectibles found',
     emptyDes: 'Create a collectible or buy one from Pasar Lite marketplace!',
-    exploreMarketplace: 'Explore Marketplace'
+    exploreMarketplace: 'Explore Marketplace',
+    connectWallet: 'Connect Wallet',
   },
   MyfeedsComponent: {
     allempty: 'No channels found',
@@ -342,23 +340,6 @@ export const en = {
     follow: 'Subscribe',
     following: 'Subscribed',
     searchFeeds: 'Search',
-    status0: 'Connecting',
-    status1: 'Connecting',
-    status2: 'Connecting',
-    status3: 'Connecting',
-    status4: 'Pending',
-    status5: 'Connecting',
-    status6: 'Pending',
-    status7: 'Pending',
-    status8: 'Signin error',
-    status9: 'Pending',
-    status10: 'Pending',
-    status11: 'Pending',
-    status12: 'Pending',
-    status14: 'Requested',
-    discover: 'Explore on Discovery Square',
-    des1:
-'Your subscription request to this channel is ongoing; this takes a few seconds. Would you like to cancel this subscription？',
     confirmTitle: 'Cancel Request',
     des:'Failed to connect to the channel'
   },
@@ -407,7 +388,6 @@ export const en = {
     nameContainInvalidChars:
       'Channel name must start with an English letter and may only contain English letters and numbers',
     feedMaxNumber: '5 channels may be created at maximum',
-    // feedNum: 'You can create up to 5 channels',
     des1: 'Show channel in the Explore Feeds for users to discover.',
     tippingAddress: 'Tipping Address',
     tippingAddressDes: 'Enter tipping address',
@@ -460,6 +440,8 @@ export const en = {
   },
   PostdetailPage: {
     postview: 'Post View',
+    replyingto: 'Replying to',
+
   },
   AddServerPage: {
     tipMsg: 'Possible URL error',
@@ -468,38 +450,6 @@ export const en = {
     serverAlreadyAdded: 'This Feeds Publisher Account has already been added.',
     scanimg: 'Import QR code from Picture',
     tipMsg1: 'No QR code found',
-  },
-  ServerInfoPage: {
-    title: 'Publisher Account Details',
-    online: 'Online',
-    users: 'Users',
-    offline: 'Offline',
-    name: 'Name',
-    owner: 'Owner',
-    introduction: 'Description',
-    did: 'DID',
-    deleteFeedSource: 'Delete Publisher Account',
-    DeletethisFeedSource: 'Delete Publisher Account',
-    cancel: 'Cancel',
-    RemovethisFeedSource: 'Remove this Feeds Publisher Account',
-    removeserver: 'Feeds Publisher Account Service removed',
-    feedsSourceQRCode: 'Publisher Account QR Code',
-    public: 'Private',
-    replyingto: 'Replying to',
-    containedfeeds: 'Contained Channels',
-    version: 'version',
-    beingPublic: 'Public',
-    des1: 'When developer mode is opened, you can choose public or public test Channel',
-    des2: 'Test Channel',
-    des3: 'Public Channel',
-    feedsSourceQRCodeDes:
-      "This QR Code is only limited to your personal use. It's used to bind your publisher account on other devices",
-    elaaddress: 'ELA Address',
-    serverDes: 'Description',
-    serverName: 'Name',
-    inputName: 'Enter Publisher Name',
-    inputServerDes: 'Enter Publisher Description',
-    inputElaAddress: 'Enter ELA Address',
   },
   CreatenewpostPage: {
     post: 'Post',
@@ -547,7 +497,6 @@ export const en = {
   },
   GalleriahivePage: {
     title: 'Log in to Hive',
-    // titleSuccess: 'logged in to Hive',
     description:
       'Waiting for Essentials authorization to log in to Hive Node, please wait....',
     buttonTitle: 'start',
@@ -659,7 +608,6 @@ export const en = {
     des1: 'Data cleared successfully',
     hidedeletepost: 'Display Deleted Posts',
     hidedeletecomment: 'Display Deleted Comments',
-    // hideOfflinefeed: 'Display online Channels only',
     on: 'On',
     off: 'Off',
     'language-setting': 'Language',
@@ -699,22 +647,11 @@ export const en = {
     connections: 'Connections',
     connectionsDes: 'Manage account connections'
   },
-  // DiscoverfeedPage: {
-  //   title: 'Discovery Square',
-  //   emptyDes: 'There are no public Channels',
-  // },
-  DiscoverfeedinfoPage: {
-    title: 'Channel Details',
-    feeds: 'Name',
-    follow: 'Subscribe',
-    unfollow: 'Subscribing',
-    processing: 'Processing',
-    feedsQrcode: 'Channel QR Code',
-  },
   FeedinfoPage: {
     title: 'Channel Details',
     feeds: 'Channel',
     updatetime: 'Update time',
+    feedsQrcode: 'Channel QR Code',
   },
   CommentlistPage: {
     title: 'Comment View',
@@ -839,61 +776,12 @@ export const en = {
     details: 'Details',
     sale: 'Sell'
   },
-  // ConfirmationPage: {
-  //   title: 'Confirmation',
-  //   bidDes: 'Your bid has been placed!',
-  //   purchaseDes: 'Your purchase is successful!',
-  //   ok: 'OK',
-  //   bidPlaced: 'Bid Placed!',
-  //   congratulations: 'Congratulations!',
-  // },
   ExplorefeedsPage: {
     pasar: 'Pasar Lite',
-    // explorefeeds: 'Explore Feeds',
-    // hotBids: 'Hot Bids',
-    // latest: 'Latest',
-    // new: 'New',
-    // channels: 'Channels',
-    // viewall: 'View all',
   },
-  // CurrencyviewallPage: {
-  //   title: 'Pasar (NFT Marketplace)',
-  // },
   LearnmorePage: {
     title: 'Learn more',
     next: 'Next',
-    skip: 'Skip',
-  },
-  // IntroducePage: {
-  //   title: 'Bind service',
-  //   des: '1/6',
-  //   des1: 'What is Feeds Service?',
-  //   des2: 'A service node to store data in your local device. You can download the latest version from the Feeds',
-  //   des3: 'website',
-  //   des4: '. You need to install and run Feeds Service to receive the QR code in order to bind the Publisher Account.',
-  //   des5: 'This is how Feeds works as users with a Publisher Account can publish posts, create collectibles etc.',
-  //   des6: 'Without a Publisher Account, users can only read posts but cannot publish or edit them.',
-  //   des7: 'What is Publisher Account?',
-  //   des8: 'An account to bind data to Feeds Service. Imagine if you are a book publisher, you have the permission to write, edit and publish books to the market while normal readers can only read and browse books in the bookstore.',
-  //   next: 'OK',
-  //   info: '#info',
-  //   back: 'Back',
-  // },
-  // LearnpublisheraccountPage: {
-  //   title: 'Bind service',
-  //   hello: '#hello',
-  //   des: 'Learn about Publisher Account',
-  //   createNewPublisherAccount: 'Create New Publisher Account',
-  //   bindExistingPublisherAccount: 'Bind Existing Publisher Account',
-  //   continueWithoutPublisherAccount: 'Continue without Publisher Account',
-  // },
-  WalletteachPage: {
-    title: 'Wallet',
-    wallet: '#Wallet',
-    connectWallet: 'Connect Wallet',
-    introduce1:
-      'Connect wallet to fully enjoy the Elastos Smart Contract chain (ESC) features on Feeds. Users now can also trade non-fungible tokens (NFTs) at the marketplace also known as Pasar.',
-    introduce2: 'Connect Wallet',
     skip: 'Skip',
   },
   NftdisclaimerComponent: {
@@ -912,9 +800,6 @@ export const en = {
   },
   NftavatarlistPage: {
     title: 'Collectible Avatar'
-  },
-  WhitelistPage: {
-    title: 'Verified Creators'
   },
   AssistpasarPage: {
     title: 'Assist Pasar API',
@@ -939,7 +824,6 @@ export const en = {
     checkingCollectibleResult: 'Waiting for the Channel Collectible to take effect in the contract',
     mintSuccess: 'Channel NFT Collectible created',
     mintSuccessDesc: 'Congratulations, your channel collectible has been created successfully.',
-    //mintSuccessDesc1: 'Congratulations, your channel collectible has been created successfully. We recommend you to remove your original NFT on central square.',
     // publishSameDataFailed: 'Failed to publish to Explore Feeds：Explore Feeds has same channel data',
     publishSameDataFailed: 'Failed to publish to Explore Feeds：Please reconnect the wallet before you operate',
     signatureError: 'Failed to sign data, please try again',

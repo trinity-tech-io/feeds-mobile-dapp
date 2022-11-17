@@ -149,10 +149,6 @@ export class SettingsPage implements OnInit {
     this.native.getNavCtrl().navigateForward(['/developer']);
   }
 
-  navWhiteList() {
-    this.native.getNavCtrl().navigateForward(['/whitelist']);
-  }
-
   navDataStorage() {
     this.native.getNavCtrl().navigateForward(['/datastorage']);
   }

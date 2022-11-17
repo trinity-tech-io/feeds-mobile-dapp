@@ -32,26 +32,6 @@ export class ElastosapiproviderPage implements OnInit {
     },
   ];
 
-  public availableIpfsNetworkTemplates: any = [
-    {
-      key: 'https://ipfs0.trinity-feeds.app/',
-      name: 'ipfs0.trinity-feeds.app',
-      description:'SettingsPage.ipfs0-provider-des',
-    },
-    {
-      key: 'https://ipfs1.trinity-feeds.app/',
-      name: 'ipfs1.trinity-feeds.app',
-      description:'SettingsPage.ipfs1-provider-des',
-    },
-    {
-      key: 'https://ipfs2.trinity-feeds.app/',
-      name: 'ipfs2.trinity-feeds.app',
-      description:'SettingsPage.ipfs2-provider-des',
-    }
-  ];
-
-  public selectedIpfsNetwork: string = '';
-
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -68,7 +48,6 @@ export class ElastosapiproviderPage implements OnInit {
   ionViewWillEnter() {
     this.initTitle();
     this.curApiProviderName = this.dataHelper.getApiProvider();
-    this.selectedIpfsNetwork = localStorage.getItem("selectedIpfsNetwork");
   }
 
   initTitle() {
@@ -110,12 +89,5 @@ export class ElastosapiproviderPage implements OnInit {
       that.feedsService.destroyCarrier();
       that.globalService.restartApp();
     }
-  }
-
-  selectIpfs(selectedIpfsNetwork: any) {
-    this.selectedIpfsNetwork = selectedIpfsNetwork.key;
-    localStorage.setItem("selectedIpfsNetwork",this.selectedIpfsNetwork);
-    ApiUrl.setIpfs(selectedIpfsNetwork.key)
-    this.globalService.refreshBaseNFTIPSFUrl();
   }
 }

@@ -149,20 +149,6 @@ const routes: Routes = [
         m => m.BidPageModule,
       ),
   },
-  // {
-  //   path: 'channelsviewall',
-  //   loadChildren: () =>
-  //     import('./pages/feeds/search/search.module').then(
-  //       m => m.SearchPageModule,
-  //     ),
-  // },
-  {
-    path: 'walletteach',
-    loadChildren: () =>
-      import('./pages/walletteach/walletteach.module').then(
-        m => m.WalletteachPageModule,
-      ),
-  },
   {
     path: 'subscriptions',
     loadChildren: () =>
@@ -195,10 +181,6 @@ const routes: Routes = [
   {
     path: 'nftavatarlist',
     loadChildren: () => import('./pages/nftavatarlist/nftavatarlist.module').then(m => m.NftavatarlistPageModule)
-  },
-  {
-    path: 'whitelist',
-    loadChildren: () => import('./pages/whitelist/whitelist.module').then(m => m.WhitelistPageModule)
   },
   {
     path: 'datastorage',

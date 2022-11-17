@@ -177,8 +177,8 @@ export class NewassetitemComponent implements OnInit {
 
   async handleVerifiedAddress(creatorAddress: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      let whiteListData: FeedsData.WhiteItem[] = this.feedService.getWhiteListData();
-      let whiteListItem = _.find(whiteListData, (item: FeedsData.WhiteItem) => {
+      let whiteListData: [] = [];
+      let whiteListItem = _.find(whiteListData, (item: any) => {
         return item.address === creatorAddress;
       }) || "";
       if (whiteListItem != "") {
