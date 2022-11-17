@@ -10,6 +10,7 @@ import { NativeService } from './NativeService';
 import { theme } from '@elastosfoundation/elastos-connectivity-sdk-cordova/typings';
 
 const TAG: string = 'TwitterService';
+const invalidMesage = "{\"error\":\"invalid_request\",\"error_description\":\"Value passed for the token was invalid.\"}"
 
 @Injectable()
 export class TwitterService {
@@ -87,6 +88,13 @@ export class TwitterService {
       return accessToken
     }
     catch (error) {
+      const states = error.status
+      if (states === 400) {
+        const mesg = error.error
+        if (mesg === invalidMesage) {
+          this.dataHelper.removeTwitterToken(userDid)
+        }
+      }
         this.events.publish(FeedsEvent.PublishType.twitterLoginFailed);
       throw error
     }
@@ -156,14 +164,11 @@ export class TwitterService {
     try {
       let token = this.dataHelper.getTwitterAccessToken(userDid)
       if (token === false) {
-        // TODO: refreshTOken 同样过期，提示用户重新登录
         token = await this.fetchTwitterAccessToken(userDid)
       }
       return token
     }
     catch (error) {
-      // TODO: 处理refresh token 过期
-      this.dataHelper.removeTwitterToken(userDid)
       // this.native.toastWarn("common.twitterExpired");
       throw error
     }

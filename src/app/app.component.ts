@@ -118,8 +118,6 @@ export class MyApp {
       let memo: string = obj.memo;
       this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress, amount, memo);
     });
-
-    this.twitterService.checkTwitterIsExpired()
   }
 
   initializeApp() {

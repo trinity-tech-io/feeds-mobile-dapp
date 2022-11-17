@@ -95,6 +95,10 @@ export class RedditService {
       return accessToken
     }
     catch (error) {
+      const code = error.status
+      if (code === 401 || code === 403) {
+        this.dataHelper.removeRedditToken(userDid)
+      }
       Logger.log(TAG, "fetchTokenFromReddit error = ", error)
       this.events.publish(FeedsEvent.PublishType.RedditLoginFailed);
       throw error
@@ -219,7 +223,6 @@ export class RedditService {
     }
     catch (error) {
       Logger.log(TAG, 'fetch reddit accessToken error >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', error)
-      this.dataHelper.removeRedditToken(userDid)
       throw error
     }
   }
