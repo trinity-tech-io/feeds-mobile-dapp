@@ -873,6 +873,8 @@ export const en = {
   },
   UserprofilePage: {
     title: 'User Profile',
+    allempty: 'No channels found',
+    emptyDes: "Let's change that, get started with your first channel!",
   },
   UserprofileinfoPage: {
     title: 'User Profile Details'
