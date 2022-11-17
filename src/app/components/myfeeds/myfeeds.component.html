@@ -1,7 +1,11 @@
 <div *ngIf="channels.length === 0 && followers === 0 && !isLoadingMyFeeds" class="new-empty-container">
   <img src="./assets/images/profile-no-channel.svg">
-  <h1 style="margin-top: 20px;">{{ 'MyfeedsComponent.allempty' | translate }}</h1>
-  <p>{{'MyfeedsComponent.emptyDes' | translate }}</p>
+  <!--profile-->
+  <h1 *ngIf="pageName ==='profile'" style="margin-top: 20px;">{{ 'MyfeedsComponent.allempty' | translate }}</h1>
+  <p  *ngIf="pageName ==='profile'">{{'MyfeedsComponent.emptyDes' | translate }}</p>
+  <!--userprofile--->
+  <h1 *ngIf="pageName ==='userprofile'" style="margin-top: 20px;">{{ 'UserprofilePage.allempty' | translate }}</h1>
+  <p  *ngIf="pageName ==='userprofile'">{{'UserprofilePage.emptyDes' | translate }}</p>
 
   <div class="btn-row-empty" style="margin-top:5px;" (click)="createNewFeed()" *ngIf="isOwner">
     {{ 'MyfeedsComponent.createFeed' | translate }}
