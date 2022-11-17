@@ -2443,14 +2443,18 @@ export class ProfilePage implements OnInit {
       this.channelMap[channelId] = channel;
     }
 
-    let channelName = this.channelNameMap[channelId] || "";
-    if (channelName != "") {
-      return channelName;
+    let channel = this.channelMap[channelId] || null;
+    if (channel === null && this.isLoadChannelNameMap[channelId] === "11") {//如果本地缓存，从远程获取频道信息
+      try {
+        this.isLoadChannelNameMap[channelId] = "13"
+        channel = await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId) || null;
+        this.channelMap[channelId] = channel;
+      } catch (error) {
+      }
+    } else {
+      channel = this.channelMap[channelId];
     }
-    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-    if (channel === null) {
-      return '';
-    }
+
     let key = destDid + "-" + channelId;
     this.channelMap[key] = channel;
     this.channelNameMap[channelId] = channel.displayName || channel.name || '';

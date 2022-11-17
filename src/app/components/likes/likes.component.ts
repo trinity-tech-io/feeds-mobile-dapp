@@ -83,7 +83,7 @@ export class LikesComponent implements OnInit {
     if (channel === null) {
       return "";
     }
-    const channelName = channel.displayName || channel.name;
+    const channelName = channel.displayName || channel.name || '';
     return channelName;
   }
 

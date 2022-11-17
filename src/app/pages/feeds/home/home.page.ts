@@ -842,9 +842,13 @@ export class HomePage implements OnInit {
       this.channelMap[key] = channel;
     }
     let channel = this.channelMap[key] || null;
-    if (channel === null) {
-      channel = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-      this.channelMap[key] = channel;
+    if (channel === null && this.isLoaChannelMap[key] === "11") {//如果本地缓存，从远程获取频道信息
+      try {
+        this.isLoaChannelMap[key] = "13"
+        channel = await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId) || null;
+        this.channelMap[key] = channel;
+      } catch (error) {
+      }
     } else {
       channel = this.channelMap[key];
     }
