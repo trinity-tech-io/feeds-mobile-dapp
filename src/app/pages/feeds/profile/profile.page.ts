@@ -809,6 +809,7 @@ export class ProfilePage implements OnInit {
         this.isShowUnfollow = false;
         this.channelName = item.channelName;
         this.qrCodeString = await this.getQrCodeString(item);
+        this.userDid = (await this.dataHelper.getSigninData()).did || '';
         this.hideSharMenuComponent = true;
         document.getElementById("feedstab").style.display = "none";
         break;
