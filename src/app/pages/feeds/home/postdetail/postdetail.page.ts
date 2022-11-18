@@ -141,6 +141,7 @@ export class PostdetailPage implements OnInit {
   private captainObserverList: any = {};
   private replyObserverList: any = {};
   public isSubscribed: boolean = false;
+  private refreshLikeAndCommentSid: any = null;
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -1254,14 +1255,24 @@ export class PostdetailPage implements OnInit {
 
   }
 
+  clearRefreshFollowingImageSid() {
+    if (this.refreshLikeAndCommentSid != null) {
+      cancelAnimationFrame(this.refreshLikeAndCommentSid);
+      this.refreshLikeAndCommentSid = null;
+    }
+  }
+
   refreshLikeAndCommentV2(list = []) {
-    let sid = setTimeout(() => {
+    if (this.refreshLikeAndCommentSid != null) {
+      return;
+    }
+    this.refreshLikeAndCommentSid = requestAnimationFrame(() => {
       this.isInitComment = {};
       this.isInitLikeNum = {};
       this.isInitLikeStatus = {};
       this.getCaptainCommentObserveList(list);
-      clearTimeout(sid);
-    }, 100);
+      this.clearRefreshFollowingImageSid();
+    });
   }
 
 

@@ -130,7 +130,7 @@
             @......
           </p>
           <p *ngIf="handleDisplayNameMap[post.destDid] != '' && handleDisplayNameMap[post.destDid] != undefined">
-            @{{ handleDisplayNameMap[post.destDid] }}
+            @{{ handleDisplayNameMap[post.destDid] }} - {{post.content.mediaType}}
           </p>
         </ion-col>
         <ion-col size="0.5" (click)="menuMore(post)"></ion-col>

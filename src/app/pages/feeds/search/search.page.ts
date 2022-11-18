@@ -480,17 +480,17 @@ export class SearchPage implements OnInit {
 
   refreshChannelCollectionAvatar(list = []) {
     this.clearChanCollectionSid();
-    this.chanCollectionSid = setTimeout(() => {
+    this.chanCollectionSid = requestAnimationFrame(() => {
       this.searchIsLoadimage = {};
       this.displayNameIsLoadMap = {};
       this.getSearchObserverList(list);
       this.clearChanCollectionSid();
-    }, 100);
+    });
   }
 
   clearChanCollectionSid() {
     if (this.chanCollectionSid != null) {
-      clearTimeout(this.chanCollectionSid);
+      cancelAnimationFrame(this.chanCollectionSid);
       this.chanCollectionSid = null;
     }
   }

@@ -971,15 +971,15 @@ export class ChannelsPage implements OnInit {
 
   refreshImageV2(postList = []) {
     this.clearRefreshImageSid();
-    this.refreshImageSid = setTimeout(() => {
+    this.refreshImageSid = requestAnimationFrame(() => {
       this.getObserveList(postList);
       this.clearRefreshImageSid();
-    }, 100);
+    });
   }
 
   clearRefreshImageSid() {
     if (this.refreshImageSid != null) {
-      clearTimeout(this.refreshImageSid);
+      cancelAnimationFrame(this.refreshImageSid);
       this.refreshImageSid = null;
     }
   }

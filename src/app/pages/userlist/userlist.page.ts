@@ -17,7 +17,7 @@ export class UserlistPage implements OnInit {
   public usersDidList: string[] = [];
   public pageSize = 1;
   public pageNumber = 10;
-  private userAvatarSid: NodeJS.Timer = null;
+  private userAvatarSid: any = null;
   private userObserver: any = {};
   private isLoadUsers: any = {};
   constructor(
@@ -110,10 +110,10 @@ export class UserlistPage implements OnInit {
 
   initUserObserVerList(userDidList = []) {
     this.clearUserAvatarSid();
-    this.userAvatarSid = setTimeout(() => {
+    this.userAvatarSid = requestAnimationFrame(() => {
       this.getUserObserverList(userDidList);
       this.clearUserAvatarSid();
-    }, 100);
+    });
   }
 
   getUserObserverList(userDidList = []) {
@@ -174,7 +174,7 @@ export class UserlistPage implements OnInit {
 
   clearUserAvatarSid() {
     if (this.userAvatarSid != null) {
-      clearTimeout(this.userAvatarSid);
+      cancelAnimationFrame(this.userAvatarSid);
       this.userAvatarSid = null;
     }
   }

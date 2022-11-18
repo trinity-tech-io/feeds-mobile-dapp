@@ -985,17 +985,17 @@ export class ProfilePage implements OnInit {
       if (this.refreshMyFeedsSid != null) {
         return;
       }
-      this.refreshMyFeedsSid = setTimeout(() => {
+      this.refreshMyFeedsSid = requestAnimationFrame(() => {
         this.myFeedsIsLoadimage = {};
         this.getMyFeedsObserverList(list);
         this.clearRefreshMyFeedsSid();
-      }, 100);
+      });
     }
   }
 
   clearRefreshMyFeedsSid() {
     if (this.refreshMyFeedsSid != null) {
-      clearTimeout(this.refreshMyFeedsSid);
+      cancelAnimationFrame(this.refreshMyFeedsSid);
       this.refreshMyFeedsSid = null;
     }
   }
@@ -1219,15 +1219,15 @@ export class ProfilePage implements OnInit {
 
   refreshImageV2(likeList = []) {
     this.clearRefreshImageSid();
-    this.refreshImageSid = setTimeout(() => {
+    this.refreshImageSid = requestAnimationFrame(() => {
       this.getLikeObserverList(likeList);
       this.clearRefreshImageSid();
-    }, 100);
+    });
   }
 
   clearRefreshImageSid() {
     if (this.refreshImageSid != null) {
-      clearTimeout(this.refreshImageSid);
+      cancelAnimationFrame(this.refreshImageSid);
       this.refreshImageSid = null;
     }
   }
@@ -2403,7 +2403,11 @@ export class ProfilePage implements OnInit {
         let channelId: string = arr[1];
         let postId: string = arr[2];
         let mediaType: string = arr[3];
-        await this.getChannelName(destDid, channelId);//获取频道name
+        try {
+          await this.getChannelName(destDid, channelId);//获取频道name
+        } catch (error) {
+
+        }
         this.getDisplayName(destDid, channelId, destDid);
         this.handlePostAvatarV2(destDid, channelId);
         if (mediaType === '1') {

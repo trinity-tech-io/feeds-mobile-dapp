@@ -362,16 +362,16 @@ export class SubscriptionsPage implements OnInit {
     if (this.refreshFollowingImageSid != null) {
       return;
     }
-    this.refreshFollowingImageSid = setTimeout(() => {
+    this.refreshFollowingImageSid = requestAnimationFrame(() => {
       this.followingIsLoadimage = {};
       this.getFollingObserverList(list);
       this.clearRefreshFollowingImageSid();
-    }, 100);
+    });
   }
 
   clearRefreshFollowingImageSid() {
     if (this.refreshFollowingImageSid != null) {
-      clearTimeout(this.refreshFollowingImageSid);
+      cancelAnimationFrame(this.refreshFollowingImageSid);
       this.refreshFollowingImageSid = null;
     }
   }

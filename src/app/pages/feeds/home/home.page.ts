@@ -1387,16 +1387,15 @@ export class HomePage implements OnInit {
 
   refreshImageV2(postList = []) {
     this.clearRefreshImageSid();
-    this.refreshImageSid = setTimeout(() => {
-      this.getObserveList(postList);
-      this.clearRefreshImageSid();
-    }, 100);
-    //this.newSectionObserver();
+    this.refreshImageSid = requestAnimationFrame(()=>{
+         this.getObserveList(postList);
+         this.clearRefreshImageSid();
+    })
   }
 
   clearRefreshImageSid() {
     if (this.refreshImageSid != null) {
-      clearTimeout(this.refreshImageSid);
+      cancelAnimationFrame(this.refreshImageSid);
       this.refreshImageSid = null;
     }
   }
@@ -2409,7 +2408,11 @@ export class HomePage implements OnInit {
         let channelId: string = arr[1];
         let postId: string = arr[2];
         let mediaType: string = arr[3];
-        await this.getChannelName(destDid, channelId);//获取频道name
+        try {
+          await this.getChannelName(destDid, channelId);//获取频道name
+        } catch (error) {
+
+        }
         this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
         this.getDisplayName(destDid, channelId, destDid);
         if (mediaType === '1') {
