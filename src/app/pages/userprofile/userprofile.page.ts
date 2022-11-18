@@ -750,7 +750,6 @@ export class UserprofilePage implements OnInit {
         this.isShowUnfollow = false;
         this.channelName = item.channelName;
         this.qrCodeString = await this.getQrCodeString(item);
-        this.userDid = (await this.dataHelper.getSigninData()).did || '';
         this.hideSharMenuComponent = true;
         break;
       case 'myfollow':
@@ -765,7 +764,6 @@ export class UserprofilePage implements OnInit {
         break;
       case 'mylike':
         this.qrCodeString = await this.getQrCodeString(item);
-        this.userDid = (await this.dataHelper.getSigninData()).did || '';
         this.isShowTitle = false;
         this.isShowInfo = false;
         this.isPreferences = false;

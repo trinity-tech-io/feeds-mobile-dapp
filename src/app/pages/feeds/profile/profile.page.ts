@@ -561,6 +561,7 @@ export class ProfilePage implements OnInit {
   async ionViewWillEnter() {
     this.theme.setTheme1();//改变状态栏
     this.initTitleBar();
+    this.userDid = (await this.dataHelper.getSigninData()).did || '';
     // this.elaPrice = this.dataHelper.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {
       this.theme.setTheme1();//改变状态栏
@@ -809,7 +810,6 @@ export class ProfilePage implements OnInit {
         this.isShowUnfollow = false;
         this.channelName = item.channelName;
         this.qrCodeString = await this.getQrCodeString(item);
-        this.userDid = (await this.dataHelper.getSigninData()).did || '';
         this.hideSharMenuComponent = true;
         document.getElementById("feedstab").style.display = "none";
         break;
@@ -825,7 +825,6 @@ export class ProfilePage implements OnInit {
         break;
       case 'mylike':
         this.qrCodeString = await this.getQrCodeString(item);
-        this.userDid = (await this.dataHelper.getSigninData()).did || '';
         this.isShowTitle = false;
         this.isShowInfo = false;
         this.isPreferences = false;
@@ -1845,7 +1844,6 @@ export class ProfilePage implements OnInit {
 
   async subsciptions() {
     this.clearData(true);
-    this.userDid = (await this.dataHelper.getSigninData()).did || '';
     this.native.navigateForward(['/subscriptions'], { queryParams: { "userDid":  this.userDid, "pageType": 'subscriptions'}});
   }
 
