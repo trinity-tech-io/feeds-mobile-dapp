@@ -102,6 +102,9 @@ export class SubscriptionsPage implements OnInit {
     this.activatedRoute.queryParams.subscribe((params: any) => {
       this.userDid = params.userDid;
       this.pageType = params.pageType;
+
+      console.log('this.userdid init====>', this.userDid);
+      console.log('this.pageType init====>', this.pageType);
     });
   }
 
