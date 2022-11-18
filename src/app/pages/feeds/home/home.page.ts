@@ -847,7 +847,7 @@ export class HomePage implements OnInit {
     if (channel === null && this.isLoaChannelMap[key] === "11") {//如果本地缓存，从远程获取频道信息
       try {
         this.isLoaChannelMap[key] = "13"
-        channel = await this.hiveVaultController.getChannelInfoById(destDid, channelId) || null;
+        channel = await this.hiveVaultController.getChannelV3ByIdFromRemote(this.destDid, this.channelId) || null;
         this.channelMap[key] = channel;
       } catch (error) {
       }
@@ -1087,7 +1087,7 @@ export class HomePage implements OnInit {
       let fileName: string = avatarUri.split("@")[0];
       //头像
       let channelAvatar = this.channelAvatarMap[id] || '';
-      if(channelAvatar === ''){
+      if (channelAvatar === '') {
         this.channelAvatarMap[id] = './assets/images/loading.svg';
       }
       this.hiveVaultController.
@@ -1098,14 +1098,14 @@ export class HomePage implements OnInit {
             this.channelAvatarMap[id] = realImage;
             this.isLoadAvatarImage[id] = "13";
           } else {
-            if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+            if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
               this.channelAvatarMap[id] = './assets/images/profile-0.svg';
             }
             this.isLoadAvatarImage[id] = "13";
           }
         })
         .catch(reason => {
-          if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+          if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
             this.channelAvatarMap[id] = './assets/images/profile-0.svg';
           }
           Logger.error(TAG,
@@ -1388,9 +1388,9 @@ export class HomePage implements OnInit {
 
   refreshImageV2(postList = []) {
     this.clearRefreshImageSid();
-    this.refreshImageSid = requestAnimationFrame(()=>{
-         this.getObserveList(postList);
-         this.clearRefreshImageSid();
+    this.refreshImageSid = requestAnimationFrame(() => {
+      this.getObserveList(postList);
+      this.clearRefreshImageSid();
     })
   }
 
@@ -2017,13 +2017,13 @@ export class HomePage implements OnInit {
   handelAndroidScroll(ponit: any) {
 
     if (ponit.scrollTop > 0) {
-        let isHide = this.homeTittleBar.style.display || '';
-        if(isHide === 'block' || isHide === ''){
-          this.homeTittleBar.style.display = "none";
-        }
+      let isHide = this.homeTittleBar.style.display || '';
+      if (isHide === 'block' || isHide === '') {
+        this.homeTittleBar.style.display = "none";
+      }
     } else {
       let isHide = this.homeTittleBar.style.display;
-      if(isHide === "none"){
+      if (isHide === "none") {
         this.homeTittleBar.style.display = "block";
       }
     }
@@ -2032,12 +2032,12 @@ export class HomePage implements OnInit {
   handelIosScroll(ponit: any) {
     if (ponit.scrollTop > 0) {
       let isHide = this.homeTittleBar.style.display || '';
-      if(isHide === 'block' || isHide === ''){
+      if (isHide === 'block' || isHide === '') {
         this.homeTittleBar.style.display = "none";
       }
     } else {
       let isHide = this.homeTittleBar.style.display;
-      if(isHide === "none"){
+      if (isHide === "none") {
         this.homeTittleBar.style.display = "block";
       }
     }
@@ -2414,9 +2414,9 @@ export class HomePage implements OnInit {
         } catch (error) {
 
         }
-        try{
+        try {
           this.getChannelPublicStatus(destDid, channelId);//获取频道公开状态
-        }catch(error) {
+        } catch (error) {
 
         }
         this.handlePostAvatarV2(destDid, channelId, postId);//获取头像

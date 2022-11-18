@@ -482,25 +482,25 @@ export class UserprofilePage implements OnInit {
       if (this.refreshMyFeedsSid != null) {
         return;
       }
-      this.refreshMyFeedsSid = setTimeout(() => {
+      this.refreshMyFeedsSid = requestAnimationFrame(() => {
         this.myFeedsIsLoadimage = {};
         this.getMyFeedsObserverList(list);
         this.clearRefreshMyFeedsSid();
-      }, 100);
+      });
     }
   }
 
 
   clearRefreshImageSid() {
     if (this.refreshImageSid != null) {
-      clearTimeout(this.refreshImageSid);
+      cancelAnimationFrame(this.refreshImageSid);
       this.refreshImageSid = null;
     }
   }
 
   clearRefreshMyFeedsSid() {
     if (this.refreshMyFeedsSid != null) {
-      clearTimeout(this.refreshMyFeedsSid);
+      cancelAnimationFrame(this.refreshMyFeedsSid);
       this.refreshMyFeedsSid = null;
     }
   }
@@ -945,10 +945,10 @@ export class UserprofilePage implements OnInit {
 
   refreshImageV2(likeList = []) {
     this.clearRefreshImageSid();
-    this.refreshImageSid = setTimeout(() => {
+    this.refreshImageSid = requestAnimationFrame(() => {
       this.getLikeObserverList(likeList);
       this.clearRefreshImageSid();
-    }, 100);
+    });
   }
 
   getLikeObserverList(likeList = []) {

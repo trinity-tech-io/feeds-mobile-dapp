@@ -1882,7 +1882,7 @@ export class ProfilePage implements OnInit {
 
   async subsciptions() {
     this.clearData(true);
-    this.native.navigateForward(['/subscriptions'], { queryParams: { "userDid":  this.userDid, "pageType": 'subscriptions'}});
+    this.native.navigateForward(['/subscriptions'], { queryParams: { "userDid": this.userDid, "pageType": 'subscriptions' } });
   }
 
   chanelCollections() {
@@ -2489,7 +2489,7 @@ export class ProfilePage implements OnInit {
     if (channel === null && this.isLoadChannelNameMap[channelId] === "11") {//如果本地缓存，从远程获取频道信息
       try {
         this.isLoadChannelNameMap[channelId] = "13"
-        channel = await this.hiveVaultController.getChannelInfoById(destDid, channelId) || null;
+        channel = await this.hiveVaultController.getChannelV3ByIdFromRemote(this.destDid, this.channelId) || null;
         this.channelMap[channelId] = channel;
       } catch (error) {
       }
