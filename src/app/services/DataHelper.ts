@@ -3041,7 +3041,7 @@ export class DataHelper {
           case FeedsData.SubscribedChannelType.ALL_CHANNEL:
             resolve(list);
             return;
-          case FeedsData.SubscribedChannelType.MY_CHANNEL:
+          case FeedsData.SubscribedChannelType.SELF_CHANNEL:
             const myChannelList = _.filter(list, subscribedChannel => {
               return subscribedChannel.destDid == signinDid;
             });
@@ -3357,7 +3357,7 @@ export class DataHelper {
       try {
         const selfDid = (await this.getSigninData()).did;
         const result = await this.sqliteHelper.queryChannelDataByChannelId(selfDid, channelId)
-        console.log('queryChannelDataByChannelId====>', result);
+
         resolve(result[0]);
       } catch (error) {
         reject(error);
@@ -4644,7 +4644,7 @@ export class DataHelper {
       try {
         const selfDid = (await this.getSigninData()).did;
         let subscribedList = await this.getSubscribedChannelByUser(selfDid);
-        const resultList = await this.filterSubscribedChannelV3(subscribedList, subscribedChannelType);
+        const resultList = await this.filterSubscribedChannelV3(selfDid, subscribedList, subscribedChannelType);
 
         resolve(resultList);
       } catch (error) {
@@ -4654,23 +4654,22 @@ export class DataHelper {
     })
   }
 
-  private async filterSubscribedChannelV3(list: FeedsData.SubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.SubscribedChannelV3[]> {
+  async filterSubscribedChannelV3(filterDid: string, list: FeedsData.SubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const signinDid = (await this.getSigninData()).did;
         switch (subscribedChannelType) {
           case FeedsData.SubscribedChannelType.ALL_CHANNEL:
             resolve(list);
             return;
-          case FeedsData.SubscribedChannelType.MY_CHANNEL:
+          case FeedsData.SubscribedChannelType.SELF_CHANNEL:
             const myChannelList = _.filter(list, subscribedChannel => {
-              return subscribedChannel.targetDid == signinDid;
+              return subscribedChannel.targetDid == filterDid;
             });
             resolve(myChannelList);
             return;
           case FeedsData.SubscribedChannelType.OTHER_CHANNEL:
             const otherChannelList = _.filter(list, subscribedChannel => {
-              return subscribedChannel.targetDid != signinDid;
+              return subscribedChannel.targetDid != filterDid;
             });
             resolve(otherChannelList);
             return;
@@ -4686,22 +4685,9 @@ export class DataHelper {
   resetOwnSubscribedChannel(subscibedChannelList: FeedsData.SubscribedChannelV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-
-
         const selfDid = (await this.getSigninData()).did;
-
-        const all = await this.sqliteHelper.queryAllSubscribedChannelData(selfDid);
-        console.log('all====>', all);
-
-
         await this.sqliteHelper.deleteSubscribedChannelDataByUser(selfDid, selfDid);
         await this.addSubscribedChannels(subscibedChannelList);
-
-
-
-        const all2 = await this.sqliteHelper.queryAllSubscribedChannelData(selfDid);
-
-        console.log('all2====>', all2);
         resolve('FINISH');
       } catch (error) {
         Logger.error(TAG, 'Get self subscribed channel list error', error);

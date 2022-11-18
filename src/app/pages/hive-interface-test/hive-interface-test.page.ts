@@ -526,7 +526,7 @@ export class HiveInterfaceTestPage implements OnInit {
   //   }
   // }
   querySubscribedChannelsByTargetDid() {
-    this.hiveVaultController.queryUserSubscribedChannels("did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR");
+    // this.hiveVaultController.queryUserSubscribedChannels("did:elastos:ijT34V4hjkByTcRzq2mUhf6MvJ69HL7reR");
   }
 
 
