@@ -743,7 +743,7 @@ export class ChannelsPage implements OnInit {
 
   async doRefresh(event: any) {
     try {
-      const syncChannelInfoPromise = this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
+      const syncChannelInfoPromise = this.hiveVaultController.getChannelV3ByIdFromRemote(this.destDid, this.channelId);
       const syncSubscriptionPromise = this.hiveVaultController.querySubscriptionChannelById(this.destDid, this.channelId);
       if (this.followStatus) {
         this.dataHelper.cleanCachedComment();

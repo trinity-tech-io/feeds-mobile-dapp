@@ -380,9 +380,9 @@ export class SearchPage implements OnInit {
 
     await this.native.showLoading("common.waitMoment");
     try {
-      const channel = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+      const channel = await this.hiveVaultController.getChannelV3ByIdFromRemote(feedsUrl.destDid, feedsUrl.channelId);
       if (!channel) {
-        await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+        await this.hiveVaultController.getChannelV3ByIdFromRemote(feedsUrl.destDid, feedsUrl.channelId);
       }
       this.native.navigateForward(['/channels', feedsUrl.destDid, feedsUrl.channelId], '');
       this.native.hideLoading();
@@ -638,7 +638,7 @@ export class SearchPage implements OnInit {
           continue;
         }
         try {
-          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+          const channelInfo = await this.hiveVaultController.getChannelV3ByIdFromRemote(feedsUrl.destDid, feedsUrl.channelId);
           if (channelInfo != null) {
             channelCollectionPageList.push(channelInfo);
           }
@@ -711,7 +711,7 @@ export class SearchPage implements OnInit {
         const scanResult = ScannerHelper.parseScannerResult(tokenURI);
         const feedsUrl = scanResult.feedsUrl;
         try {
-          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+          const channelInfo = await this.hiveVaultController.getChannelV3ByIdFromRemote(feedsUrl.destDid, feedsUrl.channelId);
           channelCollectionPageList.push(channelInfo);
         } catch (error) {
           this.isLoading = false;
@@ -755,7 +755,7 @@ export class SearchPage implements OnInit {
         const scanResult = ScannerHelper.parseScannerResult(tokenURI);
         const feedsUrl = scanResult.feedsUrl;
         try {
-          const channelInfo = await this.hiveVaultController.getChannelInfoById(feedsUrl.destDid, feedsUrl.channelId);
+          const channelInfo = await this.hiveVaultController.getChannelV3ByIdFromRemote(feedsUrl.destDid, feedsUrl.channelId);
           channelCollectionPageList.push(channelInfo);
         } catch (error) {
           this.isLoading = false;

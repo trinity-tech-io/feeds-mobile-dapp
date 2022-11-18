@@ -168,7 +168,7 @@ export class PostdetailPage implements OnInit {
 
     this.isSubscribed = await this.checkFollowStatus(this.destDid, this.channelId);
     if (!channel) {
-      channel = await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId);
+      channel = await this.hiveVaultController.getChannelV3ByIdFromRemote(this.destDid, this.channelId);
     }
     this.channelOwner = channel.destDid || '';
     this.channelOwnerName = this.indexText(channel.destDid);
