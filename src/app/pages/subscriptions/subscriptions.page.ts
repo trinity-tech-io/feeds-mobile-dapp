@@ -180,11 +180,8 @@ export class SubscriptionsPage implements OnInit {
     console.log('getFollowedChannelList subscribedChannel====>', subscribedChannel);
     let list = [];
     for (let item of subscribedChannel) {
-
-
       let destDid = item.targetDid;
       let channelId = item.channelId;
-
       console.log('getFollowedChannelList subscribedChannel destDid====>' + channelId, destDid);
       console.log('getFollowedChannelList subscribedChannel channelId====>' + channelId, channelId);
       let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;

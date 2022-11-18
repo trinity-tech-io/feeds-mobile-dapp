@@ -593,6 +593,45 @@ export class HiveVaultController {
     });
   }
 
+  getChannelV3ByIdFromLocal(targetDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(targetDid, channelId);
+        if (!channel) {
+          resolve(null);
+          return;
+        }
+
+        resolve(channel);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
+  getChannelV3ById(targetDid: string, channelId: string, localCachedChannelCallback: (localCachedChannel: FeedsData.ChannelV3) => void, forceLoadRemote: boolean = false): Promise<FeedsData.ChannelV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const localCachedChannel = await this.getChannelV3ByIdFromLocal(targetDid, channelId);
+        localCachedChannelCallback(localCachedChannel);
+        if (!forceLoadRemote && localCachedChannel != null) {
+          resolve(localCachedChannel);
+          return;
+        }
+        const remoteChannel = await this.getChannelV3ByIdFromRemote(targetDid, channelId);
+        if (!remoteChannel) {
+          resolve(null);
+          return;
+        }
+        resolve(remoteChannel);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
   queryCommentByChannel(targetDid: string, channelId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
