@@ -410,8 +410,8 @@ export class UserprofilePage implements OnInit {
         this.clearRefreshImageSid();
         try {
           if (!this.userOwnedchannels || this.userOwnedchannels.length == 0)
-          this.userOwnedchannels = await this.hiveVaultController.queryUserOwnedChannels(this.userDid);
-        await this.initUserOwnedChannels(this.userOwnedchannels);
+            this.userOwnedchannels = await this.hiveVaultController.queryUserOwnedChannels(this.userDid);
+          await this.initUserOwnedChannels(this.userOwnedchannels);
         } catch (error) {
           this.isLoadingMyFeeds = false;
         }
@@ -518,13 +518,12 @@ export class UserprofilePage implements OnInit {
       this.isLoadingMyFeeds = false;
       this.myFeedsSum = this.channels.length;
       this.refreshMyFeedsVisibleareaImageV2(this.channels);
-      // let followedList = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.OTHER_CHANNEL) || [];
-      this.followers = 0;
-      this.hiveVaultController.queryUserSubscribedChannels(this.userDid).then((subscribedChannels: FeedsData.SubscribedChannelV3[]) => {
-        console.log('subscribedChannels====>', subscribedChannels);
-        this.followers = subscribedChannels.length;
-      }).catch((error) => { });
-      // this.followers = followedList.length;
+      this.hiveVaultController.querySubscribedChannelsByOwner(this.userDid, FeedsData.SubscribedChannelType.OTHER_CHANNEL,
+        (localCachedSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
+          this.followers = localCachedSubscribedChannelList.length;
+        }).then((subscribedChannels: FeedsData.SubscribedChannelV3[]) => {
+          this.followers = subscribedChannels.length;
+        }).catch((error) => { });
     } catch (error) {
       this.isLoadingMyFeeds = false;
     }
@@ -722,7 +721,7 @@ export class UserprofilePage implements OnInit {
   }
 
   subsciptions() {
-    this.native.navigateForward(['/userSubscriptions'], { queryParams: { "userDid":  this.userDid, "pageType": 'userSubscriptions'}});
+    this.native.navigateForward(['/userSubscriptions'], { queryParams: { "userDid": this.userDid, "pageType": 'userSubscriptions' } });
   }
 
   async toPage(eventParm: any) {

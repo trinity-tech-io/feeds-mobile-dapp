@@ -219,7 +219,6 @@ export class HiveVaultController {
   refreshHomeData(callback: (postNum: number) => void) {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log('refreshHomeData====>');
         await this.syncSubscribedChannelFromRemote();
         await this.refreshSubscription();
         const did = (await this.dataHelper.getSigninData()).did;
@@ -393,7 +392,6 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       const selfDid = (await this.dataHelper.getSigninData()).did;
       const subscribedChannels = await this.dataHelper.getSubscribedChannelByUser(selfDid);
-      console.log('subscribedChannels====>', subscribedChannels);
       let subscribedPromise: Promise<any>[] = [];
       for (let index = 0; index < subscribedChannels.length; index++) {
         const subscribedChannel = subscribedChannels[index];
@@ -2021,20 +2019,12 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const ownerDid: string = (await this.dataHelper.getSigninData()).did;
-        console.log('restoreSubscibedChannelFromRemote====>');
         const subscribedChannelList = await this.restoreSubscibedChannelFromRemote(ownerDid) || [];
-        console.log('0000000000000====>', subscribedChannelList);
-        console.log('0000000000000====>', !subscribedChannelList);
-        console.log('0000000000000====>', subscribedChannelList.length);
-
         if (!subscribedChannelList || subscribedChannelList.length == 0) {
-          console.log('111111111111111111====>');
-
           const newSubscribedChannelList = await this.restoreSubscribedChannelFromRemoteBackupSubscribedChannel(ownerDid);
           resolve(newSubscribedChannelList);
           return;
         }
-        console.log('222222222222222====>');
         resolve(subscribedChannelList);
       } catch (error) {
         Logger.error(TAG, 'Sync subscribed channel error', error);
@@ -2046,7 +2036,7 @@ export class HiveVaultController {
   restoreSubscibedChannelFromRemote(ownerDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const subcribedChannelsList = await this.querySubscribedChannelByOwnerFromRemote(ownerDid);
+        const subcribedChannelsList = await this.querySubscribedChannelsByOwnerFromRemote(ownerDid);
         if (!subcribedChannelsList || subcribedChannelsList.length == 0) {
           resolve([]);
           return;
@@ -2064,7 +2054,6 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         const backupSubscribedChannels: FeedsData.BackupSubscribedChannelV3[] = await this.queryBackupSubscribedChannelFromRemote();
-        console.log('backupSubscribedChannels====>', backupSubscribedChannels);
         if (!backupSubscribedChannels || backupSubscribedChannels.length == 0) {
           resolve([]);
           return;
@@ -2088,8 +2077,6 @@ export class HiveVaultController {
             channelCategory: ''
           }
           await this.updateSubscribedChannelDataToRemote(subscribedChannel);
-          console.log('updateSubscribedChannelDataToRemote====>', subscribedChannel);
-
           newSubcribedChannelList.push(subscribedChannel);
         }
 
@@ -2106,7 +2093,7 @@ export class HiveVaultController {
   }
 
   //For all user
-  private querySubscribedChannelByOwnerFromRemote(ownerDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
+  private querySubscribedChannelsByOwnerFromRemote(ownerDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.querySubscribedChannelsByUserDid(ownerDid);
@@ -2117,7 +2104,6 @@ export class HiveVaultController {
         }
 
         const subscribedChannelList = HiveVaultResultParse.parseSubscribedChannelResult(ownerDid, result.find_message.items);
-        console.log('aaaaaaaaaaa====>', subscribedChannelList);
         if (!subscribedChannelList || subscribedChannelList.length == 0) {
           resolve([]);
           return;
@@ -2792,15 +2778,53 @@ export class HiveVaultController {
     });
   }
 
-  queryUserSubscribedChannels(userDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
+  querySubscribedChannelsByOwnerFromLocal(userDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const subscribedChannels = await this.querySubscribedChannelByOwnerFromRemote(userDid);
+        const subscribedChannels = await this.dataHelper.getSubscribedChannelByUser(userDid);
         if (!subscribedChannels) {
           resolve([]);
           return;
         }
         resolve(subscribedChannels);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
+  querySubscribedChannelsByOwner(userDid: string, subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL, callback: (localCachedSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => void, forceLoadRemote: boolean = false): Promise<FeedsData.SubscribedChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const localCacheSubscribedChannels = await this.querySubscribedChannelsByOwnerFromLocal(userDid);
+        if (subscribedChannelType == FeedsData.SubscribedChannelType.ALL_CHANNEL) {
+          callback(localCacheSubscribedChannels);
+        } else {
+          const filterResult = await this.dataHelper.filterSubscribedChannelV3(userDid, localCacheSubscribedChannels, subscribedChannelType);
+          callback(filterResult);
+        }
+        if (!forceLoadRemote && localCacheSubscribedChannels != null) {
+          if (subscribedChannelType == FeedsData.SubscribedChannelType.ALL_CHANNEL) {
+            resolve(localCacheSubscribedChannels);
+            return;
+          } else {
+            const filterResult = await this.dataHelper.filterSubscribedChannelV3(userDid, localCacheSubscribedChannels, subscribedChannelType);
+            resolve(filterResult);
+            return;
+          }
+        }
+        const subscribedChannels = await this.querySubscribedChannelsByOwnerFromRemote(userDid);
+        if (!subscribedChannels) {
+          resolve([]);
+          return;
+        }
+        if (subscribedChannelType == FeedsData.SubscribedChannelType.ALL_CHANNEL) {
+          resolve(subscribedChannels);
+        } else {
+          const filterResult = await this.dataHelper.filterSubscribedChannelV3(userDid, subscribedChannels, subscribedChannelType);
+          resolve(filterResult);
+        }
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);

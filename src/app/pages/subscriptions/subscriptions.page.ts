@@ -84,8 +84,6 @@ export class SubscriptionsPage implements OnInit {
       this.userDid = params.userDid;
       this.pageType = params.pageType;
 
-      console.log('this.userdid init====>', this.userDid);
-      console.log('this.pageType init====>', this.pageType);
     });
   }
 
@@ -153,23 +151,16 @@ export class SubscriptionsPage implements OnInit {
 
 
   async initFollowing() {
-    try {
-
-      console.log('this.userDid====>', this.userDid);
-      const localCachedSubscribedChannelList = await this.dataHelper.getSubscribedChannelByUser(this.userDid);// load cached data;
-      this.hiveVaultController.queryUserSubscribedChannels(this.userDid).then((remoteSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
-        console.log('333333333====>', remoteSubscribedChannelList);
+    this.hiveVaultController.querySubscribedChannelsByOwner(this.userDid, FeedsData.SubscribedChannelType.OTHER_CHANNEL,
+      (localCachedSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
+        if (!localCachedSubscribedChannelList) {
+          this.refreshSubscribedChannelList(localCachedSubscribedChannelList);
+        }
+      }).then((remoteSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
         this.refreshSubscribedChannelList(remoteSubscribedChannelList);
-      }).catch((error) => { });
-      console.log('222222222====>', localCachedSubscribedChannelList);
-
-      //   const localCachedSubscribedChannelList = await this.dataHelper.getSelfSubscribedChannelV3List();
-      console.log('localCachedSubscribedChannelList====>', localCachedSubscribedChannelList);
-      this.refreshSubscribedChannelList(localCachedSubscribedChannelList);
-    } catch (error) {
-      this.isLoading = false;
-    }
-
+      }).catch((error) => {
+        this.isLoading = false;
+      });
   }
 
   private async refreshSubscribedChannelList(totalList: FeedsData.SubscribedChannelV3[]) {
@@ -185,15 +176,12 @@ export class SubscriptionsPage implements OnInit {
   }
 
   async getFollowedChannelList(subscribedChannel: FeedsData.SubscribedChannelV3[]) {
-    console.log('getFollowedChannelList subscribedChannel====>', subscribedChannel);
     let list = [];
     for (let item of subscribedChannel) {
       let destDid = item.targetDid;
       let channelId = item.channelId;
-      console.log('getFollowedChannelList subscribedChannel destDid====>' + channelId, destDid);
-      console.log('getFollowedChannelList subscribedChannel channelId====>' + channelId, channelId);
+
       let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-      console.log('getFollowedChannelList subscribedChannel channel====>' + channelId, channel);
       if (!channel) {
         try {
           const remoteChannel = await this.hiveVaultController.getChannelV3ByIdFromRemote(destDid, channelId);
@@ -211,7 +199,6 @@ export class SubscriptionsPage implements OnInit {
       return -item.createdAt;
     });
 
-    console.log('getFollowedChannelList final list ====>', list);
     return list;
   }
 

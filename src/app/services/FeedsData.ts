@@ -10,7 +10,7 @@ declare namespace FeedsData {
   const enum SubscribedChannelType {
     ALL_CHANNEL,
     OTHER_CHANNEL,
-    MY_CHANNEL
+    SELF_CHANNEL
   }
 
   const enum CallbackMethod {
