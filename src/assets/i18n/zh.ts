@@ -985,6 +985,8 @@ export const zh = {
   },
   UserprofilePage: {
     title: '用户档案',
+    allempty: '没有找到频道',
+    emptyDes: '让我们改变现状，从第一个频道开始！'
   },
   UserprofileinfoPage: {
     title: '用户档案详情'
