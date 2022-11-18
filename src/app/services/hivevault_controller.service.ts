@@ -243,7 +243,7 @@ export class HiveVaultController {
           const destDid = subscribedChannel.targetDid;
           const channelId = subscribedChannel.channelId;
 
-          this.getChannelInfoById(destDid, channelId).catch((error) => {
+          this.getChannelV3ByIdFromRemote(destDid, channelId).catch((error) => {
             Logger.warn(TAG, 'Get channel info from', destDid, channelId, 'occur error,', error);
           });
         }
@@ -347,7 +347,7 @@ export class HiveVaultController {
           const destDid = subscribedChannel.targetDid;
           const channelId = subscribedChannel.channelId;
 
-          const channelPromise = this.getChannelInfoById(destDid, channelId) || null;
+          const channelPromise = this.getChannelV3ByIdFromRemote(destDid, channelId) || null;
 
           promiseList.push(channelPromise);
         }
@@ -570,7 +570,7 @@ export class HiveVaultController {
     return this.hiveVaultApi.downloadScripting(targetDid, mediaPath)
   }
 
-  getChannelInfoById(targetDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
+  getChannelV3ByIdFromRemote(targetDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryChannelInfo(targetDid, channelId);
@@ -2828,17 +2828,10 @@ export class HiveVaultController {
     });
   }
 
-  getChannelV3ById(targetDid: string, channelId: string) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const localChannel = await this.dataHelper.getChannelV3ById(targetDid, channelId);
-        if (!localChannel) {
-
-        }
-      } catch (error) {
-        Logger.error(TAG, 'Query backup subscribed channel error', error);
-        reject(error);
-      }
-    });
+  //TODO
+  getSubscribedExceptOwnedChannel(ownerDid: string, subscribedChannels: FeedsData.SubscribedChannelV3[]) {
+    // const list = _.filter(selfchannels, (channel: FeedsData.ChannelV3) => {
+    //   return channel.destDid === signinDid && channel.channelId != this.channelId && channel.displayName === nameValue;
+    // }) || [];
   }
 }
