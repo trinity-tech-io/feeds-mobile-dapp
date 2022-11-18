@@ -113,13 +113,11 @@ export class SubscriptionsPage implements OnInit {
   async showMenuMore(item: any) {
     this.curItem = item;
     this.isShowTitle = true;
-    let ownerDid = (await this.dataHelper.getSigninData()).did;
-    if (ownerDid === item.destDid) {
+    if (this.userDid === item.destDid) {
       this.isShowInfo = true;
     } else {
       this.isShowInfo = false;
     }
-    this.userDid = ownerDid;
     this.isShowQrcode = true;
     this.isPreferences = false;
     this.isShowUnfollow = true;
