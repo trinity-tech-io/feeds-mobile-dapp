@@ -1880,8 +1880,9 @@ export class ProfilePage implements OnInit {
     // }
   }
 
-  subsciptions() {
+  async subsciptions() {
     this.clearData(true);
+    this.userDid = (await this.dataHelper.getSigninData()).did || '';
     this.native.navigateForward(['/subscriptions'], { queryParams: { "userDid":  this.userDid, "pageType": 'subscriptions'}});
   }
 
