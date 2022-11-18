@@ -826,7 +826,6 @@ export class ProfilePage implements OnInit {
         this.isShowUnfollow = false;
         this.channelName = item.channelName;
         this.qrCodeString = await this.getQrCodeString(item);
-        this.userDid = (await this.dataHelper.getSigninData()).did || '';
         this.hideSharMenuComponent = true;
         document.getElementById("feedstab").style.display = "none";
         break;
@@ -1883,7 +1882,6 @@ export class ProfilePage implements OnInit {
 
   async subsciptions() {
     this.clearData(true);
-    this.userDid = (await this.dataHelper.getSigninData()).did || '';
     this.native.navigateForward(['/subscriptions'], { queryParams: { "userDid":  this.userDid, "pageType": 'subscriptions'}});
   }
 
