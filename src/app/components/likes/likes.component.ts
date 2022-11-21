@@ -12,10 +12,10 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { Events } from 'src/app/services/events.service';
 import _ from 'lodash';
 import { CommonPageService } from 'src/app/services/common.page.service';
-import { FeedsPage } from 'src/app/pages/feeds/feeds.page';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 import { Logger } from 'src/app/services/logger';
+import { FeedService } from 'src/app/services/FeedService';
 let TAG: string = 'Feeds-likes';
 @Component({
   selector: 'app-likes',
@@ -72,9 +72,9 @@ export class LikesComponent implements OnInit {
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
     private events: Events,
-    private feedspage: FeedsPage,
     private nftContractControllerService: NFTContractControllerService,
-    private walletConnectControllerService: WalletConnectControllerService
+    private walletConnectControllerService: WalletConnectControllerService,
+    private feedService: FeedService
   ) { }
 
   ngOnInit() {
