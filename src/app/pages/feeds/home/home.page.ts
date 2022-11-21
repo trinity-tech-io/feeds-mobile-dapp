@@ -847,7 +847,7 @@ export class HomePage implements OnInit {
     if (channel === null && this.isLoaChannelMap[key] === "11") {//如果本地缓存，从远程获取频道信息
       try {
         this.isLoaChannelMap[key] = "13"
-        channel = await this.hiveVaultController.getChannelV3ByIdFromRemote(this.destDid, this.channelId) || null;
+        channel = await this.hiveVaultController.getChannelV3ByIdFromRemote(destDid, channelId) || null;
         this.channelMap[key] = channel;
       } catch (error) {
       }
@@ -1026,23 +1026,12 @@ export class HomePage implements OnInit {
 
 
   async showComment(destDid: string, channelId: string, postId: string) {
-
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
       return;
     }
-
-    // if (this.checkServerStatus(destDid) != 0) {
-    //   this.native.toastWarn('common.connectionError1');
-    //   return;
-    // }
-
-    // let post = this.feedService.getPostFromId(nodeId, channelId, postId);
-    // if (!this.feedService.checkPostIsAvalible(post)) return;
-
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
-
     this.postId = postId;
     this.channelId = channelId;
     this.destDid = destDid;

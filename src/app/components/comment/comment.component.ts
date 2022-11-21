@@ -56,10 +56,10 @@ export class CommentComponent implements OnInit {
     } else {
       this.isAndroid = "android";
     }
-    if(this.channelAvatar === ""){
+    if (this.channelAvatar === "") {
       this.isBorder = true;
       this.avatar = "./assets/images/did-default-avatar.svg";
-    }else{
+    } else {
       this.isBorder = false;
       this.parseAvatar();
     }
@@ -68,13 +68,13 @@ export class CommentComponent implements OnInit {
     this.setFocusSid = setTimeout(() => {
       this.comment.setFocus();
       this.clearSetFocusSid();
-    },500);
+    }, 500);
   }
 
   clearSetFocusSid() {
-    if(this.setFocusSid != null ){
-       clearTimeout(this.setFocusSid);
-       this.setFocusSid = null;
+    if (this.setFocusSid != null) {
+      clearTimeout(this.setFocusSid);
+      this.setFocusSid = null;
     }
   }
 
@@ -88,30 +88,30 @@ export class CommentComponent implements OnInit {
   }
 
   async parseAvatar() {
-   let avatarUri = this.channelAvatar;
-   if(this.avatar === ''){
+    let avatarUri = this.channelAvatar;
+    if (this.avatar === '') {
       this.avatar = './assets/images/loading.svg';
-   }
+    }
     try {
-      let avatar = await this.handleChannelAvatar(avatarUri,this.destDid);
+      let avatar = await this.handleChannelAvatar(avatarUri, this.destDid);
       this.avatar = avatar;
     } catch (error) {
       this.avatar = "./assets/images/profile-0.svg";
     }
   }
 
-  handleChannelAvatar(channelAvatarUri: string,destDid: string): Promise<string>{
+  handleChannelAvatar(channelAvatarUri: string, destDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        let fileName:string = channelAvatarUri.split("@")[0];
-        this.hiveVaultController.getV3Data(destDid,channelAvatarUri,fileName,"0")
-        .then((result)=>{
-           let channelAvatar = result || '';
-           resolve(channelAvatar);
-        }).catch((err)=>{
-          resolve('./assets/images/profile-0.svg');
-        })
-      }catch(err){
+        let fileName: string = channelAvatarUri.split("@")[0];
+        this.hiveVaultController.getV3Data(destDid, channelAvatarUri, fileName, "0")
+          .then((result) => {
+            let channelAvatar = result || '';
+            resolve(channelAvatar);
+          }).catch((err) => {
+            resolve('./assets/images/profile-0.svg');
+          })
+      } catch (err) {
         resolve('./assets/images/profile-0.svg');
       }
     });
@@ -151,18 +151,18 @@ export class CommentComponent implements OnInit {
         this.postId,
         this.refcommentId,
         this.newComment
-      ).then((comment: FeedsData.CommentV3)=>{
+      ).then((comment: FeedsData.CommentV3) => {
         this.native.hideLoading();
         this.clickButton = false;
         this.hideComponent();
-        this.events.publish(FeedsEvent.PublishType.getCommentFinish,comment);
-      }).catch((error)=>{
-        this.native.handleHiveError(error,'common.createCommentFail');
+        this.events.publish(FeedsEvent.PublishType.getCommentFinish, comment);
+      }).catch((error) => {
+        this.native.handleHiveError(error, 'common.createCommentFail');
         this.clickButton = false;
         this.native.hideLoading();
       })
     } catch (error) {
-      this.native.handleHiveError(error,'common.createCommentFail');
+      this.native.handleHiveError(error, 'common.createCommentFail');
       this.clickButton = false;
       this.native.hideLoading();
     }
@@ -176,9 +176,9 @@ export class CommentComponent implements OnInit {
 
   ionBlur() {
     this.isBorderGradient = false;
-   }
+  }
 
-   ionFocus() {
-     this.isBorderGradient = true;
-   }
+  ionFocus() {
+    this.isBorderGradient = true;
+  }
 }

@@ -63,12 +63,11 @@ export class EditCommentPage implements OnInit {
     this.setFocusSid = setTimeout(() => {
       this.newPostIonTextarea.setFocus();
       this.clearSetFocusSid();
-    },500);
-
+    }, 500);
   }
 
   clearSetFocusSid() {
-    if(this.setFocusSid != null){
+    if (this.setFocusSid != null) {
       clearTimeout(this.setFocusSid);
       this.setFocusSid = null;
     }
@@ -89,22 +88,22 @@ export class EditCommentPage implements OnInit {
   }
 
   handleChannelAvatar(channelAvatarUri: string) {
-    if(this.channelAvatar === ''){
+    if (this.channelAvatar === '') {
       this.channelAvatar = './assets/images/loading.svg';
     }
     let fileName: string = channelAvatarUri.split("@")[0];
     this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
       .then((result) => {
         result = result || '';
-        if(result != ''){
+        if (result != '') {
           this.channelAvatar = result;
-        }else{
-          if(this.channelAvatar === './assets/images/loading.svg'){
+        } else {
+          if (this.channelAvatar === './assets/images/loading.svg') {
             this.channelAvatar = "./assets/images/profile-0.svg";
           }
         }
       }).catch((err) => {
-        if(this.channelAvatar === './assets/images/loading.svg'){
+        if (this.channelAvatar === './assets/images/loading.svg') {
           this.channelAvatar = "./assets/images/profile-0.svg";
         }
       })
@@ -174,12 +173,12 @@ export class EditCommentPage implements OnInit {
           this.native.pop();
 
         }).catch((error) => {
-          this.native.handleHiveError(error,'common.editCommentFail');
+          this.native.handleHiveError(error, 'common.editCommentFail');
           this.clickButton = false;
           this.native.hideLoading();
         })
     } catch (error) {
-      this.native.handleHiveError(error,'common.editCommentFail');
+      this.native.handleHiveError(error, 'common.editCommentFail');
       this.clickButton = false;
       this.native.hideLoading();
     }
@@ -201,10 +200,9 @@ export class EditCommentPage implements OnInit {
 
   ionBlur() {
     this.isBorderGradient = false;
-   }
+  }
 
-   ionFocus() {
-     this.isBorderGradient = true;
-   }
-
+  ionFocus() {
+    this.isBorderGradient = true;
+  }
 }

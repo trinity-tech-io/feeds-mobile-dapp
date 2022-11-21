@@ -98,7 +98,14 @@ export class MyApp {
                 const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar || '';
                 this.hiveVaultController.getV3HiveUrlData(avatarHiveUrl).then((base64Image: string) => {
                   this.avatar = base64Image;
-                }).catch(() => { });
+                  if (!this.avatar) {
+                    this.avatar = './assets/images/did-default-avatar.svg';
+                  }
+                }).catch(() => {
+                  if (!this.avatar) {
+                    this.avatar = './assets/images/did-default-avatar.svg';
+                  }
+                });
               }
             }).catch(() => { });
           }
