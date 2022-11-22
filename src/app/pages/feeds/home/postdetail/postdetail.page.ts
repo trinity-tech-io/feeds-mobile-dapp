@@ -149,6 +149,7 @@ export class PostdetailPage implements OnInit {
   public createrDid: string = '';
   public handleDisplayNameMap: any = {};
   private isLoadHandleDisplayNameMap: any = {};
+
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,

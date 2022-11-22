@@ -59,6 +59,11 @@ export class CommentComponent implements OnInit {
     if (this.channelAvatar === "") {
       this.isBorder = true;
       this.avatar = "./assets/images/did-default-avatar.svg";
+      if (this.createrDid != '') {
+        this.hiveVaultController.getUserAvatar(this.createrDid).then((userAvatar: string) => {
+          this.avatar = userAvatar;
+        });
+      }
     } else {
       this.isBorder = false;
       this.parseAvatar();
