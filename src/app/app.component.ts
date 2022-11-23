@@ -456,15 +456,17 @@ export class MyApp {
     this.native.navigateForward('/menu/about', '');
   }
 
-  cancel(that: any) {
+  async cancel(that: any) {
     if (this.popover != null) {
-      this.popover.dismiss();
+      await this.popover.dismiss();
+      this.popover = null;
     }
   }
 
   async confirm(that: any) {
     if (this.popover != null) {
       await this.popover.dismiss();
+      this.popover = null;
     }
     try {
       await that.dataHelper.removeData("feeds.initHive");

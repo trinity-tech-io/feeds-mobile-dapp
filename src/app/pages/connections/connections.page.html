@@ -4,7 +4,7 @@
 
     <ion-row class="section" *ngIf="twitterConnectStatus === 1" (click)="removeConnection('twitter')">
       <ion-col size="2.5" class="left-col">
-        <img src="assets/images/darkmode/connections/twitter.svg"/>
+        <img src="./assets/images/darkmode/connections/twitter.svg"/>
       </ion-col>
       <ion-col size="9.5" class="title-col">
           <h1>{{"ConnectionsPage.twitter" | translate }}</h1>
@@ -14,7 +14,7 @@
 
     <ion-row class="section" *ngIf="redditConnectStatus === 1" (click)="removeConnection('reddit')">
       <ion-col size="2.5" class="left-col">
-        <img src="assets/images/darkmode/connections/reddit.svg"/>
+        <img src="./assets/images/darkmode/connections/reddit.svg"/>
       </ion-col>
       <ion-col size="9.5" class="title-col">
           <h1>{{"ConnectionsPage.reddit" | translate }}</h1>
@@ -24,7 +24,7 @@
 
     <ion-row class="section" (click)="addConnection()" *ngIf="twitterConnectStatus === 0 || redditConnectStatus === 0">
       <ion-col size="2.5" class="left-col">
-        <img src="assets/images/darkmode/connections/add.svg"/>
+        <img src="./assets/images/darkmode/connections/add.svg"/>
       </ion-col>
       <ion-col size="9.5" class="title-col">
           <h1>{{"ConnectionsPage.addConnection" | translate }}</h1>

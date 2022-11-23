@@ -24,6 +24,7 @@ import { RedditService } from 'src/app/services/RedditService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import SparkMD5 from 'spark-md5';
+import { PopupProvider } from 'src/app/services/popup';
 
 let TAG: string = 'Feeds-createpost';
 
@@ -75,6 +76,7 @@ export class CreatenewpostPage implements OnInit {
   public isPostReddit: boolean = false;
   public channelPublicStatusList: any = {};
   private setFocusSid: any = null;
+  private socialLoginDialog: any = null;
   constructor(
     private popoverController: PopoverController,
     private platform: Platform,
@@ -101,7 +103,7 @@ export class CreatenewpostPage implements OnInit {
     private redditService: RedditService,
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
-
+    public popupProvider: PopupProvider,
   ) { }
 
   ngOnInit() {
@@ -180,6 +182,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   async ionViewWillEnter() {
+
     this.imgUrl = this.dataHelper.getSelsectNftImage();
     this.dataHelper.setSelsectNftImage(this.imgUrl);
     this.channelList = await this.dataHelper.getSelfChannelListV3() || [];
@@ -237,6 +240,7 @@ export class CreatenewpostPage implements OnInit {
 
   ionViewWillLeave() {
     this.clearSetFocusSid();
+    this.socialLoginDialogCancel(this);
     this.isLoading = false;
     this.hideSwitchFeed = false;
     this.imgUrl = '';
@@ -754,7 +758,7 @@ export class CreatenewpostPage implements OnInit {
     } else {
       const token = await this.twitterService.checkTwitterIsExpired();
       if (token === null) {
-        this.native.toastWarn("common.twitterNotLogin");
+        await this.showSocialLoginDialog('twitter');
         return;
       }
       this.isPostTwitter = true;
@@ -772,8 +776,8 @@ export class CreatenewpostPage implements OnInit {
       const token = await this.redditService.checkRedditIsExpired();
       if (token === null) {
         this.isPostReddit = false;
-        localStorage.setItem(userDid + "isSyncToReddit", "false")
-        this.native.toastWarn("common.RedditNotLogin");
+        localStorage.setItem(userDid + "isSyncToReddit", "false");
+        await this.showSocialLoginDialog('reddit');
         return;
       }
       const isSubscribeElastos = this.dataHelper.getRedditIsSubscribeElastos(userDid);
@@ -872,5 +876,37 @@ export class CreatenewpostPage implements OnInit {
     }
   }
 
+  async showSocialLoginDialog(socialType: string) {
+    let des = "";
+    if(socialType === "twitter"){
+       des = "common.twitterNotLogin";
+    }else if(socialType === "reddit"){
+       des = "common.RedditNotLogin";
+    }
+    this.socialLoginDialog = await this.popupProvider.ionicConfirm(
+      this,
+      'ConnectionsPage.addConnection',
+      des,
+      this.socialLoginDialogCancel,
+      this.socialLoginDialogConfirm,
+      './assets/images/postAdd.svg',
+      'common.yes'
+    );
+  }
+
+  async socialLoginDialogCancel(that: any){
+    if (that.socialLoginDialog != null) {
+      await that.socialLoginDialog.dismiss();
+      that.socialLoginDialog = null;
+    }
+  }
+
+  async socialLoginDialogConfirm(that: any){
+    if (that.socialLoginDialog != null) {
+      await that.socialLoginDialog.dismiss();
+      that.socialLoginDialog = null;
+    }
+    that.native.navigateForward(['/connections'],{});
+  }
 
 }
