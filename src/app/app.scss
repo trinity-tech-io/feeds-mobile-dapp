@@ -32,7 +32,8 @@
     background-image: linear-gradient(to right, #170F25, #170F25), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
     align-items: center;
     display: flex;
-    img{
+    justify-content: center;
+    .customizeAvatar {
     width: 80px;
     height: 80px;
     border-radius: 60px;

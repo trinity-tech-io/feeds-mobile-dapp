@@ -69,7 +69,7 @@ export class SubscriptionsPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.scanServiceStyle['right'] = (screen.width * 7.5) / 100 + 5 + 'px';
+    //this.scanServiceStyle['right'] = (screen.width * 7.5) / 100 + 5 + 'px';
   }
 
   ionViewWillEnter() {

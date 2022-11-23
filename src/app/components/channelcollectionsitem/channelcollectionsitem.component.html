@@ -4,7 +4,10 @@
         class="left-col"
       >
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-          <img src={{channelCollectionAvatar}} id={{channelCollectionAvatarId}}>
+          <img
+          src={{channelCollectionAvatar}}
+          [ngClass]="{'customizeAvatar': channelCollectionAvatar.indexOf('default-contact.svg') === -1 }"
+          id={{channelCollectionAvatarId}}>
         </div>
       </ion-col>
       <ion-col

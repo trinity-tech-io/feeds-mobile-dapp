@@ -845,7 +845,7 @@ export class HomePage implements OnInit {
     if (channel === null && this.isLoaChannelMap[key] === "11") {//如果本地缓存，从远程获取频道信息
       try {
         this.isLoaChannelMap[key] = "13"
-        channel = await this.hiveVaultController.getChannelInfoById(this.destDid, this.channelId) || null;
+        channel = await this.hiveVaultController.getChannelInfoById(destDid, channelId) || null;
         this.channelMap[key] = channel;
       } catch (error) {
       }

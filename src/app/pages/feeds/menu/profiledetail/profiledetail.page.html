@@ -4,8 +4,10 @@
   <ion-row class="card">
     <div class="cardImg">
       <div class="avatar" (click) = "editProfile()">
-       <img  *ngIf="avatar === ''" src="./assets/images/selectAvatar.svg" />
-       <img  *ngIf="avatar != ''"  [src]="avatar"/>
+       <img
+       *ngIf="avatar != ''"
+       [ngClass]="{'customizeAvatar': avatar.indexOf('default-contact.svg') === -1 }"
+       [src]="avatar"/>
        <img   class="eidtAvatar" src="./assets/images/eidtAvatar.svg"/>
       </div>
 

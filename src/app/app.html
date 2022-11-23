@@ -9,8 +9,11 @@
                     <img src="./assets/images/menuClose.svg">
                 </div>
                 <div class="avatar">
-                    <div *ngIf="avatar===''" class="defaultAvatar"></div>
-                    <img *ngIf="avatar!=''" [src]="avatar" (click)="profiledetail()"/>
+                    <img
+                    *ngIf="avatar!=''"
+                    [ngClass]="{'customizeAvatar': avatar.indexOf('default-contact.svg') === -1 }"
+                    [src]="avatar"
+                    (click)="profiledetail()"/>
                 </div>
                 <div class="name">
                      {{ name }}

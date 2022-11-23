@@ -12,7 +12,7 @@
 
   <div style="height: 58px;width: 100%;position: absolute;">
     <div class="search-container" [class.dark-search-container]="theme.darkMode" style="padding:0px;">
-      <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" [ngStyle]="scanServiceStyle" (click)="scanService()"/>
+      <img *ngIf="isSearch===''" src="./assets/images/scan.svg" class="scanService" (click)="scanService()"/>
       <form action="javascript:return true;" style="display: flex;justify-content: center;width: 100%;">
         <ion-searchbar #searchbar [ngClass]="{'borderGradient':isBorderGradient}"   [(ngModel)]="isSearch" inputmode=""  enterkeyhint="search" placeholder="{{ 'SearchPage.searchFeeds' | translate }}" (keyup)="getItems($event)" mode="ios" [ngModelOptions]="{standalone: true}" (ionClear)="ionClear()" (ionBlur)="ionBlur()" (ionFocus)="ionFocus()"></ion-searchbar>
       </form>

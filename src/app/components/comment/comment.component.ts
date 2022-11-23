@@ -37,6 +37,8 @@ export class CommentComponent implements OnInit {
   public isBorder: boolean = false;
   public isBorderGradient: boolean = false;
   public clickButton: boolean = false;
+  public avatar: string = '';
+  private setFocusSid: any = null;
   constructor(
     public theme: ThemeService,
     public native: NativeService,
@@ -55,17 +57,24 @@ export class CommentComponent implements OnInit {
     }
     if(this.channelAvatar === ""){
       this.isBorder = true;
-      this.channelAvatar = "./assets/images/default-contact.svg";
+      this.avatar = "./assets/images/default-contact.svg";
     }else{
       this.isBorder = false;
       this.parseAvatar();
     }
 
-    let timer = setTimeout(() => {
+    this.clearSetFocusSid();
+    this.setFocusSid = setTimeout(() => {
       this.comment.setFocus();
-      clearTimeout(timer);
-      timer = null;
-    }, 500);
+      this.clearSetFocusSid()
+    },500);
+  }
+
+  clearSetFocusSid() {
+    if(this.setFocusSid != null ){
+       clearTimeout(this.setFocusSid);
+       this.setFocusSid = null;
+    }
   }
 
   ionViewDidEnter() {
@@ -79,9 +88,13 @@ export class CommentComponent implements OnInit {
 
   async parseAvatar() {
    let avatarUri = this.channelAvatar;
-    this.channelAvatar = "./assets/icon/reserve.svg";
-    let avatar = await this.handleChannelAvatar(avatarUri,this.destDid);
-    this.channelAvatar = avatar;
+    this.avatar = "./assets/images/default-contact.svg";
+    try {
+      let avatar = await this.handleChannelAvatar(avatarUri,this.destDid);
+      this.avatar = avatar;
+    } catch (error) {
+
+    }
   }
 
   handleChannelAvatar(channelAvatarUri: string,destDid: string): Promise<string>{
@@ -93,10 +106,10 @@ export class CommentComponent implements OnInit {
            let channelAvatar = result || '';
            resolve(channelAvatar);
         }).catch((err)=>{
-          resolve('');
+          resolve('./assets/images/default-contact.svg');
         })
       }catch(err){
-        resolve('');
+        resolve('./assets/images/default-contact.svg');
       }
     });
 

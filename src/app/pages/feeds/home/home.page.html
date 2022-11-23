@@ -114,7 +114,10 @@
         <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')"></ion-col>
         <ion-col class="img-col" size="2.5" sizeMd="1" sizeLg="1" (click)="navTo(post.destDid,post.channelId,post.postId)">
           <div  id="{{post.destDid}}-{{post.channelId}}-{{post.postId}}-homeChannelAvatarKuang" class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-            <img [src] = "channelAvatarMap[post.destDid+'-'+post.channelId]" *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId]">
+            <img
+            [src] = "channelAvatarMap[post.destDid+'-'+post.channelId]"
+            [ngClass]="{'customizeAvatar': channelAvatarMap[post.destDid+'-'+post.channelId].indexOf('default-contact.svg') === -1 }"
+            *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId]">
           </div>
         </ion-col>
         <ion-col class="content-col" size="6.5" sizeMd="8" sizeLg="8" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')">
@@ -130,7 +133,7 @@
             @......
           </p>
           <p *ngIf="handleDisplayNameMap[post.destDid] != '' && handleDisplayNameMap[post.destDid] != undefined">
-            @{{ handleDisplayNameMap[post.destDid] }} - {{post.content.mediaType}}
+            @{{ handleDisplayNameMap[post.destDid] }}
           </p>
         </ion-col>
         <ion-col size="0.5" (click)="menuMore(post)"></ion-col>

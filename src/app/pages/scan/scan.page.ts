@@ -132,15 +132,15 @@ async hideCamera() {
 
   ionViewDidLeave() {
     this.clearStyleSid();
-    this.styleSid = setTimeout(()=>{
+    this.styleSid = requestAnimationFrame(()=>{
       document.body.removeAttribute("style");
       this.clearStyleSid();
-    },300);
+    });
   }
 
   clearStyleSid() {
    if(this.styleSid != null) {
-       clearTimeout(this.styleSid);
+       cancelAnimationFrame(this.styleSid);
        this.styleSid = null;
    }
   }

@@ -5,7 +5,7 @@
       {{ 'CreatenewfeedPage.profileImage' | translate }}
     </div>
     <div class="cardImg">
-      <img (click)="profileimage()" class="avatar" *ngIf="avatar === ''" src="./assets/images/selectAvatar.svg" />
+      <img (click)="profileimage()" class="avatar" *ngIf="avatar === ''" src="./assets/images/default-contact.svg" />
       <img (click)="profileimage()" class="avatar" *ngIf="avatar != ''" [src]="handleAvatar()"/>
       <img (click)="profileimage()" class="eidtAvatar" src="./assets/images/eidtAvatar.svg"/>
     </div>

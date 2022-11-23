@@ -17,7 +17,10 @@
       <ion-col size="12" style="padding:0px;">
         <div class="cardImg">
         <div class="feedAvatar">
-          <img src={{channelAvatar}} *ngIf="channelAvatar != ''">
+          <img
+          src={{channelAvatar}}
+          [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
+          *ngIf="channelAvatar != ''">
         </div>
        </div>
         <div class="feedName">
@@ -87,7 +90,10 @@
         <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></ion-col>
         <ion-col class="img-col" size="2.5" sizeMd="1" sizeLg="1">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-            <img src={{channelAvatar}} *ngIf="channelAvatar != '' ">
+            <img
+            src={{channelAvatar}}
+            [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
+            *ngIf="channelAvatar != '' ">
           </div>
         </ion-col>
         <ion-col class="content-col" size="6.5" sizeMd="8" sizeLg="8" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">

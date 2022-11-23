@@ -5,7 +5,10 @@
     <ion-row class="channel-row ion-activatable ripple">
       <ion-col size="2.5" class="left-col">
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-          <img src={{channelAvatar}} *ngIf="channelAvatar != ''">
+          <img
+          src={{channelAvatar}}
+          [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
+          *ngIf="channelAvatar != ''">
           <!-- <div class="postTwitter" *ngIf="isPostTwitter">
             <img src="./assets/images/postTwitter.svg">
           </div> -->

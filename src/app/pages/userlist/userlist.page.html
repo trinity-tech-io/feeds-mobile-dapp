@@ -30,7 +30,10 @@
       (click)="clickSubscription(userDid)"
     >
       <div  class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-      <img [src] = "pageItemMap[userDid].avatar" *ngIf="pageItemMap[userDid] != null && pageItemMap[userDid] != undefined && pageItemMap[userDid].avatar != null && pageItemMap[userDid].avatar != undefined && pageItemMap[userDid].avatar != ''">
+      <img
+      [src] = "pageItemMap[userDid].avatar"
+      [ngClass]="{'customizeAvatar': pageItemMap[userDid].avatar.indexOf('default-contact.svg') === -1 }"
+      *ngIf="pageItemMap[userDid] != null && pageItemMap[userDid] != undefined && pageItemMap[userDid].avatar != null && pageItemMap[userDid].avatar != undefined && pageItemMap[userDid].avatar != ''">
     </div>
     </ion-col>
     <ion-col

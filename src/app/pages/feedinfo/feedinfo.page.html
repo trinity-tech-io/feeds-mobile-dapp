@@ -5,7 +5,10 @@
         <ion-col size="12" style="padding:0px;">
           <div class="cardImg">
             <div class="feedAvatar">
-              <img src={{channelAvatar}} id="feedsInfoAvatar">
+              <img
+              src={{channelAvatar}}
+              [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
+              id="feedsInfoAvatar">
             </div>
            </div>
           <div class="feedName">

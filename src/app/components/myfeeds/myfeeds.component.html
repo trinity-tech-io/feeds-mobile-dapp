@@ -36,7 +36,10 @@
         (click)="navTo(channel.destDid, channel.channelId)"
       >
         <div class="feedAvatar" id={{channel.destDid}}-{{channel.channelId}}-myFeedsAvatarKuang [class.dark-feedAvatar]="theme.darkMode">
-          <img [src] = "channelAvatarMap[channel.destDid+'-'+channel.channelId]" *ngIf="channelAvatarMap[channel.destDid+'-'+channel.channelId]  != null && channelAvatarMap[channel.destDid+'-'+channel.channelId] != undefined">
+          <img
+          [src] = "channelAvatarMap[channel.destDid+'-'+channel.channelId]"
+          [ngClass]="{'customizeAvatar': channelAvatarMap[channel.destDid+'-'+channel.channelId].indexOf('default-contact.svg') === -1 }"
+          *ngIf="channelAvatarMap[channel.destDid+'-'+channel.channelId]  != null && channelAvatarMap[channel.destDid+'-'+channel.channelId] != undefined">
         </div>
         <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[channel.destDid+'-'+channel.channelId]==='2'">
       </ion-col>

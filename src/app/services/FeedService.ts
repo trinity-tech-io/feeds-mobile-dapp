@@ -5819,7 +5819,7 @@ export class FeedService {
   //   return new Promise(async (resolve, reject) => {
   //     let signinData = this.getSignInData();
   //     if (signinData == null || signinData == undefined) {
-  //       resolve('assets/images/default-contact.svg');
+  //       resolve('./assets/images/default-contact.svg');
   //       return;
   //     }
 
@@ -5837,7 +5837,7 @@ export class FeedService {
   //       return
   //     }
 
-  //     resolve('assets/images/default-contact.svg');
+  //     resolve('./assets/images/default-contact.svg');
   //     return;
   //   });
   // }

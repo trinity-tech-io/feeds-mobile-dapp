@@ -12,8 +12,10 @@
   <ion-row class="card" *ngIf="!isFullPost">
     <div class="cardImg">
       <div class="avatar" (click) = "editProfile()">
-       <img   *ngIf="avatar === ''" src="./assets/images/selectAvatar.svg" />
-       <img   *ngIf="avatar != ''"  [src]="avatar"/>
+       <img
+       *ngIf="avatar != ''"
+       [ngClass]="{'customizeAvatar': avatar.indexOf('default-contact.svg') === -1 }"
+       [src]="avatar"/>
       </div>
       <div class="cardTitle">{{name}}</div>
       <div class="card-subtitle" *ngIf="walletAddressStr!=''">
