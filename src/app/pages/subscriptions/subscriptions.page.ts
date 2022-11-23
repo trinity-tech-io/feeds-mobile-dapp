@@ -16,6 +16,9 @@ import { ScannerCode, ScannerHelper } from 'src/app/services/scanner_helper.serv
 import { IonRefresher } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { UtilService } from 'src/app/services/utilService';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
+import SparkMD5 from 'spark-md5';
 const TAG: string = 'SubscriptionsPage';
 @Component({
   selector: 'app-subscriptions',
@@ -53,6 +56,7 @@ export class SubscriptionsPage implements OnInit {
   public pageNumber = 10;
   public totalSubscribedChannelList: any = [];
   public totalNum:number = 0;
+  public channelPublicStatusList: any = {};
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -65,6 +69,8 @@ export class SubscriptionsPage implements OnInit {
     private hiveVaultController: HiveVaultController,
     private popupProvider: PopupProvider,
     private keyboard: Keyboard,
+    private nftContractControllerService: NFTContractControllerService,
+    private ipfsService: IPFSService,
     public theme: ThemeService
   ) { }
 
@@ -190,6 +196,7 @@ export class SubscriptionsPage implements OnInit {
 
       this.removeObserveList();
       this.isLoadSubscriptionV3Num = {};
+      this.dataHelper.setChannelPublicStatusList({});
       this.totalNum = 0;
       this.initFollowing();
       event.target.complete();
@@ -508,6 +515,11 @@ export class SubscriptionsPage implements OnInit {
         let channelId: string = arr[1];
         this.handleFollingAvatarV2(destDid, channelId);
         this.getChannelFollower(destDid, channelId);
+        try {
+          this.getChannelPublicStatus(destDid, channelId);
+        } catch (error) {
+
+        }
       });
 
       this.follingObserver[postGridId].observe(item);
@@ -569,6 +581,90 @@ export class SubscriptionsPage implements OnInit {
       event.target.complete();
       clearTimeout(sId);
     }, 500);
+  }
+
+  getChannelPublicStatus(destDid: string, channelId: string) {
+    this.channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
+    let key = destDid + '-' + channelId;
+    let channelPublicStatus = this.channelPublicStatusList[key] || '';
+    if (channelPublicStatus === '') {
+      this.getChannelInfo(channelId).then((channelInfo) => {
+        if (channelInfo != null) {
+          this.channelPublicStatusList[key] = "2";//已公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelNftCache(channelInfo, channelId);
+
+        } else {
+          this.channelPublicStatusList[key] = "1";//未公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelNftCache(null, channelId);
+        }
+      }).catch((err) => {
+
+      });
+
+    }
+  }
+
+  async addChannelNftCache(channelInfo: any, channelId: string) {
+    if (channelInfo === null) {
+      let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+      channelContractInfoList[channelId] = "unPublic";
+      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+      return;
+    }
+    let channelNft: FeedsData.ChannelContractInfo = {
+      description: '',
+      cname: '',
+      avatar: '',
+      receiptAddr: '',
+      tokenId: '',
+      tokenUri: '',
+      channelEntry: '',
+      ownerAddr: '',
+      signature: ''
+    };
+    channelNft.tokenId = channelInfo[0];
+    channelNft.tokenUri = channelInfo[1];
+    channelNft.channelEntry = channelInfo[2];
+    channelNft.receiptAddr = channelInfo[3];
+    channelNft.ownerAddr = channelInfo[4];
+    let uri = channelInfo[1].replace('feeds:json:', '');
+    let result: any = await this.ipfsService
+      .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+    channelNft.description = result.description;
+    channelNft.cname = result.data.cname;
+    channelNft.signature = result.data.signature;
+    let avatarUri = result.data.avatar.replace('feeds:image:', '');
+    let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl() + avatarUri);
+    let avatarBase64 = await UtilService.blobToDataURL(avatar);
+    let hash = SparkMD5.hash(avatarBase64);
+    channelNft.avatar = hash;
+    let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+    channelContractInfoList[channelId] = channelNft;
+    this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+    this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+  }
+
+  async getChannelInfo(channelId: string) {
+
+    try {
+      let tokenId: string = "0x" + channelId;
+      Logger.log(TAG, "tokenId:", tokenId);
+      tokenId = UtilService.hex2dec(tokenId);
+      Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      Logger.log(TAG, "tokenInfo:", tokenInfo);
+      if (tokenInfo[0] != '0') {
+        return tokenInfo;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
   }
 
 }

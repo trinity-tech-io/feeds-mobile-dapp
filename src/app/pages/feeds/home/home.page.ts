@@ -40,7 +40,7 @@ import { FeedsServiceApi } from 'src/app/services/api_feedsservice.service';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service'
 import { CommonPageService } from 'src/app/services/common.page.service';
 import { Config } from 'src/app/services/config';
-
+import SparkMD5 from 'spark-md5';
 let TAG: string = 'Feeds-home';
 @Component({
   selector: 'app-home',
@@ -186,7 +186,8 @@ export class HomePage implements OnInit {
   public disabledSearch: boolean = true;
   private serachPostList: any = [];
   private observerList: any = {};
-  private scrollToTopSid: NodeJS.Timer = null;
+  private scrollToTopSid: any = null;
+  private channelPublicStatusList: any = {};
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -968,6 +969,7 @@ export class HomePage implements OnInit {
       this.isLoadHandleDisplayNameMap = {};
       this.postMap = {};
       this.channelMap = {};
+      this.dataHelper.setChannelPublicStatusList({});
       this.removeObserveList();
       await this.initPostListData(true);
     } catch (error) {
@@ -1007,16 +1009,16 @@ export class HomePage implements OnInit {
   }
 
   scrollToTop() {
-    this.scrollToTopSid = setTimeout(() => {
+    this.scrollToTopSid = requestAnimationFrame(() => {
       this.content.scrollToTop(1).then(() => {
       });
       this.clearScrollToTopSid();
-    }, 10);
+    });
   }
 
   clearScrollToTopSid() {
     if (this.scrollToTopSid != null) {
-      clearTimeout(this.scrollToTopSid);
+      cancelAnimationFrame(this.scrollToTopSid);
       this.scrollToTopSid = null;
     }
   }
@@ -2413,6 +2415,11 @@ export class HomePage implements OnInit {
         } catch (error) {
 
         }
+        try{
+          this.getChannelPublicStatus(destDid, channelId);//获取频道公开状态
+        }catch(error) {
+
+        }
         this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
         this.getDisplayName(destDid, channelId, destDid);
         if (mediaType === '1') {
@@ -2470,6 +2477,90 @@ export class HomePage implements OnInit {
       //     });
       // } catch (error) {
 
+    }
+  }
+
+  getChannelPublicStatus(destDid: string, channelId: string) {
+    this.channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
+    let key = destDid + '-' + channelId;
+    let channelPublicStatus = this.channelPublicStatusList[key] || '';
+    if (channelPublicStatus === '') {
+      this.getChannelInfo(channelId).then((channelInfo) => {
+        if (channelInfo != null) {
+          this.channelPublicStatusList[key] = "2";//已公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelNftCache(channelInfo, channelId);
+
+        } else {
+          this.channelPublicStatusList[key] = "1";//未公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelNftCache(null, channelId);
+        }
+      }).catch((err) => {
+
+      });
+
+    }
+  }
+
+  async addChannelNftCache(channelInfo: any, channelId: string) {
+    if (channelInfo === null) {
+      let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+      channelContractInfoList[channelId] = "unPublic";
+      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+      return;
+    }
+    let channelNft: FeedsData.ChannelContractInfo = {
+      description: '',
+      cname: '',
+      avatar: '',
+      receiptAddr: '',
+      tokenId: '',
+      tokenUri: '',
+      channelEntry: '',
+      ownerAddr: '',
+      signature: ''
+    };
+    channelNft.tokenId = channelInfo[0];
+    channelNft.tokenUri = channelInfo[1];
+    channelNft.channelEntry = channelInfo[2];
+    channelNft.receiptAddr = channelInfo[3];
+    channelNft.ownerAddr = channelInfo[4];
+    let uri = channelInfo[1].replace('feeds:json:', '');
+    let result: any = await this.ipfsService
+      .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+    channelNft.description = result.description;
+    channelNft.cname = result.data.cname;
+    channelNft.signature = result.data.signature;
+    let avatarUri = result.data.avatar.replace('feeds:image:', '');
+    let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl() + avatarUri);
+    let avatarBase64 = await UtilService.blobToDataURL(avatar);
+    let hash = SparkMD5.hash(avatarBase64);
+    channelNft.avatar = hash;
+    let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+    channelContractInfoList[channelId] = channelNft;
+    this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+    this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+  }
+
+  async getChannelInfo(channelId: string) {
+
+    try {
+      let tokenId: string = "0x" + channelId;
+      Logger.log(TAG, "tokenId:", tokenId);
+      tokenId = UtilService.hex2dec(tokenId);
+      Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      Logger.log(TAG, "tokenInfo:", tokenInfo);
+      if (tokenInfo[0] != '0') {
+        return tokenInfo;
+      }
+      return null;
+    } catch (error) {
+      return null;
     }
   }
 }

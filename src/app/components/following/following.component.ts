@@ -14,6 +14,7 @@ export class FollowingComponent implements OnInit {
   @Input() followingList: any = [];
   @Input() subscriptionV3NumMap: any = {};
   @Input() channelAvatarMap: any = {};
+  @Input() channelPublicStatusList: any = {};
   @Output() toFollowPage = new EventEmitter();
   @Output() exploreFeeds = new EventEmitter();
   constructor(

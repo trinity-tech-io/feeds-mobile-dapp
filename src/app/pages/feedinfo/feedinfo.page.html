@@ -6,9 +6,10 @@
           <div class="cardImg">
             <div class="feedAvatar">
               <img
+              *ngIf="channelAvatar"
               src={{channelAvatar}}
-              [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
-              id="feedsInfoAvatar">
+              [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }">
+              <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel1" *ngIf="channelPublicStatusList[destDid+'-'+channelId]==='2'">
             </div>
            </div>
           <div class="feedName">

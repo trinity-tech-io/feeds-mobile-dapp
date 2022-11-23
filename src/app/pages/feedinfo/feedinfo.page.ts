@@ -141,10 +141,7 @@ export class FeedinfoPage implements OnInit {
     let avatar = this.dataHelper.getProfileIamge();
     this.channelAvatar = this.feedService.parseChannelAvatar(avatar);
     this.addEvents();
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    if (this.destDid === ownerDid) {
-      this.getChannelPublicStatus(this.destDid, this.channelId);
-    }
+    this.getChannelPublicStatus(this.destDid, this.channelId);
   }
 
   addEvents() {

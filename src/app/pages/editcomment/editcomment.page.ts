@@ -35,6 +35,7 @@ export class EditCommentPage implements OnInit {
   public titleKey: string = '';
   public clickButton: boolean = false;
   public isBorderGradient: boolean = false;
+  private setFocusSid: any = null;
   constructor(
     private native: NativeService,
     private acRoute: ActivatedRoute,
@@ -58,10 +59,19 @@ export class EditCommentPage implements OnInit {
       this.titleKey = item.titleKey;
       this.getContent(content);
     });
-    let sid = setTimeout(() => {
+    this.clearSetFocusSid();
+    this.setFocusSid = setTimeout(() => {
       this.newPostIonTextarea.setFocus();
-      clearTimeout(sid);
-    }, 500);
+      this.clearSetFocusSid();
+    },500);
+
+  }
+
+  clearSetFocusSid() {
+    if(this.setFocusSid != null){
+      clearTimeout(this.setFocusSid);
+      this.setFocusSid = null;
+    }
   }
 
   async ionViewWillEnter() {
@@ -89,6 +99,7 @@ export class EditCommentPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.clearSetFocusSid();
   }
 
   newPostTextArea() {

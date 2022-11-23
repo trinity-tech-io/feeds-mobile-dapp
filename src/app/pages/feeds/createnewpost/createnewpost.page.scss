@@ -154,11 +154,11 @@
      display: flex;
      align-items: center;
     .des{
-        justify-content: flex-start;
-        img{
-          vertical-align: middle;
-          margin-right: 5px;
-        }
+        //justify-content: flex-start;
+        // img{
+        //   vertical-align: middle;
+        //   margin-right: 5px;
+        // }
         span{
             font-style: normal;
             font-weight: 600;
@@ -168,16 +168,15 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-right: 4px;
+            display: inline-block;
+            height: 23px;
         }
     }
 
     .twitterLogo{
-       display: flex;
-       justify-content:center;
        img{
         width:30px;
         height:30px;
-        margin-bottom:5px;
        }
 
        span{
@@ -189,12 +188,9 @@
     }
 
     .redditLogo{
-        display: flex;
-        justify-content:center;
         img{
             width:30px;
             height:30px;
-            margin-bottom:5px;
            }
 
            span{

@@ -21,6 +21,7 @@
           src={{channelAvatar}}
           [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
           *ngIf="channelAvatar != ''">
+          <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel1" *ngIf="channelPublicStatusList[destDid+'-'+channelId]==='2'">
         </div>
        </div>
         <div class="feedName">
@@ -94,6 +95,7 @@
             src={{channelAvatar}}
             [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
             *ngIf="channelAvatar != '' ">
+            <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId]==='2'">
           </div>
         </ion-col>
         <ion-col class="content-col" size="6.5" sizeMd="8" sizeLg="8" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">

@@ -21,6 +21,9 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { TwitterService } from 'src/app/services/TwitterService';
 import { MorenameComponent } from 'src/app/components/morename/morename.component';
 import { RedditService } from 'src/app/services/RedditService';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
+import SparkMD5 from 'spark-md5';
 
 let TAG: string = 'Feeds-createpost';
 
@@ -43,9 +46,9 @@ export class CreatenewpostPage implements OnInit {
   public subscribers: string = '';
   public newPost: string = '';
   public imgUrl: string = '';
-  public nodeId: string = '';
-  public channelIdV3: string = '';
-  public channelId: string = "0";
+  public destDid: string = '';
+  public channelId: string = '';
+  //public channelId: string = "";
 
   public posterImg: any = '';
   public flieUri: string = '';
@@ -70,7 +73,8 @@ export class CreatenewpostPage implements OnInit {
   public extraNumber: number = 0;
   private infoPopover: any = null;
   public isPostReddit: boolean = false;
-
+  public channelPublicStatusList: any = {};
+  private setFocusSid: any = null;
   constructor(
     private popoverController: PopoverController,
     private platform: Platform,
@@ -92,20 +96,28 @@ export class CreatenewpostPage implements OnInit {
     private dataHelper: DataHelper,
 
     private postHelperService: PostHelperService,
-    private feedsServiceApi: FeedsServiceApi,
-    // private hiveService: HiveService,
-    // private hiveVaultApi: HiveVaultApi,
     private hiveVaultController: HiveVaultController,
     private twitterService: TwitterService,
     private redditService: RedditService,
+    private nftContractControllerService: NFTContractControllerService,
+    private ipfsService: IPFSService,
 
   ) { }
 
   ngOnInit() {
-    let sid = setTimeout(() => {
+    this.clearSetFocusSid();
+    this.setFocusSid = setTimeout(() => {
       this.newPostIonTextarea.setFocus();
-      clearTimeout(sid);
-    }, 500);
+      this.clearSetFocusSid();
+    },500);
+
+  }
+
+  clearSetFocusSid() {
+    if(this.setFocusSid != null){
+      clearTimeout(this.setFocusSid);
+      this.setFocusSid = null;
+    }
   }
 
   async checkBoxClick(event) {
@@ -141,14 +153,20 @@ export class CreatenewpostPage implements OnInit {
       this.dataHelper.setCurrentChannel(currentChannel);
       this.storageService.set('feeds.currentChannel', JSON.stringify(currentChannel));
     }
-
-    this.channelIdV3 = currentChannel.channelId;
+    this.destDid = currentChannel.destDid;
+    this.channelId = currentChannel.channelId;
     this.channelName = currentChannel['displayName'] || currentChannel['name'] || '';
     this.subscribers = currentChannel['subscribers'] || '';
     let channelAvatarUri = currentChannel['avatar'] || '';
     if (channelAvatarUri != '') {
       let destDid: string = currentChannel.destDid;
       this.handleChannelAvatar(channelAvatarUri, destDid);
+    }
+
+    try {
+      this.getChannelPublicStatus(currentChannel.destDid, currentChannel.channelId);
+    } catch (error) {
+
     }
   }
 
@@ -218,7 +236,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   ionViewWillLeave() {
-
+    this.clearSetFocusSid();
     this.isLoading = false;
     this.hideSwitchFeed = false;
     this.imgUrl = '';
@@ -347,7 +365,7 @@ export class CreatenewpostPage implements OnInit {
 
   async sendPost() {
     const device = UtilService.getDeviceType(this.platform);
-    await this.hiveVaultController.publishPost(this.channelIdV3, this.newPost, [this.imgUrl], this.videoData, device, '')
+    await this.hiveVaultController.publishPost(this.channelId, this.newPost, [this.imgUrl], this.videoData, device, '')
   }
 
   addImg(type: number) {
@@ -769,4 +787,90 @@ export class CreatenewpostPage implements OnInit {
       localStorage.setItem(userDid + "isSyncToReddit", "true")
     }
   }
+
+  getChannelPublicStatus(destDid: string, channelId: string) {
+    this.channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
+    let key = destDid + '-' + channelId;
+    let channelPublicStatus = this.channelPublicStatusList[key] || '';
+    if (channelPublicStatus === '') {
+      this.getChannelInfo(channelId).then((channelInfo) => {
+        if (channelInfo != null) {
+          this.channelPublicStatusList[key] = "2";//已公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelNftCache(channelInfo, channelId);
+
+        } else {
+          this.channelPublicStatusList[key] = "1";//未公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelNftCache(null, channelId);
+        }
+      }).catch((err) => {
+
+      });
+
+    }
+  }
+
+  async addChannelNftCache(channelInfo: any, channelId: string) {
+    if (channelInfo === null) {
+      let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+      channelContractInfoList[channelId] = "unPublic";
+      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+      return;
+    }
+    let channelNft: FeedsData.ChannelContractInfo = {
+      description: '',
+      cname: '',
+      avatar: '',
+      receiptAddr: '',
+      tokenId: '',
+      tokenUri: '',
+      channelEntry: '',
+      ownerAddr: '',
+      signature: ''
+    };
+    channelNft.tokenId = channelInfo[0];
+    channelNft.tokenUri = channelInfo[1];
+    channelNft.channelEntry = channelInfo[2];
+    channelNft.receiptAddr = channelInfo[3];
+    channelNft.ownerAddr = channelInfo[4];
+    let uri = channelInfo[1].replace('feeds:json:', '');
+    let result: any = await this.ipfsService
+      .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+    channelNft.description = result.description;
+    channelNft.cname = result.data.cname;
+    channelNft.signature = result.data.signature;
+    let avatarUri = result.data.avatar.replace('feeds:image:', '');
+    let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl() + avatarUri);
+    let avatarBase64 = await UtilService.blobToDataURL(avatar);
+    let hash = SparkMD5.hash(avatarBase64);
+    channelNft.avatar = hash;
+    let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+    channelContractInfoList[channelId] = channelNft;
+    this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+    this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+  }
+
+  async getChannelInfo(channelId: string) {
+
+    try {
+      let tokenId: string = "0x" + channelId;
+      Logger.log(TAG, "tokenId:", tokenId);
+      tokenId = UtilService.hex2dec(tokenId);
+      Logger.log(TAG, "tokenIdHex2dec:", tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      Logger.log(TAG, "tokenInfo:", tokenInfo);
+      if (tokenInfo[0] != '0') {
+        return tokenInfo;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+
 }

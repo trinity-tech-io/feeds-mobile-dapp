@@ -9,9 +9,7 @@
           src={{channelAvatar}}
           [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
           *ngIf="channelAvatar != ''">
-          <!-- <div class="postTwitter" *ngIf="isPostTwitter">
-            <img src="./assets/images/postTwitter.svg">
-          </div> -->
+          <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId] != undefined && channelPublicStatusList[destDid+'-'+channelId]==='2'">
         </div>
       </ion-col>
       <ion-col size="9" class="middle-col" (click)="clickFeedAvatar()">
@@ -31,33 +29,22 @@
   </ion-textarea>
   </div>
   <ion-row class="twitter1">
-    <ion-col size="3.5" class="des ionColTopBottom">
-      <img  src="/assets/images/twitterInfo.svg" (click)="twitterInfo($event)" style="margin-right:5px;"/>
+    <ion-col size="2.5" class="des">
       <span>{{ 'CreatenewpostPage.twitterDes' | translate}}</span>
     </ion-col>
-    <ion-col size="2" class="twitterLogo ionColTopBottom" (click)="clickTwitter()">
+    <ion-col size="2" class="twitterLogo" (click)="clickTwitter()">
       <img src="assets/images/darkmode/connections/twitter.svg" *ngIf="isPostTwitter"/>
       <img src="/assets/images/gTwitter.svg" *ngIf="!isPostTwitter"/>
-      <!-- <span>{{ 'ConnectionsPage.twitter' | translate}}</span> -->
     </ion-col>
-    <ion-col size="2" class="redditLogo ionColTopBottom" (click)="clickReddit()">
+    <ion-col size="2" class="redditLogo" (click)="clickReddit()">
       <img src="assets/images/darkmode/connections/reddit.svg" *ngIf="isPostReddit"/>
       <img src="/assets/images/gReddit.svg" *ngIf="!isPostReddit"/>
-      <!-- <span>{{ 'ConnectionsPage.reddit' | translate}}</span> -->
     </ion-col>
-    <ion-col size="4.5" class="ionColTopBottom">
+    <ion-col size="2">
+      <img  src="/assets/images/twitterInfo.svg" (click)="twitterInfo($event)" style="margin-right:5px;"/>
+    </ion-col>
+    <ion-col size="3.5" class="ionColTopBottom">
       <p class="extraNumber" *ngIf="(isPostReddit || isPostTwitter) && extraNumber < 0">{{ extraNumber }}</p>
-    </ion-col>
-
-    <ion-col size="3.5" class="des ionColTopBottom">
-    </ion-col>
-    <ion-col size="2" class="twitterLogo ionColTopBottom" (click)="clickTwitter()">
-      <span>{{ 'ConnectionsPage.twitter' | translate}}</span>
-    </ion-col>
-    <ion-col size="2" class="redditLogo ionColTopBottom" (click)="clickReddit()">
-      <span>{{ 'ConnectionsPage.reddit' | translate}}</span>
-    </ion-col>
-    <ion-col size="4.5" class="ionColTopBottom">
     </ion-col>
   </ion-row>
   <!-- <div class="twitter">

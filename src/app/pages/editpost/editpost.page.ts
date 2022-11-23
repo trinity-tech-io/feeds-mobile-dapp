@@ -14,7 +14,9 @@ import _ from 'lodash';
 import { DataHelper } from 'src/app/services/DataHelper';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { UtilService } from 'src/app/services/utilService';
-
+import SparkMD5 from 'spark-md5';
+import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
+import { IPFSService } from 'src/app/services/ipfs.service';
 let TAG: string = 'Feeds-editpost';
 @Component({
   selector: 'app-editpost',
@@ -52,6 +54,8 @@ export class EditPostPage implements OnInit {
   private originPostData: FeedsData.PostV3 = null;
   private isUpdateTab: boolean = false;
   public clickButton: boolean = false;
+  public channelPublicStatusList: any = {};
+  private setFocusSid: any = null;
   constructor(
     private events: Events,
     private native: NativeService,
@@ -67,7 +71,9 @@ export class EditPostPage implements OnInit {
     private viewHelper: ViewHelper,
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
-    private platform: Platform
+    private platform: Platform,
+    private nftContractControllerService: NFTContractControllerService,
+    private ipfsService: IPFSService
   ) { }
 
   ngOnInit() {
@@ -77,10 +83,19 @@ export class EditPostPage implements OnInit {
       this.channelId = item['channelId'] || '';
       this.postId = item['postId'] || '';
     });
-    let sid = setTimeout(() => {
+    this.clearSetFocusSid();
+    this.setFocusSid = setTimeout(() => {
       this.newPostIonTextarea.setFocus();
-      clearTimeout(sid);
-    }, 300);
+      this.clearSetFocusSid();
+    },500);
+
+  }
+
+  clearSetFocusSid() {
+    if(this.setFocusSid != null){
+      clearTimeout(this.setFocusSid);
+      this.setFocusSid = null;
+    }
   }
 
   ionViewWillEnter() {
@@ -89,6 +104,7 @@ export class EditPostPage implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.clearSetFocusSid();
     this.imgUrl = '';
     this.clickButton = false;
     this.native.hideLoading();
@@ -231,6 +247,12 @@ export class EditPostPage implements OnInit {
 
     this.unEditContent = this.postData.content.content || '';
     this.editContent = this.postData.content.content || '';
+
+    try {
+      this.getChannelPublicStatus(this.destDid,this.channelId);
+    } catch (error) {
+
+    }
 
   }
 
@@ -396,6 +418,87 @@ export class EditPostPage implements OnInit {
 
   ionFocus() {
     this.isBorderGradient = true;
+  }
+
+  getChannelPublicStatus(destDid: string, channelId: string) {
+    this.channelPublicStatusList = this.dataHelper.getChannelPublicStatusList();
+    let key = destDid + '-' + channelId;
+    let channelPublicStatus = this.channelPublicStatusList[key] || '';
+    if (channelPublicStatus === '') {
+      this.getChannelInfo(channelId).then((channelInfo) => {
+        if (channelInfo != null) {
+          this.channelPublicStatusList[key] = "2";//已公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelNftCache(channelInfo, channelId);
+
+        } else {
+          this.channelPublicStatusList[key] = "1";//未公开
+          this.dataHelper.setChannelPublicStatusList(this.channelPublicStatusList);
+          //add channel contract cache
+          this.addChannelNftCache(null, channelId);
+        }
+      }).catch((err) => {
+
+      });
+
+    }
+  }
+
+  async addChannelNftCache(channelInfo: any, channelId: string) {
+    if (channelInfo === null) {
+      let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+      channelContractInfoList[channelId] = "unPublic";
+      this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+      this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+      return;
+    }
+    let channelNft: FeedsData.ChannelContractInfo = {
+      description: '',
+      cname: '',
+      avatar: '',
+      receiptAddr: '',
+      tokenId: '',
+      tokenUri: '',
+      channelEntry: '',
+      ownerAddr: '',
+      signature: ''
+    };
+    channelNft.tokenId = channelInfo[0];
+    channelNft.tokenUri = channelInfo[1];
+    channelNft.channelEntry = channelInfo[2];
+    channelNft.receiptAddr = channelInfo[3];
+    channelNft.ownerAddr = channelInfo[4];
+    let uri = channelInfo[1].replace('feeds:json:', '');
+    let result: any = await this.ipfsService
+      .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+    channelNft.description = result.description;
+    channelNft.cname = result.data.cname;
+    channelNft.signature = result.data.signature;
+    let avatarUri = result.data.avatar.replace('feeds:image:', '');
+    let avatar = await UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl() + avatarUri);
+    let avatarBase64 = await UtilService.blobToDataURL(avatar);
+    let hash = SparkMD5.hash(avatarBase64);
+    channelNft.avatar = hash;
+    let channelContractInfoList = this.dataHelper.getChannelContractInfoList() || {};
+    channelContractInfoList[channelId] = channelNft;
+    this.dataHelper.setChannelContractInfoList(channelContractInfoList);
+    this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+  }
+
+  async getChannelInfo(channelId: string) {
+
+    try {
+      let tokenId: string = "0x" + channelId;
+      tokenId = UtilService.hex2dec(tokenId);
+      let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
+      if (tokenInfo[0] != '0') {
+        return tokenInfo;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
   }
 }
 

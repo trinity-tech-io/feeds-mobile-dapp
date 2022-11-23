@@ -754,6 +754,7 @@ export class ProfilePage implements OnInit {
           this.likeList = [];
           this.handleDisplayNameMap = {};
           this.postImgMap = {};
+          this.dataHelper.setChannelPublicStatusList({});
           this.initLike();
           event.target.complete();
         } catch (error) {
@@ -2318,7 +2319,11 @@ export class ProfilePage implements OnInit {
         let channelId: string = arr[1];
         this.handleMyFeedsAvatarV2(destDid, channelId);
         this.getChannelFollower(destDid, channelId);
-        this.getChannelPublicStatus(destDid, channelId);
+        try {
+          this.getChannelPublicStatus(destDid, channelId);
+        } catch (error) {
+
+        }
         //console.log("======intersectionRatio1========",typeof(changes[0]));
         //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
       });
@@ -2430,8 +2435,11 @@ export class ProfilePage implements OnInit {
         CommonPageService.handlePostCommentData(
           destDid, channelId, postId, this.hiveVaultController,
           this.isInitComment, this.commentNumMap);
-        //console.log("======intersectionRatio1========",typeof(changes[0]));
-        //console.log("======intersectionRatio2========",Object.getOwnPropertyNames(changes[0]));
+        try {
+          this.getChannelPublicStatus(destDid, channelId);
+        } catch (error) {
+
+        }
       });
 
       this.myLikeObserver[postGridId].observe(item);

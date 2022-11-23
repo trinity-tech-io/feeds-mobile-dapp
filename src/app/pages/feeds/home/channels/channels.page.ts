@@ -532,9 +532,9 @@ export class ChannelsPage implements OnInit {
       this.initRefresh();
     })
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
-    if (this.destDid === ownerDid) {
+    //if (this.destDid === ownerDid) {
       this.getChannelPublicStatus(this.destDid, this.channelId);
-    }
+    //}
   }
 
   ionViewWillLeave() {
@@ -776,6 +776,7 @@ export class ChannelsPage implements OnInit {
       this.isRefresh = true;
       event.target.disabled = false;
       this.removeObserveList();
+      this.dataHelper.setChannelPublicStatusList({});
       this.init();
       event.target.complete();
     } catch (error) {

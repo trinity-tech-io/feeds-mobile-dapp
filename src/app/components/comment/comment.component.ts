@@ -66,7 +66,7 @@ export class CommentComponent implements OnInit {
     this.clearSetFocusSid();
     this.setFocusSid = setTimeout(() => {
       this.comment.setFocus();
-      this.clearSetFocusSid()
+      this.clearSetFocusSid();
     },500);
   }
 
@@ -167,6 +167,7 @@ export class CommentComponent implements OnInit {
   }
 
   hideComponent() {
+    this.clearSetFocusSid();
     this.hideComment.emit(true);
   }
 
