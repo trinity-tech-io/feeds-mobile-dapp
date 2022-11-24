@@ -64,6 +64,7 @@ export class FeedinfoPage implements OnInit {
   public clickButton: boolean = false;
   private infoPopover: any = null;
   public channelPublicStatusList: any = {};
+  private userDidList: string[] = []; //userdid list
   constructor(
     private popoverController: PopoverController,
     private feedService: FeedService,
@@ -142,6 +143,17 @@ export class FeedinfoPage implements OnInit {
     this.channelAvatar = this.feedService.parseChannelAvatar(avatar);
     this.addEvents();
     this.getChannelPublicStatus(this.destDid, this.channelId);
+    this.initUserList();
+  }
+
+  initUserList() {
+    this.dataHelper.getDistinctSubscriptionV3UserListByChannelId(this.channelId).then((userList: string[]) => {
+      this.userDidList = [];
+      userList.forEach((userdid: string) => {
+        if (userdid)
+          this.userDidList.push(userdid);
+      });
+    });
   }
 
   addEvents() {
@@ -425,6 +437,11 @@ export class FeedinfoPage implements OnInit {
     channelContractInfoList[channelId] = channelNft;
     this.dataHelper.setChannelContractInfoList(channelContractInfoList);
     this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+  }
+
+  navUserList() {
+    this.dataHelper.setUserDidList(this.userDidList);
+    this.native.navigateForward(['/userlist'], { queryParams: { "channelId": this.channelId } });
   }
 
 }
