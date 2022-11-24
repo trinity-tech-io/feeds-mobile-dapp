@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AlertController } from '@ionic/angular';
 import { ConfirmdialogComponent } from '../components/confirmdialog/confirmdialog.component';
+import { DeleteaccountdialogComponent } from '../components/deleteaccountdialog/deleteaccountdialog.component';
 import { AlertdialogComponent } from '../components/alertdialog/alertdialog.component';
 import { PopoverController, ModalController } from '@ionic/angular';
 import { ScanPage } from '../pages/scan/scan.page';
@@ -137,6 +138,45 @@ export class PopupProvider {
 
     return this.popover;
   }
+
+  public async showDeleteAccountDialog(
+    that: any,
+    title: string,
+    message: string,
+    cancelFunction: any,
+    okFunction: any,
+    imgageName: string,
+    okText?: string,
+    cancelText?: string,
+  ): Promise<HTMLIonPopoverElement> {
+     okText = okText || 'common.confirm';
+     cancelText = cancelText || 'common.cancel';
+    this.popover = await this.popoverController.create({
+      mode: 'ios',
+      cssClass: 'ConfirmdialogComponent',
+      component: DeleteaccountdialogComponent,
+      componentProps: {
+        that: that,
+        title: title,
+        message: message,
+        okText: okText,
+        cancelText: cancelText,
+        okFunction: okFunction,
+        cancelFunction: cancelFunction,
+        imgageName: imgageName,
+      },
+    });
+
+    this.popover.onWillDismiss().then(() => {
+      if (this.popover != null) {
+        this.popover = null;
+      }
+    });
+    await this.popover.present();
+
+    return this.popover;
+  }
+
 
 
   showSelfCheckDialog(desc: string) {

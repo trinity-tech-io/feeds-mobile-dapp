@@ -1,0 +1,133 @@
+.container {
+
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 0;
+
+    .kuangImg {
+        display: flex;
+        justify-content: center;
+    }
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+
+        h1 {
+            margin: 5px 0 0;
+            font-size: 25px;
+            font-weight: 700;
+            font-style: normal;
+            text-align: center;
+            color:#7624fe;
+            margin-bottom: 10px;
+        }
+    }
+
+    .message {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        padding: 5px 15px;
+
+        p {
+            margin: 0px;
+            font-size: 15px;
+            font-weight: 400;
+            font-style: normal;
+            text-align: left;
+            color: #000000;
+            word-wrap: break-word;
+            width: 100%;
+        }
+    }
+
+    .message1 {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        padding: 5px 15px;
+        .userName{
+            width: 100%;
+            margin: 0px;
+            font-size: 16px;
+            font-weight: 400;
+            font-style: normal;
+            text-align: left;
+            color: #000000;
+            word-wrap: break-word;
+
+            span{
+                margin: 0px;
+                font-size: 15px;
+                font-weight: 400;
+                font-style: normal;
+                text-align: center;
+                color: #000000;
+                word-wrap: break-word;
+            }
+        }
+        .userNameInput{
+            --placeholder-color:#9ca0a4;
+            font-size: 14px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            color: #9ca0a4;
+            margin: 0;
+            --padding-start:20px;
+            border: 1px #9ca0a4 solid;
+        }
+    }
+
+    .btns-row {
+        margin: 0;
+        padding: 15px;
+    }
+}
+
+
+.darkContainer {
+    background: #161C24;
+    border: 2px solid transparent;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+    border-radius: 20px;
+    .header{
+        h1 {
+            color: #FFFFFF;
+        }
+    }
+    .message {
+        p {
+           color: #C4C4C4;
+        }
+    }
+
+    .message1 {
+        .userName {
+           color: #ffffff;
+           span{
+            color: #C4C4C4;
+           }
+        }
+    }
+
+    .btns-row {
+        .confirm {
+            box-shadow: none;
+        }
+    }
+
+    .btns-row .btn ion-label {
+        font-size: 15px;
+        font-weight: 700;
+        font-style: normal;
+        text-align: center;
+        color: #FFFFFF;
+    }
+}

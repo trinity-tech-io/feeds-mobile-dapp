@@ -329,7 +329,9 @@ export const zh = {
     signoutTitle: '登出',
     signoutMessage: '确认要登出吗？',
     deleteAccountTitle: '删除账户',
-    deleteAccountMessage: '确认要删除账户并清空全部微说么？'
+    deleteAccountMessage: '确认要删除账户并清空全部微说么？',
+    des: '请输入',
+    des1: '进行确认'
   },
   SearchPage: {
     title: '频道',

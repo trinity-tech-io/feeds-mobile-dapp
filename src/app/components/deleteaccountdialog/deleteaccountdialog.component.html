@@ -1,0 +1,37 @@
+<div class="container" [class.darkContainer]="theme.darkMode">
+  <ion-row class="header">
+    <h1>{{ title | translate }}</h1>
+    <ion-col size="12" class="kuangImg">
+        <img [src]="imgPath"/>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col class="message">
+      <p>{{ message | translate }}</p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col class="message1">
+      <div class="userName">
+        <span>{{'ConfirmdialogComponent.des' | translate}}</span> {{originUserName}} <span>{{'ConfirmdialogComponent.des1' | translate}}</span>
+      </div>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+  <ion-col class="message1">
+       <ion-input class="userNameInput" [(ngModel)] = "userName"></ion-input>
+  </ion-col>
+  </ion-row>
+
+  <ion-row class="btns-row" [class.dark-btns-row]="theme.darkMode">
+    <ion-col class="btn cancel ion-activatable ripple" size="5.5" (click)="cancel(that)">
+        <ion-label>{{ cancelText | translate }}</ion-label>
+        <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+    <ion-col class="btn confirm ion-activatable ripple" size="5.5" (click)="confirm(that, userName)">
+        <ion-label>{{ okText | translate }}</ion-label>
+        <ion-ripple-effect></ion-ripple-effect>
+    </ion-col>
+  </ion-row>
+</div>

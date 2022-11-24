@@ -14,6 +14,7 @@ import { AlertdialogComponent } from './alertdialog/alertdialog.component';
 import {  NftloadingComponent } from './nftloading/nftloading.component';
 import { NfttransferdialogComponent } from './nfttransferdialog/nfttransferdialog.component';
 import { NftdisclaimerComponent } from './nftdisclaimer/nftdisclaimer.component';
+import { DeleteaccountdialogComponent } from './deleteaccountdialog/deleteaccountdialog.component'
 
 import { MyfeedsComponent } from './myfeeds/myfeeds.component';
 import { FollowingComponent } from './following/following.component';
@@ -62,6 +63,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
   declarations: [
     AlertdialogComponent,
     ConfirmdialogComponent,
+    DeleteaccountdialogComponent,
     MorenameComponent,
     TipdialogComponent,
     PaypromptComponent,
@@ -93,6 +95,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
   exports: [
     AlertdialogComponent,
     ConfirmdialogComponent,
+    DeleteaccountdialogComponent,
     MorenameComponent,
     TipdialogComponent,
     PaypromptComponent,

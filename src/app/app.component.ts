@@ -25,9 +25,8 @@ import { IPFSService } from 'src/app/services/ipfs.service';
 import { ViewHelper } from './services/viewhelper.service';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
-// import { FeedsSqliteHelper } from 'src/app/services/sqlite_helper.service';
-import { TwitterService } from 'src/app/services/TwitterService';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
+import { TranslateService } from '@ngx-translate/core';
 
 let TAG: string = 'app-component';
 @Component({
@@ -57,6 +56,7 @@ export class MyApp {
   private isReady: boolean = false;
   private receivedIntentList: IntentPlugin.ReceivedIntent[] = [];
   constructor(
+    private translate: TranslateService,
     private actionSheetController: ActionSheetController,
     private modalController: ModalController,
     private events: Events,
@@ -80,7 +80,6 @@ export class MyApp {
     private viewHelper: ViewHelper,
     private keyboard: Keyboard,
     private hiveVaultController: HiveVaultController,
-    private twitterService: TwitterService,
     private didHelperService: DIDHelperService
   ) {
     this.initializeApp();
@@ -502,7 +501,22 @@ export class MyApp {
     this.dataHelper.removeRedditToken(userDid);
   }
 
-  async confirmDeleteAccount(that: any) {
+  async confirmDeleteAccount(that: any, userName: string) {
+
+    userName = userName || '';
+    let originUserName = (await this.dataHelper.getSigninData()).name || '';
+    if(userName === ''){
+      let des = that.translate.instant('ConfirmdialogComponent.des') + originUserName + that.translate.instant('ConfirmdialogComponent.des1');
+      that.native.toastWarn(des);
+      return false;
+    }
+
+    if(originUserName != userName){
+      let des = that.translate.instant('ConfirmdialogComponent.des') + originUserName + that.translate.instant('ConfirmdialogComponent.des1');
+      that.native.toastWarn(des);
+      return false;
+    }
+
     if (this.popover != null) {
       this.popover.dismiss();
     }
@@ -791,7 +805,7 @@ export class MyApp {
   }
 
   async deleteAccount() {
-    this.popover = await this.popupProvider.ionicConfirm(
+    this.popover = await this.popupProvider.showDeleteAccountDialog(
       this,
       'ConfirmdialogComponent.deleteAccountTitle',
       'ConfirmdialogComponent.deleteAccountMessage',
