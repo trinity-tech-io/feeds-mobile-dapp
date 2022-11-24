@@ -329,12 +329,6 @@ export class EidtchannelPage implements OnInit {
       return false;
     }
 
-    let checkRes = this.feedService.checkValueValid(this.displayName);
-    if (checkRes) {
-      this.native.toastWarn('CreatenewfeedPage.displaynameContainInvalidChars');
-      return false;
-    }
-
     let descValue = this.channelDes || '';
     descValue = this.native.iGetInnerText(descValue);
 

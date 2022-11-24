@@ -387,8 +387,6 @@ export const en = {
     createfeedsuccess: 'Channel created successfully!',
     tipMsgLength1: 'Maximum name length is 32 characters',
     alreadyExist: 'Channel already exists. Please change name and try again',
-    nameContainInvalidChars:
-      'Channel name must start with an English letter and may only contain English letters and numbers',
     feedMaxNumber: '5 channels may be created at maximum',
     des1: 'Show channel in the Explore Feeds for users to discover.',
     tippingAddress: 'Tipping Address',
@@ -396,8 +394,6 @@ export const en = {
     inputDisplayName: 'Add channel DisplayName',
     channelnamedes: 'Users may not make modifications after creation',
     displaynamedes: 'Users may make modifications after creation',
-    displaynameContainInvalidChars:
-      'Channel DisplayName cannot include characters except alphabet letters A-Z, a-z, digits 0-9, hyphen “-”, and underscore “_”.',
     tipMsgLength2: 'Maximum DisplayName length is 32 characters',
 
   },

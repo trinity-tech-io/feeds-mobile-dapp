@@ -109,34 +109,11 @@ export class CreatenewfeedPage implements OnInit {
       this.native.toastWarn('CreatenewfeedPage.tipMsg1');
       return;
     }
-    if(!UtilService.checkChannelName(nameValue)){
-      this.native.toastWarn('CreatenewfeedPage.nameContainInvalidChars');
-      return;
-    }
 
     if (nameValue.length > 32) {
       this.native.toastWarn('CreatenewfeedPage.tipMsgLength1');
       return;
     }
-
-    // let dispalyNameValue = this.displayName || '';
-    // dispalyNameValue = this.native.iGetInnerText(dispalyNameValue);
-
-    // if (dispalyNameValue == '') {
-    //   this.native.toastWarn('CreatenewfeedPage.inputDisplayName');
-    //   return;
-    // }
-
-    // if (dispalyNameValue.length > 32) {
-    //   this.native.toastWarn('CreatenewfeedPage.tipMsgLength2');
-    //   return;
-    // }
-
-    // let checkDisplayNameRes = this.feedService.checkValueValid(dispalyNameValue);
-    // if (checkDisplayNameRes) {
-    //   this.native.toastWarn('CreatenewfeedPage.displaynameContainInvalidChars');
-    //   return;
-    // }
 
     let descValue = this.channelDes || '';
     descValue = this.native.iGetInnerText(descValue);

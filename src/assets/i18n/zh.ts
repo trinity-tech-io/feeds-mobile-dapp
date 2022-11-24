@@ -385,20 +385,14 @@ export const zh = {
     createfeedsuccess: '创建频道成功!',
     tipMsgLength1: '名称长度最大为32个字符',
     alreadyExist: '频道已存在，请更改名称后重试',
-    nameContainInvalidChars:
-      '频道名称必须以英文字母开头，并且只能包含英文字母和数字',
     feedMaxNumber: '最多可创建5个频道',
-    //feedNum: '您最多可以创建5个频道',
     des1: '在探索 Feeds 中显示频道，以供用户发现和订阅。',
     tippingAddress: '打赏地址',
     tippingAddressDes: '输入打赏地址',
     inputDisplayName: '请输入频道显示名称',
     channelnamedes: '创建后不允许修改',
     displaynamedes: '创建后允许修改',
-    displaynameContainInvalidChars:
-      '频道显示名称不能包含除字母A-Z、a-z、数字0-9、连字符“-”和下划线“_”以外的字符。',
     tipMsgLength2: '显示名称长度最大为32个字符'
-
   },
   ProfileimagePage: {
     title: '选择头像',
