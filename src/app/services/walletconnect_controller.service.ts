@@ -73,6 +73,10 @@ export class WalletConnectControllerService {
 
     this.walletConnectProvider.on('error', (errors) => {
       Logger.error(TAG, "wallet connect error", errors);
+      let walletconnect = window.localStorage.getItem('walletconnect') || '';
+      if(walletconnect != ''){
+        window.localStorage.removeItem('walletconnect');
+      }
     });
 
     // Subscribe to session disconnection
@@ -153,12 +157,17 @@ export class WalletConnectControllerService {
           })
         } catch (error) {
           Logger.log(TAG, 'Disconnect wallet error', error);
-          window.localStorage.removeItem('walletconnect');
+          let walletconnect = window.localStorage.getItem('walletconnect') || '';
+          if(walletconnect != ''){
+            window.localStorage.removeItem('walletconnect');
+          }
           reject(error);
         }
       } else {
         const error: string = 'Not connected to wallet connect';
-        this.walletConnectProvider.connector.session.handshakeTopic = ''
+        if(this.walletConnectProvider){
+          this.walletConnectProvider.connector.session.handshakeTopic = '';
+        }
         reject(error);
         Logger.log(TAG, error);
       }

@@ -472,8 +472,24 @@ export class MyApp {
     } catch (error) {
 
     }
+    try {
+      that.disconnectWallet();
+    } catch (error) {
+
+    }
+
+    try {
+      const activeConnector = connectivity.getActiveConnector();
+      if (activeConnector.name == 'local-identity') {
+        connectivity.unregisterConnector('local-identity');
+        persistenceService.reset();
+      } else {
+        connectivity.unregisterConnector('essentials');
+      }
+    } catch (error) {
+
+    }
     that.clearData();
-    that.disconnectWallet();
   }
 
   async removeTwitterToken() {
@@ -534,24 +550,47 @@ export class MyApp {
       } else {
         connectivity.unregisterConnector('essentials');
       }
-      await that.dataHelper.removeData("feeds.initHive");
+      try {
+        await that.dataHelper.removeData("feeds.initHive");
+      } catch (error) {
 
+      }
       that.native.hideLoading();
-      that.removeTwitterToken();
-      that.removeRedditToken();
+      try {
+        that.removeTwitterToken();
+      } catch (error) {
+
+      }
+      try {
+        that.removeRedditToken();
+      } catch (error) {
+
+      }
+      try {
+        that.disconnectWallet();
+      } catch (error) {
+
+      }
       that.clearData();
-      that.disconnectWallet();
     }
   }
 
   async disconnectWallet() {
-    try {
-      await this.walletConnectControllerService.disconnect();
-    } catch (error) {
+  let accountAddress = this.nftContractControllerService.getAccountAddress() || '';
+    if(accountAddress != ''){
+      try {
+        await this.walletConnectControllerService.disconnect();
+      } catch (error) {
 
+      }
+      try {
+        await this.walletConnectControllerService.destroyWalletConnect();
+      } catch (error) {
+
+      }
+      this.nftContractControllerService.init();
     }
-    await this.walletConnectControllerService.destroyWalletConnect();
-    this.nftContractControllerService.init();
+
   }
 
   clearData() {
