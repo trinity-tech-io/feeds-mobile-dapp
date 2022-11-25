@@ -29,36 +29,55 @@ const TAG: string = 'SubscriptionsPage';
 export class SubscriptionsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonRefresher, { static: true }) ionRefresher: IonRefresher;
-  public followingList: any = [];
-  public isShowUnfollow: boolean = false;
+  private isLoadSubscriptionV3Num: any = {};
+  public isBorderGradient: boolean = false;
+
+  //For inner logic
+  private currentPageIndex: number = 1;
+  private pageStep: number = 10;
+  private itemObserver: { [key: string]: IntersectionObserver } = {};//key =>  targetDid + "-" + channelId + '-' + pageType;
+  private totalChannelList: FeedsData.ChannelV3[] = [];
+  private searchedChannelList: FeedsData.ChannelV3[] = [];
+  public loadedChannelList: FeedsData.ChannelV3[] = [];
+
+  private followingIsLoadimage: any = {};
+  private refreshFollowingImageSid: any = null;
+
+  //For UI - list item
+  public channelAvatarMap: { [key: string]: string } = {};//key => targetDid + "-" + channelId;
+  public subscriberNumberMap: { [channelId: string]: number } = {};
+  public pageType: string = '';
+  public userDid: string = '';
+  public isLoading: boolean = true;
+
+  //For UI - menu
+  public channelName: string = null;
+  public isSubscribed: boolean = false;
   public isShowQrcode: boolean = false;
   public isShowTitle: boolean = false;
   public isShowInfo: boolean = false;
   public isPreferences: boolean = false;
-  public shareDestDid: string = '';
-  public shareChannelId: string = '';
   public curItem: any = {};
   public qrCodeString: string = null;
-  public channelName: string = null;
-  public hideSharMenuComponent: boolean = false;
-  private followingIsLoadimage: any = {};
-  public isSearch: string = '';
+  public isHideShareMenuComponent: boolean = false;
+
+  //For UI - other setting
   public scanServiceStyle = { right: '' };
   public subscriptionV3NumMap: any = {};
-  private isLoadSubscriptionV3Num: any = {};
   public followAvatarMap: any = {};
-  public isBorderGradient: boolean = false;
   private searchFollowingList: any = [];
-  private refreshFollowingImageSid: any = null;
   private follingObserver: any = {};
-  public userDid: string = "";
-  public isLoading: boolean = true;
   public pageSize = 1;
   public pageNumber = 10;
   public totalSubscribedChannelList: any = [];
   public totalNum: number = 0;
   public channelPublicStatusList: any = {};
-  public pageType: string = '';
+  public shareDestDid: string = '';
+  public shareChannelId: string = '';
+
+  //For UI - search ?
+  public isSearch: string = '';
+
   constructor(
     private titleBarService: TitleBarService,
     private translate: TranslateService,
@@ -83,7 +102,6 @@ export class SubscriptionsPage implements OnInit {
     this.activatedRoute.queryParams.subscribe((params: any) => {
       this.userDid = params.userDid;
       this.pageType = params.pageType;
-
     });
   }
 
@@ -92,28 +110,28 @@ export class SubscriptionsPage implements OnInit {
     this.addEvents();
     let url: string = this.router.url;
     this.pageType = url.replace("/", '');
-    this.initFollowing();
+    this.initData().then((data) => {
+    }).catch((error) => {
+    }).finally(() => {
+      this.isLoading = false;
+    });
   }
 
   addEvents() {
-
   }
 
   removeEvents() {
   }
 
   initTitle() {
-    this.titleBarService.setTitle(
-      this.titleBar,
-      this.translate.instant('ProfilePage.following'),
-    );
+    this.titleBarService.setTitle(this.titleBar, this.translate.instant('ProfilePage.following'));
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
 
   ionViewWillLeave() {
     this.clearRefreshFollowingImageSid();
     this.followingIsLoadimage = {};
-    this.hideSharMenuComponent = false;
+    this.isHideShareMenuComponent = false;
     this.removeEvents();
     this.removeObserveList();
     this.native.handleTabsEvents();
@@ -129,10 +147,10 @@ export class SubscriptionsPage implements OnInit {
     }
     this.isShowQrcode = true;
     this.isPreferences = false;
-    this.isShowUnfollow = true;
+    this.isSubscribed = true;
     this.channelName = item.channelName;
     this.qrCodeString = await this.getQrCodeString(item);
-    this.hideSharMenuComponent = true;
+    this.isHideShareMenuComponent = true;
   }
 
   async toPage(eventParm: any) {
@@ -149,86 +167,46 @@ export class SubscriptionsPage implements OnInit {
     }
   }
 
+  async initChannelListUI(channelList: FeedsData.ChannelV3[]) {
+    this.currentPageIndex = 1;
+    this.totalChannelList = channelList;
+    const pageData = this.pagingData();
+    this.loadedChannelList = pageData;
 
-  async initFollowing() {
-    this.hiveVaultController.querySubscribedChannelsByOwner(this.userDid, FeedsData.SubscribedChannelType.OTHER_CHANNEL,
-      (localCachedSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
-        if (!localCachedSubscribedChannelList) {
-          this.refreshSubscribedChannelList(localCachedSubscribedChannelList);
-        }
-      }).then((remoteSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
-        this.refreshSubscribedChannelList(remoteSubscribedChannelList);
-      }).catch((error) => {
-        this.isLoading = false;
-      });
+    this.refreshFollowingVisibleareaImageV2(pageData);
   }
 
-  private async refreshSubscribedChannelList(totalList: FeedsData.SubscribedChannelV3[]) {
-    this.pageSize = 1;
-    this.totalSubscribedChannelList = totalList;
-    let pageData = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalSubscribedChannelList);//TOBE CHECK
-    let subscribedChannel = pageData.items;
-    this.totalNum = subscribedChannel.length;
-    this.followingList = await this.getFollowedChannelList(subscribedChannel);
-    this.searchFollowingList = _.cloneDeep(this.followingList);
-    this.isLoading = false;
-    this.refreshFollowingVisibleareaImageV2(this.followingList);
-  }
-
-  async getFollowedChannelList(subscribedChannel: FeedsData.SubscribedChannelV3[]) {
-    let list = [];
-    for (let item of subscribedChannel) {
-      let destDid = item.targetDid;
-      let channelId = item.channelId;
-
-      let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-      if (!channel) {
-        try {
-          const remoteChannel = await this.hiveVaultController.getChannelV3ByIdFromRemote(destDid, channelId);
-          if (!remoteChannel) continue;
-          list.push(remoteChannel);
-        } catch (error) {
-          continue;
-        }
-      } else {
-        list.push(channel);
-      }
-    }
-
-    list = _.sortBy(list, (item: any) => {
-      return -item.createdAt;
-    });
-
-    return list;
+  pagingData(): FeedsData.ChannelV3[] {
+    const pageData = UtilService.getPageData(this.currentPageIndex, this.pageStep, this.totalChannelList);//TOBE CHECK
+    return pageData.items;
   }
 
   async doRefresh(event: any) {
     try {
-      let subscribedChannels = await this.dataHelper.getSelfSubscribedChannelV3List();
-      let promiseList: Promise<any>[] = [];
-      for (let index = 0; index < subscribedChannels.length; index++) {
-        const subscribedChannel = subscribedChannels[index];
-        const querySubscriptionPromise = this.hiveVaultController.querySubscriptionChannelById(subscribedChannel.targetDid, subscribedChannel.channelId).then(() => { }).catch(() => { });
-        promiseList.push(querySubscriptionPromise);
-      }
-
-      const syncSCPromise = this.hiveVaultController.syncSubscribedChannelFromRemote().then(() => { }).catch(() => { });
-      promiseList.push(syncSCPromise);
-
-      const syncChannelInfoPromise = this.hiveVaultController.syncAllChannelInfo().then(() => { }).catch(() => { });
-      promiseList.push(syncChannelInfoPromise);
-
-      await Promise.allSettled(promiseList)
-
-      this.removeObserveList();
-      this.isLoadSubscriptionV3Num = {};
       this.dataHelper.setChannelPublicStatusList({});
-      this.totalNum = 0;
-      this.initFollowing();
+      this.initData();
       event.target.complete();
     } catch (err) {
       event.target.complete();
     }
+  }
+
+  initData(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      this.hiveVaultController.getChannelListFromOwner(this.userDid, FeedsData.SubscribedChannelType.OTHER_CHANNEL, (localChannelList: FeedsData.ChannelV3[]) => {
+      }).then((channelList: FeedsData.ChannelV3[]) => {
+        this.initUIData(channelList);
+        resolve();
+      }).catch((error) => {
+        reject(error);
+      });
+    })
+  }
+
+  initUIData(channelList: FeedsData.ChannelV3[]) {
+    this.removeObserveList();
+    this.isLoadSubscriptionV3Num = {};
+    this.initChannelListUI(channelList);
   }
 
   async getQrCodeString(channel: any) {
@@ -257,11 +235,11 @@ export class SubscriptionsPage implements OnInit {
             destDid, channelId
           ).then(async (result) => {
 
-            let newfollowingList = _.filter(this.followingList, (item) => {
+            let newfollowingList = _.filter(this.loadedChannelList, (item) => {
               return item.channelId != channelId;
             });
-            this.followingList = _.cloneDeep(newfollowingList);
-            this.searchFollowingList = _.cloneDeep(newfollowingList);
+            this.loadedChannelList = _.cloneDeep(newfollowingList);
+            this.searchedChannelList = _.cloneDeep(newfollowingList);
             this.native.hideLoading();
           }).catch(() => {
             this.native.hideLoading();
@@ -271,11 +249,11 @@ export class SubscriptionsPage implements OnInit {
         }
 
         this.qrCodeString = null;
-        this.hideSharMenuComponent = false;
+        this.isHideShareMenuComponent = false;
         break;
       case 'share':
         let content = this.getQrCodeString(this.curItem);
-        this.hideSharMenuComponent = false;
+        this.isHideShareMenuComponent = false;
         //share channel
         await this.native.showLoading("common.generateSharingLink");
         try {
@@ -302,11 +280,11 @@ export class SubscriptionsPage implements OnInit {
             feedId: this.shareChannelId,
           },
         });
-        this.hideSharMenuComponent = false;
+        this.isHideShareMenuComponent = false;
         break;
       case 'cancel':
         this.qrCodeString = null;
-        this.hideSharMenuComponent = false;
+        this.isHideShareMenuComponent = false;
         break;
     }
     let sharemenu: HTMLElement = document.querySelector("app-sharemenu") || null;
@@ -356,10 +334,9 @@ export class SubscriptionsPage implements OnInit {
   }
 
   ionScroll() {
-    //this.setFollowingVisibleareaImageV2();
   }
 
-  async handleFollingAvatarV2(destDid: string, channelId: string) {
+  async handleChannelAvatar(destDid: string, channelId: string) {
     let id = destDid + "-" + channelId;
     let isload = this.followingIsLoadimage[id] || '';
     if (isload === "") {
@@ -382,7 +359,7 @@ export class SubscriptionsPage implements OnInit {
           let srcData = data || "";
           if (srcData != "") {
             this.followingIsLoadimage[id] = '13';
-            this.followAvatarMap[id] = srcData;
+            this.channelAvatarMap[id] = srcData;
           } else {
             if (this.followAvatarMap[id] === './assets/images/loading.svg') {
               this.followAvatarMap[id] = './assets/images/profile-0.svg';
@@ -404,7 +381,7 @@ export class SubscriptionsPage implements OnInit {
     }
     this.refreshFollowingImageSid = requestAnimationFrame(() => {
       this.followingIsLoadimage = {};
-      this.getFollingObserverList(list);
+      this.getItemObserverList(list);
       this.clearRefreshFollowingImageSid();
     });
   }
@@ -452,7 +429,7 @@ export class SubscriptionsPage implements OnInit {
     this.isSearch = '';
     if (this.isSearch == '') {
       this.ionRefresher.disabled = false;
-      this.followingList = _.cloneDeep(this.searchFollowingList);
+      this.loadedChannelList = _.cloneDeep(this.searchedChannelList);
       return;
     }
     this.ionRefresher.disabled = true;
@@ -468,7 +445,7 @@ export class SubscriptionsPage implements OnInit {
       this.keyboard.hide();
       if (this.isSearch == '') {
         this.ionRefresher.disabled = false;
-        this.followingList = _.cloneDeep(this.searchFollowingList);
+        this.loadedChannelList = _.cloneDeep(this.searchedChannelList);
         return;
       }
       this.ionRefresher.disabled = true;
@@ -486,7 +463,7 @@ export class SubscriptionsPage implements OnInit {
       return;
     }
 
-    this.followingList = _.filter(this.searchFollowingList, (item) => {
+    this.loadedChannelList = _.filter(this.searchedChannelList, (item) => {
       return item.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
     });
   }
@@ -499,41 +476,40 @@ export class SubscriptionsPage implements OnInit {
     this.isBorderGradient = true;
   }
 
-  removeFollingObserver(postGridId: string, observer: any) {
+  removeItemObserver(postGridId: string, observer: any) {
     let item = document.getElementById(postGridId) || null;
     if (item != null) {
       if (observer != null) {
         observer.unobserve(item);//解除观察器
         observer.disconnect();  // 关闭观察器
-        this.follingObserver[postGridId] = null;
+        this.itemObserver[postGridId] = null;
       }
     }
   }
 
-  getFollingObserverList(follingList = []) {
-
-    for (let index = 0; index < follingList.length; index++) {
-      let postItem = follingList[index] || null;
+  getItemObserverList(channelList: FeedsData.ChannelV3[] = []) {
+    for (let index = 0; index < channelList.length; index++) {
+      let postItem = channelList[index] || null;
       if (postItem === null) {
         return;
       }
       let postGridId = postItem.destDid + "-" + postItem.channelId + '-' + this.pageType;
-      let exit = this.follingObserver[postGridId] || null;
+      let exit = this.itemObserver[postGridId] || null;
       if (exit != null) {
         continue;
       }
-      this.newFollingObserver(postGridId);
+      this.initItemObserver(postGridId);
     }
   }
 
-  newFollingObserver(postGridId: string) {
-    let observer = this.follingObserver[postGridId] || null;
+  initItemObserver(postGridId: string) {
+    let observer = this.itemObserver[postGridId] || null;
     if (observer != null) {
       return;
     }
     let item = document.getElementById(postGridId) || null;
-    if (item != null) {
-      this.follingObserver[postGridId] = new IntersectionObserver(async (changes: any) => {
+    if (item != null && !this.itemObserver[postGridId]) {
+      this.itemObserver[postGridId] = new IntersectionObserver(async (changes: any) => {
         let container = changes[0].target;
         let newId = container.getAttribute("id");
 
@@ -546,8 +522,8 @@ export class SubscriptionsPage implements OnInit {
         let arr = newId.split("-");
         let destDid: string = arr[0];
         let channelId: string = arr[1];
-        this.handleFollingAvatarV2(destDid, channelId);
-        this.getChannelFollower(destDid, channelId);
+        this.handleChannelAvatar(destDid, channelId);
+        this.initSubscriberNumData(destDid, channelId);
         try {
           this.getChannelPublicStatus(destDid, channelId);
         } catch (error) {
@@ -555,61 +531,54 @@ export class SubscriptionsPage implements OnInit {
         }
       });
 
-      this.follingObserver[postGridId].observe(item);
+      this.itemObserver[postGridId].observe(item);
     }
   }
 
-  getChannelFollower(destDid: string, channelId: string) {
+  initSubscriberNumData(destDid: string, channelId: string) {
     //关注数
     let follower = this.isLoadSubscriptionV3Num[channelId] || '';
     if (follower === "") {
       try {
-        let subscriptionV3Num = this.subscriptionV3NumMap[channelId] || "";
-        if (subscriptionV3Num === "") {
-          this.subscriptionV3NumMap[channelId] = "...";
-        }
-        this.dataHelper.getDistinctSubscriptionV3NumByChannelId(
-          destDid, channelId).
-          then((result) => {
-            result = result || 0;
-            if (result == 0) {
-              this.hiveVaultController.querySubscriptionChannelById(destDid, channelId).then(() => {
-                this.zone.run(async () => {
-                  this.subscriptionV3NumMap[channelId] = await this.dataHelper.getDistinctSubscriptionV3NumByChannelId(destDid, channelId);
-                });
-              })
-            }
-            this.subscriptionV3NumMap[channelId] = result;
-
-          }).catch(() => {
-            this.subscriptionV3NumMap[channelId] = 0;
-          });
+        //TODO TOBE improve
+        this.subscriberNumberMap[channelId] = 0;
+        this.dataHelper.getDistinctSubscriptionV3NumByChannelId(destDid, channelId).then((result) => {
+          result = result || 0;
+          if (result == 0) {
+            this.hiveVaultController.querySubscriptionChannelById(destDid, channelId).then(() => {
+              this.zone.run(async () => {
+                this.subscriberNumberMap[channelId] = await this.dataHelper.getDistinctSubscriptionV3NumByChannelId(destDid, channelId);
+              });
+            })
+          }
+          this.subscriberNumberMap[channelId] = result;
+        }).catch(() => {
+          this.subscriberNumberMap[channelId] = 0;
+        });
       } catch (error) {
       }
     }
   }
 
   removeObserveList() {
-    for (let postGridId in this.follingObserver) {
-      let observer = this.follingObserver[postGridId] || null;
-      this.removeFollingObserver(postGridId, observer)
+    for (let postGridId in this.itemObserver) {
+      let observer = this.itemObserver[postGridId] || null;
+      this.removeItemObserver(postGridId, observer)
     }
-    this.follingObserver = {};
+    this.itemObserver = {};
   }
 
   loadData(event: any) {
     let sId = setTimeout(async () => {
-      if (this.totalNum === this.totalSubscribedChannelList.length) {
+      if (this.loadedChannelList.length === this.totalChannelList.length) {//currentChannelNum totalNum
         event.target.complete();
         clearTimeout(sId);
         return;
       }
-      this.pageSize++;
-      let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalSubscribedChannelList);
-      let subscribedChannel = data.items;
-      this.totalNum = this.totalNum + subscribedChannel.length;
-      let newLoadedList = await this.getFollowedChannelList(subscribedChannel);
-      this.followingList = this.followingList.concat(newLoadedList);
+      this.currentPageIndex++;
+
+      const newLoadedList = this.pagingData();
+      this.loadedChannelList = this.loadedChannelList.concat(newLoadedList);
       this.refreshFollowingVisibleareaImageV2(newLoadedList);
       event.target.complete();
       clearTimeout(sId);

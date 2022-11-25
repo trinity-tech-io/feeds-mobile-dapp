@@ -608,15 +608,16 @@ export class HiveVaultController {
     });
   }
 
-  getChannelV3ById(targetDid: string, channelId: string, localCachedChannelCallback: (localCachedChannel: FeedsData.ChannelV3) => void, forceLoadRemote: boolean = false): Promise<FeedsData.ChannelV3> {
+  getChannelV3ById(targetDid: string, channelId: string, callback: (localCachedChannel: FeedsData.ChannelV3) => void, forceLoadRemote: boolean = false): Promise<FeedsData.ChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const localCachedChannel = await this.getChannelV3ByIdFromLocal(targetDid, channelId);
-        localCachedChannelCallback(localCachedChannel);
+        callback(localCachedChannel);
         if (!forceLoadRemote && localCachedChannel != null) {
           resolve(localCachedChannel);
           return;
         }
+
         const remoteChannel = await this.getChannelV3ByIdFromRemote(targetDid, channelId);
         if (!remoteChannel) {
           resolve(null);
@@ -625,6 +626,7 @@ export class HiveVaultController {
         resolve(remoteChannel);
       } catch (error) {
         Logger.error(TAG, error);
+        resolve(null);
         reject(error);
       }
     });
@@ -2896,5 +2898,55 @@ export class HiveVaultController {
     // const list = _.filter(selfchannels, (channel: FeedsData.ChannelV3) => {
     //   return channel.destDid === signinDid && channel.channelId != this.channelId && channel.displayName === nameValue;
     // }) || [];
+  }
+
+  getChannelListFromSubscribedChannelList(subscribedChannelList: FeedsData.SubscribedChannelV3[], callback: (localCachedChannelList: FeedsData.ChannelV3[]) => void, forceLoadRemote: boolean = false): Promise<FeedsData.ChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      console.log('xxxxxxxxx', subscribedChannelList);
+      if (!subscribedChannelList || subscribedChannelList.length == 0) {
+        resolve([]);
+        return
+      }
+      let localChannelList: FeedsData.ChannelV3[] = [];
+      let remoteChannelList: FeedsData.ChannelV3[] = [];
+      let channelPromisList: Promise<void>[] = [];
+
+      subscribedChannelList.forEach((subscribedChannel: FeedsData.SubscribedChannelV3) => {
+        if (subscribedChannel) {
+          const getChannelDataPromise = this.getChannelV3ById(subscribedChannel.targetDid, subscribedChannel.channelId, (localChannel: FeedsData.ChannelV3) => {
+            localChannelList.push(localChannel);
+          }, forceLoadRemote).then((remoteChannel: FeedsData.ChannelV3) => {
+            remoteChannelList.push(remoteChannel);
+          }).catch((error) => {
+          });
+          channelPromisList.push(getChannelDataPromise);
+        }
+      });
+      callback(localChannelList);
+      Promise.allSettled(channelPromisList).then(() => {
+        resolve(remoteChannelList)
+      }).catch((error) => { });
+    });
+  }
+  getChannelListFromOwner(ownerDid: string, subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL, callback: (localCachedChannelList: FeedsData.ChannelV3[]) => void, forceLoadRemote: boolean = false): Promise<FeedsData.ChannelV3[]> {
+    return new Promise(async (resolve, reject) => {
+      this.querySubscribedChannelsByOwner(ownerDid, subscribedChannelType, (localCachedSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
+        this.getChannelListFromSubscribedChannelList(localCachedSubscribedChannelList, (channelList: FeedsData.ChannelV3[]) => {
+          callback(channelList);
+        }).then((channelList: FeedsData.ChannelV3[]) => {
+          callback(channelList);
+        }).catch((error) => { });
+      }, forceLoadRemote).then((finalSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
+        this.getChannelListFromSubscribedChannelList(finalSubscribedChannelList, (channelList: FeedsData.ChannelV3[]) => {
+          callback(channelList);
+        }).then((channelList: FeedsData.ChannelV3[]) => {
+          callback(channelList);
+          resolve(channelList);
+        }).catch((error) => {
+        });
+      }).catch((error) => {
+        reject(error);
+      })
+    });
   }
 }

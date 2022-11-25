@@ -327,22 +327,9 @@ export class UserprofilePage implements OnInit {
   }
 
   async doRefresh(event: any) {
-    // this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         try {
-          // const did = (await this.dataHelper.getSigninData()).did;
-          // const selfchannels = await this.hiveVaultController.syncSelfChannel(did);
-
-          // for (let index = 0; index < selfchannels.length; index++) {
-          //   const selfchannel = selfchannels[index];
-          //   await this.hiveVaultController.querySubscriptionChannelById(selfchannel.destDid, selfchannel.channelId);
-          // }
-          // await this.hiveVaultController.syncSubscribedChannelFromBackup();
-          // this.isLoadSubscriptionV3Num = {};
-          // this.isLoadChannelNameMap = {};
-          // this.removeMyFeedsObserveList();
-          // this.dataHelper.setChannelPublicStatusList({});
           const userOwnedchannels = await this.hiveVaultController.queryUserOwnedChannels(this.userDid);
           await this.initUserOwnedChannels(userOwnedchannels);
           event.target.complete();

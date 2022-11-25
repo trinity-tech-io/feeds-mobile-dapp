@@ -29,13 +29,13 @@
   <p>{{'common.beingRefresh'|translate}}</p>
   </ion-col>
   </ion-row>
-   <div [ngClass]="{'emptyHeight': followingList.length === 0}">
+   <div [ngClass]="{'emptyHeight': loadedChannelList.length === 0}">
    <app-following
    *ngIf="!isLoading"
-   [followingList] = "followingList"
-   [subscriptionV3NumMap] = "subscriptionV3NumMap"
+   [followingList] = "loadedChannelList"
+   [subscriptionV3NumMap] = "subscriberNumberMap"
    [channelPublicStatusList] = "channelPublicStatusList"
-   [channelAvatarMap]="followAvatarMap"
+   [channelAvatarMap]="channelAvatarMap"
    [pageType] = "pageType"
    (exploreFeeds) = "exploreFeeds()"
    (fromChild)="showMenuMore($event)"
@@ -52,12 +52,12 @@
 </ion-content>
 <!---------------- ADD share menu---------------->
 <app-sharemenu
- *ngIf="hideSharMenuComponent"
+ *ngIf="isHideShareMenuComponent"
  [destDid] = "shareDestDid"
  [channelId] = "shareChannelId"
  [isShowTitle] = "isShowTitle"
  [isShowQrcode] = "isShowQrcode"
- [isShowUnfollow] = "isShowUnfollow"
+ [isShowUnfollow] = "isSubscribed"
  [isShowInfo] = "isShowInfo"
  [isPreferences]="isPreferences"
  [channelName] = "channelName"
