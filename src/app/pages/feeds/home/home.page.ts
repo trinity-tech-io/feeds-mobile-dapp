@@ -2457,7 +2457,7 @@ export class HomePage implements OnInit {
       let displayName = this.handleDisplayNameMap[userDid] || "";
       if (displayName === "") {
         let text = destDid.replace('did:elastos:', '');
-        this.handleDisplayNameMap[userDid] = UtilService.shortenAddress(text);
+        this.handleDisplayNameMap[userDid] = UtilService.shortenDid(text);
       }
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
         const name = userProfile.name || userProfile.resolvedName || userProfile.displayName

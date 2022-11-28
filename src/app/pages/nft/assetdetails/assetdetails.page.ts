@@ -162,12 +162,12 @@ export class AssetdetailsPage implements OnInit {
 
     if (did != null) {
       this.did = did.replace("did:elastos:", "");
-      this.didDispaly = UtilService.resolveDid(this.did);
+      this.didDispaly = UtilService.shortenDid(this.did);
     } else {
       this.feedService.getDidFromWalletAddress(this.ownerAddress).then((didObj: FeedsData.DidObj) => {
         if (didObj && didObj.did) {
           this.did = didObj.did.replace("did:elastos:", "");
-          this.didDispaly = UtilService.resolveDid(this.did);
+          this.didDispaly = UtilService.shortenDid(this.did);
           this.handleNftDid();
         } else {
           this.dispalyOwer = UtilService.shortenAddress(this.ownerAddress);

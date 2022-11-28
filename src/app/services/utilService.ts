@@ -670,13 +670,6 @@ export class UtilService {
     return decStr;
   }
 
-  public static resolveDid(did: string) {
-    if (!did) return '';
-    let len = did.length;
-    return did.substring(0, 18) + '...' + did.substring(len - 4, len);
-  }
-
-
   public static base64ToBlob(base64Data: string): Blob {
     const defaultType = 'image/png';
     let arr = base64Data.split(',');
@@ -902,5 +895,13 @@ export class UtilService {
  */
   public static pageCount(totalnum: number, limit: number) {
     return totalnum > 0 ? ((totalnum < limit) ? 1 : ((totalnum % limit) ? (parseInt((totalnum / limit).toString()) + 1) : (totalnum / limit))) : 0;
+  }
+
+
+  public static shortenDid(did: string, start: number = 3, end: number = 3) {
+    if (!did) return '';
+    let len = did.length;
+    let shortDid: string = 'did:'+did.substring(0, start) + '...' + did.substring(len - end, len)
+    return shortDid;
   }
 }

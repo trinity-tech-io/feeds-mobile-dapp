@@ -163,7 +163,7 @@ export class UserlistPage implements OnInit {
     if (!pageItem) {
       this.pageItemMap[userDid] = this.generatePageItem(userDid);
       let simpleDid = userDid.replace('did:elastos:', '');
-      this.pageItemMap[userDid].name = UtilService.shortenAddress(simpleDid);
+      this.pageItemMap[userDid].name = UtilService.shortenDid(simpleDid);
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
         this.setUserNameAndAvatarUI(userProfile);
       }).catch(err=>{

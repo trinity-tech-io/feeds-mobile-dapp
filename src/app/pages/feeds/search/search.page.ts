@@ -612,7 +612,7 @@ export class SearchPage implements OnInit {
     if (displayNameMap === "") {
       this.displayNameIsLoadMap[userDid] = "11";
       let text = destDid.replace('did:elastos:', '');
-      this.handleDisplayNameMap[userDid] = UtilService.shortenAddress(text);
+      this.handleDisplayNameMap[userDid] = UtilService.shortenDid(text);
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
         const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
         if (name) {

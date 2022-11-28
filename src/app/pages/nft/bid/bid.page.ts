@@ -139,13 +139,13 @@ export class BidPage implements OnInit {
         let orderSellerDid = orderSellerDidObj.did || null;
         if (orderSellerDid != null) {
           this.did = orderSellerDid.replace("did:elastos:", "");
-          this.didDispaly = UtilService.resolveDid(this.did);
+          this.didDispaly = UtilService.shortenDid(this.did);
         }
       } else {
         this.feedService.getDidFromWalletAddress(this.seller).then((didObj: FeedsData.DidObj) => {
           if (didObj && didObj.did) {
             this.did = didObj.did.replace("did:elastos:", "");
-            this.didDispaly = UtilService.resolveDid(this.did);
+            this.didDispaly = UtilService.shortenDid(this.did);
             this.handleNftDid();
           } else {
             this.dispalyOwer = UtilService.shortenAddress(this.seller);

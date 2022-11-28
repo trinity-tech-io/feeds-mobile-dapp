@@ -413,7 +413,7 @@ export class ChannelsPage implements OnInit {
     this.channelOwner = "";
 
     let text = this.destDid.replace('did:elastos:', '');
-    this.channelOwner = UtilService.shortenAddress(text);
+    this.channelOwner = UtilService.shortenDid(text);
     this.hiveVaultController.getUserProfile(this.destDid).then((userProfile: FeedsData.UserProfile) => {
       const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
       if (name) {
