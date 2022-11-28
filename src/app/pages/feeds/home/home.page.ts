@@ -1084,31 +1084,28 @@ export class HomePage implements OnInit {
       }
       let fileName: string = avatarUri.split("@")[0];
       //头像
+      let channelAvatar = this.channelAvatarMap[id] || '';
+      if(channelAvatar === ''){
+        this.channelAvatarMap[id] = './assets/images/loading.svg';
+      }
       this.hiveVaultController.
         getV3Data(destDid, avatarUri, fileName, "0")
         .then(imagedata => {
           let realImage = imagedata || '';
           if (realImage != '') {
-
             this.channelAvatarMap[id] = realImage;
             this.isLoadAvatarImage[id] = "13";
-
           } else {
+            if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+              this.channelAvatarMap[id] = './assets/images/default-contact.svg';
+            }
             this.isLoadAvatarImage[id] = "13";
           }
         })
         .catch(reason => {
-          // this.downPostAvatarMap[fileName] = "";
-          // for (let key in this.avatarImageMap) {
-          //   let uri = this.avatarImageMap[key] || "";
-          //   if (uri === avatarUri && this.isLoadAvatarImage[key] === "11") {
-          //     this.isLoadAvatarImage[key] = '13';
-          //     delete this.avatarImageMap[key];
-          //   }
-
-          // }
-          this.isLoadAvatarImage[id] = '';
-
+          if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+            this.channelAvatarMap[id] = './assets/images/default-contact.svg';
+          }
           Logger.error(TAG,
             "Excute 'handlePostAvatarV2' in home page is error , get image data error, error msg is ",
             reason

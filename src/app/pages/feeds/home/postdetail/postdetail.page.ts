@@ -219,10 +219,23 @@ export class PostdetailPage implements OnInit {
 
   handleChannelAvatar(channelAvatarUri: string) {
     let fileName: string = channelAvatarUri.split("@")[0];
+    if(this.channelAvatar === ''){
+      this.channelAvatar = './assets/images/loading.svg';
+    }
     this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
       .then((result) => {
-        this.channelAvatar = result;
+        result = result || '';
+        if(result != ''){
+          this.channelAvatar = result;
+        }else {
+          if(this.channelAvatar === './assets/images/loading.svg'){
+            this.channelAvatar = "./assets/images/default-contact.svg";
+          }
+        }
       }).catch((err) => {
+        if(this.channelAvatar === './assets/images/loading.svg'){
+          this.channelAvatar = "./assets/images/default-contact.svg";
+        }
       })
   }
 

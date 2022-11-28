@@ -164,6 +164,10 @@ export class UserlistPage implements OnInit {
       this.pageItemMap[userDid] = this.generatePageItem(userDid);
       let simpleDid = userDid.replace('did:elastos:', '');
       this.pageItemMap[userDid].name = UtilService.shortenDid(simpleDid);
+      let avatar = this.pageItemMap[userDid].avatar || '';
+      if(avatar === ''){
+        this.pageItemMap[userDid].avatar = './assets/images/loading.svg';
+      }
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
         this.setUserNameAndAvatarUI(userProfile);
       }).catch(err=>{

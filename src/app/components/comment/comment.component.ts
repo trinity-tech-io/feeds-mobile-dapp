@@ -88,12 +88,14 @@ export class CommentComponent implements OnInit {
 
   async parseAvatar() {
    let avatarUri = this.channelAvatar;
-    this.avatar = "./assets/images/default-contact.svg";
+   if(this.avatar === ''){
+      this.avatar = './assets/images/loading.svg';
+   }
     try {
       let avatar = await this.handleChannelAvatar(avatarUri,this.destDid);
       this.avatar = avatar;
     } catch (error) {
-
+      this.avatar = "./assets/images/default-contact.svg";
     }
   }
 

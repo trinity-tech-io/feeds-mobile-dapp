@@ -53,15 +53,15 @@ export class SwitchfeedComponent implements OnInit {
         let avatarUri  = channel.avatar || "";
         if(avatarUri != ""){
         let destDid = channel.destDid;
-        this.avatarList[avatarUri] = "";
+        this.avatarList[avatarUri] = "./assets/images/loading.svg";
         try {
           let avatar =  await this.parseAvatar(avatarUri,destDid) || '';
           this.avatarList[avatarUri] = avatar;
         } catch (error) {
-          this.avatarList[avatarUri] = '"./assets/images/default-contact.svg"';
+          this.avatarList[avatarUri] = "./assets/images/default-contact.svg";
         }
         }else{
-          this.avatarList[avatarUri] = '"./assets/images/default-contact.svg"';
+          this.avatarList[avatarUri] = "./assets/images/default-contact.svg";
         }
       }
   }

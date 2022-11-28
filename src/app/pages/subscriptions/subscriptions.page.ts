@@ -346,6 +346,10 @@ export class SubscriptionsPage implements OnInit {
       if (channel != null) {
         avatarUri = channel.avatar;
       }
+      let followAvatar = this.followAvatarMap[id] || '';
+      if(followAvatar === ''){
+        this.followAvatarMap[id] = './assets/images/loading.svg';
+      }
       let fileName: string = avatarUri.split("@")[0];
       this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
         this.zone.run(() => {
@@ -354,15 +358,18 @@ export class SubscriptionsPage implements OnInit {
             this.followingIsLoadimage[id] = '13';
             this.followAvatarMap[id] = srcData;
           } else {
+            if(this.followAvatarMap[id] === './assets/images/loading.svg'){
+              this.followAvatarMap[id] = './assets/images/default-contact.svg';
+            }
             this.followingIsLoadimage[id] = '13';
           }
         });
       }).catch((err) => {
-        this.followingIsLoadimage[id] = '';
+        if(this.followAvatarMap[id] === './assets/images/loading.svg'){
+          this.followAvatarMap[id] = './assets/images/default-contact.svg';
+        }
       });
     }
-
-
   }
 
   refreshFollowingVisibleareaImageV2(list = []) {

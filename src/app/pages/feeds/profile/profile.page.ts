@@ -176,7 +176,6 @@ export class ProfilePage implements OnInit {
   private channelNameMap: any = {};
   private isLoadChannelNameMap: any = {};
   public isLoadingLikeMap: any = {};
-  private downMyFeedsAvatarMap: any = {};
   public lightThemeType: number = 3;
   private handleDisplayNameMap: any = {};
   private isLoadHandleDisplayNameMap: any = {};
@@ -617,7 +616,6 @@ export class ProfilePage implements OnInit {
     this.isLoadAvatarImage = {};
     this.isLoadVideoiamge = {};
     this.myFeedsIsLoadimage = {};
-    this.downMyFeedsAvatarMap = {};
   }
 
   clearData(isClearAssets: boolean = true) {
@@ -881,7 +879,10 @@ export class ProfilePage implements OnInit {
         avatarUri = channel.avatar;
       }
       let fileName: string = avatarUri.split("@")[0];
-      this.downMyFeedsAvatarMap[fileName] = fileName;
+      let myFeedAvatar = this.myFeedAvatarMap[id] || '';
+      if(myFeedAvatar === ''){
+        this.myFeedAvatarMap[id] = './assets/images/loading.svg';
+      }
       this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
         this.zone.run(() => {
           let srcData = data || "";
@@ -889,11 +890,16 @@ export class ProfilePage implements OnInit {
             this.myFeedsIsLoadimage[id] = '13';
             this.myFeedAvatarMap[id] = data;
           } else {
+            if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
+               this.myFeedAvatarMap[id] =  "./assets/images/default-contact.svg";
+            }
             this.myFeedsIsLoadimage[id] = '13';
           }
         });
       }).catch((err) => {
-        this.myFeedsIsLoadimage[id] = '';
+        if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
+          this.myFeedAvatarMap[id] =  "./assets/images/default-contact.svg";
+        }
       });
     }
 
@@ -1135,6 +1141,10 @@ export class ProfilePage implements OnInit {
       }
       let fileName: string = avatarUri.split("@")[0];
       //头像
+      let channelAvatar = this.likeAvatarMap[id] || '';
+      if(channelAvatar === ''){
+        this.likeAvatarMap[id] = './assets/images/loading.svg';
+      }
       this.hiveVaultController.
         getV3Data(destDid, avatarUri, fileName, "0",)
         .then(imagedata => {
@@ -1143,12 +1153,16 @@ export class ProfilePage implements OnInit {
             this.likeAvatarMap[id] = realImage;
             this.isLoadAvatarImage[id] = "13";
           } else {
+            if(this.likeAvatarMap[id] === './assets/images/loading.svg'){
+              this.likeAvatarMap[id] = './assets/images/default-contact.svg';
+            }
             this.isLoadAvatarImage[id] = "13";
           }
         })
         .catch(reason => {
-
-          this.isLoadAvatarImage[id] = '';
+          if(this.likeAvatarMap[id] === './assets/images/loading.svg'){
+            this.likeAvatarMap[id] = './assets/images/default-contact.svg';
+          }
           Logger.error(TAG,
             "Excute 'handlePostAvatar' in home page is error , get image data error, error msg is ",
             reason

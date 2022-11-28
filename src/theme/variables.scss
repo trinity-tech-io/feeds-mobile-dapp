@@ -513,14 +513,14 @@ ion-row {
   align-items: center;
   justify-content: center;
   position: relative;
-  border-radius: 60px;
-  width: 60px;
-  height: 60px;
-  background-color: #161C24;
-  border: 2px solid transparent;
-  background-clip: padding-box, border-box;
-  background-origin: padding-box, border-box;
-  background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
+  border-radius:50%;
+  width: 50px;
+  height: 50px;
+  //background-color: #161C24;
+  // border: 2px solid transparent;
+  // background-clip: padding-box, border-box;
+  // background-origin: padding-box, border-box;
+  // background-image: linear-gradient(to right, #161C24, #161C24), linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
 
   .customizeAvatar {
     border-radius: 50%;
@@ -530,26 +530,10 @@ ion-row {
     width: 50px;
   }
 
-  .offline {
-    width: 10px;
-    height: 10px;
-    position: absolute;
-    bottom: 0.5px;
-    right: 0.5px;
-    background-color: #cdcde6;
-    border: 2px solid #f8f8ff;
-    border-radius: 100%;
-  }
-
-  .online {
-    background: #2dd36f;
-  }
 }
 
 .dark-feedAvatar {
-  .offline {
-    border: 2px solid #191a2f;
-  }
+
 }
 
 /********************** GLOBAL CHANNEL LISTS **********************/
@@ -728,9 +712,10 @@ ion-row {
     }
 
     .content-col {
-      display: flex;
+      // display: flex;
       flex-direction: column;
       align-items: flex-start;
+      align-self: center;
 
       ion-label {
         margin-top: 10px;

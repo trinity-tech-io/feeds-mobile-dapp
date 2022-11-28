@@ -553,16 +553,22 @@ export class SearchPage implements OnInit {
         }) || null;
         if(nenChannel != null ){
           if(nenChannel.avatar === ''){
-            this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+            this.channelAvatarMap[id] = './assets/images/default-contact.svg';
           }else{
-            let avatarUri = nenChannel.avatar.replace('feeds:image:', '');
+           let channelAvatar =  this.channelAvatarMap[id] || '';
+           if(channelAvatar === ''){
+            this.channelAvatarMap[id] = './assets/images/loading.svg';
+           }
+          let avatarUri = nenChannel.avatar.replace('feeds:image:', '');
             UtilService.downloadFileFromUrl(this.ipfsService.getNFTGetUrl()+avatarUri)
             .then(async (avatar)=>{
               let srcData = avatar || "";
               this.zone.run(async () => {
                 if (srcData != "") {
                   if(avatar.type === "text/plain"){
-                    this.channelAvatarMap[id] = './assets/images/default-contact.svg';
+                    if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+                      this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+                    }
                     this.searchIsLoadimage[id] = '13';
                   }else{
                     srcData = await UtilService.blobToDataURL(avatar);
@@ -570,16 +576,23 @@ export class SearchPage implements OnInit {
                     this.channelAvatarMap[id] = srcData;
                   }
                 } else {
+                  if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+                    this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+                  }
                   this.searchIsLoadimage[id] = '13';
                 }
               });
             }).catch(()=>{
-              this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+              if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+                this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+              }
             });
           }
 
         }else{
-          this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+          if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+            this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+          }
         }
 
       }else{
@@ -587,6 +600,10 @@ export class SearchPage implements OnInit {
         let avatarUri = "";
         if (channel != null) {
           avatarUri = channel.avatar;
+        }
+        let channelAvatar = this.channelAvatarMap[id] || '';
+        if(channelAvatar === ''){
+          this.channelAvatarMap[id] = './assets/images/loading.svg';
         }
         let fileName: string = avatarUri.split("@")[0];
         this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
@@ -596,14 +613,18 @@ export class SearchPage implements OnInit {
               this.searchIsLoadimage[id] = '13';
               this.channelAvatarMap[id] = srcData;
             } else {
+              if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+                 this.channelAvatarMap[id] === './assets/images/default-contact.svg';
+              }
               this.searchIsLoadimage[id] = '13';
             }
           });
         }).catch((err) => {
-          this.searchIsLoadimage[id] = '';
+          if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
+            this.channelAvatarMap[id] === './assets/images/default-contact.svg';
+          }
         });
       }
-
     }
   }
 
