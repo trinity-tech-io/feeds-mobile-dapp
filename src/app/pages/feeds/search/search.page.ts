@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, NgZone } from '@angular/core';
 import { FeedService } from '../../../services/FeedService';
-import { PopoverController, IonRefresher, IonSearchbar } from '@ionic/angular';
+import { PopoverController, IonRefresher, IonSearchbar, IonInfiniteScroll } from '@ionic/angular';
 import { NativeService } from '../../../services/NativeService';
 import { ThemeService } from '../../../services/theme.service';
 import { UtilService } from '../../../services/utilService';
@@ -39,6 +39,7 @@ const TAG: string = 'SearchPage';
 export class SearchPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonRefresher, { static: true }) ionRefresher: IonRefresher;
+  @ViewChild(IonInfiniteScroll, { static: true }) infiniteScroll: IonInfiniteScroll;
   @ViewChild('searchbar', { static: false }) searchbar: IonSearchbar;
 
   public popover: any = '';
@@ -168,7 +169,7 @@ export class SearchPage implements OnInit {
 
   async filterChannelCollectionPageList(channelCollectionPageList = []) {
     let channelList = [];
-    let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
+    //let subscribedChannel = await this.dataHelper.getSubscribedChannelV3List(FeedsData.SubscribedChannelType.ALL_CHANNEL);
     for (let index = 0; index < channelCollectionPageList.length; index++) {
       let channel: FeedsData.ChannelV3 = channelCollectionPageList[index];
       // let channelIndex = _.findIndex(subscribedChannel, (item) => {
@@ -199,14 +200,26 @@ export class SearchPage implements OnInit {
       } catch (error) {
 
       }
-      this.channelCollectionPageList = await this.getChannelsV2();
-      this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
-      this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+      this.handleRefresherInfinite(true);
+      try {
+        this.channelCollectionPageList = await this.getChannelsV2();
+        this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+        this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+        this.handleRefresherInfinite(false);
+      } catch (error) {
+        this.handleRefresherInfinite(false);
+      }
     } else {
+      this.handleRefresherInfinite(true);
+      try {
       this.channelCollectionPageList = await this.filterChannelCollectionPageList(channelCollectionPageList);
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.isLoading = false;
+      this.handleRefresherInfinite(false);
       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
+      } catch (error) {
+        this.handleRefresherInfinite(false);
+      }
     }
     this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
     this.initSubscribe();
@@ -822,4 +835,10 @@ export class SearchPage implements OnInit {
     } catch (error) {
     }
   }
+
+  handleRefresherInfinite(isOpen: boolean) {
+    this.ionRefresher.disabled = isOpen;
+    this.infiniteScroll.disabled = isOpen;
+  }
+
 }
