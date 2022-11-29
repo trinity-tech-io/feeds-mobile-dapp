@@ -10,11 +10,11 @@
             src={{channelAvatar}}
             [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
             *ngIf="channelAvatar != ''">
-            <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId] != undefined && channelPublicStatusList[destDid+'-'+channelId]==='2'">
           </div>
         </ion-col>
         <ion-col size="9" sizeMd="10.5" sizeLg="10.5" class="middle-col">
-          <ion-label style="margin-top:0px;">{{ channelName }}</ion-label>
+          <ion-label style="margin-top:0px;white-space:normal;">c/{{ channelName }}<img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId] != undefined && channelPublicStatusList[destDid+'-'+channelId]==='2'">
+          </ion-label>
         </ion-col>
       </ion-row>
     </ion-item>

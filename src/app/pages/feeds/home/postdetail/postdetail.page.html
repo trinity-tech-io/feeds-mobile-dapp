@@ -22,12 +22,11 @@
             src={{channelAvatar}}
             [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
             *ngIf="channelAvatar != ''">
-            <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId] != undefined && channelPublicStatusList[destDid+'-'+channelId]==='2'">
           </div>
         </ion-col>
         <ion-col class="mid-col" size="8" sizeMd="8" sizeLg="8" (press)="pressName()" (click)="navTo(destDid, channelId)" [style.touch-action]="'pan-y'">
           <ion-label>
-            {{ channelName }}
+           c/{{ channelName }} <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId] != undefined && channelPublicStatusList[destDid+'-'+channelId]==='2'">
           </ion-label>
            <!-- <p>@...</p> -->
         </ion-col>

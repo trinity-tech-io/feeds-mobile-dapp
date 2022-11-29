@@ -21,6 +21,7 @@ export class WalletConnectControllerService {
   constructor(
     private dataHelper: DataHelper,
     private events: Events,
+    private walletConnectControllerService: WalletConnectControllerService,
   ) {
   }
 
@@ -76,6 +77,8 @@ export class WalletConnectControllerService {
       let walletconnect = window.localStorage.getItem('walletconnect') || '';
       if(walletconnect != ''){
         window.localStorage.removeItem('walletconnect');
+        this.accountAddress = '';
+        this.events.publish(FeedsEvent.PublishType.clickDisconnectWallet);
       }
     });
 
@@ -160,6 +163,8 @@ export class WalletConnectControllerService {
           let walletconnect = window.localStorage.getItem('walletconnect') || '';
           if(walletconnect != ''){
             window.localStorage.removeItem('walletconnect');
+            this.accountAddress = '';
+            this.events.publish(FeedsEvent.PublishType.clickDisconnectWallet);
           }
           reject(error);
         }

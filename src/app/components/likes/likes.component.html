@@ -34,7 +34,6 @@
           [src] = "channelAvatarMap[post.destDid+'-'+post.channelId]"
           [ngClass]="{'customizeAvatar': channelAvatarMap[post.destDid+'-'+post.channelId].indexOf('default-contact.svg') === -1 }"
           *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId]  != null && channelAvatarMap[post.destDid+'-'+post.channelId] != undefined">
-          <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[post.destDid+'-'+post.channelId] != undefined && channelPublicStatusList[post.destDid+'-'+post.channelId]==='2'">
         </div>
       </ion-col>
       <ion-col class="content-col" size="6.5" sizeMd="8" sizeLg="8" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
@@ -42,7 +41,7 @@
               ......
             </ion-label>
             <ion-label  *ngIf="channelNameMap[post.channelId] != '' && channelNameMap[post.channelId] != undefined">
-              {{ handleName(post) }}
+             c/{{ handleName(post) }} <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[post.destDid+'-'+post.channelId] != undefined && channelPublicStatusList[post.destDid+'-'+post.channelId]==='2'">
               <span> {{ handleDisplayTime(post.postId,post.createdAt) }}</span>
             </ion-label>
 

@@ -25,7 +25,7 @@
         </div>
        </div>
         <div class="feedName">
-          <span>{{channelName}}</span>
+          <span>c/{{channelName}}</span>
         </div>
         <div class="channelOwner">
           <span *ngIf="channelOwner ==='' ">@......</span>
@@ -95,13 +95,12 @@
             src={{channelAvatar}}
             [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
             *ngIf="channelAvatar != '' ">
-            <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId]==='2'">
           </div>
         </ion-col>
         <ion-col class="content-col" size="6.5" sizeMd="8" sizeLg="8" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
           <p *ngIf="post.pinStatus==1 " class="pinnedPost"><img src="assets/images/darkmode/pinned.svg"> <span>{{ 'ChannelsPage.pinnedPost' | translate}}</span></p>
               <ion-label [ngClass]="{'pinnedPostTop':post.pinStatus==1}">
-                {{ channelName }}
+                c/{{ channelName }} <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId]==='2'">
                 <span> {{ handleDisplayTime(post.postId,post.createdAt) }}</span>
               </ion-label>
           <p *ngIf="channelOwner ==='' ">@......</p>

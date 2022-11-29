@@ -17,7 +17,7 @@
        [ngClass]="{'customizeAvatar': avatar.indexOf('default-contact.svg') === -1 }"
        [src]="avatar"/>
       </div>
-      <div class="cardTitle">{{name}}</div>
+      <div class="cardTitle">c/{{name}}</div>
       <div class="card-subtitle" *ngIf="walletAddressStr!=''">
         <span style="text-transform: none" (click)="clickWalletAddr()">{{walletAddressStr}}</span>
         <img  (click)="copyWalletAddr()" src="./assets/images/darkmode/copy.svg">

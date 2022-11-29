@@ -657,12 +657,18 @@ audio::-webkit-media-controls {
 .publicChannel{
   width: 18px;
   height: 18px;
-  bottom: 0px;
-  right: 0px;
-  position: absolute;
+  vertical-align: middle;
 }
 
 .publicChannel1{
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  bottom: 0px;
+  right: 4px;
+}
+
+.publicChannel2 {
   position: absolute;
   width: 20px;
   height: 20px;

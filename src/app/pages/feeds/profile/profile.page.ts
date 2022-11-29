@@ -871,36 +871,41 @@ export class ProfilePage implements OnInit {
     if (isload === "") {
       let arr = id.split("-");
       this.myFeedsIsLoadimage[id] = '11';
+      let myFeedAvatar = this.myFeedAvatarMap[id] || '';
+      if(myFeedAvatar === ''){
+        this.myFeedAvatarMap[id] = './assets/images/loading.svg';
+      }
       let destDid = arr[0];
       let channelId = arr[1];
       let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
       let avatarUri = "";
       if (channel != null) {
         avatarUri = channel.avatar;
-      }
-      let fileName: string = avatarUri.split("@")[0];
-      let myFeedAvatar = this.myFeedAvatarMap[id] || '';
-      if(myFeedAvatar === ''){
-        this.myFeedAvatarMap[id] = './assets/images/loading.svg';
-      }
-      this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
-        this.zone.run(() => {
-          let srcData = data || "";
-          if (srcData != "") {
-            this.myFeedsIsLoadimage[id] = '13';
-            this.myFeedAvatarMap[id] = data;
-          } else {
-            if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
-               this.myFeedAvatarMap[id] =  "./assets/images/default-contact.svg";
+        let fileName: string = avatarUri.split("@")[0];
+        this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
+          this.zone.run(() => {
+            let srcData = data || "";
+            if (srcData != "") {
+              this.myFeedsIsLoadimage[id] = '13';
+              this.myFeedAvatarMap[id] = data;
+            } else {
+              if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
+                 this.myFeedAvatarMap[id] =  "./assets/images/default-contact.svg";
+              }
+              this.myFeedsIsLoadimage[id] = '13';
             }
-            this.myFeedsIsLoadimage[id] = '13';
+          });
+        }).catch((err) => {
+          if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
+            this.myFeedAvatarMap[id] =  "./assets/images/default-contact.svg";
           }
         });
-      }).catch((err) => {
+
+      }else{
         if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
           this.myFeedAvatarMap[id] =  "./assets/images/default-contact.svg";
-        }
-      });
+       }
+      }
     }
 
 

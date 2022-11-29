@@ -9,11 +9,11 @@
               *ngIf="channelAvatar"
               src={{channelAvatar}}
               [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }">
-              <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel1" *ngIf="channelPublicStatusList[destDid+'-'+channelId]==='2'">
+              <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel2" *ngIf="channelPublicStatusList[destDid+'-'+channelId]==='2'">
             </div>
            </div>
           <div class="feedName">
-            <span>{{name}}</span>
+            <span>c/{{name}}</span>
           </div>
           <div class="channelOwner">
             <span *ngIf="channelOwner ==='' ">@......</span>

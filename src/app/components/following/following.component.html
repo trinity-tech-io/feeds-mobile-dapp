@@ -24,7 +24,6 @@
           [src] = "channelAvatarMap[channel.destDid+'-'+channel.channelId]"
           [ngClass]="{'customizeAvatar': channelAvatarMap[channel.destDid+'-'+channel.channelId].indexOf('default-contact.svg') === -1 }"
           *ngIf="channelAvatarMap[channel.destDid+'-'+channel.channelId]  != null && channelAvatarMap[channel.destDid+'-'+channel.channelId] != undefined">
-          <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[channel.destDid+'-'+channel.channelId]==='2'">
         </div>
       </ion-col>
       <ion-col
@@ -32,7 +31,8 @@
         class="middle-col"
         (click)="navTo(channel.destDid, channel.channelId)"
       >
-        <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0px;">{{ channel.displayName || channel.name }}</ion-label>
+        <ion-label style="margin-top:0px;white-space: normal;">c/{{ channel.displayName || channel.name }} <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[channel.destDid+'-'+channel.channelId]==='2'">
+        </ion-label>
         <ion-row>
           <br>
           <p>
