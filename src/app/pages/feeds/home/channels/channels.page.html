@@ -89,7 +89,7 @@
     id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-channel>
       <ion-row class="post-row">
         <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)"></ion-col>
-        <ion-col class="img-col" size="2.5" sizeMd="1" sizeLg="1">
+        <ion-col class="img-col" size="2" sizeMd="1" sizeLg="1">
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img
             src={{channelAvatar}}
@@ -97,7 +97,7 @@
             *ngIf="channelAvatar != '' ">
           </div>
         </ion-col>
-        <ion-col class="content-col" size="6.5" sizeMd="8" sizeLg="8" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
+        <ion-col class="content-col" size="7" sizeMd="8" sizeLg="8" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
           <p *ngIf="post.pinStatus==1 " class="pinnedPost"><img src="assets/images/darkmode/pinned.svg"> <span>{{ 'ChannelsPage.pinnedPost' | translate}}</span></p>
               <ion-label [ngClass]="{'pinnedPostTop':post.pinStatus==1}">
                 c/{{ channelName }} <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId]==='2'">

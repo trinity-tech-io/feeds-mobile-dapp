@@ -8,7 +8,8 @@
   <ion-col size="1" class="des"></ion-col>
 </ion-row> -->
 <div (click)="refreshPage()" *ngIf="newPostNumber!=0"><span style="display: flex;
-  justify-content: center;color: blueviolet;">{{"HomePage.show" | translate}} {{newPostNumber}} {{"HomePage.posts" | translate}}</span></div>
+  justify-content: center;color: blueviolet;padding-top: 5px;padding-bottom: 10px;
+    border-bottom:1px solid #323b45;">{{"HomePage.show" | translate}} {{newPostNumber}} {{"HomePage.posts" | translate}}</span></div>
 <ion-row *ngIf="tabType==='pasar'" style="margin-top: 28px;">
   <ion-col size="1">
 
@@ -112,7 +113,7 @@
       id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-home>
       <ion-row class="post-row" [ngStyle]="{'padding-top': newPostNumber!=0 && i === 0 ? '0px' : '14px' }">
         <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')"></ion-col>
-        <ion-col class="img-col" size="2.5" sizeMd="1" sizeLg="1" (click)="navTo(post.destDid,post.channelId,post.postId)">
+        <ion-col class="img-col" size="2" sizeMd="1" sizeLg="1" (click)="navTo(post.destDid,post.channelId,post.postId)">
           <div  id="{{post.destDid}}-{{post.channelId}}-{{post.postId}}-homeChannelAvatarKuang" class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img
             [src] = "channelAvatarMap[post.destDid+'-'+post.channelId]"
@@ -120,7 +121,7 @@
             *ngIf="channelAvatarMap[post.destDid+'-'+post.channelId]">
           </div>
         </ion-col>
-        <ion-col class="content-col" size="6.5" sizeMd="8" sizeLg="8" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')">
+        <ion-col class="content-col" size="7" sizeMd="8" sizeLg="8" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')">
 
               <ion-label *ngIf="hannelNameMap[post.channelId] === '' || hannelNameMap[post.channelId] === undefined">
                 ......
