@@ -188,6 +188,7 @@ export class HomePage implements OnInit {
   private observerList: any = {};
   private scrollToTopSid: any = null;
   private channelPublicStatusList: any = {};
+  public createrDid: string = '';
   constructor(
     private platform: Platform,
     private elmRef: ElementRef,
@@ -1045,6 +1046,7 @@ export class HomePage implements OnInit {
     this.postId = postId;
     this.channelId = channelId;
     this.destDid = destDid;
+    this.createrDid = destDid;
     this.channelAvatar = await this.parseAvatar(destDid, channelId);
     this.channelName = await this.getChannelName(destDid, channelId);
     this.hideComment = false;

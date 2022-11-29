@@ -145,6 +145,9 @@ export class PostdetailPage implements OnInit {
   public isSubscribed: boolean = false;
   private refreshLikeAndCommentSid: any = null;
   public channelPublicStatusList: any = {};
+  public createrDid: string = '';
+  public handleDisplayNameMap: any = {};
+  private isLoadHandleDisplayNameMap: any = {};
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -184,6 +187,11 @@ export class PostdetailPage implements OnInit {
     if (channelAvatarUri != '') {
       this.channelAvatarUri = channelAvatarUri;
       this.handleChannelAvatar(channelAvatarUri);
+    }
+    try {
+      this.getDisplayName(this.destDid, this.channelId, this.destDid);
+    } catch (error) {
+
     }
     this.initPostContent();
     if (isInit) {
@@ -542,13 +550,16 @@ export class PostdetailPage implements OnInit {
       this.refcommentId = '0';
       this.commentName = this.channelName;
       this.commentAvatar = this.channelAvatarUri;
+      this.createrDid = this.destDid;
     } else {
       this.refcommentId = comment.commentId;
       this.commentName = this.userNameMap[comment.createrDid];
       if (this.destDid === comment.createrDid) {
         this.commentAvatar = this.channelAvatarUri;
+        this.createrDid = comment.createrDid;
       } else {
         this.commentAvatar = '';
+        this.createrDid = comment.createrDid;
       }
     }
 
@@ -804,6 +815,7 @@ export class PostdetailPage implements OnInit {
       this.removeReplyCommentObserverList();
       this.removeCaptainCommentObserverList();
       this.dataHelper.setChannelPublicStatusList({});
+      this.isLoadHandleDisplayNameMap = {};
       this.initData(true);
       event.target.complete();
     } catch (error) {
@@ -1559,6 +1571,25 @@ export class PostdetailPage implements OnInit {
       return null;
     } catch (error) {
       return null;
+    }
+  }
+
+  getDisplayName(destDid: string, channelId: string, userDid: string) {
+    let displayNameMap = this.isLoadHandleDisplayNameMap[userDid] || '';
+    if (displayNameMap === "") {
+      this.isLoadHandleDisplayNameMap[userDid] = "11";
+      let displayName = this.handleDisplayNameMap[userDid] || "";
+      if (displayName === "") {
+        let text = destDid.replace('did:elastos:', '');
+        this.handleDisplayNameMap[userDid] = UtilService.shortenDid(text);
+      }
+      this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+        const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
+        if (name) {
+          this.handleDisplayNameMap[userDid] = name;
+        }
+      }).catch(() => {
+      });
     }
   }
 }

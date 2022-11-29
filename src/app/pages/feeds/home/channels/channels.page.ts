@@ -143,6 +143,7 @@ export class ChannelsPage implements OnInit {
   private infoPopover: any = null;
   private userDidList: string[] = []; //userdid list
   public channelPublicStatusList: any = {};
+  public createrDid: string = '';
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -843,6 +844,7 @@ export class ChannelsPage implements OnInit {
     // if (!this.feedService.checkPostIsAvalible(post)) return;
 
     this.pauseVideo(destDid + '-' + channelId + '-' + postId);
+    this.createrDid = this.destDid;
     this.postId = postId;
     this.hideComment = false;
   }

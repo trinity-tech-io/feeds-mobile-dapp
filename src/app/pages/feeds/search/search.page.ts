@@ -231,6 +231,16 @@ export class SearchPage implements OnInit {
     this.displayNameIsLoadMap = {};
     this.searchIsLoadimage = {};
     this.events.unsubscribe(FeedsEvent.PublishType.search);
+    try {
+      this.ionRefresher.complete();
+    } catch (error) {
+
+    }
+    try {
+      this.infiniteScroll.complete();
+    } catch (error) {
+
+    }
   }
 
   async subscribe(destDid: string, channelId: string, event: any) {

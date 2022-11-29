@@ -133,6 +133,11 @@
             }
         }
         }
+        .feedNameDiv{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         .feedName{
         font-size: 25px;
         font-weight: 700;
@@ -144,6 +149,14 @@
         white-space:nowrap;
         overflow:hidden;
         text-overflow:ellipsis;
+        max-width: 90%;
+        display: inline-block;
+       }
+
+       .feedNameImg{
+        align-items: center;
+        margin-top: 10px;
+        margin-left: 3px;
        }
 
         .channelOwner{

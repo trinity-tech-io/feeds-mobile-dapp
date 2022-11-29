@@ -199,6 +199,7 @@ export class ProfilePage implements OnInit {
   public isLoadingMyFeeds: boolean = true;
   private setMyFeedsSid: any = null;
   private channelPublicStatusList: any = {};
+  public createrDid: string = '';
   constructor(
     private elmRef: ElementRef,
     public theme: ThemeService,
@@ -840,6 +841,7 @@ export class ProfilePage implements OnInit {
     this.postId = commentParams.postId;
     this.channelId = commentParams.channelId;
     this.destDid = commentParams.destDid;
+    this.createrDid = commentParams.destDid;
     this.channelAvatar = commentParams.channelAvatar;
     this.channelName = commentParams.channelName;
     this.hideComment = false;
