@@ -19,6 +19,7 @@ export class FeedsSqliteHelper {
   private readonly TABLE_POST_NEW: string = 'postsnew';
   private readonly TABLE_POST_NEW330: string = 'postsnew330';
   private readonly TABLE_USER: string = 'users';
+  private readonly TABLE_USER_NEW: string = 'usersnew';
   // private readonly TABLE_PINPOST: string = 'pinpost';
 
   private readonly TABLE_SUBSCRIBED_CHANNELS: string = 'subscribed_channels';
@@ -490,6 +491,21 @@ export class FeedsSqliteHelper {
         resolve(channelList);
       } catch (error) {
         Logger.error(TAG, 'query Channel Data with user error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryOriginUserListById(dbUserDid: string): Promise<FeedsData.UserProfile[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_USER;
+        const params = [];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const users = this.parseUserData(result);
+        resolve(users);
+      } catch (error) {
+        Logger.error(TAG, 'query userdata data error', error);
         reject(error);
       }
     });
@@ -1171,7 +1187,7 @@ export class FeedsSqliteHelper {
   private createUserTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'create table if not exists ' + this.TABLE_USER
+        const statement = 'create table if not exists ' + this.TABLE_USER_NEW
           + '('
           + 'did VARCHAR(64) UNIQUE, resolved_name VARCHAR(64), resolved_avatar TEXT, resolved_bio TEXT, display_name VARCHAR(64), name VARCHAR(64), avatar TEXT, bio TEXT, updated_at REAL(64)'
           + ')';
@@ -1189,7 +1205,7 @@ export class FeedsSqliteHelper {
   insertUserData(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'INSERT INTO ' + this.TABLE_USER
+        const statement = 'INSERT INTO ' + this.TABLE_USER_NEW
           + '(did, resolved_name, resolved_avatar, resolved_bio, display_name, name, avatar, bio, updated_at) VALUES'
           + '(?,?,?,?,?,?,?,?,?)';
 
@@ -1208,7 +1224,7 @@ export class FeedsSqliteHelper {
   updateUserData(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'UPDATE ' + this.TABLE_USER
+        const statement = 'UPDATE ' + this.TABLE_USER_NEW
           + ' SET resolved_name=?, resolved_avatar=?, resolved_bio=?, display_name=?, name=?, avatar=?, bio=?, updated_at=? WHERE did=?';
         const params = [user.resolvedName, user.resolvedAvatar, user.resolvedBio, user.displayName, user.name, user.avatar, user.bio, user.updatedAt, user.did];
         const result = await this.executeSql(dbUserDid, statement, params);
@@ -1225,13 +1241,28 @@ export class FeedsSqliteHelper {
   queryUserDataById(dbUserDid: string, userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_USER + ' WHERE did=?';
+        const statement = 'SELECT * FROM ' + this.TABLE_USER_NEW + ' WHERE did=?';
         const params = [userDid];
         const result = await this.executeSql(dbUserDid, statement, params);
         const users = this.parseUserData(result);
         resolve(users[0]);
       } catch (error) {
         Logger.error(TAG, 'query userdata data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  deleteOriginUserDataById(dbUserDid: string, userDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_USER + ' WHERE did=?'
+        const params = [userDid];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Remove subscribed channel data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Remove subscribed channel data error', error);
         reject(error);
       }
     });
@@ -1859,6 +1890,53 @@ export class FeedsSqliteHelper {
   }
 
   restoreSqlData340(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const updateUsersPromise = this.updateUsersDataStructure(dbUserDid);
+        const updateSubscribedChannelPromise = this.updateSubscribedChannelDataStructure(dbUserDid);
+
+        Promise.allSettled([updateUsersPromise, updateSubscribedChannelPromise])
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  updateUsersDataStructure(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.createUserTable(dbUserDid);
+
+        let userProfileList: FeedsData.UserProfile[] = [];
+        try {
+          userProfileList = await this.queryOriginUserListById(dbUserDid);
+        } catch (error) {
+        }
+
+        userProfileList.forEach((userProfile: FeedsData.UserProfile) => {
+          const newProfile: FeedsData.UserProfile = {
+            did: userProfile.did,
+            resolvedName: userProfile.resolvedName,
+            resolvedAvatar: userProfile.resolvedAvatar,
+            resolvedBio: userProfile.resolvedBio,
+            displayName: userProfile.displayName,
+            name: userProfile.name,
+            avatar: userProfile.avatar,
+            bio: userProfile.bio,
+            updatedAt: userProfile.updatedAt || 0
+          }
+          this.insertUserData(dbUserDid, newProfile);
+          this.deleteOriginUserDataById(dbUserDid, userProfile.did);
+        });
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  updateSubscribedChannelDataStructure(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         await this.createSubscribedChannelTable(dbUserDid);
