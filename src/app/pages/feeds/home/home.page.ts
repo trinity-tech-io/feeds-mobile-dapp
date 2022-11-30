@@ -1099,14 +1099,14 @@ export class HomePage implements OnInit {
             this.isLoadAvatarImage[id] = "13";
           } else {
             if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-              this.channelAvatarMap[id] = './assets/images/default-contact.svg';
+              this.channelAvatarMap[id] = './assets/images/profile-0.svg';
             }
             this.isLoadAvatarImage[id] = "13";
           }
         })
         .catch(reason => {
           if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-            this.channelAvatarMap[id] = './assets/images/default-contact.svg';
+            this.channelAvatarMap[id] = './assets/images/profile-0.svg';
           }
           Logger.error(TAG,
             "Excute 'handlePostAvatarV2' in home page is error , get image data error, error msg is ",

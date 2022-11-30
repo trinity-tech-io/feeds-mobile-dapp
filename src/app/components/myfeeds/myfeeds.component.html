@@ -38,7 +38,7 @@
         <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
           <img
           [src] = "channelAvatarMap[channel.destDid+'-'+channel.channelId]"
-          [ngClass]="{'customizeAvatar': channelAvatarMap[channel.destDid+'-'+channel.channelId].indexOf('default-contact.svg') === -1 }"
+          class="customizeAvatar"
           *ngIf="channelAvatarMap[channel.destDid+'-'+channel.channelId]  != null && channelAvatarMap[channel.destDid+'-'+channel.channelId] != undefined">
         </div>
       </ion-col>

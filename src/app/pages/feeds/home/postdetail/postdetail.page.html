@@ -20,7 +20,7 @@
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode" (click)="navTo(destDid, channelId)">
             <img
             src={{channelAvatar}}
-            [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
+            class="customizeAvatar"
             *ngIf="channelAvatar != ''">
           </div>
         </ion-col>
@@ -169,9 +169,8 @@
           >
           <img
           *ngIf="comment.destDid === comment.createrDid && channelAvatar != ''"
-          class="comment-avatar"
           style="border: none;"
-          [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
+          class="customizeAvatar"
           [src]="channelAvatar">
           <img
           *ngIf="comment.destDid != comment.createrDid"
@@ -254,9 +253,8 @@
             >
             <img
             *ngIf="replyComment.destDid === replyComment.createrDid && channelAvatar != ''"
-            class="comment-avatar"
             style="border: none;"
-            [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
+            class="customizeAvatar"
             [src]="channelAvatar">
             <img
             *ngIf="replyComment.destDid != replyComment.createrDid"

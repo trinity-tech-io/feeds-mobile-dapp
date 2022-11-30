@@ -899,20 +899,20 @@ export class ProfilePage implements OnInit {
               this.myFeedAvatarMap[id] = data;
             } else {
               if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
-                 this.myFeedAvatarMap[id] =  "./assets/images/default-contact.svg";
+                 this.myFeedAvatarMap[id] =  "./assets/images/profile-0.svg";
               }
               this.myFeedsIsLoadimage[id] = '13';
             }
           });
         }).catch((err) => {
           if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
-            this.myFeedAvatarMap[id] =  "./assets/images/default-contact.svg";
+            this.myFeedAvatarMap[id] =  "./assets/images/profile-0.svg";
           }
         });
 
       }else{
         if(this.myFeedAvatarMap[id] === './assets/images/loading.svg'){
-          this.myFeedAvatarMap[id] =  "./assets/images/default-contact.svg";
+          this.myFeedAvatarMap[id] =  "./assets/images/profile-0.svg";
        }
       }
     }
@@ -1168,14 +1168,14 @@ export class ProfilePage implements OnInit {
             this.isLoadAvatarImage[id] = "13";
           } else {
             if(this.likeAvatarMap[id] === './assets/images/loading.svg'){
-              this.likeAvatarMap[id] = './assets/images/default-contact.svg';
+              this.likeAvatarMap[id] = './assets/images/profile-0.svg';
             }
             this.isLoadAvatarImage[id] = "13";
           }
         })
         .catch(reason => {
           if(this.likeAvatarMap[id] === './assets/images/loading.svg'){
-            this.likeAvatarMap[id] = './assets/images/default-contact.svg';
+            this.likeAvatarMap[id] = './assets/images/profile-0.svg';
           }
           Logger.error(TAG,
             "Excute 'handlePostAvatar' in home page is error , get image data error, error msg is ",

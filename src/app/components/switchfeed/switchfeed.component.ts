@@ -58,10 +58,10 @@ export class SwitchfeedComponent implements OnInit {
           let avatar =  await this.parseAvatar(avatarUri,destDid) || '';
           this.avatarList[avatarUri] = avatar;
         } catch (error) {
-          this.avatarList[avatarUri] = "./assets/images/default-contact.svg";
+          this.avatarList[avatarUri] = "./assets/images/profile-0.svg";
         }
         }else{
-          this.avatarList[avatarUri] = "./assets/images/default-contact.svg";
+          this.avatarList[avatarUri] = "./assets/images/profile-0.svg";
         }
       }
   }

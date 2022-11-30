@@ -101,12 +101,12 @@ export class EditCommentPage implements OnInit {
           this.channelAvatar = result;
         }else{
           if(this.channelAvatar === './assets/images/loading.svg'){
-            this.channelAvatar = "./assets/images/default-contact.svg";
+            this.channelAvatar = "./assets/images/profile-0.svg";
           }
         }
       }).catch((err) => {
         if(this.channelAvatar === './assets/images/loading.svg'){
-          this.channelAvatar = "./assets/images/default-contact.svg";
+          this.channelAvatar = "./assets/images/profile-0.svg";
         }
       })
   }

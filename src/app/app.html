@@ -11,7 +11,7 @@
                 <div class="avatar">
                     <img
                     *ngIf="avatar!=''"
-                    [ngClass]="{'customizeAvatar': avatar.indexOf('default-contact.svg') === -1 }"
+                    class="customizeAvatar"
                     [src]="avatar"
                     (click)="profiledetail()"/>
                 </div>

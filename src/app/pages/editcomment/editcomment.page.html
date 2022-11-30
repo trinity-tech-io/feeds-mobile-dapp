@@ -10,7 +10,7 @@
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img
             src={{channelAvatar}}
-            [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
+            class="customizeAvatar"
             *ngIf="channelAvatar != ''">
           </div>
           <ion-label (press)="pressName(channelName)" [style.touch-action]="'pan-y'">{{ channelName }}</ion-label>

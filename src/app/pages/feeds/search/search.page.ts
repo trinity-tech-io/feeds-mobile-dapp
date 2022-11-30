@@ -576,7 +576,7 @@ export class SearchPage implements OnInit {
         }) || null;
         if(nenChannel != null ){
           if(nenChannel.avatar === ''){
-            this.channelAvatarMap[id] = './assets/images/default-contact.svg';
+            this.channelAvatarMap[id] = './assets/images/profile-0.svg';
           }else{
            let channelAvatar =  this.channelAvatarMap[id] || '';
            if(channelAvatar === ''){
@@ -590,7 +590,7 @@ export class SearchPage implements OnInit {
                 if (srcData != "") {
                   if(avatar.type === "text/plain"){
                     if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-                      this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+                      this.channelAvatarMap[id] = './assets/images/profile-0.svg'
                     }
                     this.searchIsLoadimage[id] = '13';
                   }else{
@@ -600,21 +600,21 @@ export class SearchPage implements OnInit {
                   }
                 } else {
                   if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-                    this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+                    this.channelAvatarMap[id] = './assets/images/profile-0.svg'
                   }
                   this.searchIsLoadimage[id] = '13';
                 }
               });
             }).catch(()=>{
               if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-                this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+                this.channelAvatarMap[id] = './assets/images/profile-0.svg'
               }
             });
           }
 
         }else{
           if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-            this.channelAvatarMap[id] = './assets/images/default-contact.svg'
+            this.channelAvatarMap[id] = './assets/images/profile-0.svg'
           }
         }
 
@@ -637,14 +637,14 @@ export class SearchPage implements OnInit {
               this.channelAvatarMap[id] = srcData;
             } else {
               if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-                 this.channelAvatarMap[id] === './assets/images/default-contact.svg';
+                 this.channelAvatarMap[id] === './assets/images/profile-0.svg';
               }
               this.searchIsLoadimage[id] = '13';
             }
           });
         }).catch((err) => {
           if(this.channelAvatarMap[id] === './assets/images/loading.svg'){
-            this.channelAvatarMap[id] === './assets/images/default-contact.svg';
+            this.channelAvatarMap[id] === './assets/images/profile-0.svg';
           }
         });
       }

@@ -359,14 +359,14 @@ export class SubscriptionsPage implements OnInit {
             this.followAvatarMap[id] = srcData;
           } else {
             if(this.followAvatarMap[id] === './assets/images/loading.svg'){
-              this.followAvatarMap[id] = './assets/images/default-contact.svg';
+              this.followAvatarMap[id] = './assets/images/profile-0.svg';
             }
             this.followingIsLoadimage[id] = '13';
           }
         });
       }).catch((err) => {
         if(this.followAvatarMap[id] === './assets/images/loading.svg'){
-          this.followAvatarMap[id] = './assets/images/default-contact.svg';
+          this.followAvatarMap[id] = './assets/images/profile-0.svg';
         }
       });
     }

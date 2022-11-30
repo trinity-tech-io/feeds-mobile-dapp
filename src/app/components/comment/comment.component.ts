@@ -96,7 +96,7 @@ export class CommentComponent implements OnInit {
       let avatar = await this.handleChannelAvatar(avatarUri,this.destDid);
       this.avatar = avatar;
     } catch (error) {
-      this.avatar = "./assets/images/default-contact.svg";
+      this.avatar = "./assets/images/profile-0.svg";
     }
   }
 
@@ -109,10 +109,10 @@ export class CommentComponent implements OnInit {
            let channelAvatar = result || '';
            resolve(channelAvatar);
         }).catch((err)=>{
-          resolve('./assets/images/default-contact.svg');
+          resolve('./assets/images/profile-0.svg');
         })
       }catch(err){
-        resolve('./assets/images/default-contact.svg');
+        resolve('./assets/images/profile-0.svg');
       }
     });
 

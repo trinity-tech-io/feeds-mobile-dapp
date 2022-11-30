@@ -14,7 +14,7 @@
       <div class="avatar" (click) = "editProfile()">
        <img
        *ngIf="avatar != ''"
-       [ngClass]="{'customizeAvatar': avatar.indexOf('default-contact.svg') === -1 }"
+       class="customizeAvatar"
        [src]="avatar"/>
       </div>
       <div class="cardTitle">{{name}}</div>

@@ -11,13 +11,11 @@
           [class.dark-feedAvatar]="theme.darkMode" *ngIf="refcommentId!='0'">
             <img
             *ngIf="isBorder&&avatar"
-            [ngClass]="{'customizeAvatar': avatar.indexOf('default-contact.svg') === -1 }"
-            class="comment-avatar"
+            class="customizeAvatar"
             src= {{avatar}} />
             <img
             *ngIf="!isBorder&&avatar"
-            [ngClass]="{'customizeAvatar': avatar.indexOf('default-contact.svg') === -1 }"
-            class="comment-avatar"
+            class="customizeAvatar"
             src= {{avatar}} />
           </div>
 
@@ -26,7 +24,7 @@
           [class.dark-feedAvatar]="theme.darkMode" *ngIf="refcommentId==='0'">
             <img
             src={{avatar}}
-            [ngClass]="{'customizeAvatar': avatar.indexOf('default-contact.svg') === -1 }"
+            class="customizeAvatar"
             *ngIf="avatar">
           </div>
         </ion-col>

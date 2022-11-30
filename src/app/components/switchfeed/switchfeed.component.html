@@ -11,7 +11,7 @@
           <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
             <img
             src={{avatarList[channel.avatar]}}
-            [ngClass]="{'customizeAvatar': avatarList[channel.avatar].indexOf('default-contact.svg') === -1 }"
+            class="customizeAvatar"
             *ngIf="avatarList[channel.avatar]">
           </div>
         </ion-col>

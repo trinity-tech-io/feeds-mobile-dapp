@@ -32,7 +32,7 @@
       <div  class="feedAvatar1" [class.dark-feedAvatar1]="theme.darkMode">
       <img
       [src] = "pageItemMap[userDid].avatar"
-      [ngClass]="{'customizeAvatar': pageItemMap[userDid].avatar.indexOf('default-contact.svg') === -1 }"
+      class="customizeAvatar"
       *ngIf="pageItemMap[userDid] != null && pageItemMap[userDid] != undefined && pageItemMap[userDid].avatar != null && pageItemMap[userDid].avatar != undefined && pageItemMap[userDid].avatar != ''">
     </div>
     </ion-col>
