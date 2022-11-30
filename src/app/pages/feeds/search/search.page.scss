@@ -35,6 +35,10 @@ ion-searchbar {
   z-index: 2;
 }
 
+.channel-list ion-item .channel-row .middle-col ion-row{
+  padding-top: 5px;
+}
+
 .channel-list ion-item .channel-row .middle-col p{
   font-size: 12px;
   font-stretch: normal;
@@ -60,7 +64,6 @@ ion-searchbar {
   display:-webkit-box;
   -webkit-box-orient:vertical;
   -webkit-line-clamp:2;
-  padding-top: 12px;
   width: 95%;
 }
 
@@ -125,6 +128,7 @@ ion-searchbar {
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+  margin-top: 3px;
 }
 
 .unsubscribed {
@@ -135,7 +139,7 @@ ion-searchbar {
   height: 35px;
   line-height: 31px;
   margin: 0;
-  top: 12px;
+  top: 9px;
 }
 
 .subscribed {
@@ -146,7 +150,7 @@ ion-searchbar {
   height: 35px;
   line-height: 31px;
   margin: 0;
-  top: 12px;
+  top: 9px;
 }
 
 ion-button {
