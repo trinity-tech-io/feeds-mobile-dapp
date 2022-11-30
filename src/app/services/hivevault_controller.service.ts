@@ -49,7 +49,7 @@ export class HiveVaultController {
           this.dataHelper.cleanOldestPostV3();
 
           try {
-            const posts = await this.queryRemotePostWithTime(destDid, channelId, endTime, null);
+            const posts = await this.queryPostByChannelIdWithTimeFromRemote(destDid, channelId, endTime, null);
             postList = _.differenceWith(postList, posts);
           } catch (error) {
           }
@@ -82,7 +82,7 @@ export class HiveVaultController {
           this.dataHelper.cleanOldestPostV3();
 
           try {
-            const posts = await this.queryRemotePostWithTime(destDid, channelId, UtilService.getCurrentTimeNum(), null);
+            const posts = await this.queryPostByChannelIdWithTimeFromRemote(destDid, channelId, UtilService.getCurrentTimeNum(), null);
             postList.push(posts);
           } catch (error) {
           }
@@ -271,7 +271,7 @@ export class HiveVaultController {
           const channelId = subscribedChannel.channelId
           const destDid = subscribedChannel.targetDid
 
-          this.queryRemotePostWithTime(destDid, channelId, UtilService.getCurrentTimeNum(), callback).catch((error) => {
+          this.queryPostByChannelIdWithTimeFromRemote(destDid, channelId, UtilService.getCurrentTimeNum(), callback).catch((error) => {
             Logger.warn(TAG, 'Get remote posts from', destDid, channelId, 'occur error,', error);
           });
         }
@@ -510,7 +510,7 @@ export class HiveVaultController {
     console.log("rangeOfTimePostList >>>>>>>>>>>> ", rangeOfTimePostList)
   }
 
-  async queryPostByPostId(targetDid: string, channelId: string, postId: string): Promise<FeedsData.PostV3> {
+  async queryPostByPostIdFromRemote(targetDid: string, channelId: string, postId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryPostById(targetDid, channelId, postId);
@@ -522,6 +522,19 @@ export class HiveVaultController {
         const posts = HiveVaultResultParse.parsePostResult(targetDid, result.find_message.items);
         await this.dataHelper.addPost(posts[0]);
         resolve(posts[0]);
+      } catch (error) {
+        Logger.error(TAG, error);
+        reject(error)
+      }
+    });
+  }
+
+  queryPostByPostIdFromLocal(targetDid: string, channelId: string, postId: string): Promise<FeedsData.PostV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const post = await this.dataHelper.getPostV3ById(postId) || null;
+        Logger.log(TAG, 'Query Post By PostId From Local result is', post);
+        resolve(post);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error)
@@ -611,7 +624,7 @@ export class HiveVaultController {
   getChannelV3ById(targetDid: string, channelId: string, callback: (localCachedChannel: FeedsData.ChannelV3) => void, forceLoadRemote: boolean = false): Promise<FeedsData.ChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const localCachedChannel = await this.getChannelV3ByIdFromLocal(targetDid, channelId);
+        const localCachedChannel = await this.getChannelV3ByIdFromLocal(targetDid, channelId) || null;
         callback(localCachedChannel);
         if (!forceLoadRemote && localCachedChannel != null) {
           resolve(localCachedChannel);
@@ -941,7 +954,7 @@ export class HiveVaultController {
 
         this.insertSubscribedChannelToRemote(targetDid, channelId, result.createdAt, result.updatedAt);
         try {
-          await this.queryRemotePostWithTime(targetDid, channelId, UtilService.getCurrentTimeNum(), null);
+          await this.queryPostByChannelIdWithTimeFromRemote(targetDid, channelId, UtilService.getCurrentTimeNum(), null);
         } catch (error) {
         }
 
@@ -1920,11 +1933,11 @@ export class HiveVaultController {
     }
 
     //TODO sync post by time
-    this.queryRemotePostWithTime(post.destDid, post.channelId, post.updatedAt, null);
+    this.queryPostByChannelIdWithTimeFromRemote(post.destDid, post.channelId, post.updatedAt, null);
     return post;
   }
 
-  queryRemotePostWithTime(destDid: string, channelId: string, endTime: number, callback: (postNum: number) => void): Promise<FeedsData.PostV3[]> {
+  queryPostByChannelIdWithTimeFromRemote(destDid: string, channelId: string, endTime: number, callback: (postNum: number) => void): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const result = await this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId, 0, endTime);
@@ -1932,6 +1945,19 @@ export class HiveVaultController {
 
         //this.eventBus.publish(FeedsEvent.PublishType.updateTab, false);
         resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'Query post with time error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryPostByChannelIdWithTimeFromLocal(destDid: string, channelId: string, endTime: number): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        //TODO
+        //   const postList = await this.dataHelper.queryPostDataByTime();
+        resolve(null);
       } catch (error) {
         Logger.error(TAG, 'Query post with time error', error);
         reject(error);
@@ -2949,4 +2975,61 @@ export class HiveVaultController {
       })
     });
   }
+
+  //TODO
+  queryTimeLineData() {
+
+  }
+
+  queryPostByPostId(targetDid: string, channelId: string, postId: string, callback: (localCachedChannel: FeedsData.PostV3) => void, forceLoadRemote: boolean = false): Promise<FeedsData.PostV3> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const localPost = await this.queryPostByPostIdFromLocal(targetDid, channelId, postId) || null;
+        callback(localPost);
+        if (!forceLoadRemote && localPost != null) {
+          resolve(localPost);
+          return;
+        }
+
+        const remotePost = await this.queryPostByPostIdFromRemote(targetDid, channelId, postId) || null;
+        if (!remotePost) {
+          resolve(null);
+          return;
+        }
+        resolve(remotePost);
+      } catch (error) {
+        Logger.error(TAG, error);
+        resolve(null);
+        reject(error);
+      }
+    });
+  }
+
+
+  queryPostByChannelIdWithTime(targetDid: string, channelId: string, postId: string, endTime: number, callbackCached: (localCachedPost: FeedsData.PostV3[]) => void, callback: (newPostNum: number) => void, forceLoadRemote: boolean = false): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const localPostList = await this.queryPostByChannelIdWithTimeFromLocal(targetDid, channelId, endTime) || null;
+        callbackCached(localPostList);
+        if (!forceLoadRemote && localPostList != null) {
+          resolve(localPostList);
+          return;
+        }
+
+        const remotePost = await this.queryPostByChannelIdWithTimeFromRemote(targetDid, channelId, endTime, (newPostNum: number) => {
+          callback(newPostNum);
+        }) || null;
+        if (!remotePost) {
+          resolve(null);
+          return;
+        }
+        resolve(remotePost);
+      } catch (error) {
+        Logger.error(TAG, error);
+        resolve(null);
+        reject(error);
+      }
+    });
+  }
+
 }
