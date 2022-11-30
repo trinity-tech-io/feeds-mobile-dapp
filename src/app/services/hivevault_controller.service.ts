@@ -964,7 +964,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       let signinData = await this.dataHelper.getSigninData();
       if (signinData == null || signinData == undefined) {
-        resolve('./assets/images/default-contact.svg');
+        resolve('./assets/images/did-default-avatar.svg');
         return;
       }
 
@@ -982,7 +982,7 @@ export class HiveVaultController {
         return
       }
 
-      resolve('./assets/images/default-contact.svg');
+      resolve('./assets/images/did-default-avatar.svg');
       return;
     });
   }

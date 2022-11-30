@@ -58,7 +58,7 @@ export class CommentComponent implements OnInit {
     }
     if(this.channelAvatar === ""){
       this.isBorder = true;
-      this.avatar = "./assets/images/default-contact.svg";
+      this.avatar = "./assets/images/did-default-avatar.svg";
     }else{
       this.isBorder = false;
       this.parseAvatar();

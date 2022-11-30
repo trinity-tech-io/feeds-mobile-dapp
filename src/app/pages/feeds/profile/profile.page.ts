@@ -467,9 +467,16 @@ export class ProfilePage implements OnInit {
     }
     this.description = signInData['description'] || '';
     // let userDid = signInData['did'] || '';
-    this.updateUserAvatar();
+    try {
+      if(this.avatar === ''){
+        this.avatar = './assets/images/loading.svg';
+      }
+      await this.updateUserAvatar();
+    } catch (error) {
+
+    }
     let avatar = this.avatar || null;
-    if (avatar === null) {
+    if (avatar === null ||  this.avatar === './assets/images/loading.svg') {
       this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
     }
 
@@ -2273,7 +2280,6 @@ export class ProfilePage implements OnInit {
 
   async updateUserAvatar() {
     let avatar = await this.hiveVaultController.getUserAvatar();
-
     let imgUri = "";
     if (avatar.indexOf('feeds:imgage:') > -1) {
       imgUri = avatar.replace('feeds:imgage:', '');

@@ -92,7 +92,7 @@ export class UserlistPage implements OnInit {
     }
   }
 
-  setUserAvatar(userDid: string, avatar = './assets/images/default-contact.svg') {
+  setUserAvatar(userDid: string, avatar = './assets/images/did-default-avatar.svg') {
     if (!this.pageItemMap[userDid])
       this.pageItemMap[userDid] = this.generatePageItem(userDid);
     this.pageItemMap[userDid].avatar = avatar;

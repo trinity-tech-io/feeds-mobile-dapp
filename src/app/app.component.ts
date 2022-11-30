@@ -85,11 +85,18 @@ export class MyApp {
     this.initializeApp();
     this.initProfileData();
 
-    this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, () => {
+    this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, async () => {
       document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
-      this.getAvatar();
+      try {
+        if(this.avatar === ''){
+          this.avatar = './assets/images/loading.svg';
+        }
+        await this.getAvatar();
+      } catch (error) {
+
+      }
       let avatar = this.avatar || null;
-      if (avatar === null) {
+      if (avatar === null || this.avatar === './assets/images/loading.svg') {
         this.hiveVaultController.refreshAvatar().then(async () => { await this.getAvatar(); }).catch(async () => { await this.getAvatar(); });
       }
       this.initProfileData();

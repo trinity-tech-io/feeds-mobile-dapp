@@ -175,8 +175,8 @@
           [src]="channelAvatar">
           <img
           *ngIf="comment.destDid != comment.createrDid"
-          class="comment-avatar"
-          src='./assets/images/default-contact.svg'>
+          class="customizeAvatar"
+          src='./assets/images/did-default-avatar.svg'>
           </div>
         </ion-col>
         <ion-col class="content-col" size="8" sizeMd="8" sizeLg="8">
@@ -258,7 +258,10 @@
             style="border: none;"
             [ngClass]="{'customizeAvatar': channelAvatar.indexOf('default-contact.svg') === -1 }"
             [src]="channelAvatar">
-            <img *ngIf="replyComment.destDid != replyComment.createrDid" class="comment-avatar" src='./assets/images/default-contact.svg'>
+            <img
+            *ngIf="replyComment.destDid != replyComment.createrDid"
+            class="customizeAvatar"
+            src='./assets/images/did-default-avatar.svg'>
             </div>
           </ion-col>
           <ion-col class="content-col" size="7.5" sizeMd="7" sizeLg="7">
