@@ -86,7 +86,7 @@ export class AddFeedService {
       try {
         Logger.log(TAG, 'Decode result is ', decodeResult);
         let feedName = decodeResult.feedName;
-        let avatar = './assets/images/profile-1.svg';
+        let avatar = './assets/images/profile-0.svg';
         let follower = 0;
 
         if (

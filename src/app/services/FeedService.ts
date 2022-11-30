@@ -5416,7 +5416,7 @@ export class FeedService {
     this.realm = '';
     this.serviceNonce = '';
     this.serviceRealm = '';
-    this.profileIamge = 'assets/images/profile-1.svg';
+    this.profileIamge = 'assets/images/profile-0.svg';
     this.clipProfileIamge = '';
     this.selsectIndex = 1;
 

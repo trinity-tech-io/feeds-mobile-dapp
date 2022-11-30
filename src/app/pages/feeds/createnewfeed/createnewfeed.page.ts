@@ -16,6 +16,7 @@ import { HiveVaultController } from 'src/app/services/hivevault_controller.servi
 import { UtilService } from 'src/app/services/utilService';
 import { MorenameComponent } from 'src/app/components/morename/morename.component';
 import _ from 'lodash';
+import { CameraService } from 'src/app/services/CameraService';
 
 @Component({
   selector: 'app-createnewfeed',
@@ -40,6 +41,10 @@ export class CreatenewfeedPage implements OnInit {
   //public displayName: string = "";
   public channelName: string = "";
   public channelDes: string = "";
+
+  public hidePictureMenuComponent: boolean = false;
+  public isSupportGif: boolean = false;
+
   constructor(
     private feedService: FeedService,
     private popoverController: PopoverController,
@@ -54,8 +59,8 @@ export class CreatenewfeedPage implements OnInit {
     private ipfsService: IPFSService,
     private dataHelper: DataHelper,
     private hiveVaultController: HiveVaultController,
-    private popupProvider: PopupProvider
-
+    private popupProvider: PopupProvider,
+    private camera: CameraService
   ) { }
 
   ngOnInit() {
@@ -66,7 +71,14 @@ export class CreatenewfeedPage implements OnInit {
     this.initTitle();
     this.curLang = this.languageService.getCurLang();
     this.developerMode = this.dataHelper.getDeveloperMode();
-    this.channelAvatar = this.dataHelper.getProfileIamge();
+    let clipProfileIamge = this.dataHelper.getClipProfileIamge();
+    if (clipProfileIamge != '') {
+      this.channelAvatar = clipProfileIamge;
+      this.dataHelper.setClipProfileIamge('');
+    } else {
+      this.channelAvatar =
+        this.dataHelper.getProfileIamge() || 'assets/images/profile-0.svg';
+    }
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
   }
 
@@ -80,6 +92,9 @@ export class CreatenewfeedPage implements OnInit {
     this.theme.restTheme();
     this.native.hideLoading();
     this.clickButton = false;
+    if(this.hidePictureMenuComponent){
+      this.hidePictureMenuComponent = false;
+    }
     this.native.handleTabsEvents();
   }
 
@@ -196,7 +211,8 @@ export class CreatenewfeedPage implements OnInit {
   }
 
   profileimage() {
-    this.native.navigateForward(['/profileimage'], '');
+    this.hidePictureMenuComponent = true;
+    //this.native.navigateForward(['/profileimage'], '');
   }
 
   clickPublicChannel() {
@@ -268,6 +284,44 @@ export class CreatenewfeedPage implements OnInit {
     });
 
     return await this.infoPopover.present();
+  }
+
+  openGallery(data: any) {
+    this.hidePictureMenuComponent = false;
+    let fileBase64  = data["fileBase64"] || "";
+    if(fileBase64 != ""){
+      this.native.navigateForward(['editimage'], '');
+      this.dataHelper.setClipProfileIamge(fileBase64);
+    }
+  }
+
+  openCamera() {
+    this.camera.openCamera(
+      30,
+      0,
+      1,
+      (imageUrl: any) => {
+        this.hidePictureMenuComponent = false;
+        let imgBase64 = imageUrl || "";
+        if(imgBase64 != ""){
+          this.native.navigateForward(['editimage'], '');
+          this.dataHelper.setClipProfileIamge(imgBase64);
+        }
+      },
+      err => {},
+    );
+  }
+
+  hidePictureMenu(data: any) {
+    let buttonType = data['buttonType'];
+    switch(buttonType) {
+      case 'photolibary':
+        this.hidePictureMenuComponent = false;
+        break;
+      case 'cancel':
+        this.hidePictureMenuComponent = false;
+        break;
+    }
   }
 
 }

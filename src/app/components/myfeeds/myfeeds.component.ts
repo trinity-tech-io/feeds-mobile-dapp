@@ -71,7 +71,7 @@ export class MyfeedsComponent implements OnInit {
   }
 
   checkDid() {
-    this.dataHelper.setProfileIamge('assets/images/profile-1.svg');
+    this.dataHelper.setProfileIamge('assets/images/profile-0.svg');
     this.dataHelper.setSelsectIndex(1);
 
     this.native.navigateForward(['/createnewfeed'], '');

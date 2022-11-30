@@ -20,6 +20,7 @@ import { Config } from 'src/app/services/config';
 import { Logger } from 'src/app/services/logger';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import SparkMD5 from 'spark-md5';
+import { CameraService } from 'src/app/services/CameraService';
 const TAG: string = 'EidtchannelPage';
 const SUCCESS = 'success';
 @Component({
@@ -57,6 +58,10 @@ export class EidtchannelPage implements OnInit {
   private updateChannelSid: NodeJS.Timer = null;
   private popoverDialog: any = null;
   private signature: string = "";
+
+  public hidePictureMenuComponent: boolean = false;
+  public isSupportGif: boolean = false;
+
   constructor(
     private feedService: FeedService,
     public activatedRoute: ActivatedRoute,
@@ -73,6 +78,7 @@ export class EidtchannelPage implements OnInit {
     private storageService: StorageService,
     private walletConnectControllerService: WalletConnectControllerService,
     private ipfsService: IPFSService,
+    private camera: CameraService
   ) { }
 
   async ngOnInit() {
@@ -126,7 +132,14 @@ export class EidtchannelPage implements OnInit {
   async ionViewWillEnter() {
     this.theme.setTheme1();
     this.initTitle();
-    this.channelAvatar = this.dataHelper.getProfileIamge();
+    let clipProfileIamge = this.dataHelper.getClipProfileIamge();
+    if (clipProfileIamge != '') {
+      this.channelAvatar = clipProfileIamge;
+      this.dataHelper.setClipProfileIamge('');
+    } else {
+      this.channelAvatar =
+        this.dataHelper.getProfileIamge() || 'assets/images/profile-0.svg';
+    }
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
   }
 
@@ -155,7 +168,7 @@ export class EidtchannelPage implements OnInit {
     if(this.isShowUpdateContratct){
         return;
     }
-    this.native.navigateForward(['/profileimage'], '');
+    this.hidePictureMenuComponent = true;
   }
 
   cancel() {
@@ -712,5 +725,43 @@ export class EidtchannelPage implements OnInit {
       that.dataHelper.saveData("feeds.contractInfo.list",channelContractInfoList);
     }
     that.native.pop();
+  }
+
+  openGallery(data: any) {
+    this.hidePictureMenuComponent = false;
+    let fileBase64  = data["fileBase64"] || "";
+    if(fileBase64 != ""){
+      this.native.navigateForward(['editimage'], '');
+      this.dataHelper.setClipProfileIamge(fileBase64);
+    }
+  }
+
+  openCamera() {
+    this.camera.openCamera(
+      30,
+      0,
+      1,
+      (imageUrl: any) => {
+        this.hidePictureMenuComponent = false;
+        let imgBase64 = imageUrl || "";
+        if(imgBase64 != ""){
+          this.native.navigateForward(['editimage'], '');
+          this.dataHelper.setClipProfileIamge(imgBase64);
+        }
+      },
+      err => {},
+    );
+  }
+
+  hidePictureMenu(data: any) {
+    let buttonType = data['buttonType'];
+    switch(buttonType) {
+      case 'photolibary':
+        this.hidePictureMenuComponent = false;
+        break;
+      case 'cancel':
+        this.hidePictureMenuComponent = false;
+        break;
+    }
   }
 }

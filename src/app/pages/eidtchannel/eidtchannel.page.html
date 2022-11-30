@@ -7,7 +7,7 @@
     <div class="cardImg">
       <img (click)="profileimage()" class="avatar" *ngIf="avatar === ''" src="./assets/images/profile-0.svg" />
       <img (click)="profileimage()" class="avatar" *ngIf="avatar != ''" [src]="avatar"/>
-      <img (click)="profileimage()" class="eidtAvatar" src="./assets/images/eidtAvatar.svg" *ngIf="!isShowUpdateContratct"/>
+      <img (click)="profileimage()" class="eidtAvatar" src="./assets/images/add-channel.svg" *ngIf="!isShowUpdateContratct"/>
     </div>
   </ion-row>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
@@ -51,3 +51,12 @@
  [loadingMaxNumber] = "loadingMaxNumber"
 >
 </app-nftloading>
+ <!---------------- ADD picture menu---------------->
+ <app-picturemenu
+ *ngIf="hidePictureMenuComponent"
+ [isSupportGif] = "isSupportGif"
+ (openCamera) = "openCamera()"
+ (openGallery)= "openGallery($event)"
+ (hidePictureMenu)="hidePictureMenu($event)"
+ >
+ </app-picturemenu>

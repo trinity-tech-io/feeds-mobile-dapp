@@ -7,7 +7,7 @@
     <div class="cardImg">
       <img (click)="profileimage()" class="avatar" *ngIf="avatar === ''" src="./assets/images/profile-0.svg" />
       <img (click)="profileimage()" class="avatar" *ngIf="avatar != ''" [src]="handleAvatar()"/>
-      <img (click)="profileimage()" class="eidtAvatar" src="./assets/images/eidtAvatar.svg"/>
+      <img (click)="profileimage()" class="eidtAvatar" src="./assets/images/add-channel.svg"/>
     </div>
   </ion-row>
   <ion-grid class="container" [class.darkContainer]="theme.darkMode">
@@ -45,12 +45,12 @@
 
         <ion-item lines="none">
           <ion-row class="section dev-mode">
-            <ion-col size="9" class="title-col" (swipe)="clickPublicChannel()" [style.touch-action]="'pan-y'">
+            <ion-col size="10" class="title-col" (swipe)="clickPublicChannel()" [style.touch-action]="'pan-y'">
                 <h1 (click)="help($event)" >{{"FeedspreferencesPage.des" | translate }} <img [src]="!theme.darkMode ? './assets/images/question-circle.svg' : './assets/images/darkmode/question-circle.svg'" id="help"></h1>
                 <h2 *ngIf="curChannelPublicStatus" (click)="clickPublicChannel()">{{ 'SettingsPage.on' | translate }}</h2>
                  <h2 *ngIf="!curChannelPublicStatus" (click)="clickPublicChannel()">{{ 'SettingsPage.off' | translate }}</h2>
             </ion-col>
-            <ion-col size="3" class="arrow-col" (swipe)="clickPublicChannel()" (click)="clickPublicChannel()" [style.touch-action]="'pan-y'">
+            <ion-col size="2" class="arrow-col" (swipe)="clickPublicChannel()" (click)="clickPublicChannel()" [style.touch-action]="'pan-y'">
               <ion-toggle [(ngModel)]="curChannelPublicStatus"  mode="ios" color="success" style="pointer-events:none;"></ion-toggle>
             </ion-col>
            </ion-row>
@@ -64,3 +64,12 @@
     </ion-row>
   </ion-grid>
 </ion-content>
+  <!---------------- ADD picture menu---------------->
+  <app-picturemenu
+  *ngIf="hidePictureMenuComponent"
+  [isSupportGif] = "isSupportGif"
+  (openCamera) = "openCamera()"
+  (openGallery)= "openGallery($event)"
+  (hidePictureMenu)="hidePictureMenu($event)"
+  >
+  </app-picturemenu>

@@ -108,7 +108,7 @@ export class DataHelper {
   private realm = '';
   private serviceNonce = '';
   private serviceRealm = '';
-  private profileIamge = 'assets/images/profile-1.svg';
+  private profileIamge = 'assets/images/profile-0.svg';
   private clipProfileIamge = '';
 
   private carrierStatus = FeedsData.ConnState.disconnected;

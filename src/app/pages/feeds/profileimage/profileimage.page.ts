@@ -88,7 +88,7 @@ export class ProfileimagePage implements OnInit {
       this.dataHelper.setClipProfileIamge('');
     } else {
       this.selectedAvatar =
-        this.dataHelper.getProfileIamge() || 'assets/images/profile-1.svg';
+        this.dataHelper.getProfileIamge() || 'assets/images/profile-0.svg';
     }
     // Check if an uploaded avatar exists. If so, select it and have it displayed
     if (this.selectedAvatar.indexOf('data:image') === -1 &&
