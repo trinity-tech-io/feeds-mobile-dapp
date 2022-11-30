@@ -4438,7 +4438,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const result = await this.sqliteHelper.insertUserData(selfDid, user);
+        const result = await this.sqliteHelper.insertUserProfile(selfDid, user);
         resolve(result);
       } catch (error) {
         reject(error);
@@ -4450,7 +4450,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const result = await this.sqliteHelper.updateUserData(selfDid, user);
+        const result = await this.sqliteHelper.updateUserProfile(selfDid, user);
         resolve(result);
       } catch (error) {
         reject(error);
@@ -4462,7 +4462,7 @@ export class DataHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const result = await this.sqliteHelper.queryUserDataById(selfDid, userDid);
+        const result = await this.sqliteHelper.queryUserProfileById(selfDid, userDid);
         resolve(result);
       } catch (error) {
         reject(error);

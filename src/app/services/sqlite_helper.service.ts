@@ -124,7 +124,7 @@ export class FeedsSqliteHelper {
         const p5 = this.createCommentTable(dbUserDid);
         const p6 = this.createLikeTable(dbUserDid);
         // const p7 = this.createPinPostTable(dbUserDid);
-        const p7 = this.createUserTable(dbUserDid);
+        const p7 = this.createUserProfileTable(dbUserDid);
         const p8 = this.createSubscribedChannelTable(dbUserDid);
         Promise.all(
           [p1, p2, p3, p4, p5, p6, p7, p8]
@@ -1184,7 +1184,7 @@ export class FeedsSqliteHelper {
   }
 
   //User
-  private createUserTable(dbUserDid: string): Promise<any> {
+  private createUserProfileTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'create table if not exists ' + this.TABLE_USER_NEW
@@ -1202,7 +1202,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertUserData(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
+  insertUserProfile(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_USER_NEW
@@ -1221,7 +1221,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  updateUserData(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
+  updateUserProfile(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'UPDATE ' + this.TABLE_USER_NEW
@@ -1238,7 +1238,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryUserDataById(dbUserDid: string, userDid: string): Promise<FeedsData.UserProfile> {
+  queryUserProfileById(dbUserDid: string, userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_USER_NEW + ' WHERE did=?';
@@ -1253,7 +1253,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  deleteOriginUserDataById(dbUserDid: string, userDid: string): Promise<string> {
+  deleteOriginUserProfileById(dbUserDid: string, userDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_USER + ' WHERE did=?'
@@ -1846,7 +1846,7 @@ export class FeedsSqliteHelper {
   restoreSqlData320(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.createUserTable(dbUserDid);
+        await this.createUserProfileTable(dbUserDid);
         await this.createPostTable(dbUserDid);
         let postData = [];
         try {
@@ -1869,7 +1869,7 @@ export class FeedsSqliteHelper {
   restoreSqlData330(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.createUserTable(dbUserDid);
+        await this.createUserProfileTable(dbUserDid);
         await this.createPostTable(dbUserDid);
         let postData = [];
         try {
@@ -1906,7 +1906,7 @@ export class FeedsSqliteHelper {
   updateUsersDataStructure(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.createUserTable(dbUserDid);
+        await this.createUserProfileTable(dbUserDid);
 
         let userProfileList: FeedsData.UserProfile[] = [];
         try {
@@ -1926,8 +1926,8 @@ export class FeedsSqliteHelper {
             bio: userProfile.bio,
             updatedAt: userProfile.updatedAt || 0
           }
-          this.insertUserData(dbUserDid, newProfile);
-          this.deleteOriginUserDataById(dbUserDid, userProfile.did);
+          this.insertUserProfile(dbUserDid, newProfile);
+          this.deleteOriginUserProfileById(dbUserDid, userProfile.did);
         });
         resolve('FINISH');
       } catch (error) {
