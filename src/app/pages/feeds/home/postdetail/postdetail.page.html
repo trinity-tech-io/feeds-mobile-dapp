@@ -273,7 +273,7 @@
             </ion-row>
 
             <ion-label>
-              <p (press)="pressContent(comment.createrDid)"><span style="color:#7624fe;">{{'PostdetailPage.replyingto'|translate}}</span>  <span style="font-size: 15px;font-weight: 700;color: #fff;" *ngIf="replyComment.destDid != comment.createrDid">@</span><span style="font-size: 15px;font-weight: 700;color: #fff;" *ngIf="replyComment.destDid === comment.createrDid"> c/</span>{{ userNameMap[comment.createrDid] }}</p>
+              <p (press)="pressContent(comment.createrDid)"><span style="color:#7624fe;">{{'PostdetailPage.replyingto'|translate}}</span>  <span style="font-size: 15px;font-weight: 700;color: #fff;" *ngIf="replyComment.destDid != comment.createrDid"> @</span><span style="font-size: 15px;font-weight: 700;color: #fff;" *ngIf="replyComment.destDid === comment.createrDid"> c/</span>{{ userNameMap[comment.createrDid] }}</p>
             </ion-label>
           </ion-col>
           <ion-col class="menuMore" size="0.5"  *ngIf="replyComment.status != 1 && isOwnComment[replyComment.commentId]"  (click)="openReplyTool(replyComment)">
