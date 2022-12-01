@@ -79,7 +79,9 @@
               "elliptic",
               "crypto-browserify",
               "promise-queue",
-              "ts-retrofit"
+              "ts-retrofit",
+              "stream",
+              "string_decoder"
             ]
           },
           "configurations": {
