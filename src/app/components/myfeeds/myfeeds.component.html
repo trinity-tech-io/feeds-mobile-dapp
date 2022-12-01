@@ -18,9 +18,9 @@
   <img *ngIf="!theme.darkMode" class="loadingIcon" src="./assets/images/nftloading.gif"/>
   <img *ngIf="theme.darkMode" class="loadingIcon" src="./assets/images/darkmode/nftloading.gif"/>
   </ion-col>
-  <ion-col size="12" class="loading">
+  <!-- <ion-col size="12" class="loading">
   <p>{{'common.beingRefresh'|translate}}</p>
-  </ion-col>
+  </ion-col> -->
 </ion-row>
 
 <ion-list *ngIf="channels.length > 0 || followers > 0 && !isLoadingMyFeeds" class="channel-list" [class.darkChannelList]="theme.darkMode"

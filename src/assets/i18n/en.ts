@@ -583,12 +583,12 @@ export const en = {
     des1: 'This channel is already public on the Explore Feeds and needs to unpublic from the Explore Feeds before it can be edited.',
     des2: 'This channel is already a collection and is public on the  Explore Feeds. It needs to unpublic from the  Explore Feeds and the collection can only be edited after deleting the collection.',
     des3: 'This channel is already a collection, you need to delete the collection before it can be edited.',
-    updateChannelDesc: 'Update Channel Collectibles, please wait',
-    updateChannelTimeoutDesc: 'Update Channel Collectibles timeout, you can confirm later',
-    updateChannelSuccess: 'Channel Collectibles updated successfully',
-    updateChannelFailed: 'Failed to update channel collectibles',
-    updateChannelDesc1: 'Update Channel, please wait',
-    updateChannelDesc2: 'The current channel information is inconsistent with the public channel information, please synchronize the data in time.',
+    updateChannelDesc: 'Updating channel info..., please wait..',
+    updateChannelTimeoutDesc: 'Updating channel info timeout, you can confirm later',
+    updateChannelSuccess: 'Channel info updated successfully',
+    updateChannelFailed: 'Failed to update channel info',
+    updateChannelDesc1: 'Update Channel info..., please wait.. ',
+    updateChannelDesc2: 'The current channel info is inconsistent with the public channel info, please synchronize the data in time.',
     updateChannelDesc3: 'Synchronize data'
   },
   EditPostPage: {
