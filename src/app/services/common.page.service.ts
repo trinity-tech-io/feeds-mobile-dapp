@@ -76,7 +76,7 @@ export class CommonPageService {
     text = text || "";
     if (text != '') {
       text = text.replace('did:elastos:', '');
-      return UtilService.shortenAddress(text);
+      return UtilService.shortenDid(text);
     }
   }
 
