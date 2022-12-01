@@ -332,8 +332,8 @@ export const en = {
     signoutMessage: 'Are you sure you want to sign out?',
     deleteAccountTitle: 'Delete account',
     deleteAccountMessage: 'Are you sure you want to delete your account and clear all posts?',
-    des: 'Please type',
-    des1: 'to confirm.'
+    des: 'Please type ',
+    des1: ' to confirm.'
   },
   SearchPage: {
     title: 'Channels',
