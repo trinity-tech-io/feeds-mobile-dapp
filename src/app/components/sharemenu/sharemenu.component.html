@@ -5,7 +5,7 @@
     <ion-grid style="padding:0px;">
       <ion-row class="shareTitle" *ngIf="isShowTitle">
         <ion-col size="12">
-          {{channelName}}
+          c/{{channelName}} <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId]==='2'">
         </ion-col>
       </ion-row>
 

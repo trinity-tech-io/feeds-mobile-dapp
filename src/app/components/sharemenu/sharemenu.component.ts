@@ -16,6 +16,7 @@ export class SharemenuComponent implements OnInit {
   @Input() isPreferences: boolean = false;
   @Input() channelName: string = null;
   @Input() qrCodeString: string = null;
+  @Input() channelPublicStatusList: any = {};
   @Input() userDid: string = '';
   @Output() hideShareMenu = new EventEmitter();
   constructor(
