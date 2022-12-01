@@ -135,6 +135,7 @@ export class EidtchannelPage implements OnInit {
     let clipProfileIamge = this.dataHelper.getClipProfileIamge();
     if (clipProfileIamge != '') {
       this.channelAvatar = clipProfileIamge;
+      this.dataHelper.setProfileIamge(clipProfileIamge);
       this.dataHelper.setClipProfileIamge('');
     } else {
       this.channelAvatar =

@@ -143,7 +143,7 @@ export class CreatenewfeedPage implements OnInit {
     }
 
 
-    this.channelAvatar = this.dataHelper.getProfileIamge() || '';
+    //this.channelAvatar = this.dataHelper.getProfileIamge() || '';
 
     if (this.channelAvatar == '') {
       this.native.toastWarn('CreatenewfeedPage.tipMsg');
