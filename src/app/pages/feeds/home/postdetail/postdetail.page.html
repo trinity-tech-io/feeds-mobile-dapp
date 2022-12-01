@@ -182,7 +182,7 @@
           <ion-row class="top-row">
             <ion-col class="left-col" size="10.5">
               <ion-label (press)="pressContent(comment.createrDid)" [style.touch-action]="'pan-y'">
-                @{{ userNameMap[comment.createrDid]}}
+                @<span style="font-size: 15px;font-weight: 700;color: #fff;" *ngIf="comment.destDid === comment.createrDid"> c/</span>{{ userNameMap[comment.createrDid]}}
                 <span> {{ handleDisplayTime(comment.commentId,comment.updatedAt) }}</span>
               </ion-label>
             </ion-col>
@@ -266,7 +266,7 @@
             <ion-row class="top-row">
               <ion-col class="left-col" size="10.5">
                 <ion-label (press)="pressContent(replyComment.createrDid)" [style.touch-action]="'pan-y'">
-                  @{{ userNameMap[replyComment.createrDid]}}
+                  @<span style="font-size: 15px;font-weight: 700;color: #fff;" *ngIf="replyComment.destDid === replyComment.createrDid"> c/</span>{{ userNameMap[replyComment.createrDid]}}
                   <span> {{ handleDisplayTime(replyComment.commentId,replyComment.updatedAt) }}</span>
                 </ion-label>
               </ion-col>
