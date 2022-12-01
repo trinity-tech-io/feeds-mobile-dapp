@@ -76,9 +76,8 @@ export class EditCommentPage implements OnInit {
 
   async ionViewWillEnter() {
     this.initTitle();
-
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId);
-    this.channelName = channel['name'] || '';
+    this.channelName = channel['displayName'] || channel['name'] || '';
     this.subscribers = channel['subscribers'] || '';
     let channelAvatarUri = channel['avatar'] || '';
     if (channelAvatarUri != '') {

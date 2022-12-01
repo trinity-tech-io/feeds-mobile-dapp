@@ -189,7 +189,7 @@
           </ion-row>
 
           <ion-label>
-            <p  (press)="pressContent(channelOwner)"><span style="color:#7624fe;">{{'PostdetailPage.replyingto'|translate}}</span> @{{ userNameMap[channelOwner] }}</p>
+            <p  (press)="pressContent(channelOwner)"><span style="color:#7624fe;">{{'PostdetailPage.replyingto'|translate}}</span> c/{{ userNameMap[channelOwner] }}</p>
           </ion-label>
         </ion-col>
         <ion-col class="menuMore" size="0.5"  *ngIf="comment.status != 1 && isOwnComment[comment.commentId]" (click)="openEditTool(comment)">
