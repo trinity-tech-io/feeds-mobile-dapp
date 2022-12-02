@@ -608,7 +608,11 @@ export class MyApp {
         this.dataHelper.setChannelCollectionPageList([]);
         this.dataHelper.setChannelContractInfoList({});
         this.dataHelper.saveData("feeds.contractInfo.list", {});
-        this.globalService.restartApp();
+        let req = requestAnimationFrame(()=>{
+          this.globalService.restartApp();
+          cancelAnimationFrame(req);
+          req = null;
+        });
       })
       .catch(err => {
         //TODO
