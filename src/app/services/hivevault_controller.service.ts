@@ -216,22 +216,6 @@ export class HiveVaultController {
     });
   }
 
-  refreshHomeData(callback: (postNum: number) => void) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.syncSubscribedChannelFromRemote();
-        await this.refreshSubscription();
-        const did = (await this.dataHelper.getSigninData()).did;
-        this.syncSelfChannel(did).catch(() => { });
-        this.asyncGetAllChannelInfo().catch(() => { });
-        this.asyncGetAllPost(callback).catch(() => { });
-        this.asyncGetAllComments().catch(() => { });
-        this.asyncGetAllLikeData().catch(() => { });
-      } catch (error) {
-      }
-    });
-  }
-
   asyncGetAllChannelInfo(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1937,21 +1921,6 @@ export class HiveVaultController {
     return post;
   }
 
-  queryPostByChannelIdWithTimeFromRemote(destDid: string, channelId: string, endTime: number, callback: (postNum: number) => void): Promise<FeedsData.PostV3[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const result = await this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId, 0, endTime);
-        const postList = await this.handleSyncPostResult(destDid, channelId, result, callback);
-
-        //this.eventBus.publish(FeedsEvent.PublishType.updateTab, false);
-        resolve(postList);
-      } catch (error) {
-        Logger.error(TAG, 'Query post with time error', error);
-        reject(error);
-      }
-    });
-  }
-
   private queryPostByChannelIdByTimeFromLocal(destDid: string, channelId: string, endTime: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2918,13 +2887,6 @@ export class HiveVaultController {
     });
   }
 
-  //TODO
-  getSubscribedExceptOwnedChannel(ownerDid: string, subscribedChannels: FeedsData.SubscribedChannelV3[]) {
-    // const list = _.filter(selfchannels, (channel: FeedsData.ChannelV3) => {
-    //   return channel.destDid === signinDid && channel.channelId != this.channelId && channel.displayName === nameValue;
-    // }) || [];
-  }
-
   getChannelListFromSubscribedChannelList(subscribedChannelList: FeedsData.SubscribedChannelV3[], callback: (localCachedChannelList: FeedsData.ChannelV3[]) => void, forceLoadRemote: boolean = false): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       console.log('xxxxxxxxx', subscribedChannelList);
@@ -2953,6 +2915,7 @@ export class HiveVaultController {
       }).catch((error) => { });
     });
   }
+
   getChannelListFromOwner(ownerDid: string, subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL, callback: (localCachedChannelList: FeedsData.ChannelV3[]) => void, forceLoadRemote: boolean = false): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       this.querySubscribedChannelsByOwner(ownerDid, subscribedChannelType, (localCachedSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
@@ -3005,30 +2968,6 @@ export class HiveVaultController {
     });
   }
 
-  private queryPostByChannelIdWithTime(targetDid: string, channelId: string, endTime: number, callbackCached: (localCachedPost: FeedsData.PostV3[]) => void, callback: (newPostNum: number) => void, forceLoadRemote: boolean = false): Promise<FeedsData.PostV3[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const localPostList = await this.queryPostByChannelIdByTimeFromLocal(targetDid, channelId, endTime) || [];
-        callbackCached(localPostList);
-        if (!forceLoadRemote && localPostList.length > 0) {
-          resolve(localPostList);
-          return;
-        }
-
-        const remotePostList = await this.queryPostByChannelIdWithTimeFromRemote(targetDid, channelId, endTime, (newPostNum: number) => { callback(newPostNum); }) || [];
-        if (!remotePostList) {
-          resolve([]);
-          return;
-        }
-        resolve(remotePostList);
-      } catch (error) {
-        Logger.error(TAG, error);
-        resolve(null);
-        reject(error);
-      }
-    });
-  }
-
   queryCommentListByChannelId(targetDid: string, channelId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3053,10 +2992,102 @@ export class HiveVaultController {
     });
   }
 
+  /* queryPostListByChannelId start*/
   queryPostListByChannelId(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       // try {
-      //   const localPost = await this.queryPostByPostIdFromLocal(targetDid, channelId, postId) || null;
+      //   const localPost = await this.queryPostListByChannelIdFromLocal(targetDid, channelId, postId) || null;
+      //   callback(localPost);
+      //   if (!forceLoadRemote && localPost != null) {
+      //     resolve(localPost);
+      //     return;
+      //   }
+
+      //   const remotePost = await this.querypostli(targetDid, channelId, postId) || null;
+      //   if (!remotePost) {
+      //     resolve(null);
+      //     return;
+      //   }
+      //   resolve(remotePost);
+      // } catch (error) {
+      //   Logger.error(TAG, error);
+      //   resolve(null);
+      //   reject(error);
+      // }
+    });
+  }
+
+  queryPostListByChannelIdFromLocal() {
+
+  }
+
+  queryPostListByChannelIdFromRemote() {
+
+  }
+  /* queryPostListByChannelId end*/
+
+  /* queryPostByChannelIdWithTime start*/
+  private queryPostByChannelIdWithTime(targetDid: string, channelId: string, endTime: number, callbackCached: (localCachedPost: FeedsData.PostV3[]) => void, callback: (newPostNum: number) => void, forceLoadRemote: boolean = false): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const localPostList = await this.queryPostByChannelIdByTimeFromLocal(targetDid, channelId, endTime) || [];
+        callbackCached(localPostList);
+        if (!forceLoadRemote && localPostList.length > 0) {
+          resolve(localPostList);
+          return;
+        }
+
+        const remotePostList = await this.queryPostByChannelIdWithTimeFromRemote(targetDid, channelId, endTime, (newPostNum: number) => { callback(newPostNum); }) || [];
+        if (!remotePostList) {
+          resolve([]);
+          return;
+        }
+        resolve(remotePostList);
+      } catch (error) {
+        Logger.error(TAG, error);
+        resolve(null);
+        reject(error);
+      }
+    });
+  }
+
+  private queryPostByChannelIdWithTimeFromLocal(destDid: string, channelId: string, endTime: number, callback: (postNum: number) => void): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId, 0, endTime);
+        const postList = await this.handleSyncPostResult(destDid, channelId, result, callback);
+
+        //this.eventBus.publish(FeedsEvent.PublishType.updateTab, false);
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'Query post with time error', error);
+        reject(error);
+      }
+    });
+  }
+
+  //TOBE Improve
+  queryPostByChannelIdWithTimeFromRemote(destDid: string, channelId: string, endTime: number, callback: (postNum: number) => void): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await this.hiveVaultApi.queryPostByRangeOfTime(destDid, channelId, 0, endTime);
+        const postList = await this.handleSyncPostResult(destDid, channelId, result, callback);
+
+        //this.eventBus.publish(FeedsEvent.PublishType.updateTab, false);
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'Query post with time error', error);
+        reject(error);
+      }
+    });
+  }
+  /* queryPostByChannelIdWithTime end*/
+
+  /* queryPostListByChannelList start*/
+  queryPostListByChannelList(channelIdList: string[], callback: (localCachedPostList: FeedsData.PostV3[]) => void, forceLoadRemote: boolean = false): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      // try {
+      //   const localPost = await this.queryPostListByChannelListFromLocal(channelIdList) || null;
       //   callback(localPost);
       //   if (!forceLoadRemote && localPost != null) {
       //     resolve(localPost);
@@ -3090,33 +3121,49 @@ export class HiveVaultController {
     });
   }
 
-  queryPostListByChannelList(channelIdList: string[], callback: (localCachedPostList: FeedsData.PostV3[]) => void, forceLoadRemote: boolean = false): Promise<FeedsData.PostV3[]> {
-    return new Promise(async (resolve, reject) => {
-      // try {
-      //   const localPost = await this.queryPostListByChannelListFromLocal(channelIdList) || null;
-      //   callback(localPost);
-      //   if (!forceLoadRemote && localPost != null) {
-      //     resolve(localPost);
-      //     return;
-      //   }
+  private queryPostListByChannelListFromRemote() {
 
-      //   const remotePost = await this.queryPostByPostIdFromRemote(targetDid, channelId, postId) || null;
-      //   if (!remotePost) {
-      //     resolve(null);
-      //     return;
-      //   }
-      //   resolve(remotePost);
-      // } catch (error) {
-      //   Logger.error(TAG, error);
-      //   resolve(null);
-      //   reject(error);
-      // }
-    });
   }
+  /* queryPostListByChannelList end*/
 
   //ForUI
   refreshChannelPage() {
+    //subscribedChannel sync
+    //post
+    //channel
+    //like
   }
 
+  //ForUI
+  refreshHomePage() {
+  }
 
+  //ForUI
+  refereshPostDetailPage() {
+
+  }
+
+  //ForUI
+  refreshProfilePage() {
+    // subscribedChannel
+    // userProfile asyn
+    // 
+  }
+
+  //TOBE improve
+  refreshHomeData(callback: (postNum: number) => void) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.syncSubscribedChannelFromRemote();
+        await this.refreshSubscription();
+        const did = (await this.dataHelper.getSigninData()).did;
+        this.syncSelfChannel(did).catch(() => { });
+        this.asyncGetAllChannelInfo().catch(() => { });
+        this.asyncGetAllPost(callback).catch(() => { });
+        this.asyncGetAllComments().catch(() => { });
+        this.asyncGetAllLikeData().catch(() => { });
+      } catch (error) {
+      }
+    });
+  }
 }
