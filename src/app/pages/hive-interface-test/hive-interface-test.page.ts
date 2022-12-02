@@ -60,8 +60,14 @@ export class HiveInterfaceTestPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
 
-  createCollection() {
-    this.hiveVaultApi.createAllCollections();
+  async createCollection() {
+    // this.hiveVaultApi.createAllCollections();
+    const selfDid = (await this.dataHelper.getSigninData()).did;
+    // this.sqliteHelper.queryPostData(selfDid);
+
+    const list = ["e7e37c148eee68863995e67f285fc37eda9114fa6879f3829e95cc40a47dce57", "1190262f8fbf1a0e1d8016ddcf05f23496a464b3af0c1a67c726c71d69b774e1"]
+    this.dataHelper.getPostListByChannelList(list);
+
   }
 
   //

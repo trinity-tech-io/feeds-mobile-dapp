@@ -59,11 +59,11 @@ export class SettingsPage implements OnInit {
     if (this.popover != null) {
       this.popoverController.dismiss();
     }
-   let hideDeletedPosts =  this.dataHelper.getHideDeletedPosts();
-   let originalHideDeletedPosts =  this.dataHelper.getOriginalHideDeletedPosts();
+    let hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
+    let originalHideDeletedPosts = this.dataHelper.getOriginalHideDeletedPosts();
 
 
-    if(originalHideDeletedPosts != hideDeletedPosts){
+    if (originalHideDeletedPosts != hideDeletedPosts) {
       this.events.publish(FeedsEvent.PublishType.hideDeletedPosts);
       this.dataHelper.setOriginalHideDeletedPosts(hideDeletedPosts);
     }
@@ -77,7 +77,7 @@ export class SettingsPage implements OnInit {
       return;
     }
 
-    let originalPasarListGrid  = this.dataHelper.getOriginalPasarListGrid();
+    let originalPasarListGrid = this.dataHelper.getOriginalPasarListGrid();
     let pasarListGrid = this.dataHelper.getPasarListGrid();
     if (originalPasarListGrid != pasarListGrid) {
       this.events.publish(FeedsEvent.PublishType.pasarListGrid);
@@ -162,10 +162,10 @@ export class SettingsPage implements OnInit {
   }
 
   navAppPreferences() {
-    this.native.navigateForward(['/apppreferences'],{});
+    this.native.navigateForward(['/apppreferences'], {});
   }
 
   navConnections() {
-    this.native.navigateForward(['/connections'],{});
+    this.native.navigateForward(['/connections'], {});
   }
 }

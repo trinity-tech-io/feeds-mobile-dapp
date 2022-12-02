@@ -2059,11 +2059,11 @@ export class DataHelper {
   }
 
   ////hideDeletedPosts
-  setHideDeletedPosts(hideDeletedPosts: boolean) {
+  setHideDeletedPostStatus(hideDeletedPosts: boolean) {
     this.hideDeletedPosts = hideDeletedPosts;
   }
 
-  getHideDeletedPosts(): boolean {
+  getHideDeletedPostsStatus(): boolean {
     return this.hideDeletedPosts;
   }
 
@@ -3567,6 +3567,24 @@ export class DataHelper {
     });
   }
 
+  getPostListByChannelList(channelList: string[]): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const postList = await this.sqliteHelper.queryPostListByChannelList(selfDid, channelList)
+
+        let sortList = [];
+        sortList = _.sortBy(postList, (item: any) => {
+          return -item.createdAt;
+        });
+        resolve(sortList);
+
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   getPostV3List(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -3596,7 +3614,7 @@ export class DataHelper {
     })
   }
 
-  queryChannelPostDataByTime(channelId: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
+  queryPostDataByChannelIdByTime(channelId: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;

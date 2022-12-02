@@ -226,7 +226,7 @@ export class HomePage implements OnInit {
   async initPostListData(scrollToTop: boolean) {
     this.pageSize = 1;
     if (scrollToTop) {
-      this.totalData = await this.sortPostList();
+      this.totalData = await this.preparePostList();
       let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalData);
       if (data.currentPage === data.totalPage) {
         this.postList = data.items
@@ -235,7 +235,7 @@ export class HomePage implements OnInit {
       }
       this.scrollToTop();
     } else {
-      let newList = await this.sortPostList();
+      let newList = await this.preparePostList();
       _.each(this.postList, (item: FeedsData.PostV3, index) => {
         let postId = item.postId;
         let post = _.find(newList, (newItem: FeedsData.PostV3) => {
@@ -265,9 +265,9 @@ export class HomePage implements OnInit {
     }
   }
 
-  async sortPostList() {
+  async preparePostList() {
     let postList = await this.dataHelper.getPostV3List() || [];
-    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
     if (!this.hideDeletedPosts) {
       postList = _.filter(postList, (item: any) => {
         return item.status != 1;
@@ -283,7 +283,7 @@ export class HomePage implements OnInit {
       return;
     }
     this.isPostLoading = false;
-    let newList = await this.sortPostList();
+    let newList = await this.preparePostList();
     _.each(this.postList, (item: FeedsData.PostV3, index) => {
       let postId = item.postId;
       let post = _.find(newList, (newItem: FeedsData.PostV3) => {
@@ -388,7 +388,7 @@ export class HomePage implements OnInit {
     this.events.subscribe(FeedsEvent.PublishType.unfollowFeedsFinish, () => {
       Logger.log(TAG, "revice unfollowFeedsFinish event");
       this.zone.run(async () => {
-        this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+        this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
         await this.refreshPostList();
       });
     });
@@ -416,7 +416,7 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts, () => {
       this.zone.run(async () => {
-        this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+        this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
         this.refreshPostList();
       });
     });
@@ -526,7 +526,7 @@ export class HomePage implements OnInit {
         try {
           let post: FeedsData.PostV3 = await this.dataHelper.getPostV3ById(deletePostEventData.postId);
           this.hiveVaultController.deletePost(post).then(async (result: FeedsData.PostV3) => {
-            let newList = await this.sortPostList();
+            let newList = await this.preparePostList();
             let deletePostIndex = _.findIndex(newList, (item: any) => {
               return item.postId === result.postId;
             })
@@ -2319,7 +2319,7 @@ export class HomePage implements OnInit {
     this.searchPostText = url;
     this.handleRefresherInfinite(true);
     event.stopPropagation();
-    let newList = await this.sortPostList();
+    let newList = await this.preparePostList();
     this.serachPostList = _.cloneDeep(this.postList);
     this.postList = _.filter(newList, (item: FeedsData.PostV3) => {
       let status = item.status;

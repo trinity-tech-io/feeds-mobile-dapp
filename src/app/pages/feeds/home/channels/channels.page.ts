@@ -256,7 +256,7 @@ export class ChannelsPage implements OnInit {
   }
 
   async filterDeletedPostList(postList: FeedsData.PostV3[]) {
-    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
     let sortedData = postList;
     if (!this.hideDeletedPosts) {
       sortedData = _.filter(postList, (item: FeedsData.PostV3) => {
@@ -483,7 +483,7 @@ export class ChannelsPage implements OnInit {
       this.isAndroid = false;
     }
 
-    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
     this.clientHeight = screen.availHeight;
     this.clientWidth = screen.availWidth;
     this.styleObj.width = screen.width - 105 + 'px';

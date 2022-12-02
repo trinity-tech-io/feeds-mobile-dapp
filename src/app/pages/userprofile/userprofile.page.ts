@@ -186,7 +186,7 @@ export class UserprofilePage implements OnInit {
     this.initTitle();
     this.initUserProfile(this.userDid);
     this.changeType(this.selectType);
-    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
 
     this.addEvents();
   }
@@ -209,7 +209,7 @@ export class UserprofilePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts, () => {
       this.zone.run(() => {
-        this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+        this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
         this.refreshLikeList();
       });
     });
@@ -902,7 +902,7 @@ export class UserprofilePage implements OnInit {
       return -item.createdAt;
     });
 
-    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
         return item.status != 1;

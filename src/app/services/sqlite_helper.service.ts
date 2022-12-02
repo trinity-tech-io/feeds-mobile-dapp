@@ -164,7 +164,6 @@ export class FeedsSqliteHelper {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW330;
         const result = await this.executeSql(dbUserDid, statement);
-        // const pinpostList = await this.queryPinPostList(dbUserDid);
         const postList = this.parsePostData(result);
         resolve(postList);
       } catch (error) {
@@ -261,6 +260,34 @@ export class FeedsSqliteHelper {
         const postList = this.parsePostData(result);
 
         Logger.log(TAG, 'query post data by channel id result: ', postList)
+        resolve(postList);
+      } catch (error) {
+        Logger.error(TAG, 'query post table error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryPostListByChannelList(dbUserDid: string, channelIdList: string[]): Promise<FeedsData.PostV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!channelIdList || channelIdList.length == 0) {
+          resolve([]);
+          return;
+        }
+
+        let listStr = ''
+        channelIdList.forEach((channelId: string) => {
+          listStr += "'" + channelId + "'" + ',';
+        });
+        const paramStr = listStr.substring(0, listStr.length - 1);
+
+        const statement = 'SELECT * FROM ' + this.TABLE_POST_NEW330 + ' WHERE channel_id in (' + paramStr + ')';
+        const params = [];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const postList = this.parsePostData(result);
+
+        Logger.log(TAG, 'query post data by channel list result: ', postList)
         resolve(postList);
       } catch (error) {
         Logger.error(TAG, 'query post table error', error);

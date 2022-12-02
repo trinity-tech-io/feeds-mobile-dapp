@@ -404,10 +404,10 @@ export class MyApp {
       .loadData('feeds.hideDeletedPosts')
       .then(status => {
         if (status === null) {
-          this.dataHelper.setHideDeletedPosts(false);
+          this.dataHelper.setHideDeletedPostStatus(false);
           return;
         }
-        this.dataHelper.setHideDeletedPosts(status);
+        this.dataHelper.setHideDeletedPostStatus(status);
       })
       .catch(err => { });
 

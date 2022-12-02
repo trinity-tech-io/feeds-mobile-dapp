@@ -333,7 +333,7 @@ export class ProfilePage implements OnInit {
       return -item.createdAt;
     });
 
-    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
     if (!this.hideDeletedPosts) {
       likeList = _.filter(likeList, (item: any) => {
         return item.status != 1;
@@ -447,7 +447,7 @@ export class ProfilePage implements OnInit {
     );
 
 
-    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
     this.clientHeight = screen.availHeight;
     this.clientWidth = screen.availWidth;
     this.curItem = {};
@@ -455,7 +455,7 @@ export class ProfilePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.hideDeletedPosts, () => {
       this.zone.run(() => {
-        this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+        this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
         this.refreshLikeList();
       });
     });

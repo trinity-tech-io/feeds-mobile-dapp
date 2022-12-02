@@ -33,7 +33,7 @@ export class ApppreferencesPage implements OnInit {
     this.dataHelper.setOriginalPasarListGrid(this.pasarListGrid);
     this.isShowAdult = this.dataHelper.getAdultStatus();
     this.dataHelper.changeOriginalAdultStatus(this.isShowAdult);
-    this.hideDeletedPosts = this.dataHelper.getHideDeletedPosts();
+    this.hideDeletedPosts = this.dataHelper.getHideDeletedPostsStatus();
     this.dataHelper.setOriginalHideDeletedPosts(this.hideDeletedPosts);
     this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
   }
@@ -78,7 +78,7 @@ export class ApppreferencesPage implements OnInit {
     this.zone.run(() => {
       this.hideDeletedPosts = !this.hideDeletedPosts;
     });
-    this.dataHelper.setHideDeletedPosts(this.hideDeletedPosts);
+    this.dataHelper.setHideDeletedPostStatus(this.hideDeletedPosts);
     this.dataHelper.saveData('feeds.hideDeletedPosts', this.hideDeletedPosts);
   }
 
