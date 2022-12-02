@@ -642,7 +642,7 @@ export class MyApp {
           this.wName = signInData['name'] || '';
         }
         this.userDid = signInData.did || "";
-        this.userDidDisplay = UtilService.userDidDisplay(this.userDid);
+        this.userDidDisplay = UtilService.shortenDid(this.userDid);
         this.name = UtilService.moreNanme(this.wName, 15);
       },
       error => { },

@@ -114,11 +114,13 @@ export class DeveloperPage implements OnInit {
         localStorage.removeItem(userDid + "localScriptVersion");
         await that.feedsSqliteHelper.dropAllData(userDid);
         that.native.hideLoading();
-        that.globalService.restartApp();
-        // alert("success");
+        let req = requestAnimationFrame(()=>{
+          that.globalService.restartApp();
+          cancelAnimationFrame(req);
+          req = null;
+        });
       } else {
         that.native.hideLoading();
-        alert("fail");
       }
     } catch (error) {
       that.native.hideLoading();
