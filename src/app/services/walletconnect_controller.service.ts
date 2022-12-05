@@ -19,9 +19,7 @@ export class WalletConnectControllerService {
   private walletConnectProvider: WalletConnectProvider;
   private walletConnectWeb3: Web3;
   constructor(
-    private dataHelper: DataHelper,
-    private events: Events,
-    private walletConnectControllerService: WalletConnectControllerService,
+    private events: Events
   ) {
   }
 
@@ -75,7 +73,7 @@ export class WalletConnectControllerService {
     this.walletConnectProvider.on('error', (errors) => {
       Logger.error(TAG, "wallet connect error", errors);
       let walletconnect = window.localStorage.getItem('walletconnect') || '';
-      if(walletconnect != ''){
+      if (walletconnect != '') {
         window.localStorage.removeItem('walletconnect');
         this.accountAddress = '';
         this.events.publish(FeedsEvent.PublishType.clickDisconnectWallet);
@@ -161,7 +159,7 @@ export class WalletConnectControllerService {
         } catch (error) {
           Logger.log(TAG, 'Disconnect wallet error', error);
           let walletconnect = window.localStorage.getItem('walletconnect') || '';
-          if(walletconnect != ''){
+          if (walletconnect != '') {
             window.localStorage.removeItem('walletconnect');
             this.accountAddress = '';
             this.events.publish(FeedsEvent.PublishType.clickDisconnectWallet);
@@ -170,7 +168,7 @@ export class WalletConnectControllerService {
         }
       } else {
         const error: string = 'Not connected to wallet connect';
-        if(this.walletConnectProvider){
+        if (this.walletConnectProvider) {
           this.walletConnectProvider.connector.session.handshakeTopic = '';
         }
         reject(error);
@@ -228,6 +226,6 @@ export class WalletConnectControllerService {
 
   publishAccount(account: string) {
     this.events.publish(FeedsEvent.PublishType.walletAccountChanged, account);
-    this.events.publish(FeedsEvent.PublishType.walletConnectedRefreshPage,account);
+    this.events.publish(FeedsEvent.PublishType.walletConnectedRefreshPage, account);
   }
 }
