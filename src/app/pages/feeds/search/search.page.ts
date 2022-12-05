@@ -731,7 +731,35 @@ export class SearchPage implements OnInit {
             }
           }
         } catch (error) {
-          this.isLoading = false;
+          let newChannelInfo = {
+            "destDid": feedsUrl.destDid,
+            "channelId": feedsUrl.channelId,
+            "name": "",
+            "intro": "",
+            "avatar": "",
+            "type": "public",
+            "tipping_address": "",
+            "displayName": "",
+            "channelSource": 'ipfs'
+          }
+          let tokenURI = channel[1];
+           newChannelInfo.tipping_address = channel[3];
+           let uri = tokenURI.replace('feeds:json:', '');
+           try {
+            let result:any = await this.ipfsService
+            .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+            newChannelInfo.intro = result.description || '';
+            newChannelInfo.displayName = result.data.cname || '';
+            newChannelInfo.avatar =  result.data.avatar || '';
+            } catch (error) {
+              newChannelInfo.intro = '';
+              newChannelInfo.displayName = '';
+              newChannelInfo.avatar =  '';
+           }
+          channelCollectionPageList.push(newChannelInfo);
+          if(this.startIndex > 0){
+            this.startIndex = this.startIndex - 1;
+          }
         }
       }
       this.isLoading = false;
