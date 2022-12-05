@@ -99,11 +99,7 @@ import { RedditService } from 'src/app/services/RedditService';
 Sentry.init({
   dsn:
     'https://4196003a1c864f5798dd2be18be5cb48@o339076.ingest.sentry.io/5524842',
-<<<<<<< HEAD
-  release: '3.3.2',
-=======
   release: '3.4.0',
->>>>>>> Update version to 3.4.0
   integrations: [new RewriteFrames()],
 });
 

@@ -4701,4 +4701,13 @@ export class DataHelper {
       }
     })
   }
+
+  ////clipProfileIamge
+  setClipProfileIamge(clipProfileIamge: string) {
+    this.clipProfileIamge = clipProfileIamge;
+  }
+
+  getClipProfileIamge() {
+    return this.clipProfileIamge;
+  }
 }
