@@ -66,8 +66,10 @@ export class UserlistPage implements OnInit {
   setUserNameAndAvatarUI(userProfile: FeedsData.UserProfile) {
     const name = userProfile.name || userProfile.resolvedName || userProfile.displayName;
     const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
+    const description = userProfile.bio || userProfile.resolvedBio || '';
     this.setUserNameUI(userProfile.did, name);
     this.setAvatarUI(userProfile.did, avatarUrl);
+    this.setUserDescription(userProfile.did, description);
   }
 
   setUserNameUI(userDid: string, name: string) {
@@ -101,6 +103,12 @@ export class UserlistPage implements OnInit {
     if (!this.pageItemMap[userDid])
       this.pageItemMap[userDid] = this.generatePageItem(userDid);
     this.pageItemMap[userDid].name = userName;
+  }
+
+  setUserDescription(userDid: string, userDescription: string = '') {
+    if (!this.pageItemMap[userDid])
+      this.pageItemMap[userDid] = this.generatePageItem(userDid);
+    this.pageItemMap[userDid].description = userDescription
   }
 
   generatePageItem(userDid: string): PageItem {
@@ -164,7 +172,7 @@ export class UserlistPage implements OnInit {
       let simpleDid = userDid.replace('did:elastos:', '');
       this.pageItemMap[userDid].name = UtilService.shortenDid(simpleDid);
       let avatar = this.pageItemMap[userDid].avatar || '';
-      if(avatar === ''){
+      if (avatar === '') {
         this.pageItemMap[userDid].avatar = './assets/images/loading.svg';
       }
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
