@@ -593,6 +593,9 @@ export class SearchPage implements OnInit {
                         this.channelAvatarMap[id] = './assets/images/profile-0.svg'
                       }
                       this.searchIsLoadimage[id] = '13';
+                    }else{
+                      srcData = await UtilService.blobToDataURL(avatar);
+                      this.channelAvatarMap[id] = srcData;
                     }
                   } else {
                     if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
