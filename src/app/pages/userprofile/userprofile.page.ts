@@ -1751,7 +1751,7 @@ export class UserprofilePage implements OnInit {
     }
   }
 
-  setUserAvatar(userDid: string, avatar = './assets/images/default-contact.svg') {
+  setUserAvatar(userDid: string, avatar = './assets/images/did-default-avatar.svg') {
     this.avatar = avatar;
   }
 

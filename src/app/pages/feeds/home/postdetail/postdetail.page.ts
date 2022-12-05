@@ -1615,7 +1615,7 @@ export class PostdetailPage implements OnInit {
 
   setCommentUserAvatar(comment: FeedsData.CommentV3) {
     if (!this.userAvatarMap[comment.createrDid]) {
-      this.userAvatarMap[comment.createrDid] = './assets/images/default-contact.svg';
+      this.userAvatarMap[comment.createrDid] = './assets/images/did-default-avatar.svg';
       this.hiveVaultController.getUserAvatar(comment.createrDid).then((userAvatar: string) => {
         this.userAvatarMap[comment.createrDid] = userAvatar;
       });

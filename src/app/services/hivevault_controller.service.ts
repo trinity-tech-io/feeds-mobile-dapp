@@ -1050,13 +1050,13 @@ export class HiveVaultController {
       let userProfile: FeedsData.UserProfile = await this.getUserProfile(userDid);
       const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar;
       if (!avatarHiveUrl) {
-        resolve('./assets/images/default-contact.svg');
+        resolve('./assets/images/did-default-avatar.svg');
         return;
       }
 
       const avatar = await this.getV3HiveUrlData(avatarHiveUrl);
       if (!avatar) {
-        resolve('./assets/images/default-contact.svg');
+        resolve('./assets/images/did-default-avatar.svg');
         return;
       }
 
@@ -1068,13 +1068,13 @@ export class HiveVaultController {
   getUserAvatarFromHiveUrl(avatarHiveUrl: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       if (!avatarHiveUrl) {
-        resolve('./assets/images/default-contact.svg');
+        resolve('./assets/images/did-default-avatar.svg');
         return;
       }
 
       const avatar = await this.getV3HiveUrlData(avatarHiveUrl);
       if (!avatar) {
-        resolve('./assets/images/default-contact.svg');
+        resolve('./assets/images/did-default-avatar.svg');
         return;
       }
 
@@ -3147,7 +3147,7 @@ export class HiveVaultController {
   refreshProfilePage() {
     // subscribedChannel
     // userProfile asyn
-    // 
+    //
   }
 
   //TOBE improve

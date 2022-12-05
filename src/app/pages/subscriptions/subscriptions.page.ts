@@ -344,14 +344,16 @@ export class SubscriptionsPage implements OnInit {
       this.followingIsLoadimage[id] = '11';
       let destDid = arr[0];
       let channelId = arr[1];
+      let followAvatar = this.channelAvatarMap[id] || '';
+      if (followAvatar === '') {
+        this.channelAvatarMap[id] = './assets/images/loading.svg';
+      }
       let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
       let avatarUri = "";
       if (channel != null) {
         avatarUri = channel.avatar;
-      }
-      let followAvatar = this.followAvatarMap[id] || '';
-      if (followAvatar === '') {
-        this.followAvatarMap[id] = './assets/images/loading.svg';
+      }else {
+        this.channelAvatarMap[id] = './assets/images/profile-0.svg';
       }
       let fileName: string = avatarUri.split("@")[0];
       this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
@@ -361,15 +363,15 @@ export class SubscriptionsPage implements OnInit {
             this.followingIsLoadimage[id] = '13';
             this.channelAvatarMap[id] = srcData;
           } else {
-            if (this.followAvatarMap[id] === './assets/images/loading.svg') {
-              this.followAvatarMap[id] = './assets/images/profile-0.svg';
+            if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
+              this.channelAvatarMap[id] = './assets/images/profile-0.svg';
             }
             this.followingIsLoadimage[id] = '13';
           }
         });
       }).catch((err) => {
-        if (this.followAvatarMap[id] === './assets/images/loading.svg') {
-          this.followAvatarMap[id] = './assets/images/profile-0.svg';
+        if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
+          this.channelAvatarMap[id] = './assets/images/profile-0.svg';
         }
       });
     }
