@@ -246,27 +246,33 @@ export class SearchPage implements OnInit {
       return;
     }
 
-    await this.native.showLoading('common.waitMoment');
-    try {
-      await this.hiveVaultController.subscribeChannel(destDid, channelId);
-      await this.hiveVaultController.syncPostFromChannel(destDid, channelId);
-      await this.hiveVaultController.syncCommentFromChannel(destDid, channelId);
-      await this.hiveVaultController.syncLikeDataFromChannel(destDid, channelId);
+    // await this.native.showLoading('common.waitMoment');
+    // try {
+    //   await this.hiveVaultController.subscribeChannel(destDid, channelId);
+    //   await this.hiveVaultController.syncPostFromChannel(destDid, channelId);
+    //   await this.hiveVaultController.syncCommentFromChannel(destDid, channelId);
+    //   await this.hiveVaultController.syncLikeDataFromChannel(destDid, channelId);
 
-      let channelIndex = _.findIndex(this.channelCollectionPageList, (item: FeedsData.ChannelV3) => {
-        return item.channelId === channelId && item.destDid === destDid;
-      });
+    //   // let channelIndex = _.findIndex(this.channelCollectionPageList, (item: FeedsData.ChannelV3) => {
+    //   //   return item.channelId === channelId && item.destDid === destDid;
+    //   // });
 
-      if (channelIndex > -1) {
-        this.subscribedChannelMap[channelId] = this.channelCollectionPageList[channelIndex];
-      }
-      this.native.hideLoading();
-    } catch (error) {
-      this.native.hideLoading();
-    }
+    //   // if (channelIndex > -1) {
+    //   //   this.subscribedChannelMap[channelId] = this.channelCollectionPageList[channelIndex];
+    //   // }
+    //   this.subscribedChannelMap[channelId] = true;
+    //   this.native.hideLoading();
+    // } catch (error) {
+    //   this.native.hideLoading();
+    // }
 
-    //TODO
-    // this.hiveVaultController.subscribeChannel();
+
+    this.subscribedChannelMap[channelId] = true;
+    this.hiveVaultController.subscribeChannelFlow(destDid, channelId).then(() => {
+    }).catch((error) => {
+      this.subscribedChannelMap[channelId] = undefined;
+      this.native.toastWarn('common.subscribeChannelFail');
+    })
   }
 
   getItems(events: any) {

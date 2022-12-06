@@ -1634,23 +1634,35 @@ export class ProfilePage implements OnInit {
           this.native.toastWarn('common.connectionError');
           return;
         }
-        // if (this.checkServerStatus(destDid) != 0) {
-        //   this.native.toastWarn('common.connectionError1');
-        //   return;
+
+        // await this.native.showLoading("common.waitMoment");
+        // try {
+        //   this.hiveVaultController.unSubscribeChannel(
+        //     destDid, channelId
+        //   ).then(async (result) => {
+        //     this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish);
+        //     this.native.hideLoading();
+        //   }).catch(() => {
+        //     this.native.hideLoading();
+        //   });
+        // } catch (error) {
+        //   this.native.hideLoading();
         // }
-        await this.native.showLoading("common.waitMoment");
-        try {
-          this.hiveVaultController.unSubscribeChannel(
-            destDid, channelId
-          ).then(async (result) => {
-            this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish);
-            this.native.hideLoading();
-          }).catch(() => {
-            this.native.hideLoading();
-          });
-        } catch (error) {
-          this.native.hideLoading();
-        }
+
+
+        this.hiveVaultController.unSubscribeChannelFlow(
+          destDid, channelId
+        ).then(async (result) => {
+        }).catch(() => {
+          this.native.toastWarnWithMoreInfo('common.unsubscribedChannelFail', ':c/' + this.channelNameMap[channelId]);
+        });
+        const channel: FeedsData.BackupSubscribedChannelV3 = {
+          destDid: destDid,
+          channelId: channelId
+        };
+        this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+        this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
+
 
         this.qrCodeString = null;
         this.hideSharMenuComponent = false;
@@ -2438,7 +2450,7 @@ export class ProfilePage implements OnInit {
         let postId: string = arr[2];
         let mediaType: string = arr[3];
         try {
-          await this.getChannelName(destDid, channelId);//获取频道name
+          this.getChannelName(destDid, channelId);//获取频道name
         } catch (error) {
 
         }
