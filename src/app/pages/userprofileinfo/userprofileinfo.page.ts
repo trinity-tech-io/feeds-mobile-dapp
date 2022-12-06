@@ -43,7 +43,7 @@ export class UserprofileinfoPage implements OnInit {
   initProfile(userDid: string) {
     this.hiveVaultController.getUserProfilePageItem(userDid).then(async (pageItem: { name: string, description: string, avatarHiveUrl: string }) => {
       this.userName = pageItem.name || ' ';
-      this.userDescription = pageItem.description || ' ';
+      this.userDescription = pageItem.description || '';
       this.avatar = await this.hiveVaultController.getUserAvatarFromHiveUrl(pageItem.avatarHiveUrl);
       this.collectData();
     }).catch(() => {
@@ -81,10 +81,16 @@ export class UserprofileinfoPage implements OnInit {
       type: 'ProfiledetailPage.name',
       details: this.userName,
     });
+   console.log("=========",this.userDescription);
+   let description = this.userDescription || '';
+   if(description === ''){
+      description = this.translate.instant('DIDdata.NoDescription');
+   }
+   console.log("=========",description);
 
     this.profileDetails.push({
       type: 'ProfiledetailPage.description',
-      details: this.userDescription,
+      details: description,
     });
 
     this.profileDetails.push({

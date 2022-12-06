@@ -58,7 +58,12 @@
     [channelAvatarMap] = "myFeedAvatarMap">
     </app-myfeeds>
 
-    <app-likes
+    <div *ngIf="selectType == 'ProfilePage.myLikes'" class="new-empty-container new-empty-container-height">
+      <img src="./assets/images/no-Likes.svg">
+      <h1  style="margin-top: 20px;">{{ 'LikesComponent.notSupported' | translate }}</h1>
+    </div>
+
+    <!-- <app-likes
        *ngIf="selectType == 'ProfilePage.myLikes'"
        [pageName] = "pageName"
        [hideDeletedPosts] = "hideDeletedPosts"
@@ -89,7 +94,7 @@
        (clickImage)="showBigImage($event)"
        (toPage)="toPage($event)"
        >
-    </app-likes>
+    </app-likes> -->
     <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
       <ion-infinite-scroll-content
         class="ion-padding-top"

@@ -19,7 +19,7 @@
             <h1>{{ profile.type | translate}}</h1>
             <h2 *ngIf="profile.type === 'ProfiledetailPage.did'; else elseBlock" (press)="copytext(profile.details)" [style.touch-action]="'pan-y'">{{ profile.details }}</h2>
             <ng-template #elseBlock>
-              <h2>{{ profile.details }}</h2>
+              <h2>{{ profile.details}}</h2>
             </ng-template>
         </ion-col>
       </ion-row>

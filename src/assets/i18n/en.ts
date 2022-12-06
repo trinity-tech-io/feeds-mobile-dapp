@@ -325,7 +325,8 @@ export const en = {
     allempty: 'Nothing liked yet',
     emptyLikeDes: "See what's being posted on the timeline!",
     timeline: 'Timeline',
-    exploreFeeds: 'Explore Feeds'
+    exploreFeeds: 'Explore Feeds',
+    notSupported: 'Not supported for now'
   },
   ConfirmdialogComponent: {
     signoutTitle: 'Sign Out',

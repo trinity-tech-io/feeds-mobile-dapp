@@ -323,7 +323,8 @@ export const zh = {
     allempty: '还没有收藏',
     emptyLikeDes: '看看时间线上发生了什么！',
     timeline: '时间线',
-    exploreFeeds: '探索 Feeds'
+    exploreFeeds: '探索 Feeds',
+    notSupported: '暂时不支持'
   },
   ConfirmdialogComponent: {
     signoutTitle: '登出',

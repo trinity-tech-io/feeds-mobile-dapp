@@ -302,7 +302,7 @@ export class UserprofilePage implements OnInit {
 
   postListScroll(event: any) {
     if (this.selectType === "ProfilePage.myLikes") {
-      this.handlePostListScroll(event);
+      //this.handlePostListScroll(event);
     }
   }
 
@@ -339,14 +339,14 @@ export class UserprofilePage implements OnInit {
         break;
       case 'ProfilePage.myLikes':
         try {
-          await this.hiveVaultController.syncAllLikeData();
-          this.removeLikeObserveList();
-          this.pageSize = 1;
-          this.isLoadHandleDisplayNameMap = {};
-          this.likeList = [];
-          this.handleDisplayNameMap = {};
-          this.postImgMap = {};
-          this.initLike();
+          // await this.hiveVaultController.syncAllLikeData();
+          // this.removeLikeObserveList();
+          // this.pageSize = 1;
+          // this.isLoadHandleDisplayNameMap = {};
+          // this.likeList = [];
+          // this.handleDisplayNameMap = {};
+          // this.postImgMap = {};
+          // this.initLike();
           event.target.complete();
         } catch (error) {
           event.target.complete();
@@ -405,10 +405,10 @@ export class UserprofilePage implements OnInit {
 
         break;
       case 'ProfilePage.myLikes':
-        this.removeLikeObserveList();
-        this.clearRefreshMyFeedsSid();
-        this.pageSize = 1;
-        this.initLike();
+        // this.removeLikeObserveList();
+        // this.clearRefreshMyFeedsSid();
+        // this.pageSize = 1;
+        // this.initLike();
         break;
     }
   }

@@ -212,7 +212,7 @@ export class MenuService {
 
     this.actionSheetMenuStatus = "opening";
 
-    const editCommentButton = this.createEditCommentButton(comment.destDid, comment.channelId, comment.postId, comment.refcommentId, comment.commentId, comment.content);
+    const editCommentButton = this.createEditCommentButton(comment.destDid, comment.channelId, comment.createrDid,comment.postId, comment.refcommentId, comment.commentId, comment.content);
     const removeCommentButton = this.createRemoveCommentButton(comment);
     const cancelButton = this.createCancelButton();
 
@@ -229,7 +229,7 @@ export class MenuService {
 
     this.actionSheetMenuStatus = "opening";
 
-    const editReplyButton = this.createEditReplyButton(reply.destDid, reply.channelId, reply.postId, reply.refcommentId, reply.commentId, reply.content);
+    const editReplyButton = this.createEditReplyButton(reply.destDid, reply.channelId, reply.createrDid,reply.postId, reply.refcommentId, reply.commentId, reply.content);
     const removeReplyButton = this.createRemoveReplyButton(reply);
     const cancelButton = this.createCancelButton();
 
@@ -490,7 +490,7 @@ export class MenuService {
     }
   }
 
-  private createEditCommentButton(destDid: string, channelId: string, postId: string, refcommentId: string, commentId: string, content: string) {
+  private createEditCommentButton(destDid: string, channelId: string, createrDid: string,postId: string, refcommentId: string, commentId: string, content: string) {
     return {
       text: this.translate.instant('common.editcomment'),
       icon: 'ios-edit1',
@@ -498,6 +498,7 @@ export class MenuService {
         this.native.go('editcomment', {
           destDid: destDid,
           channelId: channelId,
+          createrDid: createrDid,
           postId: postId,
           refcommentId: refcommentId,
           commentId: commentId,
@@ -527,7 +528,7 @@ export class MenuService {
     }
   }
 
-  private createEditReplyButton(destDid: string, channelId: string, postId: string, refcommentId: string, commentId: string, content: string): ActionSheetButton {
+  private createEditReplyButton(destDid: string, channelId: string, createrDid: string,postId: string, refcommentId: string, commentId: string, content: string): ActionSheetButton {
     return {
       text: this.translate.instant('CommentlistPage.editreply'),
       icon: 'ios-edit1',
@@ -535,6 +536,7 @@ export class MenuService {
         this.native.go('editcomment', {
           destDid: destDid,
           channelId: channelId,
+          createrDid: createrDid,
           postId: postId,
           refcommentId: refcommentId,
           commentId: commentId,

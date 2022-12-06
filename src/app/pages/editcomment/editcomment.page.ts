@@ -37,6 +37,7 @@ export class EditCommentPage implements OnInit {
   public clickButton: boolean = false;
   public isBorderGradient: boolean = false;
   private setFocusSid: any = null;
+  private createrDid: string = null;
   constructor(
     private native: NativeService,
     private acRoute: ActivatedRoute,
@@ -56,6 +57,7 @@ export class EditCommentPage implements OnInit {
       this.postId = item.postId;
       this.refcommentId = item.refcommentId;
       this.commentId = item.commentId;
+      this.createrDid = item.createrDid;
       let content = item.content || '';
       this.titleKey = item.titleKey;
       this.getContent(content);
@@ -79,7 +81,7 @@ export class EditCommentPage implements OnInit {
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId);
     //this.channelName = channel['displayName'] || channel['name'] || '';
     try {
-      this.getDisplayName(this.destDid);
+      this.getDisplayName(this.createrDid);
     } catch (error) {
 
     }
@@ -107,7 +109,7 @@ export class EditCommentPage implements OnInit {
       this.channelAvatar = './assets/images/loading.svg';
     }
     try {
-      this.hiveVaultController.getUserAvatar(this.destDid).then((userAvatar: string) => {
+      this.hiveVaultController.getUserAvatar(this.createrDid).then((userAvatar: string) => {
         userAvatar =  userAvatar || '';
         if(userAvatar != ''){
           this.channelAvatar = userAvatar;
