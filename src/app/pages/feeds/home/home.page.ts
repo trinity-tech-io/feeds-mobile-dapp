@@ -1036,8 +1036,8 @@ export class HomePage implements OnInit {
     this.channelId = channelId;
     this.destDid = destDid;
     this.createrDid = destDid;
-    this.channelAvatar = await this.parseAvatar(destDid, channelId);
-    this.channelName = await this.getChannelName(destDid, channelId);
+    //this.channelAvatar = await this.parseAvatar(destDid, channelId);
+    this.channelName = this.handleDisplayNameMap[destDid];
     this.hideComment = false;
   }
 

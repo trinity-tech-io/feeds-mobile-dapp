@@ -263,8 +263,8 @@ export class LikesComponent implements OnInit {
       destDid: destDid,
       channelId: channelId,
       postId: postId,
-      channelAvatar: await this.parseAvatar(destDid, channelId),
-      channelName: channelName,
+      channelAvatar: null,
+      channelName: this.handleDisplayNameMap[destDid],
     });
   }
 

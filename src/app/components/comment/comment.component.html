@@ -7,7 +7,7 @@
         <ion-col size="2.5" sizeMd="1" sizeLg="1" class="left-col">
 
           <div
-          [ngClass]="{'feedAvatar': destDid === createrDid, 'feedAvatar1':  destDid != createrDid }"
+          class="feedAvatar1"
           [class.dark-feedAvatar]="theme.darkMode" *ngIf="refcommentId!='0'">
             <img
             *ngIf="isBorder&&avatar"
@@ -20,7 +20,7 @@
           </div>
 
           <div
-          [ngClass]="{'feedAvatar': destDid === createrDid, 'feedAvatar1':  destDid != createrDid }"
+          class="feedAvatar1"
           [class.dark-feedAvatar]="theme.darkMode" *ngIf="refcommentId==='0'">
             <img
             src={{avatar}}
@@ -29,7 +29,7 @@
           </div>
         </ion-col>
         <ion-col size="8" sizeMd="9.5" sizeLg="9.5"  class="middle-col">
-          <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{'PostdetailPage.replyingto'|translate}} <span *ngIf="destDid!=createrDid">@</span><span *ngIf="destDid === createrDid" style="color: #fff;;">c/</span>{{ channelName }}</ion-label>
+          <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{'PostdetailPage.replyingto'|translate}} @{{ channelName }}</ion-label>
           <!-- <p>Comments</p> -->
         </ion-col>
         <ion-col size="1.5" class="right-col" (click)="hideComponent()">

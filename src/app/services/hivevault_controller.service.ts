@@ -1047,20 +1047,24 @@ export class HiveVaultController {
       if (!userDid) {
         userDid = signinData.did;
       }
-      let userProfile: FeedsData.UserProfile = await this.getUserProfile(userDid);
-      const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar;
-      if (!avatarHiveUrl) {
-        resolve('./assets/images/did-default-avatar.svg');
-        return;
-      }
+      try {
+        let userProfile: FeedsData.UserProfile = await this.getUserProfile(userDid);
+        const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar;
+        if (!avatarHiveUrl) {
+          resolve('./assets/images/did-default-avatar.svg');
+          return;
+        }
 
-      const avatar = await this.getV3HiveUrlData(avatarHiveUrl);
-      if (!avatar) {
-        resolve('./assets/images/did-default-avatar.svg');
-        return;
-      }
+        const avatar = await this.getV3HiveUrlData(avatarHiveUrl);
+        if (!avatar) {
+          resolve('./assets/images/did-default-avatar.svg');
+          return;
+        }
 
-      resolve(avatar);
+        resolve(avatar);
+      } catch (error) {
+        resolve('./assets/images/did-default-avatar.svg');
+      }
       return;
     });
   }

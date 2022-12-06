@@ -132,7 +132,7 @@ export class PostdetailPage implements OnInit {
   private isInitComment: any = {};
   private postCommentList: FeedsData.CommentV3[] = [];
   private isInitUserNameMap: any = {};
-  private userNameMap: any = {};
+  public userNameMap: any = {};
   public userAvatarMap: { [userDid: string]: string } = {};
   private isloadingLikeMap: any = {};
   private isLoadingLike = false;
@@ -147,9 +147,6 @@ export class PostdetailPage implements OnInit {
   private refreshLikeAndCommentSid: any = null;
   public channelPublicStatusList: any = {};
   public createrDid: string = '';
-  public handleDisplayNameMap: any = {};
-  private isLoadHandleDisplayNameMap: any = {};
-
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
@@ -184,12 +181,13 @@ export class PostdetailPage implements OnInit {
     this.channelOwnerName = this.indexText(channel.destDid);
     this.channelWName = channel['displayName'] || channel['name'] || '';
     this.channelName = channel['displayName'] || channel['name'];
-    this.userNameMap[this.channelOwner] = this.channelName;
+    //this.userNameMap[this.channelOwner] = this.channelName;
     let channelAvatarUri = channel['avatar'] || '';
     if (channelAvatarUri != '') {
       this.channelAvatarUri = channelAvatarUri;
       this.handleChannelAvatar(channelAvatarUri);
     }
+    this.setMainUserAvatar(channel.destDid);
     try {
       this.getDisplayName(this.destDid, this.channelId, this.destDid);
     } catch (error) {
@@ -552,9 +550,9 @@ export class PostdetailPage implements OnInit {
 
     if (comment === null) {
       this.refcommentId = '0';
-      this.commentName = this.channelName;
-      this.commentAvatar = this.channelAvatarUri;
       this.createrDid = this.destDid;
+      this.commentName = this.userNameMap[this.createrDid];
+      this.commentAvatar = this.channelAvatarUri;
     } else {
       this.refcommentId = comment.commentId;
       this.commentName = this.userNameMap[comment.createrDid];
@@ -819,7 +817,7 @@ export class PostdetailPage implements OnInit {
       this.removeReplyCommentObserverList();
       this.removeCaptainCommentObserverList();
       this.dataHelper.setChannelPublicStatusList({});
-      this.isLoadHandleDisplayNameMap = {};
+      this.isInitUserNameMap = {};
       this.initData(true);
       event.target.complete();
     } catch (error) {
@@ -1579,18 +1577,18 @@ export class PostdetailPage implements OnInit {
   }
 
   getDisplayName(destDid: string, channelId: string, userDid: string) {
-    let displayNameMap = this.isLoadHandleDisplayNameMap[userDid] || '';
+    let displayNameMap = this.isInitUserNameMap[userDid] || '';
     if (displayNameMap === "") {
-      this.isLoadHandleDisplayNameMap[userDid] = "11";
-      let displayName = this.handleDisplayNameMap[userDid] || "";
+      this.isInitUserNameMap[userDid] = "11";
+      let displayName = this.userNameMap[userDid] || "";
       if (displayName === "") {
         let text = destDid.replace('did:elastos:', '');
-        this.handleDisplayNameMap[userDid] = UtilService.shortenDid(text);
+        this.userNameMap[userDid] = UtilService.shortenDid(text);
       }
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
         const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
         if (name) {
-          this.handleDisplayNameMap[userDid] = name;
+          this.userNameMap[userDid] = name;
         }
       }).catch(() => {
       })
@@ -1615,11 +1613,26 @@ export class PostdetailPage implements OnInit {
 
   setCommentUserAvatar(comment: FeedsData.CommentV3) {
     if (!this.userAvatarMap[comment.createrDid]) {
-      this.userAvatarMap[comment.createrDid] = './assets/images/did-default-avatar.svg';
+     let userAvatar = this.userAvatarMap[comment.createrDid] || '';
+     if(userAvatar === ''){
+      this.userAvatarMap[comment.createrDid] = './assets/images/loading.svg';
+     }
       this.hiveVaultController.getUserAvatar(comment.createrDid).then((userAvatar: string) => {
         this.userAvatarMap[comment.createrDid] = userAvatar;
+      }).catch((err)=>{
+         if(this.userAvatarMap[comment.createrDid] === './assets/images/loading.svg'){
+          this.userAvatarMap[comment.createrDid] = './assets/images/did-default-avatar.svg';
+         }
       });
     }
+  }
+
+  setMainUserAvatar(createrDid: string){
+    this.hiveVaultController.getUserAvatar(createrDid).then((userAvatar: string) => {
+      this.userAvatarMap[createrDid] = userAvatar;
+    }).catch((err)=>{
+        this.userAvatarMap[createrDid] = './assets/images/did-default-avatar.svg';
+    });
   }
 }
 

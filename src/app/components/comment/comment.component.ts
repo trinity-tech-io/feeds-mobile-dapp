@@ -56,19 +56,7 @@ export class CommentComponent implements OnInit {
     } else {
       this.isAndroid = "android";
     }
-    if (this.channelAvatar === "") {
-      this.isBorder = true;
-      this.avatar = "./assets/images/did-default-avatar.svg";
-      if (this.createrDid != '') {
-        this.hiveVaultController.getUserAvatar(this.createrDid).then((userAvatar: string) => {
-          this.avatar = userAvatar;
-        });
-      }
-    } else {
-      this.isBorder = false;
-      this.parseAvatar();
-    }
-
+    this.parseAvatar();
     this.clearSetFocusSid();
     this.setFocusSid = setTimeout(() => {
       this.comment.setFocus();
@@ -98,29 +86,28 @@ export class CommentComponent implements OnInit {
       this.avatar = './assets/images/loading.svg';
     }
     try {
-      let avatar = await this.handleChannelAvatar(avatarUri, this.destDid);
+      let avatar = await this.handleUserAvatar();
       this.avatar = avatar;
     } catch (error) {
-      this.avatar = "./assets/images/profile-0.svg";
+      this.avatar = "./assets/images/did-default-avatar.svg";
     }
   }
 
-  handleChannelAvatar(channelAvatarUri: string, destDid: string): Promise<string> {
+  handleUserAvatar(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        let fileName: string = channelAvatarUri.split("@")[0];
-        this.hiveVaultController.getV3Data(destDid, channelAvatarUri, fileName, "0")
-          .then((result) => {
-            let channelAvatar = result || '';
-            resolve(channelAvatar);
-          }).catch((err) => {
-            resolve('./assets/images/profile-0.svg');
-          })
+        this.hiveVaultController.getUserAvatar(this.createrDid).then((userAvatar: string) => {
+          userAvatar =  userAvatar || '';
+          resolve(userAvatar);
+        }).catch((err)=>{
+         let userAvatar = './assets/images/did-default-avatar.svg';
+         resolve(userAvatar);
+        });
       } catch (err) {
-        resolve('./assets/images/profile-0.svg');
+        let userAvatar = './assets/images/did-default-avatar.svg';
+        resolve(userAvatar);
       }
     });
-
   }
 
   sendComment() {
