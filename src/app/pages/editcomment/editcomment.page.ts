@@ -11,6 +11,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import _ from 'lodash';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { DataHelper } from 'src/app/services/DataHelper';
+import { UtilService } from 'src/app/services/utilService';
 
 @Component({
   selector: 'app-editcomment',
@@ -76,37 +77,49 @@ export class EditCommentPage implements OnInit {
   async ionViewWillEnter() {
     this.initTitle();
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId);
-    this.channelName = channel['displayName'] || channel['name'] || '';
-    this.subscribers = channel['subscribers'] || '';
-    let channelAvatarUri = channel['avatar'] || '';
-    if (channelAvatarUri != '') {
-      this.handleChannelAvatar(channelAvatarUri);
+    //this.channelName = channel['displayName'] || channel['name'] || '';
+    try {
+      this.getDisplayName(this.destDid);
+    } catch (error) {
+
     }
+    this.subscribers = channel['subscribers'] || '';
+    this.handleChannelAvatar();
+  }
+
+  getDisplayName(userDid: string) {
+    let text = userDid.replace('did:elastos:', '');
+    this.channelName = UtilService.shortenDid(text);
+      this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+        const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
+        if (name) {
+           this.channelName = name;
+        }
+      }).catch(() => {
+      })
   }
 
   ionViewDidEnter() {
   }
 
-  handleChannelAvatar(channelAvatarUri: string) {
+  handleChannelAvatar() {
     if (this.channelAvatar === '') {
       this.channelAvatar = './assets/images/loading.svg';
     }
-    let fileName: string = channelAvatarUri.split("@")[0];
-    this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
-      .then((result) => {
-        result = result || '';
-        if (result != '') {
-          this.channelAvatar = result;
-        } else {
-          if (this.channelAvatar === './assets/images/loading.svg') {
-            this.channelAvatar = "./assets/images/profile-0.svg";
-          }
+    try {
+      this.hiveVaultController.getUserAvatar(this.destDid).then((userAvatar: string) => {
+        userAvatar =  userAvatar || '';
+        if(userAvatar != ''){
+          this.channelAvatar = userAvatar;
+        }else{
+          this.channelAvatar = './assets/images/did-default-avatar.svg';
         }
-      }).catch((err) => {
-        if (this.channelAvatar === './assets/images/loading.svg') {
-          this.channelAvatar = "./assets/images/profile-0.svg";
-        }
-      })
+      }).catch((err)=>{
+        this.channelAvatar == './assets/images/did-default-avatar.svg';
+      });
+    } catch (err) {
+      this.channelAvatar == './assets/images/did-default-avatar.svg';
+    }
   }
 
   ionViewWillLeave() {
