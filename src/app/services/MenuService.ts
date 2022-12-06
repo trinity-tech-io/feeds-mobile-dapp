@@ -214,7 +214,7 @@ export class MenuService {
 
     this.actionSheetMenuStatus = "opening";
 
-    const editCommentButton = this.createEditCommentButton(comment.destDid, comment.channelId, comment.createrDid,comment.postId, comment.refcommentId, comment.commentId, comment.content);
+    const editCommentButton = this.createEditCommentButton(comment.destDid, comment.channelId, comment.createrDid, comment.postId, comment.refcommentId, comment.commentId, comment.content);
     const removeCommentButton = this.createRemoveCommentButton(comment);
     const cancelButton = this.createCancelButton();
 
@@ -231,7 +231,7 @@ export class MenuService {
 
     this.actionSheetMenuStatus = "opening";
 
-    const editReplyButton = this.createEditReplyButton(reply.destDid, reply.channelId, reply.createrDid,reply.postId, reply.refcommentId, reply.commentId, reply.content);
+    const editReplyButton = this.createEditReplyButton(reply.destDid, reply.channelId, reply.createrDid, reply.postId, reply.refcommentId, reply.commentId, reply.content);
     const removeReplyButton = this.createRemoveReplyButton(reply);
     const cancelButton = this.createCancelButton();
 
@@ -476,7 +476,7 @@ export class MenuService {
     }
   }
 
-  private createEditCommentButton(destDid: string, channelId: string, createrDid: string,postId: string, refcommentId: string, commentId: string, content: string) {
+  private createEditCommentButton(destDid: string, channelId: string, createrDid: string, postId: string, refcommentId: string, commentId: string, content: string) {
     return {
       text: this.translate.instant('common.editcomment'),
       icon: 'ios-edit1',
@@ -514,7 +514,7 @@ export class MenuService {
     }
   }
 
-  private createEditReplyButton(destDid: string, channelId: string, createrDid: string,postId: string, refcommentId: string, commentId: string, content: string): ActionSheetButton {
+  private createEditReplyButton(destDid: string, channelId: string, createrDid: string, postId: string, refcommentId: string, commentId: string, content: string): ActionSheetButton {
     return {
       text: this.translate.instant('CommentlistPage.editreply'),
       icon: 'ios-edit1',
@@ -892,37 +892,52 @@ export class MenuService {
     );
   }
 
-  async unsubscribeDialogCancel(that: any){
+  async unsubscribeDialogCancel(that: any) {
     if (that.unsubscribeDialog != null) {
       await that.unsubscribeDialog.dismiss();
       that.unsubscribeDialog = null;
     }
   }
 
-  async unsubscribeDialogConfirm(that: any){
+  async unsubscribeDialogConfirm(that: any) {
     if (that.unsubscribeDialog != null) {
       await that.unsubscribeDialog.dismiss();
       that.unsubscribeDialog = null;
     }
     //
-    that.native.showLoading("common.waitMoment").then(() => {
-      try {
-        that.hiveVaultController.unSubscribeChannel(
-          that.destDid, that.channelId
-        ).then(async (result) => {
-          let channel: FeedsData.BackupSubscribedChannelV3 = {
-            destDid: that.destDid,
-            channelId: that.channelId
-          };
-          that.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
-          that.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
-          that.native.hideLoading();
-        }).catch(() => {
-          that.native.hideLoading();
-        });
-      } catch (error) {
-        that.native.hideLoading();
-      }
+
+
+    this.hiveVaultController.unSubscribeChannelFlow(
+      that.destDid, that.channelId
+    ).then(async (result) => {
+    }).catch(() => {
+      this.native.toastWarnWithMoreInfo('common.unsubscribedChannelFail', ':c/' + that.channelName);
     });
+    const channel: FeedsData.BackupSubscribedChannelV3 = {
+      destDid: that.destDid,
+      channelId: that.channelId
+    };
+    this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+    this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
+
+    // that.native.showLoading("common.waitMoment").then(() => {
+    //   try {
+    //     that.hiveVaultController.unSubscribeChannel(
+    //       that.destDid, that.channelId
+    //     ).then(async (result) => {
+    //       let channel: FeedsData.BackupSubscribedChannelV3 = {
+    //         destDid: that.destDid,
+    //         channelId: that.channelId
+    //       };
+    //       that.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+    //       that.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
+    //       that.native.hideLoading();
+    //     }).catch(() => {
+    //       that.native.hideLoading();
+    //     });
+    //   } catch (error) {
+    //     that.native.hideLoading();
+    //   }
+    // });
   }
 }

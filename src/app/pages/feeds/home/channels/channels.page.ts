@@ -190,22 +190,31 @@ export class ChannelsPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
+    // await this.native.showLoading('common.waitMoment');
+    // try {
+    //   await this.hiveVaultController.subscribeChannel(this.destDid, this.channelId);
+    //   await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
+    //   await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
+    //   await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
+    //   this.initRefresh();
+    //   this.followStatus = true;
+    //   this.clickButton = false;
+    //   this.native.hideLoading();
+    // } catch (error) {
+    //   this.clickButton = false;
+    //   this.followStatus = false;
+    //   this.native.hideLoading();
+    // }
     this.clickButton = true;
-    await this.native.showLoading('common.waitMoment');
-    try {
-      await this.hiveVaultController.subscribeChannel(this.destDid, this.channelId);
-      await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
-      await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
-      await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
-      this.initRefresh();
-      this.followStatus = true;
+    this.followStatus = true;
+    this.hiveVaultController.subscribeChannelFlow(this.destDid, this.channelId).then(() => {
       this.clickButton = false;
-      this.native.hideLoading();
-    } catch (error) {
-      this.clickButton = false;
+    }).catch((error) => {
+      this.native.toastWarn('common.subscribeChannelFail');
       this.followStatus = false;
-      this.native.hideLoading();
-    }
+      this.clickButton = false;
+    })
   }
 
   async unsubscribe() {

@@ -29,7 +29,7 @@ export class NativeService {
     private translate: TranslateService,
     private network: Network,
     private events: Events,
-  ) {}
+  ) { }
 
   public toast(
     message: string = 'Operation completed',
@@ -63,14 +63,31 @@ export class NativeService {
       .then(toast => toast.present());
   }
 
-   public HiveErrorWarn(
+  public toastWarnWithMoreInfo(
     message: string = 'Operation completed',
-    errorCode : number = null,
+    moreInfo: string,
+    duration: number = 3000,
   ): void {
-    if(errorCode === null){
+    message = this.translate.instant(message) + moreInfo;
+    this.toastCtrl
+      .create({
+        mode: 'ios',
+        color: 'warning',
+        message,
+        duration: 3000,
+        position: 'top',
+      })
+      .then(toast => toast.present());
+  }
+
+  public HiveErrorWarn(
+    message: string = 'Operation completed',
+    errorCode: number = null,
+  ): void {
+    if (errorCode === null) {
       message = this.translate.instant(message);
-    }else{
-      message = this.translate.instant(message)+" - "+errorCode;
+    } else {
+      message = this.translate.instant(message) + " - " + errorCode;
     }
     this.toastCtrl
       .create({
@@ -162,7 +179,7 @@ export class NativeService {
 
   public hideLoading(): void {
     if (this.loading != null) {
-        this.loading.dismiss();
+      this.loading.dismiss();
     }
   }
 
@@ -220,10 +237,10 @@ export class NativeService {
       online();
     });
 
-    if(this.network.type === 'none') {
-        offline();
-    }else{
-        online();
+    if (this.network.type === 'none') {
+      offline();
+    } else {
+      online();
     }
 
     // stop connect watch
@@ -280,7 +297,7 @@ export class NativeService {
   ): Function {
     let timeout = null;
     let lastRun = 0;
-    return function() {
+    return function () {
       if (timeout) {
         if (iselapsed) {
           return;
@@ -317,7 +334,7 @@ export class NativeService {
     });
     modal.onWillDismiss().then(() => {
       if (modal != null) {
-          modal = null;
+        modal = null;
       }
     });
     await modal.present();
@@ -325,11 +342,11 @@ export class NativeService {
   }
 
   public clickUrl(url: string, event: any) {
-    let reg=/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
+    let reg = /(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
     var urlExp = new RegExp(reg);
-    if(urlExp.test(url) === true){
+    if (urlExp.test(url) === true) {
       this.openUrl(url);
-    }else{//处理#搜索
+    } else {//处理#搜索
 
     }
     event.stopPropagation();
@@ -344,15 +361,15 @@ export class NativeService {
   handleTabsEvents(isUpdateHomePage?: string) {
     isUpdateHomePage = isUpdateHomePage || '';
     let isUpdate = false;
-    if(isUpdateHomePage != '') {
+    if (isUpdateHomePage != '') {
       isUpdate = true;
     }
     let url: string = this.router.url;
-    switch(url) {
+    switch (url) {
       case "/tabs/home":
       case "/home":
-      this.events.publish(FeedsEvent.PublishType.homeCommonEvents);
-      this.events.publish(FeedsEvent.PublishType.updateTab,isUpdate);
+        this.events.publish(FeedsEvent.PublishType.homeCommonEvents);
+        this.events.publish(FeedsEvent.PublishType.updateTab, isUpdate);
         break;
       case "/tabs/profile":
       case "/profile":
@@ -365,21 +382,21 @@ export class NativeService {
       case "/tabs/search":
       case "/search":
         this.events.publish(FeedsEvent.PublishType.search);
-          break;
+        break;
     }
   }
 
-  handleHiveError(error: any, errorDes: string){
+  handleHiveError(error: any, errorDes: string) {
     let message = error.message || null;
-    if(message != null && message.indexOf("Failed to construct 'URL': Invalid URL")>-1){
+    if (message != null && message.indexOf("Failed to construct 'URL': Invalid URL") > -1) {
 
-    }else if(message != null && message.indexOf("Network Error")>-1){
+    } else if (message != null && message.indexOf("Network Error") > -1) {
 
-    }else if (error["code"] != 507) {
+    } else if (error["code"] != 507) {
       let errorCode = error["code"] || null;
-      if(errorCode != null){
-        this.HiveErrorWarn(errorDes,errorCode);
-      }else{
+      if (errorCode != null) {
+        this.HiveErrorWarn(errorDes, errorCode);
+      } else {
         this.HiveErrorWarn(errorDes);
       }
     }

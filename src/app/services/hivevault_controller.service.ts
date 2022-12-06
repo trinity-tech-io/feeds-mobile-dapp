@@ -950,6 +950,55 @@ export class HiveVaultController {
     });
   }
 
+  subscribeChannelFlow(targetDid: string, channelId: string, userDisplayName: string = ''): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let subscribedChannel = null;
+      const signinData = await this.dataHelper.getSigninData();
+      try {
+        await this.fakeAddSubscribedChannel(signinData.did, targetDid, channelId);
+        subscribedChannel = await this.subscribeChannel(targetDid, channelId, userDisplayName);
+
+        const promise1 = this.syncPostFromChannel(targetDid, channelId);
+        const promise2 = this.syncCommentFromChannel(targetDid, channelId);
+        const promise3 = this.syncLikeDataFromChannel(targetDid, channelId);
+        Promise.allSettled([promise1, promise2, promise3]).catch((error) => { });
+        resolve('finish');
+      } catch (error) {
+        this.dataHelper.removeSubscribedChannelByID(signinData.did, targetDid, channelId);
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
+  fakeAddSubscribedChannel(userDid: string, targetDid: string, channelId: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const currentTime = UtilService.getCurrentTimeNum();
+        let subscribedChannel: FeedsData.SubscribedChannelV3 = {
+          userDid: userDid,
+          targetDid: targetDid,
+          channelId: channelId,
+          subscribedAt: currentTime,
+          updatedAt: currentTime,
+
+          channelName: '',
+          channelDisplayName: '',
+          channelIntro: '',
+          channelAvatar: '',
+          channelType: '',
+          channelCategory: ''
+        }
+        await this.dataHelper.addSubscribedChannel(subscribedChannel);
+        resolve('FINISH')
+      } catch (error) {
+        this.dataHelper.removeSubscribedChannelByID(userDid, targetDid, channelId);
+        Logger.error(TAG, error);
+        reject(error);
+      }
+    });
+  }
+
   updateSubscriptionChannel(targetDid: string, channelId: string, status: number): Promise<{ updatedAt: number }> {
     return this.hiveVaultApi.updateSubscription(targetDid, channelId, status);
   }
@@ -1477,11 +1526,23 @@ export class HiveVaultController {
           reject(errorMsg);
         }
         await this.dataHelper.removeSubscribedChannelByID(did, destDid, channelId);
-        await this.dataHelper.removeChannelPostData(channelId);
+        // await this.dataHelper.removeChannelPostData(channelId); 
         const returnResult = {
           destDid: destDid,
           channelId: channelId
         }
+        resolve(returnResult);
+      } catch (error) {
+        Logger.error(TAG, 'Unsubscribe channel error', error);
+        reject(error);
+      }
+    });
+  }
+
+  unSubscribeChannelFlow(destDid: string, channelId: string): Promise<{ destDid: string, channelId: string }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const returnResult = await this.unSubscribeChannel(destDid, channelId);
         resolve(returnResult);
       } catch (error) {
         Logger.error(TAG, 'Unsubscribe channel error', error);
