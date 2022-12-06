@@ -229,24 +229,42 @@ export class SubscriptionsPage implements OnInit {
           return;
         }
 
-        await this.native.showLoading("common.waitMoment");
-        try {
-          this.hiveVaultController.unSubscribeChannel(
-            destDid, channelId
-          ).then(async (result) => {
+        // await this.native.showLoading("common.waitMoment");
+        // try {
+        //   this.hiveVaultController.unSubscribeChannel(
+        //     destDid, channelId
+        //   ).then(async (result) => {
 
-            let newfollowingList = _.filter(this.loadedChannelList, (item) => {
-              return item.channelId != channelId;
-            });
-            this.loadedChannelList = _.cloneDeep(newfollowingList);
-            this.searchedChannelList = _.cloneDeep(newfollowingList);
-            this.native.hideLoading();
-          }).catch(() => {
-            this.native.hideLoading();
-          });
-        } catch (err) {
-          this.native.hideLoading();
-        }
+        //     let newfollowingList = _.filter(this.loadedChannelList, (item) => {
+        //       return item.channelId != channelId;
+        //     });
+        //     this.loadedChannelList = _.cloneDeep(newfollowingList);
+        //     this.searchedChannelList = _.cloneDeep(newfollowingList);
+        //     this.native.hideLoading();
+        //   }).catch(() => {
+        //     this.native.hideLoading();
+        //   });
+        // } catch (err) {
+        //   this.native.hideLoading();
+        // }
+
+
+        this.hiveVaultController.unSubscribeChannelFlow(
+          destDid, channelId
+        ).then(async (result) => {
+        }).catch(() => {
+          let channelItem: FeedsData.ChannelV3 = _.find(this.loadedChannelList, (item: FeedsData.ChannelV3) => {
+            return item.channelId === channelId;
+          }) || null;
+          if (channelItem != null)
+            this.native.toastWarnWithMoreInfo('common.unsubscribedChannelFail', ':c/' + channelItem.displayName || channelItem.name);
+        });
+        const channel: FeedsData.BackupSubscribedChannelV3 = {
+          destDid: destDid,
+          channelId: channelId
+        };
+        this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+        this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
 
         this.qrCodeString = null;
         this.isHideShareMenuComponent = false;
@@ -352,7 +370,7 @@ export class SubscriptionsPage implements OnInit {
       let avatarUri = "";
       if (channel != null) {
         avatarUri = channel.avatar;
-      }else {
+      } else {
         this.channelAvatarMap[id] = './assets/images/profile-0.svg';
       }
       let fileName: string = avatarUri.split("@")[0];

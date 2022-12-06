@@ -251,27 +251,33 @@ export class SearchPage implements OnInit {
       return;
     }
 
-    await this.native.showLoading('common.waitMoment');
-    try {
-      await this.hiveVaultController.subscribeChannel(destDid, channelId);
-      await this.hiveVaultController.syncPostFromChannel(destDid, channelId);
-      await this.hiveVaultController.syncCommentFromChannel(destDid, channelId);
-      await this.hiveVaultController.syncLikeDataFromChannel(destDid, channelId);
+    // await this.native.showLoading('common.waitMoment');
+    // try {
+    //   await this.hiveVaultController.subscribeChannel(destDid, channelId);
+    //   await this.hiveVaultController.syncPostFromChannel(destDid, channelId);
+    //   await this.hiveVaultController.syncCommentFromChannel(destDid, channelId);
+    //   await this.hiveVaultController.syncLikeDataFromChannel(destDid, channelId);
 
-      let channelIndex = _.findIndex(this.channelCollectionPageList, (item: FeedsData.ChannelV3) => {
-        return item.channelId === channelId && item.destDid === destDid;
-      });
+    //   // let channelIndex = _.findIndex(this.channelCollectionPageList, (item: FeedsData.ChannelV3) => {
+    //   //   return item.channelId === channelId && item.destDid === destDid;
+    //   // });
 
-      if (channelIndex > -1) {
-        this.subscribedChannelMap[channelId] = this.channelCollectionPageList[channelIndex];
-      }
-      this.native.hideLoading();
-    } catch (error) {
-      this.native.hideLoading();
-    }
+    //   // if (channelIndex > -1) {
+    //   //   this.subscribedChannelMap[channelId] = this.channelCollectionPageList[channelIndex];
+    //   // }
+    //   this.subscribedChannelMap[channelId] = true;
+    //   this.native.hideLoading();
+    // } catch (error) {
+    //   this.native.hideLoading();
+    // }
 
-    //TODO
-    // this.hiveVaultController.subscribeChannel();
+
+    this.subscribedChannelMap[channelId] = true;
+    this.hiveVaultController.subscribeChannelFlow(destDid, channelId).then(() => {
+    }).catch((error) => {
+      this.subscribedChannelMap[channelId] = undefined;
+      this.native.toastWarn('common.subscribeChannelFail');
+    })
   }
 
   getItems(events: any) {
@@ -593,7 +599,7 @@ export class SearchPage implements OnInit {
                         this.channelAvatarMap[id] = './assets/images/profile-0.svg'
                       }
                       this.searchIsLoadimage[id] = '13';
-                    }else{
+                    } else {
                       srcData = await UtilService.blobToDataURL(avatar);
                       this.channelAvatarMap[id] = srcData;
                     }
@@ -746,21 +752,21 @@ export class SearchPage implements OnInit {
             "channelSource": 'ipfs'
           }
           let tokenURI = channel[1];
-           newChannelInfo.tipping_address = channel[3];
-           let uri = tokenURI.replace('feeds:json:', '');
-           try {
-            let result:any = await this.ipfsService
-            .nftGet(this.ipfsService.getNFTGetUrl() + uri);
+          newChannelInfo.tipping_address = channel[3];
+          let uri = tokenURI.replace('feeds:json:', '');
+          try {
+            let result: any = await this.ipfsService
+              .nftGet(this.ipfsService.getNFTGetUrl() + uri);
             newChannelInfo.intro = result.description || '';
             newChannelInfo.displayName = result.data.cname || '';
-            newChannelInfo.avatar =  result.data.avatar || '';
-            } catch (error) {
-              newChannelInfo.intro = '';
-              newChannelInfo.displayName = '';
-              newChannelInfo.avatar =  '';
-           }
+            newChannelInfo.avatar = result.data.avatar || '';
+          } catch (error) {
+            newChannelInfo.intro = '';
+            newChannelInfo.displayName = '';
+            newChannelInfo.avatar = '';
+          }
           channelCollectionPageList.push(newChannelInfo);
-          if(this.startIndex > 0){
+          if (this.startIndex > 0) {
             this.startIndex = this.startIndex - 1;
           }
         }

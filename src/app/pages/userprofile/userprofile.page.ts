@@ -52,7 +52,7 @@ export class UserprofilePage implements OnInit {
   private myFeedsObserver: any = {};
   private refreshImageSid: any = null;
 
-  public channels = []; //myFeeds page
+  public channelList: FeedsData.ChannelV3[] = []; //myFeeds page
   public isLoadingMyFeeds: boolean = true;
   public myFeedsSum: number = 0;
   public followers = 0;
@@ -500,11 +500,11 @@ export class UserprofilePage implements OnInit {
         newChannels = _.sortBy(newChannels, (item: FeedsData.ChannelV3) => {
           return -item.createdAt;
         });
-        this.channels = newChannels;
+        this.channelList = newChannels;
       }
       this.isLoadingMyFeeds = false;
-      this.myFeedsSum = this.channels.length;
-      this.refreshMyFeedsVisibleareaImageV2(this.channels);
+      this.myFeedsSum = this.channelList.length;
+      this.refreshMyFeedsVisibleareaImageV2(this.channelList);
       this.hiveVaultController.querySubscribedChannelsByOwner(this.userDid, FeedsData.SubscribedChannelType.OTHER_CHANNEL,
         (localCachedSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
           this.followers = localCachedSubscribedChannelList.length;
@@ -1534,23 +1534,37 @@ export class UserprofilePage implements OnInit {
           this.native.toastWarn('common.connectionError');
           return;
         }
-        // if (this.checkServerStatus(destDid) != 0) {
-        //   this.native.toastWarn('common.connectionError1');
-        //   return;
+
+        // await this.native.showLoading("common.waitMoment");
+        // try {
+        //   this.hiveVaultController.unSubscribeChannel(
+        //     destDid, channelId
+        //   ).then(async (result) => {
+        //     this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish);
+        //     this.native.hideLoading();
+        //   }).catch(() => {
+        //     this.native.hideLoading();
+        //   });
+        // } catch (error) {
+        //   this.native.hideLoading();
         // }
-        await this.native.showLoading("common.waitMoment");
-        try {
-          this.hiveVaultController.unSubscribeChannel(
-            destDid, channelId
-          ).then(async (result) => {
-            this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish);
-            this.native.hideLoading();
-          }).catch(() => {
-            this.native.hideLoading();
-          });
-        } catch (error) {
-          this.native.hideLoading();
-        }
+
+        this.hiveVaultController.unSubscribeChannelFlow(
+          destDid, channelId
+        ).then(async (result) => {
+        }).catch(() => {
+          let channelItem: FeedsData.ChannelV3 = _.find(this.channelList, (item: FeedsData.ChannelV3) => {
+            return item.channelId === channelId;
+          }) || null;
+          if (channelItem != null)
+            this.native.toastWarnWithMoreInfo('common.unsubscribedChannelFail', ':c/' + channelItem.displayName || channelItem.name);
+        });
+        const channel: FeedsData.BackupSubscribedChannelV3 = {
+          destDid: destDid,
+          channelId: channelId
+        };
+        this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+        this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
 
         this.qrCodeString = null;
         this.hideSharMenuComponent = false;
