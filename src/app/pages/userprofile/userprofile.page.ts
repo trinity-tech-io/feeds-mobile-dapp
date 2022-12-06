@@ -568,27 +568,40 @@ export class UserprofilePage implements OnInit {
     if (isload === "") {
       let arr = id.split("-");
       this.myFeedsIsLoadimage[id] = '11';
+      let myFeedAvatar = this.myFeedAvatarMap[id] || '';
+      if (myFeedAvatar === '') {
+        this.myFeedAvatarMap[id] = './assets/images/loading.svg';
+      }
       let destDid = arr[0];
       let channelId = arr[1];
       let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
       let avatarUri = "";
       if (channel != null) {
         avatarUri = channel.avatar;
-      }
-      let fileName: string = avatarUri.split("@")[0];
-      this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
-        this.zone.run(() => {
-          let srcData = data || "";
-          if (srcData != "") {
-            this.myFeedsIsLoadimage[id] = '13';
-            this.myFeedAvatarMap[id] = data;
-          } else {
-            this.myFeedsIsLoadimage[id] = '13';
+        let fileName: string = avatarUri.split("@")[0];
+        this.hiveVaultController.getV3Data(destDid, avatarUri, fileName, "0").then((data) => {
+          this.zone.run(() => {
+            let srcData = data || "";
+            if (srcData != "") {
+              this.myFeedsIsLoadimage[id] = '13';
+              this.myFeedAvatarMap[id] = data;
+            } else {
+              if (this.myFeedAvatarMap[id] === './assets/images/loading.svg') {
+                this.myFeedAvatarMap[id] = "./assets/images/profile-0.svg";
+              }
+              this.myFeedsIsLoadimage[id] = '13';
+            }
+          });
+        }).catch((err) => {
+          if (this.myFeedAvatarMap[id] === './assets/images/loading.svg') {
+            this.myFeedAvatarMap[id] = "./assets/images/profile-0.svg";
           }
         });
-      }).catch((err) => {
-        this.myFeedsIsLoadimage[id] = '';
-      });
+      }else{
+        if (this.myFeedAvatarMap[id] === './assets/images/loading.svg') {
+          this.myFeedAvatarMap[id] = "./assets/images/profile-0.svg";
+        }
+      }
     }
 
 
@@ -1080,6 +1093,10 @@ export class UserprofilePage implements OnInit {
       if (channel != null) {
         avatarUri = channel.avatar;
       }
+      let channelAvatar = this.likeAvatarMap[id] || '';
+      if (channelAvatar === '') {
+        this.likeAvatarMap[id] = './assets/images/loading.svg';
+      }
       let fileName: string = avatarUri.split("@")[0];
       //头像
       this.hiveVaultController.
@@ -1090,12 +1107,16 @@ export class UserprofilePage implements OnInit {
             this.likeAvatarMap[id] = realImage;
             this.isLoadAvatarImage[id] = "13";
           } else {
+            if (this.likeAvatarMap[id] === './assets/images/loading.svg') {
+              this.likeAvatarMap[id] = './assets/images/profile-0.svg';
+            }
             this.isLoadAvatarImage[id] = "13";
           }
         })
         .catch(reason => {
-
-          this.isLoadAvatarImage[id] = '';
+          if (this.likeAvatarMap[id] === './assets/images/loading.svg') {
+            this.likeAvatarMap[id] = './assets/images/profile-0.svg';
+          }
           Logger.error(TAG,
             "Excute 'handlePostAvatar' in home page is error , get image data error, error msg is ",
             reason
