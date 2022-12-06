@@ -373,25 +373,18 @@ export class MenuService {
           return;
         }
 
-        this.native.showLoading("common.waitMoment").then(() => {
-          try {
-            this.hiveVaultController.unSubscribeChannel(
-              destDid, channelId
-            ).then(async (result) => {
-              let channel: FeedsData.BackupSubscribedChannelV3 = {
-                destDid: destDid,
-                channelId: channelId
-              };
-              this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
-              this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
-              this.native.hideLoading();
-            }).catch(() => {
-              this.native.hideLoading();
-            });
-          } catch (error) {
-            this.native.hideLoading();
-          }
+        this.hiveVaultController.unSubscribeChannelFlow(
+          destDid, channelId
+        ).then(async (result) => {
+        }).catch(() => {
+          this.native.toastWarnWithMoreInfo('common.unsubscribedChannelFail', ':c/' + channelName);
         });
+        const channel: FeedsData.BackupSubscribedChannelV3 = {
+          destDid: destDid,
+          channelId: channelId
+        };
+        this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+        this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
       },
     };
   }

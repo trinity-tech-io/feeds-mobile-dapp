@@ -222,6 +222,8 @@ export const en = {
     twitterError3: 'Unable to connect to Twitter. Please check the network and try again',
     unableUnsubscribe: 'Unable to unsubscribe from your own channel',
     channelError: 'Please use the wallet you used to public this channel',
+    unsubscribedChannelFail: 'Unsubscribe channel fail',
+    subscribeChannelFail: 'Subscribe channel fail'
   },
   app: {
     profileDetails: 'Profile Details',
@@ -343,7 +345,7 @@ export const en = {
     following: 'Subscribed',
     searchFeeds: 'Search',
     confirmTitle: 'Cancel Request',
-    des:'Failed to connect to the channel'
+    des: 'Failed to connect to the channel'
   },
   ChannelsPage: {
     feeds: 'Channel',

@@ -177,22 +177,31 @@ export class ChannelsPage implements OnInit {
       this.native.toastWarn('common.connectionError');
       return;
     }
+
+    // await this.native.showLoading('common.waitMoment');
+    // try {
+    //   await this.hiveVaultController.subscribeChannel(this.destDid, this.channelId);
+    //   await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
+    //   await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
+    //   await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
+    //   this.initRefresh();
+    //   this.followStatus = true;
+    //   this.clickButton = false;
+    //   this.native.hideLoading();
+    // } catch (error) {
+    //   this.clickButton = false;
+    //   this.followStatus = false;
+    //   this.native.hideLoading();
+    // }
     this.clickButton = true;
-    await this.native.showLoading('common.waitMoment');
-    try {
-      await this.hiveVaultController.subscribeChannel(this.destDid, this.channelId);
-      await this.hiveVaultController.syncPostFromChannel(this.destDid, this.channelId);
-      await this.hiveVaultController.syncCommentFromChannel(this.destDid, this.channelId);
-      await this.hiveVaultController.syncLikeDataFromChannel(this.destDid, this.channelId);
-      this.initRefresh();
-      this.followStatus = true;
+    this.followStatus = true;
+    this.hiveVaultController.subscribeChannelFlow(this.destDid, this.channelId).then(() => {
       this.clickButton = false;
-      this.native.hideLoading();
-    } catch (error) {
-      this.clickButton = false;
+    }).catch((error) => {
+      this.native.toastWarn('common.subscribeChannelFail');
       this.followStatus = false;
-      this.native.hideLoading();
-    }
+      this.clickButton = false;
+    })
   }
 
   tip() {
@@ -455,21 +464,21 @@ export class ChannelsPage implements OnInit {
 
   handleChannelAvatar(channelAvatarUri: string) {
     let fileName: string = channelAvatarUri.split("@")[0];
-    if(this.channelAvatar === ''){
+    if (this.channelAvatar === '') {
       this.channelAvatar = "./assets/images/loading.svg";
     }
     this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
       .then((result) => {
         result = result || '';
-        if(result != ''){
+        if (result != '') {
           this.channelAvatar = result;
-        }else{
-          if(this.channelAvatar === './assets/images/loading.svg'){
+        } else {
+          if (this.channelAvatar === './assets/images/loading.svg') {
             this.channelAvatar = "./assets/images/profile-0.svg";
           }
         }
       }).catch((err) => {
-        if(this.channelAvatar === './assets/images/loading.svg'){
+        if (this.channelAvatar === './assets/images/loading.svg') {
           this.channelAvatar = "./assets/images/profile-0.svg";
         }
       })
@@ -547,7 +556,7 @@ export class ChannelsPage implements OnInit {
     })
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     //if (this.destDid === ownerDid) {
-      this.getChannelPublicStatus(this.destDid, this.channelId);
+    this.getChannelPublicStatus(this.destDid, this.channelId);
     //}
   }
 

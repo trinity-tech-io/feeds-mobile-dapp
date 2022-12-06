@@ -222,6 +222,8 @@ export const zh = {
     twitterError3: '无法解析twitter服务地址，请检查网络后重试',
     unableUnsubscribe: '无法取消订阅自己的频道',
     channelError: '请使用公开此频道时所用的钱包',
+    unsubscribedChannelFail: '取消订阅频道失败',
+    subscribeChannelFail: '订阅频道失败'
   },
   app: {
     profileDetails: '档案详情',
@@ -341,7 +343,7 @@ export const zh = {
     following: '已订阅',
     searchFeeds: '搜索',
     confirmTitle: '取消请求',
-    des:'无法连接频道'
+    des: '无法连接频道'
   },
   ChannelsPage: {
     feeds: '频道',
