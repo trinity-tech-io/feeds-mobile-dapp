@@ -248,7 +248,9 @@ export class SubscriptionsPage implements OnInit {
         //   this.native.hideLoading();
         // }
 
-
+        _.remove(this.loadedChannelList, (item: FeedsData.ChannelV3) => {
+          return item.channelId === channelId
+        });
         this.hiveVaultController.unSubscribeChannelFlow(
           destDid, channelId
         ).then(async (result) => {
