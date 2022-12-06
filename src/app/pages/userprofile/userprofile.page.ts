@@ -153,7 +153,7 @@ export class UserprofilePage implements OnInit {
   public channelName = null;
 
   private userOwnedchannels: FeedsData.ChannelV3[] = [];
-
+  public createrDid: string = '';
   constructor(
     private translate: TranslateService,
     private titleBarService: TitleBarService,
@@ -1778,5 +1778,15 @@ export class UserprofilePage implements OnInit {
 
   setUserName(userDid: string, userName: string = 'common.unknown') {
     this.name = userName;
+  }
+
+  showComment(commentParams) {
+    this.postId = commentParams.postId;
+    this.channelId = commentParams.channelId;
+    this.destDid = commentParams.destDid;
+    this.createrDid = commentParams.destDid;
+    this.channelAvatar = commentParams.channelAvatar;
+    this.channelName = commentParams.channelName;
+    this.hideComment = false;
   }
 }

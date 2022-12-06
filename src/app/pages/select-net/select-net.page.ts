@@ -80,9 +80,13 @@ export class SelectNetPage implements OnInit {
       that.dataHelper.setChannelCollectionPageList([]);
       that.dataHelper.setChannelContractInfoList({});
       that.dataHelper.saveData("feeds.contractInfo.list",{});
-      that.feedService.resetConnectionStatus();
+      //that.feedService.resetConnectionStatus();
       //that.feedService.destroyCarrier();
-      that.globalService.restartApp();
+      let req = requestAnimationFrame(()=>{
+        that.globalService.restartApp();
+        cancelAnimationFrame(req);
+        req = null;
+      });
     }
   }
 }

@@ -65,9 +65,13 @@ export class DatastoragePage implements OnInit {
       this.popover.dismiss();
       this.popover = null;
 
-      that.feedService.resetConnectionStatus();
-      that.feedService.destroyCarrier();
-      that.globalService.restartApp();
+      // that.feedService.resetConnectionStatus();
+      // that.feedService.destroyCarrier();
+      let req = requestAnimationFrame(()=>{
+        that.globalService.restartApp();
+        cancelAnimationFrame(req);
+        req = null;
+      });
     }
   }
 
