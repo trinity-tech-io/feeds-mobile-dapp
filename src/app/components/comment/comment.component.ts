@@ -96,7 +96,8 @@ export class CommentComponent implements OnInit {
   handleUserAvatar(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        this.hiveVaultController.getUserAvatar(this.createrDid).then((userAvatar: string) => {
+        let userDid = (await this.dataHelper.getSigninData()).did;
+        this.hiveVaultController.getUserAvatar(userDid).then((userAvatar: string) => {
           userAvatar =  userAvatar || '';
           resolve(userAvatar);
         }).catch((err)=>{

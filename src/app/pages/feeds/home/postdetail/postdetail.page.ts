@@ -187,9 +187,10 @@ export class PostdetailPage implements OnInit {
       this.channelAvatarUri = channelAvatarUri;
       this.handleChannelAvatar(channelAvatarUri);
     }
-    this.setMainUserAvatar(channel.destDid);
+    let userDid = (await this.dataHelper.getSigninData()).did;
+    this.setMainUserAvatar(userDid);
     try {
-      this.getDisplayName(this.destDid, this.channelId, this.destDid);
+      this.getDisplayName(userDid, this.channelId, userDid);
     } catch (error) {
 
     }
