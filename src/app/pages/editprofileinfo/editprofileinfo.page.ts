@@ -186,7 +186,8 @@ export class EditprofileinfoPage implements OnInit {
         this.cleanClipImage(this.avatar);
       } catch (error) {
       } finally {
-        this.native.hideLoading()
+        this.native.hideLoading();
+        this.native.pop();
       }
     } else {
       this.native.toastWarn('EditprofileinfoPage.notChange');

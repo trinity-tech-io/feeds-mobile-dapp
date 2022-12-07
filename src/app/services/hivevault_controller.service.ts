@@ -2587,12 +2587,6 @@ export class HiveVaultController {
           avatarHiveUrl = await this.uploadUserProfileAvatar(avatar);
         }
 
-        // if (!avatarHiveUrl) {
-        //   Logger.error(TAG, 'Update avatar result null');
-        //   reject('Update avatar result null');
-        //   return;
-        // }
-
         const originProfile = await this.getUserProfileFromLocal(did);
         const result = await this.hiveVaultApi.updateSelfProfile(name, description, avatarHiveUrl);
         if (!result) {
@@ -2612,8 +2606,12 @@ export class HiveVaultController {
           bio: description,
           updatedAt: result.updatedAt
         }
-        const scriptName = UtilService.parseScriptNameFromHiveUrl(avatarHiveUrl);
-        await this.fileHelperService.saveV3Data(scriptName, avatar);
+
+        if (avatarHiveUrl != originProfile.avatar) {
+          const scriptName = UtilService.parseScriptNameFromHiveUrl(avatarHiveUrl);
+          await this.fileHelperService.saveV3Data(scriptName, avatar);
+        }
+
         await this.dataHelper.addUserProfile(userProfile);
         resolve(userProfile)
       } catch (error) {

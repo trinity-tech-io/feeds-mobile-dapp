@@ -153,32 +153,24 @@ export class ProfiledetailPage implements OnInit {
     });
 
     let signInData = await this.dataHelper.getSigninData();
-    let nickname = signInData['nickname'] || '';
-    if (nickname != '' && nickname != 'Information not provided') {
-      this.userName = nickname;
-    } else {
-      this.userName = signInData['name'] || '';
-    }
-    this.userDescription = signInData['description'] || '';
+
+    this.userName = '';
+    this.userDescription = '';
     this.userDid = signInData['did'];
-    this.did = this.feedService.rmDIDPrefix(signInData['did'] || '');
-    this.telephone = signInData['telephone'] || '';
-    this.email = signInData['email'] || '';
-    this.location = signInData['location'] || '';
+    this.did = this.feedService.rmDIDPrefix(this.userDid || '');
+    this.hiveVaultController.getUserProfile(signInData.did).then((userProfile: FeedsData.UserProfile) => {
+      this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || '';
+      this.userDescription = userProfile.bio || userProfile.resolvedBio || '';
+      this.userDid = userProfile.did;
+      this.did = this.feedService.rmDIDPrefix(this.userDid || '');
+      this.collectData();
+    });
     this.collectData();
     try {
-      // let croppedImage = this.dataHelper.getClipProfileIamge();
-      // if (croppedImage != '') {
-      //   this.avatar = croppedImage;
-      //   await this.saveAvatar();
-      // } else {
       this.avatar = await this.hiveVaultController.getUserAvatar();
-      // }
     } catch (error) {
-
     }
     this.handleImages()
-
   }
 
   ionViewDidEnter() { }
