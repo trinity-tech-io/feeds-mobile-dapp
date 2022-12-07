@@ -3,6 +3,7 @@ import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from '../../services/theme.service';
 import { UtilService } from '../../services/utilService';
 import { ViewHelper } from '../../services/viewhelper.service';
+import { DataHelper } from '../../services/DataHelper';
 
 @Component({
   selector: 'app-following',
@@ -16,15 +17,20 @@ export class FollowingComponent implements OnInit {
   @Input() channelAvatarMap: any = {};
   @Input() channelPublicStatusList: any = {};
   @Input() pageType: string = "";
+  @Input() userDid: string = "";
   @Output() toFollowPage = new EventEmitter();
   @Output() exploreFeeds = new EventEmitter();
+  public showThreeDotMenu: boolean = true;
   constructor(
     public theme: ThemeService,
     private viewHelper: ViewHelper,
     private native: NativeService,
+    private dataHelper: DataHelper,
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.checkIfShowMenu();
+  }
 
   moreName(name: string) {
     return UtilService.moreNanme(name);
@@ -70,5 +76,14 @@ export class FollowingComponent implements OnInit {
 
   clickExploreFeeds() {
     this.exploreFeeds.emit();
+  }
+
+  async checkIfShowMenu() {
+    const userDid = (await this.dataHelper.getSigninData()).did
+    if (this.userDid == userDid) {
+      this.showThreeDotMenu = true;
+    } else {
+      this.showThreeDotMenu = false;
+    }
   }
 }

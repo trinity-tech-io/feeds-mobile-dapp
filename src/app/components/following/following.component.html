@@ -41,11 +41,15 @@
           </p>
         </ion-row>
       </ion-col>
-      <ion-col size="0.5" class="right-col" (click)="menuMore(channel)">
+      <ion-col size="0.5" *ngIf="showThreeDotMenu"  class="right-col" (click)="menuMore(channel)">
       </ion-col>
-      <ion-col size="1.5" class="right-col" (click)="menuMore(channel)" style="text-align: center;">
+      <ion-col size="1.5" *ngIf="showThreeDotMenu"  class="right-col" (click)="menuMore(channel)" style="text-align: center;">
         <img [src]="!theme.darkMode ? './assets/images/dots-three-vertical.svg' : './assets/images/dots-three-vertical-dark.svg'">
       </ion-col>
+
+      <ion-col size="2" *ngIf="!showThreeDotMenu" class="right-col">
+      </ion-col>
+
       <ion-ripple-effect></ion-ripple-effect>
     </ion-row>
   </ion-item>
