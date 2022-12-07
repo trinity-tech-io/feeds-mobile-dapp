@@ -2891,7 +2891,6 @@ export class HiveVaultController {
 
   getChannelListFromSubscribedChannelList(subscribedChannelList: FeedsData.SubscribedChannelV3[], callback: (localCachedChannelList: FeedsData.ChannelV3[]) => void, forceLoadRemote: boolean = false): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
-      console.log('xxxxxxxxx', subscribedChannelList);
       if (!subscribedChannelList || subscribedChannelList.length == 0) {
         resolve([]);
         return

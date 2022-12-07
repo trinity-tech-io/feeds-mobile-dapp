@@ -37,8 +37,8 @@ export class SubscriptionsPage implements OnInit {
   private pageStep: number = 10;
   private itemObserver: { [key: string]: IntersectionObserver } = {};//key =>  targetDid + "-" + channelId + '-' + pageType;
   private totalChannelList: FeedsData.ChannelV3[] = [];
-  private searchedChannelList: FeedsData.ChannelV3[] = [];
   public loadedChannelList: FeedsData.ChannelV3[] = [];
+  private originChannelList: FeedsData.ChannelV3[] = [];
 
   private followingIsLoadimage: any = {};
   private refreshFollowingImageSid: any = null;
@@ -239,7 +239,6 @@ export class SubscriptionsPage implements OnInit {
               return item.channelId != channelId;
             });
             this.loadedChannelList = _.cloneDeep(newfollowingList);
-            this.searchedChannelList = _.cloneDeep(newfollowingList);
             this.native.hideLoading();
           }).catch(() => {
             this.native.hideLoading();
@@ -352,7 +351,7 @@ export class SubscriptionsPage implements OnInit {
       let avatarUri = "";
       if (channel != null) {
         avatarUri = channel.avatar;
-      }else {
+      } else {
         this.channelAvatarMap[id] = './assets/images/profile-0.svg';
       }
       let fileName: string = avatarUri.split("@")[0];
@@ -429,12 +428,6 @@ export class SubscriptionsPage implements OnInit {
 
   ionClear() {
     this.isSearch = '';
-    if (this.isSearch == '') {
-      this.ionRefresher.disabled = false;
-      this.loadedChannelList = _.cloneDeep(this.searchedChannelList);
-      return;
-    }
-    this.ionRefresher.disabled = true;
     this.handleSearch();
   }
 
@@ -445,12 +438,6 @@ export class SubscriptionsPage implements OnInit {
       (events.keyCode === 8 && this.isSearch === '')
     ) {
       this.keyboard.hide();
-      if (this.isSearch == '') {
-        this.ionRefresher.disabled = false;
-        this.loadedChannelList = _.cloneDeep(this.searchedChannelList);
-        return;
-      }
-      this.ionRefresher.disabled = true;
       this.handleSearch();
     }
   }
@@ -460,14 +447,31 @@ export class SubscriptionsPage implements OnInit {
     this.native.setRootRouter(['/tabs/search']);
   }
 
+  resetSearchData() {
+    if (this.originChannelList && this.originChannelList.length > 0) {
+      this.loadedChannelList = _.cloneDeep(this.originChannelList);
+      this.originChannelList = [];
+    }
+  }
+
+  backupOriginLoadedChannelList() {
+    if (!this.originChannelList || this.originChannelList.length == 0) {
+      this.originChannelList = _.cloneDeep(this.loadedChannelList);
+    }
+  }
+
   handleSearch() {
     if (this.isSearch === '') {
+      this.ionRefresher.disabled = false;
+      this.resetSearchData();
       return;
+    } else {
+      this.ionRefresher.disabled = true;
+      this.backupOriginLoadedChannelList();
+      this.loadedChannelList = _.filter(this.totalChannelList, (item) => {
+        return item.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
+      });
     }
-
-    this.loadedChannelList = _.filter(this.searchedChannelList, (item) => {
-      return item.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
-    });
   }
 
   ionBlur() {
@@ -518,7 +522,6 @@ export class SubscriptionsPage implements OnInit {
         let intersectionRatio = changes[0].intersectionRatio;
 
         if (intersectionRatio === 0) {
-          //console.log("======newId leave========", newId);
           return;
         }
         let arr = newId.split("-");
