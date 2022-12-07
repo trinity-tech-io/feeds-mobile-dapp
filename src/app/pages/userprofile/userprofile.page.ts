@@ -508,9 +508,10 @@ export class UserprofilePage implements OnInit {
       this.hiveVaultController.querySubscribedChannelsByOwner(this.userDid, FeedsData.SubscribedChannelType.OTHER_CHANNEL,
         (localCachedSubscribedChannelList: FeedsData.SubscribedChannelV3[]) => {
           this.followers = localCachedSubscribedChannelList.length;
-        }).then((subscribedChannels: FeedsData.SubscribedChannelV3[]) => {
+        }, true).then((subscribedChannels: FeedsData.SubscribedChannelV3[]) => {
           this.followers = subscribedChannels.length;
-        }).catch((error) => { });
+        }).catch((error) => {
+        });
     } catch (error) {
       this.isLoadingMyFeeds = false;
     }
@@ -597,7 +598,7 @@ export class UserprofilePage implements OnInit {
             this.myFeedAvatarMap[id] = "./assets/images/profile-0.svg";
           }
         });
-      }else{
+      } else {
         if (this.myFeedAvatarMap[id] === './assets/images/loading.svg') {
           this.myFeedAvatarMap[id] = "./assets/images/profile-0.svg";
         }
