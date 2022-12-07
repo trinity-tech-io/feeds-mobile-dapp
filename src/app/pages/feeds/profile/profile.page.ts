@@ -460,33 +460,7 @@ export class ProfilePage implements OnInit {
       });
     });
 
-
-    let signInData = await this.dataHelper.getSigninData();
-    let nickname = signInData['nickname'] || '';
-    if (nickname != '' && nickname != 'Information not provided') {
-      this.name = nickname;
-    } else {
-      this.name = signInData['name'] || '';
-    }
-    this.description = signInData['description'] || '';
-    // let userDid = signInData['did'] || '';
-    try {
-      if (this.avatar === '') {
-        this.avatar = './assets/images/loading.svg';
-      }
-      await this.updateUserAvatar();
-    } catch (error) {
-
-    }
-    let avatar = this.avatar || null;
-    if (avatar === null || this.avatar === './assets/images/loading.svg') {
-      this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
-    }
-    // this.updateUserAvatar();
-    // let avatar = this.avatar || null;
-    // if (avatar === null) {
-    //   this.hiveVaultController.refreshAvatar().then(async () => { await this.updateUserAvatar() }).catch(async () => { await this.updateUserAvatar() });
-    // }
+    this.initUserProfile();
 
     this.events.subscribe(FeedsEvent.PublishType.updateLikeList, list => {
       this.zone.run(() => {
@@ -2672,5 +2646,63 @@ export class ProfilePage implements OnInit {
     channelContractInfoList[channelId] = channelNft;
     this.dataHelper.setChannelContractInfoList(channelContractInfoList);
     this.dataHelper.saveData("feeds.contractInfo.list", channelContractInfoList);
+  }
+
+  async initUserProfile() {
+    const signInData = await this.dataHelper.getSigninData();
+    const nickname = signInData['nickname'] || '';
+    if (nickname != '' && nickname != 'Information not provided') {
+      this.name = nickname;
+    } else {
+      this.name = signInData['name'] || '';
+    }
+    this.description = signInData['description'] || '';
+
+    try {
+      if (this.avatar === '') {
+        this.avatar = './assets/images/loading.svg';
+      }
+    } catch (error) {
+    }
+
+    this.hiveVaultController.getUserProfile(signInData.did).then((userProfile: FeedsData.UserProfile) => {
+      this.setProfileUI(userProfile);
+    });
+  }
+
+  setProfileUI(userProfile: FeedsData.UserProfile) {
+    const name = userProfile.name || userProfile.resolvedName || userProfile.displayName;
+    const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
+    this.setUserNameUI(userProfile.did, name);
+    this.setAvatarUI(userProfile.did, avatarUrl);
+  }
+
+  setUserNameUI(userDid: string, name: string) {
+    if (name) {
+      this.setUserName(userDid, name);
+    } else {
+      this.setUserName(userDid);
+    }
+  }
+
+  setAvatarUI(userDid: string, avatarUrl: string) {
+    if (avatarUrl) {
+      this.hiveVaultController.getV3HiveUrlData(avatarUrl)
+        .then((image) => {
+          this.setUserAvatar(userDid, image);
+        }).catch((err) => {
+          this.setUserAvatar(userDid);
+        })
+    } else {
+      this.setUserAvatar(userDid);
+    }
+  }
+
+  setUserAvatar(userDid: string, avatar = './assets/images/did-default-avatar.svg') {
+    this.avatar = avatar;
+  }
+
+  setUserName(userDid: string, userName: string = 'common.unknown') {
+    this.name = userName;
   }
 }

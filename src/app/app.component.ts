@@ -38,7 +38,6 @@ export class MyApp {
   private backButtoncount: number = 0;
   public name: string = '';
   public avatar: string = '';
-  public wName: string = '';
   public popover: any = null;
   public sService: any = null;
   public userDid: string = '';
@@ -621,7 +620,7 @@ export class MyApp {
         this.dataHelper.setChannelCollectionPageList([]);
         this.dataHelper.setChannelContractInfoList({});
         this.dataHelper.saveData("feeds.contractInfo.list", {});
-        let req = requestAnimationFrame(()=>{
+        let req = requestAnimationFrame(() => {
           this.globalService.restartApp();
           cancelAnimationFrame(req);
           req = null;
@@ -649,14 +648,20 @@ export class MyApp {
       signInData => {
         if (signInData == null || signInData == undefined) return;
         let nickname = signInData['nickname'] || '';
+        let wName = ''
         if (nickname != '' && nickname != 'Information not provided') {
-          this.wName = nickname;
+          wName = nickname;
         } else {
-          this.wName = signInData['name'] || '';
+          wName = signInData['name'] || '';
         }
         this.userDid = signInData.did || "";
         this.userDidDisplay = UtilService.shortenDid(this.userDid);
-        this.name = UtilService.moreNanme(this.wName, 15);
+        this.name = UtilService.moreNanme(wName, 15);
+
+        this.hiveVaultController.getUserProfile(signInData.did).then((userProfile: FeedsData.UserProfile) => {
+          wName = userProfile.name || userProfile.resolvedName || userProfile.displayName
+          this.name = UtilService.moreNanme(wName, 15);
+        }).catch((error) => { });
       },
       error => { },
     );

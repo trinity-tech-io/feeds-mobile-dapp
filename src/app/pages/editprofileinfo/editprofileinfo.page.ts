@@ -80,16 +80,9 @@ export class EditprofileinfoPage implements OnInit {
       this.userDid = signInData.did;
       const userProfile: FeedsData.UserProfile = await this.hiveVaultController.getUserProfile(this.userDid);
 
-      let nickname = signInData['nickname'] || '';
-      if (nickname != '' && nickname != 'Information not provided') {
-        this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName;
-      } else {
-        this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || '';
-      }
+      this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || '';
       this.userDes = userProfile.bio || userProfile.resolvedBio || '';
-
       const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
-
       await this.setAvatarUI(this.userDid, avatarUrl);
 
       this.originUserName = this.userName;

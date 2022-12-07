@@ -1761,7 +1761,6 @@ export class UserprofilePage implements OnInit {
 
   setAvatarUI(userDid: string, avatarUrl: string) {
     if (avatarUrl) {
-      let fileName: string = userDid.replace('did:elastos:', '');
       this.hiveVaultController.getV3HiveUrlData(avatarUrl)
         .then((image) => {
           this.setUserAvatar(userDid, image);

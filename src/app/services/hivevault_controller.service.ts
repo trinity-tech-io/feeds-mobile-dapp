@@ -2361,7 +2361,7 @@ export class HiveVaultController {
     });
   }
 
-  getUserProfile(userDid: string): Promise<FeedsData.UserProfile> {
+  getUserProfile(userDid: string, syncRemote: boolean = false): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
         const localProfile = await this.getUserProfileFromLocal(userDid);
