@@ -38,6 +38,7 @@ export class EditCommentPage implements OnInit {
   public isBorderGradient: boolean = false;
   private setFocusSid: any = null;
   private createrDid: string = null;
+  private userDid: string = null;
   constructor(
     private native: NativeService,
     private acRoute: ActivatedRoute,
@@ -78,18 +79,19 @@ export class EditCommentPage implements OnInit {
 
   async ionViewWillEnter() {
     this.initTitle();
+    this.userDid = (await this.dataHelper.getSigninData()).did;
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId);
     //this.channelName = channel['displayName'] || channel['name'] || '';
     try {
-      this.getDisplayName(this.createrDid);
+      this.getDisplayName(this.userDid);
     } catch (error) {
 
     }
     this.subscribers = channel['subscribers'] || '';
-    this.handleChannelAvatar();
+    this.handleChannelAvatar(this.userDid);
   }
 
-  getDisplayName(userDid: string) {
+  async getDisplayName(userDid: string) {
     let text = userDid.replace('did:elastos:', '');
     this.channelName = UtilService.shortenDid(text);
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
@@ -104,12 +106,12 @@ export class EditCommentPage implements OnInit {
   ionViewDidEnter() {
   }
 
-  handleChannelAvatar() {
+  handleChannelAvatar(userDid: string) {
     if (this.channelAvatar === '') {
       this.channelAvatar = './assets/images/loading.svg';
     }
     try {
-      this.hiveVaultController.getUserAvatar(this.createrDid).then((userAvatar: string) => {
+      this.hiveVaultController.getUserAvatar(userDid).then((userAvatar: string) => {
         userAvatar =  userAvatar || '';
         if(userAvatar != ''){
           this.channelAvatar = userAvatar;
