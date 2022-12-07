@@ -655,9 +655,9 @@ export class MyApp {
           wName = signInData['name'] || '';
         }
         this.userDid = signInData.did || "";
-        this.userDidDisplay = UtilService.shortenDid(this.userDid);
+        let text = this.userDid.replace('did:elastos:', '');
+        this.userDidDisplay = UtilService.shortenDid(text);
         this.name = UtilService.moreNanme(wName, 15);
-
         this.hiveVaultController.getUserProfile(signInData.did).then((userProfile: FeedsData.UserProfile) => {
           wName = userProfile.name || userProfile.resolvedName || userProfile.displayName
           this.name = UtilService.moreNanme(wName, 15);
