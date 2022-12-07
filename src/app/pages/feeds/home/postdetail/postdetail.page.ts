@@ -1404,6 +1404,11 @@ export class PostdetailPage implements OnInit {
         let postId: string = arr[2];
         let commentId: string = arr[3];
         let createrDid: string = arr[4];
+        try {
+          this.getDisplayName(destDid, this.channelId, destDid);
+        } catch (error) {
+
+        }
         this.handleLikeAndCommentV2(destDid, channelId, postId, commentId, createrDid);
       });
       this.captainObserverList[postGridId].observe(item);
