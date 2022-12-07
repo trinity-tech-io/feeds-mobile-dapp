@@ -137,34 +137,35 @@ export class GalleriachannelPage implements OnInit {
 
   async mint() {
 
-   this.channelEntry = UtilService.generateFeedsQrCodeString(this.destDid,this.channelId);
-   let signData = {data:this.channelEntry};
-   let signResult = await this.intentService.didsign(signData);
-   if(signResult === null){
-    this.native.toastWarn("GalleriachannelPage.signatureError")
-       return;
-   }
-  let data = signResult['result'] || null;
-  if(data === null){
-    this.native.toastWarn("GalleriachannelPage.signatureError")
-    return;
-  }
-
-  let signature = data['signature'] || null;
-  if(signature === null){
-    this.native.toastWarn("GalleriachannelPage.signatureError")
-    return;
-  }
-  let iss = data["iss"] || null;
-  if(iss != this.destDid ){
-    this.native.toastWarn("GalleriachannelPage.signatureError1")
-    return;
-  }
-  this.signature = signature;
   if (!this.checkParms()) {
     // show params error
     return;
   }
+
+  this.channelEntry = UtilService.generateFeedsQrCodeString(this.destDid,this.channelId);
+  let signData = {data:this.channelEntry};
+  let signResult = await this.intentService.didsign(signData);
+  if(signResult === null){
+   this.native.toastWarn("GalleriachannelPage.signatureError")
+      return;
+  }
+ let data = signResult['result'] || null;
+ if(data === null){
+   this.native.toastWarn("GalleriachannelPage.signatureError")
+   return;
+ }
+
+ let signature = data['signature'] || null;
+ if(signature === null){
+   this.native.toastWarn("GalleriachannelPage.signatureError")
+   return;
+ }
+ let iss = data["iss"] || null;
+ if(iss != this.destDid ){
+   this.native.toastWarn("GalleriachannelPage.signatureError1")
+   return;
+ }
+ this.signature = signature;
 
   await this.doMint();
   }
