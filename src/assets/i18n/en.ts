@@ -464,7 +464,7 @@ export const en = {
   DIDdata: {
     Notprovided: '',
     NotprovidedfromDIDDocument: 'Information is being obtained',
-    NoDescription: 'Add Description',
+    NoDescription: 'No description for now',
   },
   CommentPage: {
     publishComment: 'Post Reply',
