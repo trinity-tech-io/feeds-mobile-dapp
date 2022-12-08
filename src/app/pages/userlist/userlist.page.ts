@@ -84,7 +84,11 @@ export class UserlistPage implements OnInit {
     if (avatarUrl) {
       this.hiveVaultController.getV3HiveUrlData(avatarUrl)
         .then((image) => {
-          this.setUserAvatar(userDid, image);
+          if (!image || image == 'null') {
+            this.setUserAvatar(userDid);
+          } else {
+            this.setUserAvatar(userDid, image);
+          }
         }).catch((err) => {
           this.setUserAvatar(userDid);
         })
