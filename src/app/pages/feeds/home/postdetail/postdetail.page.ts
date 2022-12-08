@@ -1652,5 +1652,9 @@ export class PostdetailPage implements OnInit {
     }
     return this.userAvatarMap[userDid];
   }
+
+  openUserProfile(userDid: string) {
+    this.native.navigateForward(['/userprofile'], { queryParams: { 'userDid': userDid } });
+  }
 }
 
