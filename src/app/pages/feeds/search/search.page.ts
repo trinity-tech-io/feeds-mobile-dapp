@@ -104,7 +104,13 @@ export class SearchPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    //this.scanServiceStyle['right'] = (screen.width * 7.5) / 100 + 5 + 'px';
+    let maxPageSize = (screen.height-92)/70;
+    let pageSizeInt = parseInt((maxPageSize).toString());
+    if (maxPageSize > pageSizeInt) {
+        this.pageSize = pageSizeInt + 1;
+    } else {
+      this.pageSize = pageSizeInt;
+    }
   }
 
   initTile() {
