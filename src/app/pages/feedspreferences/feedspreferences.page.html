@@ -3,9 +3,9 @@
   <ion-grid class="ios-container" [class.ios-dark-container]="theme.darkMode">
     <ion-row class="section" (click)="newToggle()">
       <ion-col size="9" class="title-col" (swipe)="newToggle()" [style.touch-action]="'pan-y'">
-          <h1>{{"FeedspreferencesPage.des" | translate }}</h1>
-          <h2 *ngIf="curFeedPublicStatus">{{ 'SettingsPage.on' | translate }}</h2>
-          <h2 *ngIf="!curFeedPublicStatus">{{ 'SettingsPage.off' | translate }}</h2>
+          <h2>{{"FeedspreferencesPage.des" | translate }}</h2>
+          <h3 *ngIf="curFeedPublicStatus">{{ 'SettingsPage.on' | translate }}</h3>
+          <h3 *ngIf="!curFeedPublicStatus">{{ 'SettingsPage.off' | translate }}</h3>
       </ion-col>
       <ion-col size="3" class="arrow-col" (swipe)="newToggle()" [style.touch-action]="'pan-y'">
         <ion-toggle style="pointer-events: none;"  mode="ios" color="success" [(ngModel)]="curFeedPublicStatus"></ion-toggle>
