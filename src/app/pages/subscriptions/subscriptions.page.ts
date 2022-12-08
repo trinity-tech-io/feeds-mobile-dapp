@@ -34,7 +34,7 @@ export class SubscriptionsPage implements OnInit {
 
   //For inner logic
   private currentPageIndex: number = 1;
-  private pageStep: number = 10;
+  private pageStep: number = 15;
   private itemObserver: { [key: string]: IntersectionObserver } = {};//key =>  targetDid + "-" + channelId + '-' + pageType;
   private totalChannelList: FeedsData.ChannelV3[] = [];
   public loadedChannelList: FeedsData.ChannelV3[] = [];
