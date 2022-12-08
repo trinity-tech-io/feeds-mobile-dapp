@@ -66,8 +66,6 @@ export class CreatenewpostPage implements OnInit {
   // 视频data
   private videoData: FeedsData.videoData = null;
   private isUpdateHomePage: boolean = false;
-  public hidePictureMenuComponent: boolean = false;
-  public isSupportGif: boolean = true;
   public isBorderGradient: boolean = false;
   public isPostTwitter: boolean = false;
   public curTextNum: number = 0;
@@ -77,6 +75,7 @@ export class CreatenewpostPage implements OnInit {
   public channelPublicStatusList: any = {};
   private setFocusSid: any = null;
   private socialLoginDialog: any = null;
+  public accept: string = "image/png, image/jpeg, image/jpg, image/gif";
   constructor(
     private popoverController: PopoverController,
     private platform: Platform,
@@ -654,10 +653,6 @@ export class CreatenewpostPage implements OnInit {
     this.native.navigateForward(['mintnft'], {});
   }
 
-  clickImageMenu() {
-    this.hidePictureMenuComponent = true;
-  }
-
   openNft(that: any) {
     that.native.navigateForward(['profilenftimage'], { queryParams: { type: 'postImages' } });
   }
@@ -674,7 +669,6 @@ export class CreatenewpostPage implements OnInit {
       1,
       (imageUrl: any) => {
         this.zone.run(() => {
-          this.hidePictureMenuComponent = false;
           this.imgUrl = imageUrl;
           this.dataHelper.setSelsectNftImage(imageUrl);
         });
@@ -692,25 +686,6 @@ export class CreatenewpostPage implements OnInit {
   removeImg() {
     this.imgUrl = "";
     this.dataHelper.setSelsectNftImage("");
-  }
-
-  hidePictureMenu(data: any) {
-    let buttonType = data['buttonType'];
-    switch (buttonType) {
-      case 'photolibary':
-        this.hidePictureMenuComponent = false;
-        break;
-      case 'cancel':
-        this.hidePictureMenuComponent = false;
-        break;
-    }
-  }
-
-  openGallery(data: any) {
-    this.hidePictureMenuComponent = false;
-    let fileBase64 = data["fileBase64"] || "";
-    this.imgUrl = fileBase64;
-    this.dataHelper.setSelsectNftImage(fileBase64);
   }
 
   ionBlur() {
@@ -920,6 +895,36 @@ export class CreatenewpostPage implements OnInit {
       that.socialLoginDialog = null;
     }
     that.native.navigateForward(['/connections'],{});
+  }
+
+  handelFile(event: any) {
+    event.target.value = null;
+    document.getElementById("mintfile1").onchange = async (event) => {
+        this.onChange(event);
+    };
+  }
+
+  async onChange(event: any) {
+    let realFile = event.target.files[0];
+    this.createImagePreview(realFile, event);
+  }
+
+  async createImagePreview(file: any, inputEvent?: any) {
+    await this.native.showLoading("common.waitMoment");
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async event => {
+      try {
+          let assetBase64 = event.target.result.toString();
+          this.native.hideLoading();
+          this.imgUrl = assetBase64;
+          this.dataHelper.setSelsectNftImage(assetBase64);
+        }catch (error) {
+          this.imgUrl = '';
+          this.dataHelper.setSelsectNftImage('');
+          this.native.hideLoading();
+      }
+    }
   }
 
 }

@@ -87,7 +87,8 @@ playsinline webkit-playsinline>
   <ion-row class="submit-row">
     <ion-col class="left-col">
       <!-- <ion-icon  mode="ios" name="image" (click)="addImg(0)" *ngIf="posterImg ===''"></ion-icon> -->
-      <img id="image" [src]="!theme.darkMode ? './assets/images/photo.svg' : './assets/images/darkmode/photo.svg'" (click)="clickImageMenu()" *ngIf="posterImg ===''"/>
+      <ion-input class="file" type="file" id="mintfile1"  [accept]="accept" (click)="handelFile($event)" *ngIf="posterImg ===''"></ion-input>
+      <img id="image" [src]="!theme.darkMode ? './assets/images/photo.svg' : './assets/images/darkmode/photo.svg'" *ngIf="posterImg ===''"/>
       <img id="camera" [src]="!theme.darkMode ? './assets/images/photo-camera.svg' : './assets/images/darkmode/photo-camera.svg'" (click)="addImg(1)"  *ngIf="posterImg ===''"/>
       <img id="selectvideo" [src]="!theme.darkMode ? './assets/images/file-video.svg' : './assets/images/darkmode/file-video.svg'" (click)="selectvideo()" *ngIf="imgUrl === ''" />
       <img id="videocam" [src]="!theme.darkMode ? './assets/images/video.svg' : './assets/images/darkmode/video.svg'" (click)="videocam()"*ngIf="imgUrl === ''"  />
@@ -111,13 +112,3 @@ playsinline webkit-playsinline>
 (hideComment)="hideComponent($event)"
 >
 </app-switchfeed>
-
-<!---------------- ADD picture menu---------------->
-<app-picturemenu
- *ngIf="hidePictureMenuComponent"
- [isSupportGif] = "isSupportGif"
- (openCamera) = "openCamera()"
- (openGallery)= "openGallery($event)"
- (hidePictureMenu)="hidePictureMenu($event)"
->
-</app-picturemenu>
