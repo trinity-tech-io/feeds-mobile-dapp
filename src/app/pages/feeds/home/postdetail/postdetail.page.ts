@@ -382,7 +382,7 @@ export class PostdetailPage implements OnInit {
     }
   }
 
-  ionViewWillEnter() {
+  initial() {
     this.clientHeight = screen.availHeight;
     this.clientWidth = screen.availWidth;
     if (this.platform.is('ios')) {
@@ -469,6 +469,15 @@ export class PostdetailPage implements OnInit {
         return;
       }
       this.post.pinStatus = FeedsData.PinStatus.NOTPINNED;
+    });
+  }
+
+  ionViewWillEnter() {
+    this.zone.run(() => {
+      const initTimmer = setTimeout(() => {
+        this.initial();
+        clearTimeout(initTimmer);
+      }, 300);
     });
   }
 
@@ -1385,30 +1394,32 @@ export class PostdetailPage implements OnInit {
     }
     let item = document.getElementById(postGridId) || null;
     if (item != null) {
-      this.captainObserverList[postGridId] = new IntersectionObserver(async (changes: any) => {
-        let container = changes[0].target;
-        let newId = container.getAttribute("id");
-        let intersectionRatio = changes[0].intersectionRatio;
+      if (!this.captainObserverList[postGridId]) {
+        this.captainObserverList[postGridId] = new IntersectionObserver(async (changes: any) => {
+          let container = changes[0].target;
+          let newId = container.getAttribute("id");
+          let intersectionRatio = changes[0].intersectionRatio;
 
-        if (intersectionRatio === 0) {
-          //console.log("======newId leave========", newId);
-          return;
-        }
-        let arr = newId.split("-");
-        let destDid: string = arr[0];
-        let channelId: string = arr[1];
-        let postId: string = arr[2];
-        let commentId: string = arr[3];
-        let createrDid: string = arr[4];
-        try {
-          this.getDisplayName(destDid, this.channelId, destDid);
-        } catch (error) {
+          if (intersectionRatio === 0) {
+            //console.log("======newId leave========", newId);
+            return;
+          }
+          let arr = newId.split("-");
+          let destDid: string = arr[0];
+          let channelId: string = arr[1];
+          let postId: string = arr[2];
+          let commentId: string = arr[3];
+          let createrDid: string = arr[4];
+          try {
+            this.getDisplayName(destDid, this.channelId, destDid);
+          } catch (error) {
 
-        }
-        this.handleLikeAndCommentV2(destDid, channelId, postId, commentId, createrDid);
-        this.getUserAvatar(createrDid);
-      });
-      this.captainObserverList[postGridId].observe(item);
+          }
+          this.handleLikeAndCommentV2(destDid, channelId, postId, commentId, createrDid);
+          this.getUserAvatar(createrDid);
+        });
+        this.captainObserverList[postGridId].observe(item);
+      }
     }
   }
 
@@ -1451,25 +1462,27 @@ export class PostdetailPage implements OnInit {
     }
     let item = document.getElementById(postGridId) || null;
     if (item != null) {
-      this.replyObserverList[postGridId] = new IntersectionObserver(async (changes: any) => {
-        let container = changes[0].target;
-        let newId = container.getAttribute("id");
-        let intersectionRatio = changes[0].intersectionRatio;
+      if (!this.replyObserverList[postGridId]) {
+        this.replyObserverList[postGridId] = new IntersectionObserver(async (changes: any) => {
+          let container = changes[0].target;
+          let newId = container.getAttribute("id");
+          let intersectionRatio = changes[0].intersectionRatio;
 
-        if (intersectionRatio === 0) {
-          //console.log("======newId leave========", newId);
-          return;
-        }
-        let arr = newId.split("-");
-        let destDid: string = arr[0];
-        let channelId: string = arr[1];
-        let postId: string = arr[2];
-        let commentId: string = arr[3];
-        let createrDid: string = arr[4];
-        this, this.handleUserNameV2(destDid, channelId, postId, commentId, createrDid);
-        this.getUserAvatar(createrDid);
-      });
-      this.replyObserverList[postGridId].observe(item);
+          if (intersectionRatio === 0) {
+            //console.log("======newId leave========", newId);
+            return;
+          }
+          let arr = newId.split("-");
+          let destDid: string = arr[0];
+          let channelId: string = arr[1];
+          let postId: string = arr[2];
+          let commentId: string = arr[3];
+          let createrDid: string = arr[4];
+          this, this.handleUserNameV2(destDid, channelId, postId, commentId, createrDid);
+          this.getUserAvatar(createrDid);
+        });
+        this.replyObserverList[postGridId].observe(item);
+      }
     }
   }
 
@@ -1603,7 +1616,6 @@ export class PostdetailPage implements OnInit {
     if (!this.userAvatarMap) {
       this.userAvatarMap = {};
     }
-
     if (!this.userAvatarMap[userDid]) {
       this.userAvatarMap[userDid] = './assets/images/loading.svg';
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
@@ -1632,6 +1644,13 @@ export class PostdetailPage implements OnInit {
       })
     }
     return;
+  }
+
+  getUserAvatarUI(userDid: string) {
+    if (!this.userAvatarMap[userDid]) {
+      this.getUserAvatar(userDid);
+    }
+    return this.userAvatarMap[userDid];
   }
 }
 
