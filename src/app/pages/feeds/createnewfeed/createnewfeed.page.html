@@ -46,9 +46,9 @@
         <ion-item lines="none">
           <ion-row class="section dev-mode">
             <ion-col size="10" class="title-col" (swipe)="clickPublicChannel()" [style.touch-action]="'pan-y'">
-                <h1 (click)="help($event)" >{{"FeedspreferencesPage.des" | translate }} <img [src]="!theme.darkMode ? './assets/images/question-circle.svg' : './assets/images/darkmode/question-circle.svg'" id="help"></h1>
-                <h2 *ngIf="curChannelPublicStatus" (click)="clickPublicChannel()">{{ 'SettingsPage.on' | translate }}</h2>
-                 <h2 *ngIf="!curChannelPublicStatus" (click)="clickPublicChannel()">{{ 'SettingsPage.off' | translate }}</h2>
+                <h2 (click)="help($event)" >{{"FeedspreferencesPage.des" | translate }} <img [src]="!theme.darkMode ? './assets/images/question-circle.svg' : './assets/images/darkmode/question-circle.svg'" id="help"></h2>
+                <h3 *ngIf="curChannelPublicStatus" (click)="clickPublicChannel()">{{ 'SettingsPage.on' | translate }}</h3>
+                 <h3 *ngIf="!curChannelPublicStatus" (click)="clickPublicChannel()">{{ 'SettingsPage.off' | translate }}</h3>
             </ion-col>
             <ion-col size="2" class="arrow-col" (swipe)="clickPublicChannel()" (click)="clickPublicChannel()" [style.touch-action]="'pan-y'">
               <ion-toggle [(ngModel)]="curChannelPublicStatus"  mode="ios" color="success" style="pointer-events:none;"></ion-toggle>

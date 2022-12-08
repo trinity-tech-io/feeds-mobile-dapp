@@ -84,21 +84,29 @@ ion-content{
         }
 
         .title-col {
-          h1, h2 {
+          h1, h2, h3 {
             margin: 0;
           }
 
           h1 {
-            font-size: 17px;
-            font-weight: 400;
-            letter-spacing: 0.9px;
-            margin-bottom: 7.5px;
+            color: #000000;
+            font-style: normal;
+            font-weight: 700;
+            font-size: 20px;
           }
 
           h2 {
+            color: #9ca0a4;
+            font-size: 17px;
+            font-weight: 400;
+            letter-spacing: .9px;
+          }
+
+          h3 {
+            font-style: normal;
+            font-weight: 400;
             font-size: 15px;
-            font-weight: 700;
-            letter-spacing: 2.4px;
+            color: #C4C4C4;
           }
         }
 
@@ -278,9 +286,16 @@ ion-content{
         //border-bottom: 1px solid #2e2f4e;
 
         .title-col {
-          h2 {
-            color: #cfd1f7;
-          }
+            h1 {
+              color: #fff;
+            }
+            h2 {
+              color: #fff;
+            }
+
+            h3{
+              color: #C4C4C4
+            }
         }
       }
 
