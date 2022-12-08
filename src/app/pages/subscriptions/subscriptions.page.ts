@@ -68,7 +68,7 @@ export class SubscriptionsPage implements OnInit {
   private searchFollowingList: any = [];
   private follingObserver: any = {};
   public pageSize = 1;
-  public pageNumber = 10;
+  public pageNumber = 15;
   public totalSubscribedChannelList: any = [];
   public totalNum: number = 0;
   public channelPublicStatusList: any = {};
