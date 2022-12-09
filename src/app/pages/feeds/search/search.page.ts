@@ -308,10 +308,16 @@ export class SearchPage implements OnInit {
     }
 
     this.channelCollectionPageList = this.searchChannelCollectionPageList.filter(
-      (channel: FeedsData.ChannelV3) => channel.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1,
+      (channel: FeedsData.ChannelV3) =>{
+       let  channelName =  channel.displayName  || channel.name || '';
+       console.log("========="+channelName);
+       if(channelName != ''){
+          return channelName.toLocaleLowerCase().indexOf(this.isSearch.toLocaleLowerCase()) > -1;
+       }
+      }
     );
-
     if (this.channelCollectionPageList.length > 0) {
+      this.removeObserveList();
       this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
     }
 

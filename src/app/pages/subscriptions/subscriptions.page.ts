@@ -469,7 +469,10 @@ export class SubscriptionsPage implements OnInit {
       this.ionRefresher.disabled = true;
       this.backupOriginLoadedChannelList();
       this.loadedChannelList = _.filter(this.totalChannelList, (item) => {
-        return item.name.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
+        let  channelName =  item.displayName  || item.name || '';
+        if(channelName != ''){
+          return channelName.toLowerCase().indexOf(this.isSearch.toLowerCase()) > -1
+        }
       });
     }
   }
