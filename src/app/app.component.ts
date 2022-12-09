@@ -27,6 +27,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 
 let TAG: string = 'app-component';
 @Component({
@@ -35,6 +36,7 @@ let TAG: string = 'app-component';
   styleUrls: ['app.scss'],
 })
 export class MyApp {
+  private originUserProfile: FeedsData.UserProfile = null;
   private backButtoncount: number = 0;
   public name: string = '';
   public avatar: string = '';
@@ -87,25 +89,10 @@ export class MyApp {
     this.events.subscribe(FeedsEvent.PublishType.openRightMenuForSWM, async () => {
       document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
       try {
-        this.avatar = './assets/images/loading.svg';
-        const userDid = (await this.dataHelper.getSigninData()).did
-        if (userDid) {
-          this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
-            if (userProfile) {
-              const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar || '';
-              this.hiveVaultController.getV3HiveUrlData(avatarHiveUrl).then((base64Image: string) => {
-                this.avatar = base64Image;
-                if (!this.avatar) {
-                  this.avatar = './assets/images/did-default-avatar.svg';
-                }
-              }).catch(() => {
-                if (!this.avatar) {
-                  this.avatar = './assets/images/did-default-avatar.svg';
-                }
-              });
-            }
-          }).catch(() => { });
+        if (!this.avatar) {
+          this.avatar = './assets/images/loading.svg';
         }
+        this.loadUserProfile();
       } catch (error) {
       }
       this.initProfileData();
@@ -133,6 +120,30 @@ export class MyApp {
       let memo: string = obj.memo;
       this.viewHelper.showPayPrompt(nodeId, channelId, elaAddress, amount, memo);
     });
+  }
+
+  async loadUserProfile() {
+    const userDid = (await this.dataHelper.getSigninData()).did
+    if (userDid) {
+      this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+        const isEqual = _.isEqual(this.originUserProfile, userProfile);
+        if (!isEqual && userProfile) {
+          const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar || '';
+          this.hiveVaultController.getV3HiveUrlData(avatarHiveUrl).then((base64Image: string) => {
+            this.avatar = base64Image;
+            if (!this.avatar) {
+              this.avatar = './assets/images/did-default-avatar.svg';
+            }
+          }).catch(() => {
+            if (!this.avatar) {
+              this.avatar = './assets/images/did-default-avatar.svg';
+            }
+          });
+        }
+
+        this.originUserProfile = userProfile;
+      }).catch(() => { });
+    }
   }
 
   initializeApp() {
