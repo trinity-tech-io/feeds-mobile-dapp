@@ -14,7 +14,7 @@ import { Events } from 'src/app/services/events.service';
 export class UserlistPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public pageItemMap: { [userDid: string]: PageItem } = {};
-  public totalUserDidList: string[] = [];
+  public totalUsersDidList: string[] = [];
   public usersDidList: string[] = [];
   public pageSize = 1;
   public pageNumber = 15;
@@ -31,22 +31,39 @@ export class UserlistPage implements OnInit {
     private hiveVaultController: HiveVaultController,
     private events: Events,
     private zone: NgZone,
-  ) { }
+  ) {
+  }
+  ngOnInit() {
+    this.activatedRoute.queryParams.subscribe((params: Params) => {
+    });
+    this.addEvents();
+    this.initData();
+  }
+  ngOnDestroy() {
+    this.removeEvents();
+  }
+
+  ionViewDidLoad() {
+  }
+
+  ionViewWillUnload() {
+  }
 
   ionViewWillEnter() {
     this.initTitle();
-    this.initData();
-    this.addEvents();
   }
 
   ionViewWillLeave() {
-    this.removeEvents();
   }
 
   addEvents() {
     this.events.subscribe(FeedsEvent.PublishType.refreshUserProfile, () => {
       this.zone.run(() => {
-        this.initData();
+        if (!this.usersDidList || this.usersDidList.length == 0) {
+          this.initData();
+        } else {
+          this.refreshPageItem(this.usersDidList);
+        }
       });
     });
   }
@@ -66,21 +83,15 @@ export class UserlistPage implements OnInit {
   async initData() {
     this.pageSize = 1;
     const userList = this.dataHelper.getUserDidList();
-    this.totalUserDidList = userList;
-    let pageData = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
+    this.totalUsersDidList = userList;
+    let pageData = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUsersDidList);
     this.usersDidList = pageData.items;
     // this.syncRemoteUserProfile(this.usersDidList);
-    this.removeObserveList();
-    this.initUserObserVerList(this.usersDidList);
+    this.refreshPageItem(this.usersDidList);
   }
 
   clickItem(userItem: string) {
     this.native.toast(userItem);
-  }
-
-  ngOnInit() {
-    this.activatedRoute.queryParams.subscribe((params: Params) => {
-    });
   }
 
   setUserNameAndAvatarUI(userProfile: FeedsData.UserProfile) {
@@ -246,28 +257,41 @@ export class UserlistPage implements OnInit {
 
   async handleRefesh() {
     this.pageSize = 1;
-    // refresh total data todo
-    let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
-    this.usersDidList = data.items;
-    this.refreshUserProfileFromList(this.totalUserDidList).then(() => {
-      this.initUserObserVerList(this.usersDidList);
+    this.usersDidList = this.pageData();
+
+    this.refreshProfileFromRemote(this.totalUsersDidList, this.usersDidList);
+    // this.refreshPageItem(this.usersDidList);
+  }
+
+  pageData(): string[] {
+    let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUsersDidList);
+    return data.items;
+  }
+
+  refreshProfileFromRemote(totalUsersDidList: string[], loadedUsersDidList: string[]) {
+    this.refreshUserProfileFromList(totalUsersDidList).then(() => {
+      this.refreshPageItem(loadedUsersDidList);
     }).catch((error) => {
-      this.initUserObserVerList(this.usersDidList);
+      this.refreshPageItem(loadedUsersDidList);
     });
+  }
+
+  refreshPageItem(loadedUserDidList: string[]) {
     this.removeObserveList();
     this.isLoadUsers = {};
-    this.initUserObserVerList(this.usersDidList);
+    this.pageItemMap = {};
+    this.initUserObserVerList(loadedUserDidList);
   }
 
   loadData(event: any) {
     let sId = setTimeout(() => {
-      if (this.usersDidList.length === this.totalUserDidList.length) {
+      if (this.usersDidList.length === this.totalUsersDidList.length) {
         event.target.complete();
         clearTimeout(sId);
         return;
       }
       this.pageSize++;
-      let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
+      let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUsersDidList);
       const newLoadedList = data.items
       this.usersDidList = this.usersDidList.concat(newLoadedList);
       // this.syncRemoteUserProfile(newLoadedList);
@@ -306,7 +330,7 @@ export class UserlistPage implements OnInit {
 
   clickSubscription(userDid: string) {
     userDid = userDid || '';
-    if(userDid != ''){
+    if (userDid != '') {
       this.native.navigateForward(['/userprofile'], { queryParams: { 'userDid': userDid } });
     }
   }
