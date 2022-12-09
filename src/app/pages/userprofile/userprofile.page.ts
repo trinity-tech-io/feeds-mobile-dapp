@@ -340,7 +340,14 @@ export class UserprofilePage implements OnInit {
       case 'ProfilePage.myFeeds':
         try {
           const userOwnedchannels = await this.hiveVaultController.queryUserOwnedChannels(this.userDid);
+
+          //TOBE Improve
+          this.removeMyFeedsObserveList();
+          this.myFeedAvatarMap = {};
+          this.myFeedsIsLoadimage = {};
+
           await this.initUserOwnedChannels(userOwnedchannels);
+
           event.target.complete();
         } catch (error) {
           event.target.complete();
