@@ -281,7 +281,10 @@ export class UserlistPage implements OnInit {
   }
 
   clickSubscription(userDid: string) {
-    this.native.navigateForward(['/userprofile'], { queryParams: { 'userDid': userDid } });
+    userDid = userDid || '';
+    if(userDid != ''){
+      this.native.navigateForward(['/userprofile'], { queryParams: { 'userDid': userDid } });
+    }
   }
 }
 
