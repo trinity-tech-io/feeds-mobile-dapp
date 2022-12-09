@@ -49,7 +49,7 @@
     <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="pageItemMap[userDid] != '' && pageItemMap[userDid] != undefined && pageItemMap[userDid].name != '' && pageItemMap[userDid].name != undefined">
       @{{ pageItemMap[userDid].name | translate }}
     </ion-label>
-    <div class="displayDes" *ngIf="pageItemMap[userDid] != '' && pageItemMap[userDid] != undefined && pageItemMap[userDid].description != '' && pageItemMap[userDid].description != undefined" (click)="copyText(subscription.userDid)">
+    <div class="displayDes" *ngIf="pageItemMap[userDid] != '' && pageItemMap[userDid] != undefined && pageItemMap[userDid].description != '' && pageItemMap[userDid].description != undefined" (click)="copyText(userDid)">
       {{  pageItemMap[userDid].description }}
     </div>
     </ion-col>
