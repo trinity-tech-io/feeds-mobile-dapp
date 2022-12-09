@@ -39,6 +39,7 @@ export class UserprofilePage implements OnInit {
   public selectType: string = 'ProfilePage.myFeeds';
   public pageSize: number = 1;
   public pageNumber: number = 5;
+  private originUserProfile = null;
   // Sign in data
   public name: string = '';
   public avatar: string = '';
@@ -192,7 +193,6 @@ export class UserprofilePage implements OnInit {
   }
 
   addEvents() {
-
     this.events.subscribe(
       FeedsEvent.PublishType.walletAccountChanged,
       (walletAccount) => {
@@ -327,6 +327,15 @@ export class UserprofilePage implements OnInit {
   }
 
   async doRefresh(event: any) {
+    this.hiveVaultController.refreshUserProfile(this.userDid).then((userProfile: FeedsData.UserProfile) => {
+      const isEqual = _.isEqual(userProfile, this.originUserProfile);
+      if (!isEqual) {
+        this.initUserProfile(this.userDid, userProfile);
+        this.events.publish(FeedsEvent.PublishType.refreshUserProfile, userProfile);
+      }
+    }).catch((error) => {
+    });
+
     switch (this.selectType) {
       case 'ProfilePage.myFeeds':
         try {
@@ -380,10 +389,16 @@ export class UserprofilePage implements OnInit {
     this.native.navigateForward(['/userprofileinfo'], { queryParams: { 'userDid': this.userDid } });
   }
 
-  initUserProfile(userDid: string) {
-    this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+  initUserProfile(userDid: string, userProfile: FeedsData.UserProfile = null) {
+    if (!userProfile) {
+      this.hiveVaultController.getUserProfile(userDid).then((loadedUserProfile: FeedsData.UserProfile) => {
+        this.originUserProfile = loadedUserProfile;
+        this.setProfileUI(loadedUserProfile);
+      });
+    } else {
+      this.originUserProfile = userProfile;
       this.setProfileUI(userProfile);
-    });
+    }
   }
 
   async changeType(type: string) {

@@ -192,7 +192,9 @@ declare namespace FeedsEvent {
     authEssentialFail = 'feeds:authEssentialFail',
 
     pinPostFinish = 'feeds:pinPostFinish',
-    unpinPostFinish = 'feeds:unpinPostFinish'
+    unpinPostFinish = 'feeds:unpinPostFinish',
+
+    refreshUserProfile = 'feeds:refreshUserProfile',
   }
 
   type TipDialogData = {

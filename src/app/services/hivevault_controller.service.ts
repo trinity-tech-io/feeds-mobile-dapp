@@ -2526,6 +2526,28 @@ export class HiveVaultController {
     });
   }
 
+  refreshUserProfile(userDid: string): Promise<FeedsData.UserProfile> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let remoteProfile = null;
+        try {
+          remoteProfile = await this.getUserProfileWithSaveFromRemote(userDid);
+        } catch (error) {
+        }
+
+        try {
+          remoteProfile = await this.syncUserProfileFromDidDocument(userDid);
+        } catch (error) {
+        }
+
+        resolve(remoteProfile);
+      } catch (error) {
+        Logger.error(TAG, 'Update profile error', error);
+        reject(error);
+      }
+    });
+  }
+
   syncDidDocumentProfileFromList(usersDidList: string[]) {
   }
 
@@ -2648,7 +2670,6 @@ export class HiveVaultController {
           bio: profile.description,
           updatedAt: profile.updatedAt
         }
-
         resolve(userProfile);
       } catch (error) {
         Logger.warn(TAG, 'Cant get remote profile', userDid);
@@ -2666,7 +2687,7 @@ export class HiveVaultController {
           resolve(null);
           return;
         }
-        this.dataHelper.addUserProfile(profile);
+        await this.dataHelper.addUserProfile(profile);
         resolve(profile);
       } catch (error) {
         Logger.warn(TAG, 'Cant Get remote user profile', userDid);

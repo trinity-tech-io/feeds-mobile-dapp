@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { ThemeService } from '../../services/theme.service';
@@ -8,6 +8,7 @@ import { DataHelper } from 'src/app/services/DataHelper';
 import { Params, ActivatedRoute } from '@angular/router';
 import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
 import { UtilService } from 'src/app/services/utilService';
+import { Events } from 'src/app/services/events.service';
 
 @Component({ selector: 'app-userlist', templateUrl: './userlist.page.html', styleUrls: ['./userlist.page.scss'], })
 export class UserlistPage implements OnInit {
@@ -27,12 +28,31 @@ export class UserlistPage implements OnInit {
     private dataHelper: DataHelper,
     private native: NativeService,
     public theme: ThemeService,
-    private hiveVaultController: HiveVaultController
+    private hiveVaultController: HiveVaultController,
+    private events: Events,
+    private zone: NgZone,
   ) { }
 
   ionViewWillEnter() {
     this.initTitle();
     this.initData();
+    this.addEvents();
+  }
+
+  ionViewWillLeave() {
+    this.removeEvents();
+  }
+
+  addEvents() {
+    this.events.subscribe(FeedsEvent.PublishType.refreshUserProfile, () => {
+      this.zone.run(() => {
+        this.initData();
+      });
+    });
+  }
+
+  removeEvents() {
+    this.events.unsubscribe(FeedsEvent.PublishType.refreshUserProfile);
   }
 
   initTitle() {
@@ -49,7 +69,7 @@ export class UserlistPage implements OnInit {
     this.totalUserDidList = userList;
     let pageData = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
     this.usersDidList = pageData.items;
-    this.syncRemoteUserProfile(this.usersDidList);
+    // this.syncRemoteUserProfile(this.usersDidList);
     this.removeObserveList();
     this.initUserObserVerList(this.usersDidList);
   }
@@ -229,7 +249,11 @@ export class UserlistPage implements OnInit {
     // refresh total data todo
     let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
     this.usersDidList = data.items;
-    this.syncRemoteUserProfile(this.usersDidList);
+    this.refreshUserProfileFromList(this.totalUserDidList).then(() => {
+      this.initUserObserVerList(this.usersDidList);
+    }).catch((error) => {
+      this.initUserObserVerList(this.usersDidList);
+    });
     this.removeObserveList();
     this.isLoadUsers = {};
     this.initUserObserVerList(this.usersDidList);
@@ -246,7 +270,7 @@ export class UserlistPage implements OnInit {
       let data = UtilService.getPageData(this.pageSize, this.pageNumber, this.totalUserDidList);
       const newLoadedList = data.items
       this.usersDidList = this.usersDidList.concat(newLoadedList);
-      this.syncRemoteUserProfile(newLoadedList);
+      // this.syncRemoteUserProfile(newLoadedList);
 
       this.initUserObserVerList(data.items);
       event.target.complete();
@@ -263,21 +287,21 @@ export class UserlistPage implements OnInit {
       .catch(() => { });
   }
 
-  private syncDidDocumentProfileFromList(usersDidList: string[]) {
-    for (let index = 0; index < usersDidList.length; index++) {
-      const userdid: string = usersDidList[index];
-      this.hiveVaultController.getUserProfile(userdid).then((userProfile: FeedsData.UserProfile) => {
-        this.setUserNameAndAvatarUI(userProfile);
-      });
-      // this.hiveVaultController.syncUserProfileFromDidDocument(userdid).then((userProfile: FeedsData.UserProfile) => {
-      //   this.setUserNameAndAvatarUI(userProfile);
-      // });
-    }
-  }
+  private refreshUserProfileFromList(usersDidList: string[]): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let promiseArray = [];
+      for (let index = 0; index < usersDidList.length; index++) {
+        const userdid: string = usersDidList[index];
+        const promise = this.hiveVaultController.refreshUserProfile(userdid);
+        promiseArray.push(promise);
+      }
 
-  syncRemoteUserProfile(userDidList: string[]) {
-    // this.syncDidDocumentProfileFromList(userDidList);
-
+      Promise.allSettled(promiseArray).then(() => {
+        resolve('FINISH')
+      }).catch((error) => {
+        reject(error);
+      })
+    });
   }
 
   clickSubscription(userDid: string) {
