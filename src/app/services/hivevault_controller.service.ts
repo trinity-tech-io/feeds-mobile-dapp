@@ -2699,6 +2699,7 @@ export class HiveVaultController {
 
   syncSelfProfileWithRemote(): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
+      const signinData = (await this.dataHelper.getSigninData());
       const userDid: string = (await this.dataHelper.getSigninData()).did;
       try {
         let remoteProfile = null;
@@ -2718,8 +2719,14 @@ export class HiveVaultController {
           const description = localUserProfile.bio || localUserProfile.resolvedBio;
           const avatar = localUserProfile.avatar || localUserProfile.resolvedAvatar;
 
+          let finalName = ''
+          if (!name) {
+            finalName = signinData.name;
+          } else {
+            finalName = name;
+          }
           if (!name || !description || !avatar) {
-            const updatedProfile = await this.updateUserProfile(userDid, name, description, avatar);
+            const updatedProfile = await this.updateUserProfile(userDid, finalName, description, avatar);
             resolve(updatedProfile);
             return;
           }
@@ -3204,10 +3211,17 @@ export class HiveVaultController {
       }
 
       try {
-        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const signinData = (await this.dataHelper.getSigninData());
+        const selfDid = signinData.did
         const userProfile = await this.getUserProfileWithSaveFromRemote(selfDid);
+        let name = ''
+        if (!userProfile.name) {
+          name = signinData.name;
+        } else {
+          name = userProfile.name;
+        }
         if (!userProfile.avatar) {
-          await this.updateUserProfile(selfDid, userProfile.name, userProfile.bio, avatarImage);
+          await this.updateUserProfile(selfDid, name, userProfile.bio, avatarImage);
           resolve('FINISH');
         } else {
           resolve('FINISH');
