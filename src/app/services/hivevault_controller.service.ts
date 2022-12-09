@@ -2295,6 +2295,7 @@ export class HiveVaultController {
         // this.events.publish(FeedsEvent.PublishType.updateSyncHiveData, syncHiveData1);
         // this.dataHelper.setSyncHiveData(syncHiveData1);
         await this.createCollectionAndRregisteScript(userDid)
+        await this.restoreCustomAvatar();
         preVersion = lasterVersion === '' ? localVersion : lasterVersion
         lasterVersion = Config.scriptVersion
         regist_scripting = false
@@ -3188,4 +3189,33 @@ export class HiveVaultController {
       }
     });
   }
+
+  restoreCustomAvatar(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      let avatarImage = null;
+      try {
+        avatarImage = await this.downloadCustomeAvatar('custome');
+      } catch (error) {
+      }
+
+      if (!avatarImage) {
+        resolve('FINISH');
+        return;
+      }
+
+      try {
+        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const userProfile = await this.getUserProfileWithSaveFromRemote(selfDid);
+        if (!userProfile.avatar) {
+          await this.updateUserProfile(selfDid, userProfile.name, userProfile.bio, avatarImage);
+          resolve('FINISH');
+        } else {
+          resolve('FINISH');
+        }
+      } catch (error) {
+
+      }
+    });
+  }
+
 }
