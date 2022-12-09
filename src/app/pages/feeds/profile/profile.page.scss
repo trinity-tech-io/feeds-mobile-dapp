@@ -56,13 +56,13 @@
     .connectWallet{
         display: flex;
         position: absolute;
-        width: 150px;
         height: 35px;
         background: linear-gradient(90deg, #7624FE 0%, #368BFF 100%);
         border-radius: 20px;
         justify-content: center;
         align-items: center;
         top: 134px;
+        padding: 0px 15px;
     }
 
     .card-subtitle{
