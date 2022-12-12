@@ -179,6 +179,17 @@ export class PostdetailPage implements OnInit {
 
 
   async initData(isInit: boolean) {
+    try {
+      this.getDisplayName(this.destDid, this.channelId, this.destDid);
+    } catch (error) {
+
+    }
+    let userDid = (await this.dataHelper.getSigninData()).did;
+    try {
+      this.getDisplayName(userDid, this.channelId, userDid);
+    } catch (error) {
+
+    }
     let channel: FeedsData.ChannelV3 =
       await this.dataHelper.getChannelV3ById(this.destDid, this.channelId) || null;
 
@@ -189,18 +200,12 @@ export class PostdetailPage implements OnInit {
     this.channelOwner = channel.destDid || '';
     this.channelOwnerName = this.indexText(channel.destDid);
     this.channelWName = channel['displayName'] || channel['name'] || '';
-    this.channelName = channel['displayName'] || channel['name'];
+    this.channelName = channel['displayName'] || channel['name'] || '';
     //this.userNameMap[this.channelOwner] = this.channelName;
     let channelAvatarUri = channel['avatar'] || '';
     if (channelAvatarUri != '') {
       this.channelAvatarUri = channelAvatarUri;
       this.handleChannelAvatar(channelAvatarUri);
-    }
-    let userDid = (await this.dataHelper.getSigninData()).did;
-    try {
-      this.getDisplayName(userDid, this.channelId, userDid);
-    } catch (error) {
-
     }
     this.initPostContent();
     if (isInit) {
@@ -1452,11 +1457,11 @@ export class PostdetailPage implements OnInit {
           let postId: string = arr[2];
           let commentId: string = arr[3];
           let createrDid: string = arr[4];
-          try {
-            this.getDisplayName(destDid, this.channelId, destDid);
-          } catch (error) {
+          // try {
+          //   this.getDisplayName(destDid, this.channelId, destDid);
+          // } catch (error) {
 
-          }
+          // }
           this.handleLikeAndCommentV2(destDid, channelId, postId, commentId, createrDid);
           this.getUserAvatar(createrDid);
         });

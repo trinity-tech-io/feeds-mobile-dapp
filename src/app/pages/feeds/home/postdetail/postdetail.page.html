@@ -25,7 +25,10 @@
           </div>
         </ion-col>
         <ion-col class="mid-col" size="8.5" sizeMd="8" sizeLg="8" (press)="pressName()" (click)="navTo(destDid, channelId)" [style.touch-action]="'pan-y'">
-          <ion-label>
+          <ion-label *ngIf="channelName === ''">
+            c/...... <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId] != undefined && channelPublicStatusList[destDid+'-'+channelId]==='2'">
+           </ion-label>
+          <ion-label *ngIf="channelName != ''">
            c/{{ channelName }} <img src="./assets/images/darkmode/publicChannel.svg" class="publicChannel" *ngIf="channelPublicStatusList[destDid+'-'+channelId] != undefined && channelPublicStatusList[destDid+'-'+channelId]==='2'">
           </ion-label>
           <p *ngIf="userNameMap[destDid] === '' || userNameMap[destDid] === undefined">
