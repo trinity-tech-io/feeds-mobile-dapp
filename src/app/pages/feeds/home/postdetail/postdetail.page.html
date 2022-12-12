@@ -10,7 +10,7 @@
     </ion-refresher-content>
   </ion-refresher>
 
-  <div class="container" [class.blur]="!hideComment">
+  <div class="container">
 
     <!---------------- POST DETAILS ---------------->
     <ion-grid class="postDetail-grid ion-activatable ripple" [class.dark-postDetail-grid]="theme.darkMode">
@@ -304,11 +304,10 @@
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>
-
 </ion-content>
-
+<div *ngIf="!isAndroid" style="height:28px;"></div>
 <!---------------- ADD COMMENT FOOTER ---------------->
-<app-comment
+<app-newcomment
   *ngIf="!hideComment"
   [postId]="postId"
   [destDid]="destDid"
@@ -318,4 +317,4 @@
   [channelName]="commentName"
   [createrDid] = "createrDid"
   (hideComment)="hideComponent($event)"
-></app-comment>
+></app-newcomment>

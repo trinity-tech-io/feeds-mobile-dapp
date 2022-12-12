@@ -224,7 +224,8 @@ export const en = {
     channelError: 'Please use the wallet you used to public this channel',
     makeTipping: 'Tipping, please wait',
     tippingFailed: 'Tipping Failed',
-    tippingSucess: 'Tipping Sucess'
+    tippingSucess: 'Tipping Sucess',
+    post: 'Post'
   },
   app: {
     profileDetails: 'Profile Details',

@@ -54,7 +54,8 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="submit-row">
+    <ion-row class="submit-row" [ngClass]="{'submit-row-bottom': isAndroid==='ios'&&isBorderGradient}"
+    >
       <ion-col offset="1.5" size="4" class="left-col">
       </ion-col>
       <ion-col class="right-col" size="6.5">

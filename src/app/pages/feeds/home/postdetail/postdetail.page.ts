@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ModalController, Platform } from '@ionic/angular';
 import ChatBubbleIcon from '@iconify/icons-clarity/chat-bubble-line';
+import { IonTextarea, ModalController, Platform } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -29,6 +29,7 @@ let TAG: string = 'Feeds-postview';
   styleUrls: ['./postdetail.page.scss'],
 })
 export class PostdetailPage implements OnInit {
+  @ViewChild('comment', { static: false }) comment: IonTextarea;
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
@@ -506,6 +507,7 @@ export class PostdetailPage implements OnInit {
 
   ionViewWillLeave() {
     this.commentTime = {};
+    this.hideComment = true;
     let value = this.popoverController.getTop()['__zone_symbol__value'] || '';
     if (value != '') {
       this.popoverController.dismiss();
@@ -538,8 +540,6 @@ export class PostdetailPage implements OnInit {
     this.isVideoPercentageLoading = false;
     this.isVideoLoading = false;
     this.videoDownStatus = '';
-    this.hideComment = true;
-    // this.postImage = '';
     this.isFullContent = {};
     this.isOwnComment = {};
     this.clearVideo();
@@ -579,6 +579,16 @@ export class PostdetailPage implements OnInit {
       return;
     }
 
+    if (this.hideComment) {
+      this.hideComment = false;
+    } else {
+      let comment1: any = document.getElementById("newComment") || null;
+      if (comment1 != null) {
+        comment1.setFocus();
+      }
+
+    }
+
     if (comment === null) {
       this.refcommentId = '0';
       this.createrDid = this.destDid;
@@ -599,7 +609,6 @@ export class PostdetailPage implements OnInit {
 
 
     this.pauseVideo();
-    this.hideComment = false;
   }
 
   like() {
@@ -662,9 +671,9 @@ export class PostdetailPage implements OnInit {
     }
 
     CommonPageService.likeComment(
-      comment, 
+      comment,
       this.likedCommentMap,
-      this.isloadingLikeMap, 
+      this.isloadingLikeMap,
       this.likedCommentNum,
       this.hiveVaultController,
       this.dataHelper
@@ -1639,8 +1648,10 @@ export class PostdetailPage implements OnInit {
         const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
         if (name) {
           this.userNameMap[userDid] = name;
+          this.showComment(null);
         }
       }).catch(() => {
+        this.showComment(null);
       })
     }
   }

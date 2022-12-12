@@ -224,7 +224,8 @@ export const zh = {
     channelError: '请使用公开此频道时所用的钱包',
     makeTipping: '正在打赏，请稍候',
     tippingFailed: '打赏失败',
-    tippingSucess: '打赏成功'
+    tippingSucess: '打赏成功',
+    post: '发布'
   },
   app: {
     profileDetails: '档案详情',

@@ -1,0 +1,39 @@
+<ion-footer [class.ionfooter]="isAndroid==='android'"  [class.ioniosfooter]="isAndroid==='ios'">
+  <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode">
+
+    <ion-item class="removeBorder" lines="none">
+      <ion-row class="channel-row ion-activatable ripple">
+        <ion-col size="12" sizeMd="12" sizeLg="12"  class="middle-col">
+          <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{'PostdetailPage.replyingto'|translate}} <span style="color: #C4C4C4;">@{{ channelName }}</span></ion-label>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+
+    <ion-row class="input-row">
+      <ion-col  size="12">
+        <ion-textarea
+          id="newComment"
+          #comment
+          autofocus="true"
+          [(ngModel)]="newComment"
+          placeholder="{{'CommentPage.inputComment'|translate}}"
+          [ngClass]="{'borderGradient':isBorderGradient}"
+          (ionBlur)="ionBlur()"
+          (ionFocus)="ionFocus()"
+        >
+        </ion-textarea>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="submit-row" *ngIf="newComment != ''">
+      <ion-col size="5.5" class="left-col">
+      </ion-col>
+      <ion-col class="right-col" size="6.5">
+        <ion-button (click)="sendComment()" [disabled]="clickButton">
+          <ion-label *ngIf="!clickButton">{{ 'common.post' | translate }}</ion-label>
+          <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-list>
+</ion-footer>
