@@ -88,9 +88,11 @@ export class PopupProvider {
     imgageName: string,
     okText?: string,
     cancelText?: string,
+    channelName?: string,
   ): Promise<HTMLIonPopoverElement> {
     let ok = okText || 'common.confirm';
     let cancel = cancelText || 'common.cancel';
+    channelName = channelName || '';
     return await this.showConfirmdialog(
       that,
       title,
@@ -100,6 +102,7 @@ export class PopupProvider {
       imgageName,
       ok,
       cancel,
+      channelName,
     );
   }
 
@@ -112,6 +115,7 @@ export class PopupProvider {
     imgageName: string,
     okText?: string,
     cancelText?: string,
+    channelName?: string,
   ): Promise<HTMLIonPopoverElement> {
     this.popover = await this.popoverController.create({
       mode: 'ios',
@@ -126,6 +130,7 @@ export class PopupProvider {
         okFunction: okFunction,
         cancelFunction: cancelFunction,
         imgageName: imgageName,
+        channelName: channelName
       },
     });
 

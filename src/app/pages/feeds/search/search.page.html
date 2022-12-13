@@ -80,7 +80,7 @@
         <span>{{ "SearchPage.follow" | translate }}</span>
       </div>
 
-      <ion-button class="subscribed" *ngIf="subscribedChannelMap[channelCollection.channelId] != undefined && channelCollection.channelSource === 'hive'" (click)="unsubscribe(channelCollection.destDid, channelCollection.channelId, $event)">
+      <ion-button class="subscribed" *ngIf="subscribedChannelMap[channelCollection.channelId] != undefined && channelCollection.channelSource === 'hive'" (click)="unsubscribe(channelCollection, $event)">
         <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
       </ion-button>
     </ion-col>

@@ -271,7 +271,7 @@ export class FeedinfoPage implements OnInit {
     try {
       const userDid = (await this.dataHelper.getSigninData()).did || '';
       if (this.destDid != userDid) {
-        this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId, userDid);
+        this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId, userDid, this.name);
       } else {
         this.native.toast_trans('common.unableUnsubscribe');
       }

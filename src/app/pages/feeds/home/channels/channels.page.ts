@@ -219,7 +219,7 @@ export class ChannelsPage implements OnInit {
       const userDid = (await this.dataHelper.getSigninData()).did || '';
 
       if (this.destDid != userDid) {
-        this.menuService.showChannelMenu(this.destDid, this.channelId, userDid);
+        this.menuService.showChannelMenu(this.destDid, this.channelId, userDid, this.channelName);
       } else {
         this.native.toast_trans('common.unableUnsubscribe');
       }

@@ -22,6 +22,8 @@ export class MenuService {
   private channelId: string = "";
   private postId: string = "";
   private comment: FeedsData.CommentV3 = null;
+  private unsubscribeDialog: any = null;
+  private channelName: string = null;
   constructor(
     private actionSheetController: ActionSheetController,
     private translate: TranslateService,
@@ -62,13 +64,13 @@ export class MenuService {
     })
   }
 
-  async showChannelMenu(destDid: string, channelId: string, userDid: string) {
+  async showChannelMenu(destDid: string, channelId: string, userDid: string, channelName: string) {
     if (this.actionSheetMenuStatus != null) {
       return;
     }
     this.actionSheetMenuStatus = "opening";
     if (destDid != userDid) {
-      const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
+      const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, channelName);
       const cancelButton = this.createCancelButton();
       await this.createActionSheetMenu({
         cssClass: 'editPost',
@@ -89,7 +91,7 @@ export class MenuService {
     }
     this.actionSheetMenuStatus = "opening";
     const sharePostButton: ActionSheetButton = this.createSharePostButton(destDid, postId);
-    const unsubscribeButton: ActionSheetButton = this.createUnsubscribeButton(destDid, channelId);
+    const unsubscribeButton: ActionSheetButton = this.createUnsubscribeButton(destDid, channelId, channelName);
     const cancelButton = this.createCancelButton();
 
     await this.createActionSheetMenu({
@@ -126,13 +128,13 @@ export class MenuService {
     });
   }
 
-  async showUnsubscribeMenuWithoutName(destDid: string, channelId: string, userDid: string): Promise<string> {
+  async showUnsubscribeMenuWithoutName(destDid: string, channelId: string, userDid: string, channelName: string): Promise<string> {
     if (this.actionSheetMenuStatus != null) {
       return;
     }
     this.actionSheetMenuStatus = "opening";
     if (destDid != userDid) {
-      const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, null);
+      const unsubscribeButton = this.createUnsubscribeButton(destDid, channelId, channelName);
       const cancelButton = this.createCancelButton();
 
       await this.createActionSheetMenu({
@@ -358,40 +360,24 @@ export class MenuService {
     };
   }
 
-  private createUnsubscribeButton(destDid: string, channelId: string, channelName: string = null): ActionSheetButton {
+  private createUnsubscribeButton(destDid: string, channelId: string, channelName: string): ActionSheetButton {
     let unsubscribeText = this.translate.instant('common.unsubscribe')
-    if (channelName) unsubscribeText = this.translate.instant('common.unsubscribe') + ' @' + channelName;
+    //if (channelName) unsubscribeText = this.translate.instant('common.unsubscribe') + ' c/' + channelName;
 
     return {
       text: unsubscribeText,
       role: 'destructive',
       icon: 'ios-unsubscribe',
-      handler: () => {
+      handler: async () => {
         let connect = this.dataHelper.getNetworkStatus();
         if (connect === FeedsData.ConnState.disconnected) {
           this.native.toastWarn('common.connectionError');
           return;
         }
-
-        this.native.showLoading("common.waitMoment").then(() => {
-          try {
-            this.hiveVaultController.unSubscribeChannel(
-              destDid, channelId
-            ).then(async (result) => {
-              let channel: FeedsData.BackupSubscribedChannelV3 = {
-                destDid: destDid,
-                channelId: channelId
-              };
-              this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
-              this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
-              this.native.hideLoading();
-            }).catch(() => {
-              this.native.hideLoading();
-            });
-          } catch (error) {
-            this.native.hideLoading();
-          }
-        });
+        this.destDid = destDid;
+        this.channelId = channelId;
+        this.channelName = channelName;
+        await this.showUnsubscribeDialog();
       },
     };
   }
@@ -888,6 +874,55 @@ export class MenuService {
       } catch (error) {
       }
       this.native.hideLoading();
+    });
+  }
+
+  async showUnsubscribeDialog() {
+
+    this.unsubscribeDialog = await this.popupProvider.ionicConfirm(
+      this,
+      'common.unsubscribeChannel',
+      'common.unsubscribeChannelDes',
+      this.unsubscribeDialogCancel,
+      this.unsubscribeDialogConfirm,
+      './assets/images/unsubscribeChannel.svg',
+      'common.yes',
+      '',
+      this.channelName
+    );
+  }
+
+  async unsubscribeDialogCancel(that: any){
+    if (that.unsubscribeDialog != null) {
+      await that.unsubscribeDialog.dismiss();
+      that.unsubscribeDialog = null;
+    }
+  }
+
+  async unsubscribeDialogConfirm(that: any){
+    if (that.unsubscribeDialog != null) {
+      await that.unsubscribeDialog.dismiss();
+      that.unsubscribeDialog = null;
+    }
+    //
+    that.native.showLoading("common.waitMoment").then(() => {
+      try {
+        that.hiveVaultController.unSubscribeChannel(
+          that.destDid, that.channelId
+        ).then(async (result) => {
+          let channel: FeedsData.BackupSubscribedChannelV3 = {
+            destDid: that.destDid,
+            channelId: that.channelId
+          };
+          that.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+          that.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
+          that.native.hideLoading();
+        }).catch(() => {
+          that.native.hideLoading();
+        });
+      } catch (error) {
+        that.native.hideLoading();
+      }
     });
   }
 }

@@ -15,6 +15,7 @@ export class ConfirmdialogComponent implements OnInit {
   public confirm: any;
   public that: any;
   public imgPath: string = '';
+  public channelName: string = '';
   constructor(public theme: ThemeService, private navParams: NavParams) {
     this.that = this.navParams.get('that');
     this.title = this.navParams.get('title') || 'common.confirmDialog';
@@ -27,6 +28,7 @@ export class ConfirmdialogComponent implements OnInit {
     this.confirm = this.navParams.get('okFunction');
     this.imgPath =
       this.navParams.get('imgageName') || './assets/images/tskth.svg';
+    this.channelName =  this.navParams.get('channelName') || '';
   }
 
   ngOnInit() {}

@@ -859,7 +859,9 @@ export class SearchPage implements OnInit {
 
   }
 
-  async unsubscribe(destDid: string, channelId: string, event: any) {
+  async unsubscribe(channelCollection: any, event: any) {
+   let destDid =  channelCollection.destDid;
+   let channelId = channelCollection.channelId;
     event.stopPropagation();
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
@@ -871,7 +873,8 @@ export class SearchPage implements OnInit {
       const userDid = (await this.dataHelper.getSigninData()).did || '';
 
       if (destDid != userDid) {
-        this.menuService.showChannelMenu(destDid, channelId, userDid);
+        let channelName = channelCollection.displayName  || channelCollection.name || '';
+        this.menuService.showChannelMenu(destDid, channelId, userDid,channelName);
       } else {
         this.native.toast_trans('common.unableUnsubscribe');
       }

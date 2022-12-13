@@ -225,7 +225,9 @@ export const zh = {
     makeTipping: '正在打赏，请稍候',
     tippingFailed: '打赏失败',
     tippingSucess: '打赏成功',
-    post: '发布'
+    post: '发布',
+    unsubscribeChannel: '取消订阅',
+    unsubscribeChannelDes: '您确定要取消订阅频道吗？'
   },
   app: {
     profileDetails: '档案详情',

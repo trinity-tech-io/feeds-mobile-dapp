@@ -833,6 +833,7 @@ export class ProfilePage implements OnInit {
         this.isPreferences = false;
         this.isShowQrcode = false;
         this.isShowUnfollow = true;
+        this.channelName = item.channelName;
         this.hideSharMenuComponent = true;
         document.getElementById("feedstab").style.display = "none";
         break;

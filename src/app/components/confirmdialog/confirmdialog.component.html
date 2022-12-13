@@ -1,6 +1,6 @@
 <div class="container" [class.darkContainer]="theme.darkMode">
   <ion-row class="header">
-    <h1>{{ title | translate }}</h1>
+    <h1>{{ title | translate }} <span *ngIf="channelName !=''">c/{{channelName}}</span></h1>
     <ion-col size="12" class="kuangImg">
         <img [src]="imgPath"/>
     </ion-col>
