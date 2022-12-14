@@ -119,8 +119,8 @@ export class Config {
     public static PASAR_ASSIST_MAINNET_SERVER: string = 'https://assist.trinity-feeds.app/pasar/api/v1/';
 
 
-    public static GALLERIA_ASSIST_TESTNET_SERVER: string = 'https://test.trinity-feeds.app/galleria/api/v1/';
-    public static GALLERIA_ASSIST_MAINNET_SERVER: string = 'https://assist.trinity-feeds.app/galleria/api/v1/';
+    public static CHANNEL_NFT_ASSIST_TESTNET_SERVER: string = 'https://assist-test.pasarprotocol.io/api/v1/';
+    public static CHANNEL_NFT_ASSIST_MAINNET_SERVER: string = 'https://assist-test.pasarprotocol.io/api/v1/';
 
     public static STICKER_ASSIST_TESTNET_SERVER: string = 'https://test.trinity-feeds.app/sticker/api/v1/';
     public static STICKER_ASSIST_MAINNET_SERVER: string = 'https://assist.trinity-feeds.app/sticker/api/v1/';

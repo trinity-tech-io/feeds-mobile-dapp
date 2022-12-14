@@ -326,14 +326,14 @@ export class PasarAssistService {
   * @param pageNum 页码 从1开始 选填 默认1
   * @param pageSize 每页条目 大于0 选填 默认10
   */
-  listGalleriaPanelsFromService(pageNum: number, pageSize: number): Promise<any> {
+  listChannelNftFromService(pageNum: number, pageSize: number): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         let url = '';
         if (this.dataHelper.getDevelopNet() == 'MainNet')
-          url = this.baseAssistUrl + 'galleria/api/v1/listPanels'
+          url = Config.CHANNEL_NFT_ASSIST_MAINNET_SERVER + 'listFeedsChannel'
         else
-          url = Config.GALLERIA_ASSIST_TESTNET_SERVER + 'listPanels'
+          url = Config.CHANNEL_NFT_ASSIST_TESTNET_SERVER + 'listFeedsChannel'
 
         url = url + '?pageNum=' + pageNum;
         if (pageSize)
@@ -344,37 +344,13 @@ export class PasarAssistService {
           reject(null);
           return;
         }
-        const resultCode = result.code;
+        const resultCode = result.status;
         if (resultCode != 200)
           reject(null);
 
         resolve(result);
       } catch (error) {
         Logger.error(TAG, 'List Pasar Order From Service error', error);
-        reject(null)
-      }
-    });
-  }
-
-  getPanel(tokenId: string): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let url = '';
-        if (this.dataHelper.getDevelopNet() == 'MainNet')
-          url = this.baseAssistUrl + 'galleria/api/v1/getPanel'
-        else
-          url = Config.GALLERIA_ASSIST_TESTNET_SERVER + 'getPanel'
-
-        url = url + '?tokenId=' + tokenId;
-        const result = await this.httpService.httpGet(url);
-
-        const resultCode = result.code;
-        if (resultCode != 200)
-          reject(null);
-
-        resolve(result);
-      } catch (error) {
-        Logger.error(TAG, 'getPanel From Service error', error);
         reject(null)
       }
     });

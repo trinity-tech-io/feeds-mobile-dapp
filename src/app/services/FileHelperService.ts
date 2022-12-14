@@ -127,7 +127,7 @@ export class FileHelperService {
   getBlobFromCacheFile(fileEntry: FileEntry): Promise<Blob> {
     return new Promise(async (resolve, reject) => {
       try {
-        let blob = await this.fileService.getFileData(fileEntry);
+        let blob: Blob = await this.fileService.getFileData(fileEntry);
         resolve(blob);
       } catch (error) {
         reject(error);
@@ -207,6 +207,19 @@ export class FileHelperService {
     });
   }
 
+  getNFTAvatar(fileUrl: string, fileName: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const fileEntry = await this.getOrderFileEntry(fileName);
+        const result = await this.getData(fileUrl,'', fileEntry);
+        resolve(result);
+      } catch (error) {
+        Logger.error("Get NFT data error");
+        reject(error);
+      }
+    });
+  }
+
   getV3Data(fileName: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -240,40 +253,57 @@ export class FileHelperService {
   }
 
 
-  getData(fileUrl: string, type: string, fileEntry: FileEntry): Promise<string> {
+  getData(fileUrl: string, type: string, fileEntry: FileEntry): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const base64Type: string = this.transType(type);
-        const fileBlob = await this.getBlobFromCacheFile(fileEntry);
-        if (fileBlob.size > 0) {
-          const result = await this.transBlobToBase64(fileBlob);
-          let finalresult = result;
-          if (result.startsWith('data:null;base64,'))
-            finalresult = result.replace("data:null;base64,", base64Type);
+        if(type != ''){
+          const base64Type: string = this.transType(type);
+          const fileBlob = await this.getBlobFromCacheFile(fileEntry);
+          if (fileBlob.size > 0) {
+            const result = await this.transBlobToBase64(fileBlob);
+            let finalresult = result;
+            if (result.startsWith('data:null;base64,'))
+              finalresult = result.replace("data:null;base64,", base64Type);
 
-          if (result.startsWith('unsafe:data:*/*;base64,'))
-            finalresult = result.replace("unsafe:data:*/*", base64Type);
+            if (result.startsWith('unsafe:data:*/*;base64,'))
+              finalresult = result.replace("unsafe:data:*/*", base64Type);
 
-          if (result.startsWith('data:*/*;base64,'))
-            finalresult = result.replace("data:*/*;base64,", base64Type);
-          Logger.log(TAG, "Get data from local");
-          resolve(finalresult);
-          return;
+            if (result.startsWith('data:*/*;base64,'))
+              finalresult = result.replace("data:*/*;base64,", base64Type);
+            Logger.log(TAG, "Get data from local");
+            resolve(finalresult);
+            return;
+          }
+        }else{
+
+          const fileBlob:Blob = await this.getBlobFromCacheFile(fileEntry);
+          if (fileBlob.size > 0) {
+            Logger.log(TAG, "Get data from local");
+            resolve(fileBlob);
+            return;
+          }
         }
         const result = this.dataHelper.getDownloadingUrl(fileUrl);
-
         if (!result || result && result.length > 0) {
           resolve('');
           return;
         }
         this.dataHelper.addDownloadingUrl(fileUrl);
         let blob = await UtilService.downloadFileFromUrl(fileUrl);
-
-        const result2 = await this.transBlobToBase64(blob);
         await this.writeCacheFileData(fileEntry, blob);
+        if(type === ''){
+          let blobTypeKey = fileUrl.split('/')[4]+'_blobType';
+          await this.dataHelper.saveData(blobTypeKey,blob.type);
+        }
         this.dataHelper.deleteDownloadingUrl(fileUrl);
         Logger.log(TAG, "Get data from net");
-        resolve(result2);
+        if(type != ''){
+          const result2 = await this.transBlobToBase64(blob);
+          resolve(result2);
+        }else{
+          resolve(blob);
+        }
+
       } catch (error) {
         Logger.error("Get NFT data error");
         reject(error);
@@ -307,7 +337,6 @@ export class FileHelperService {
           data,
           false
         );
-
         resolve(newEntry);
       } catch (error) {
         reject(error);
