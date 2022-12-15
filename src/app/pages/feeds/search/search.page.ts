@@ -180,6 +180,7 @@ export class SearchPage implements OnInit {
         this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
         this.isLoading = false;
         this.handleRefresherInfinite(false);
+
         this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
       } catch (error) {
         this.isLoading = false;
@@ -188,6 +189,7 @@ export class SearchPage implements OnInit {
     } else {
       this.handleRefresherInfinite(true);
       try {
+        this.channelCollectionPageList = channelCollectionPageList;
         this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
         this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
         this.isLoading = false;
@@ -523,50 +525,54 @@ export class SearchPage implements OnInit {
           if (nenChannel.avatar === '') {
             this.channelAvatarMap[id] = './assets/images/profile-0.svg';
           } else {
-            let channelAvatar = this.channelAvatarMap[id] || '';
-            if (channelAvatar === '') {
-              this.channelAvatarMap[id] = './assets/images/loading.svg';
-            }
-            let avatarUri = nenChannel.avatar.replace('feeds:image:', '');
-            let fetchUrl = this.ipfsService.getNFTGetUrl() + avatarUri;
-            this.fileHelperService.getNFTAvatar(fetchUrl, avatarUri)
-              .then(async (avatar: any) => {
-                let srcData = avatar || "";
-                this.zone.run(async () => {
-                  if (srcData != "") {
-                    let avatarType = await this.dataHelper.loadData(avatarUri + '_blobType') || '';
-                    if (avatar.type === "text/plain" || avatarType === "text/plain") {
+            if (nenChannel.avatar.indexOf("feeds:image:") > -1) {
+              let channelAvatar = this.channelAvatarMap[id] || '';
+              if (channelAvatar === '') {
+                this.channelAvatarMap[id] = './assets/images/loading.svg';
+              }
+              let avatarUri = nenChannel.avatar.replace('feeds:image:', '');
+              let fetchUrl = this.ipfsService.getNFTGetUrl() + avatarUri;
+              this.fileHelperService.getNFTAvatar(fetchUrl, avatarUri)
+                .then(async (avatar: any) => {
+                  let srcData = avatar || "";
+                  this.zone.run(async () => {
+                    if (srcData != "") {
+                      let avatarType = await this.dataHelper.loadData(avatarUri + '_blobType') || '';
+                      if (avatar.type === "text/plain" || avatarType === "text/plain") {
+                        if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
+                          this.channelAvatarMap[id] = './assets/images/profile-0.svg'
+                        }
+                        this.searchIsLoadimage[id] = '13';
+                      } else {
+
+                        srcData = await UtilService.blobToDataURL(avatar);
+                        let finalresult = srcData;
+                        if (srcData.startsWith('data:null;base64,'))
+                          finalresult = srcData.replace("data:null;base64,", "data:" + avatarType + ";base64,");
+
+                        if (srcData.startsWith('unsafe:data:*/*;base64,'))
+                          finalresult = srcData.replace("unsafe:data:*/*", "data:" + avatarType + ";base64,");
+
+                        if (srcData.startsWith('data:*/*;base64,'))
+                          finalresult = srcData.replace("data:*/*;base64,", "data:" + avatarType + ";base64,");
+                        this.channelAvatarMap[id] = this.domSanitizer.bypassSecurityTrustUrl(finalresult);
+                      }
+                    } else {
                       if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
                         this.channelAvatarMap[id] = './assets/images/profile-0.svg'
                       }
                       this.searchIsLoadimage[id] = '13';
-                    } else {
-                      srcData = await UtilService.blobToDataURL(avatar);
-                      let finalresult = srcData;
-                      if (srcData.startsWith('data:null;base64,'))
-                        finalresult = srcData.replace("data:null;base64,", "data:" + avatarType + ";base64,");
-
-                      if (srcData.startsWith('unsafe:data:*/*;base64,'))
-                        finalresult = srcData.replace("unsafe:data:*/*", "data:" + avatarType + ";base64,");
-
-                      if (srcData.startsWith('data:*/*;base64,'))
-                        finalresult = srcData.replace("data:*/*;base64,", "data:" + avatarType + ";base64,");
-                      this.channelAvatarMap[id] = this.domSanitizer.bypassSecurityTrustUrl(finalresult);
                     }
-                  } else {
-                    if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
-                      this.channelAvatarMap[id] = './assets/images/profile-0.svg'
-                    }
-                    this.searchIsLoadimage[id] = '13';
+                  });
+                }).catch(() => {
+                  if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
+                    this.channelAvatarMap[id] = './assets/images/profile-0.svg'
                   }
                 });
-              }).catch(() => {
-                if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
-                  this.channelAvatarMap[id] = './assets/images/profile-0.svg'
-                }
-              });
+            } else {
+              this.channelAvatarMap[id] = './assets/images/profile-0.svg';
+            }
           }
-
         } else {
           //if (this.channelAvatarMap[id] === './assets/images/loading.svg') {
           this.channelAvatarMap[id] = './assets/images/profile-0.svg';

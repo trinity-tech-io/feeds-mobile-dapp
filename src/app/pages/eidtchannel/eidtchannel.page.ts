@@ -286,20 +286,6 @@ export class EidtchannelPage implements OnInit {
           this.storageService.set('feeds.currentChannel', JSON.stringify(currentChannel));
         }
 
-        //更新explore feeds cace
-
-        let channelCollectionPageList = this.dataHelper.getChannelCollectionPageList() || [];
-
-        let channelIndex = _.findIndex(channelCollectionPageList,(item: FeedsData.ChannelV3)=>{
-                  return item.channelId === this.channelId;
-        });
-
-        if(channelIndex > -1){
-          channelCollectionPageList[channelIndex].displayName = this.displayName;
-          channelCollectionPageList[channelIndex].intro = this.channelDes;
-          channelCollectionPageList[channelIndex].avatar = result.avatar;
-        }
-
         this.isClickConfirm = true;
         this.clickButton = false;
         if(this.channelContratctInfo != null && this.channelContratctInfo != "unPublic"){
@@ -478,6 +464,16 @@ export class EidtchannelPage implements OnInit {
     let channelEntry = UtilService.generateFeedsQrCodeString(this.destDid,this.channelId);
     this.uploadData()
     .then(async (result) => {
+      //更新explore feeds cace
+      let channelCollectionPageList = this.dataHelper.getChannelCollectionPageList() || [];
+      let channelIndex = _.findIndex(channelCollectionPageList,(item: FeedsData.ChannelV3)=>{
+                return item.channelId === this.channelId;
+      });
+      if(channelIndex > -1){
+        channelCollectionPageList[channelIndex].displayName = this.displayName;
+        channelCollectionPageList[channelIndex].intro = this.channelDes;
+        channelCollectionPageList[channelIndex].avatar = this.avatarCid;
+      }
       Logger.log(TAG, 'Upload Result', result);
       if(this.isShowUpdateContratct){
         this.loadingCurNumber = "1";
@@ -496,6 +492,7 @@ export class EidtchannelPage implements OnInit {
       }
       return this.updateChannelContract(tokenId, tokenUri, channelEntry, receiptAddr);
     }).then(async ()=>{
+
       this.nftContractControllerService.getChannel().cancelUpdateChanneProcess();
       //add channel Contratct cace
       await this.addChannelNftCache();
