@@ -38,10 +38,10 @@
   <ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode" style="margin-top: 45px;" *ngIf="channelCollectionPageList.length > 0 && !isLoading">
   <!-- channel Collection -->
   <ion-item
-  *ngFor="let channelCollection of channelCollectionPageList"
+  *ngFor="let channelCollection of channelCollectionPageList let channelIndex=index"
   class="channelCollectionFeeds"
   lines="none">
-  <ion-row class="channel-row ion-activatable ripple"  id = {{channelCollection.destDid}}-{{channelCollection.channelId}}-{{channelCollection.channelSource}}-search
+  <ion-row class="channel-row ion-activatable ripple"  id = {{channelCollection.destDid}}-{{channelCollection.channelId}}-{{channelCollection.channelSource}}-{{channelIndex}}-search
   >
     <ion-col
       size="2.2"
@@ -73,14 +73,15 @@
       </ion-row>
 
       <ion-row *ngIf="channelCollection.channelSource === 'ipfs'">
-        <div class="des">{{ "SearchPage.des" | translate }}</div>
+        <div class="des" *ngIf="channelCollection.hiveVault != 'noExit'">{{ channelCollection.intro }} </div>
+        <div class="des" *ngIf="channelCollection.hiveVault === 'noExit'">{{ "SearchPage.des" | translate }}</div>
       </ion-row>
 
-      <div  class="btn-row-empty unsubscribed" (click)="subscribe(channelCollection.destDid, channelCollection.channelId, $event)" *ngIf="subscribedChannelMap[channelCollection.channelId] === undefined && channelCollection.channelSource === 'hive'">
+      <div  class="btn-row-empty unsubscribed" (click)="subscribe(channelCollection.destDid, channelCollection.channelId, $event)" *ngIf="subscribedChannelMap[channelCollection.channelId] === undefined && channelCollection.channelSource === 'ipfs' && channelCollection.hiveVault != '' && channelCollection.hiveVault != 'noExit'">
         <span>{{ "SearchPage.follow" | translate }}</span>
       </div>
 
-      <ion-button class="subscribed" *ngIf="subscribedChannelMap[channelCollection.channelId] != undefined && channelCollection.channelSource === 'hive'" (click)="unsubscribe(channelCollection, $event)">
+      <ion-button class="subscribed" *ngIf="subscribedChannelMap[channelCollection.channelId] != undefined && channelCollection.channelSource === 'ipfs'&& channelCollection.hiveVault != '' && channelCollection.hiveVault != 'noExit'" (click)="unsubscribe(channelCollection, $event)">
         <ion-label>{{ 'SearchPage.following' | translate }}</ion-label>
       </ion-button>
     </ion-col>

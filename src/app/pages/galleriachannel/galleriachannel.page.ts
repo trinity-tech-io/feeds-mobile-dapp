@@ -230,9 +230,19 @@ export class GalleriachannelPage implements OnInit {
                 return this.destDid === channel.destDid && this.channelId === channel.channelId;
           })
           if(channelIndex === -1 ){
-            let newChannel:any = this.channel;
-            newChannel.channelSource = "hive";
-            channelCollectionPageList.unshift(newChannel);
+            let newIpfsInfo = {
+              "destDid": this.channel.destDid,
+              "channelId": this.channel.channelId,
+              "name": this.channel.name,
+              "intro": this.channel.intro,
+              "avatar": this.avatar,
+              "type": "public",
+              "tipping_address": this.receiptAddr,
+              "displayName": this.channel.displayName,
+              "channelSource": 'ipfs',
+              "hiveVault": "exit"
+          }
+            channelCollectionPageList.unshift(newIpfsInfo);
             this.dataHelper.setChannelCollectionPageList(channelCollectionPageList)
           }
           // add channelContracts Info Cache

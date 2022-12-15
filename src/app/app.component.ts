@@ -276,7 +276,7 @@ export class MyApp {
         this.initNftFirstdisclaimer();
         this.initChannelPublicStatusList();
         this.initCurrentChannel();
-        this.initSpecificChannelCollectionPageList();
+        this.initChannelNftList();
         this.initCollectibleSetting();
         this.initFeedsSortType();
         this.initHideAdult();
@@ -356,9 +356,9 @@ export class MyApp {
       .catch(err => { });
   }
 
-  initSpecificChannelCollectionPageList() {
+  initChannelNftList() {
     this.dataHelper
-      .loadData('feedsNetWork:newChannelCollectionPageList')
+      .loadData('feedsNetWork:channelNftList')
       .then(channelCollectionPageList => {
         if (channelCollectionPageList === null) {
           this.dataHelper.setChannelCollectionPageList([]);
