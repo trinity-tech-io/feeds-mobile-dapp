@@ -331,9 +331,9 @@ export class PasarAssistService {
       try {
         let url = '';
         if (this.dataHelper.getDevelopNet() == 'MainNet')
-          url = Config.CHANNEL_NFT_ASSIST_MAINNET_SERVER + 'listFeedsChannel'
+          url = Config.CHANNEL_NFT_ASSIST_MAINNET_SERVER + 'listFeedsChannel';
         else
-          url = Config.CHANNEL_NFT_ASSIST_TESTNET_SERVER + 'listFeedsChannel'
+          url = Config.CHANNEL_NFT_ASSIST_TESTNET_SERVER + 'listFeedsChannel';
 
         url = url + '?pageNum=' + pageNum;
         if (pageSize)
@@ -351,6 +351,31 @@ export class PasarAssistService {
         resolve(result);
       } catch (error) {
         Logger.error(TAG, 'List Pasar Order From Service error', error);
+        reject(null)
+      }
+    });
+  }
+  //https://assist-test.pasarprotocol.io/api/v1/listFeedsChannel?keyword=test181
+  searchChannelNftFromService(name: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = '';
+        if (this.dataHelper.getDevelopNet() == 'MainNet')
+          url = Config.CHANNEL_NFT_ASSIST_MAINNET_SERVER + 'listFeedsChannel?keyword=';
+        else
+          url = Config.CHANNEL_NFT_ASSIST_TESTNET_SERVER + 'listFeedsChannel?keyword=';
+
+
+        url = url +name;
+        const result = await this.httpService.httpGet(url);
+
+        const resultCode = result.status;
+        if (resultCode != 200)
+          reject(null);
+
+        resolve(result);
+      } catch (error) {
+        Logger.error(TAG, 'search Stickers From Service error', error);
         reject(null)
       }
     });

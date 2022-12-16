@@ -294,24 +294,25 @@ export class SearchPage implements OnInit {
     this.ionRefresher.disabled = true;
     this.handleSearch();
   }
-  handleSearch() {
+  async handleSearch() {
     if (this.isSearch === '') {
       return;
     }
 
-    this.channelCollectionPageList = this.searchChannelCollectionPageList.filter(
-      (channel: FeedsData.ChannelV3) => {
-        let channelName = channel.displayName || channel.name || '';
-        if (channelName != '') {
-          return channelName.toLocaleLowerCase().indexOf(this.isSearch.toLocaleLowerCase()) > -1;
-        }
+    try {
+      await this.native.showLoading("common.waitMoment");
+      let result = await this.pasarAssistService.searchChannelNftFromService(this.isSearch);
+      let channelNftList = result.data.data || [];
+      let channelCollectionPageList = this.handleChannelNftList(channelNftList);
+      this.native.hideLoading();
+      if (channelCollectionPageList.length > 0) {
+        this.channelCollectionPageList = channelCollectionPageList;
+        this.removeObserveList();
+        this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
       }
-    );
-    if (this.channelCollectionPageList.length > 0) {
-      this.removeObserveList();
-      this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
+    } catch (error) {
+      this.native.hideLoading();
     }
-
   }
 
   async doRefresh(event: any) {
