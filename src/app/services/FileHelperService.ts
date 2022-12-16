@@ -278,9 +278,13 @@ export class FileHelperService {
 
           const fileBlob:Blob = await this.getBlobFromCacheFile(fileEntry);
           if (fileBlob.size > 0) {
-            Logger.log(TAG, "Get data from local");
-            resolve(fileBlob);
-            return;
+            let blobTypeKey = fileUrl.split('/')[4]+'_blobType';
+            let avatarType = await this.dataHelper.loadData(blobTypeKey) || '';
+            if(avatarType != ''){
+              Logger.log(TAG, "Get data from local");
+              resolve(fileBlob);
+              return;
+            }
           }
         }
         const result = this.dataHelper.getDownloadingUrl(fileUrl);
@@ -290,11 +294,11 @@ export class FileHelperService {
         }
         this.dataHelper.addDownloadingUrl(fileUrl);
         let blob = await UtilService.downloadFileFromUrl(fileUrl);
-        await this.writeCacheFileData(fileEntry, blob);
         if(type === ''){
           let blobTypeKey = fileUrl.split('/')[4]+'_blobType';
           await this.dataHelper.saveData(blobTypeKey,blob.type);
         }
+        await this.writeCacheFileData(fileEntry, blob);
         this.dataHelper.deleteDownloadingUrl(fileUrl);
         Logger.log(TAG, "Get data from net");
         if(type != ''){
