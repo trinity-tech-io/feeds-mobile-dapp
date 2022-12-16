@@ -22,6 +22,7 @@ import { CommonPageService } from 'src/app/services/common.page.service';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
 import SparkMD5 from 'spark-md5';
+import { WalletConnectControllerService } from 'src/app/services/walletconnect_controller.service';
 let TAG: string = 'Feeds-postview';
 @Component({
   selector: 'app-postdetail',
@@ -175,6 +176,7 @@ export class PostdetailPage implements OnInit {
     private hiveVaultController: HiveVaultController,
     private nftContractControllerService: NFTContractControllerService,
     private ipfsService: IPFSService,
+    private walletConnectControllerService: WalletConnectControllerService
   ) { }
 
 
@@ -273,7 +275,6 @@ export class PostdetailPage implements OnInit {
       this.infiniteScroll.disabled = false;
     }
     this.initOwnCommentObj();
-    this.handleUserAvatars(this.captainCommentList);
     this.refreshLikeAndCommentV2(this.captainCommentList);
     //this.totalData = this.sortCommentList();
   }
@@ -314,7 +315,6 @@ export class PostdetailPage implements OnInit {
       this.captainCommentList = this.totalData;
     }
     this.initOwnCommentObj();
-    this.handleUserAvatars(this.captainCommentList);
     this.refreshLikeAndCommentV2(this.captainCommentList);
   }
 
@@ -864,7 +864,6 @@ export class PostdetailPage implements OnInit {
         this.captainCommentList = this.captainCommentList.concat(data.items);
       }
       this.initOwnCommentObj();
-      this.handleUserAvatars(this.captainCommentList);
       this.refreshLikeAndCommentV2(data.items);
       clearTimeout(sid);
       event.target.complete();
