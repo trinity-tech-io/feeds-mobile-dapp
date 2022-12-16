@@ -37,11 +37,11 @@ export class PosttiplistPage implements OnInit {
   private maxCount: number = 0;
   private startIndex: number = 0;
   public  postTipList: postTipItem[]  = [];
-  private userAvatarSid: NodeJS.Timer = null;
+  private userAvatarSid: any = null;
   private userObserver: any = {};
   private isLoadUsers: any = {};
   public  isLoading: boolean = true;
-  private pageNumber = 10;
+  private pageNumber = 15;
   private pageSize = 1;
   private isMaxConut: boolean = false;
   constructor(
@@ -66,7 +66,6 @@ export class PosttiplistPage implements OnInit {
     this.initTitle();
     let postTipListMap = this.dataHelper.getPostTipListMap() || {};
     await this.getPostTipList(postTipListMap);
-    this.syncRemoteUserProfile(this.postTipList);
     this.isLoading = false;
     this.removeObserveList();
     this.initUserObserVerList(this.postTipList);
@@ -82,17 +81,17 @@ export class PosttiplistPage implements OnInit {
 
   clearUserAvatarSid() {
     if (this.userAvatarSid != null) {
-      clearTimeout(this.userAvatarSid);
+      cancelAnimationFrame(this.userAvatarSid);
       this.userAvatarSid = null;
     }
   }
 
   initUserObserVerList(userDidList = []) {
     this.clearUserAvatarSid();
-    this.userAvatarSid = setTimeout(() => {
+    this.userAvatarSid = requestAnimationFrame(() => {
       this.getUserObserverList(userDidList);
       this.clearUserAvatarSid();
-    }, 100);
+    });
   }
 
   getUserObserverList(userDidList = []) {
@@ -141,8 +140,10 @@ export class PosttiplistPage implements OnInit {
   setUserNameAndAvatarUI(userProfile: FeedsData.UserProfile) {
     const name = userProfile.name || userProfile.resolvedName || userProfile.displayName;
     const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
+    const description = userProfile.bio || userProfile.resolvedBio || '';
     this.setUserNameUI(userProfile.did, name);
     this.setAvatarUI(userProfile.did, avatarUrl);
+    this.setUserDescription(userProfile.did, description);
   }
 
   setUserNameUI(userDid: string, name: string) {
@@ -167,7 +168,7 @@ export class PosttiplistPage implements OnInit {
     }
   }
 
-  setUserAvatar(userDid: string, avatar = './assets/images/default-contact.svg') {
+  setUserAvatar(userDid: string, avatar = './assets/images/did-default-avatar.svg') {
     if (!this.pageItemMap[userDid])
       this.pageItemMap[userDid] = this.generatePageItem(userDid);
     this.pageItemMap[userDid].avatar = avatar;
@@ -179,12 +180,22 @@ export class PosttiplistPage implements OnInit {
     this.pageItemMap[userDid].name = userName;
   }
 
+  setUserDescription(userDid: string, userDescription: string = '') {
+    if (!this.pageItemMap[userDid])
+      this.pageItemMap[userDid] = this.generatePageItem(userDid);
+    this.pageItemMap[userDid].description = userDescription
+  }
+
   setPageItemData(userDid: string) {
     let pageItem = this.pageItemMap[userDid] || '';
     if (!pageItem) {
       this.pageItemMap[userDid] = this.generatePageItem(userDid);
       let simpleDid = userDid.replace('did:elastos:', '');
       this.pageItemMap[userDid].name = UtilService.shortenAddress(simpleDid);
+      let avatar = this.pageItemMap[userDid].avatar || '';
+      if (avatar === '') {
+        this.pageItemMap[userDid].avatar = './assets/images/loading.svg';
+      }
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
         this.setUserNameAndAvatarUI(userProfile);
       }).catch(err=>{
@@ -305,7 +316,6 @@ doRefresh(event: any) {
   let sId = setTimeout(async () => {
     try {
       await this.getPostTipList({});
-      this.syncRemoteUserProfile(this.postTipList);
       this.removeObserveList();
       this.isLoadUsers = {};
       this.initUserObserVerList(this.postTipList);
@@ -314,21 +324,6 @@ doRefresh(event: any) {
     event.target.complete();
     clearTimeout(sId);
   }, 200)
-}
-
-syncRemoteUserProfile(userDidList:  postTipItem[]) {
-  let newUserDidList = _.uniqBy(userDidList,"did");
-  this.syncDidDocumentProfileFromList(newUserDidList);
-}
-
-syncDidDocumentProfileFromList(usersDidList: postTipItem[]) {
-  for (let index = 0; index < usersDidList.length; index++) {
-    let postTipItem:postTipItem = usersDidList[index];
-    const userdid: string = postTipItem.did;
-    this.hiveVaultController.syncUserProfileFromDidDocument(userdid).then((userProfile: FeedsData.UserProfile) => {
-      this.setUserNameAndAvatarUI(userProfile);
-    });
-  }
 }
 
 loadData(event: any) {
@@ -357,7 +352,6 @@ loadData(event: any) {
     let postTipListMap = this.dataHelper.getPostTipListMap() || {};
     postTipListMap[this.postId] = this.postTipList;
     this.dataHelper.saveData("feedsNetWork:post.tip.list",postTipListMap);
-    this.syncRemoteUserProfile(newPostTipList);
     this.initUserObserVerList(newPostTipList);
     event.target.complete();
     clearTimeout(sId);

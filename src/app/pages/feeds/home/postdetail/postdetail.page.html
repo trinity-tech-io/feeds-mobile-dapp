@@ -137,7 +137,7 @@
           <ic-icon [icon]="chatIcon" [size]="24" style="padding-right: 8px"></ic-icon>
           <ion-label>{{ commentsNum }}</ion-label>
         </ion-col>
-        <ion-col (click)="clickDashang()" *ngIf="isAndroid && postTipAdressMap[channelId]" (press)="clickDashangList(channelId, postId)" [style.touch-action]="'pan-y'">
+        <ion-col (click)="clickDashang()" *ngIf="isAndroid && channelPublicStatusList[destDid+'-'+channelId] != undefined && channelPublicStatusList[destDid+'-'+channelId]==='2'" (press)="clickDashangList(channelId, postId)" [style.touch-action]="'pan-y'">
           <img src="/assets/images/tip.svg" *ngIf="!theme.darkMode">
           <img src="/assets/images/darkmode/tip.svg" *ngIf="theme.darkMode">
           <ion-label>{{  postTipCountMap[postId] }}</ion-label>

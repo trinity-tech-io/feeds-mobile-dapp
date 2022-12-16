@@ -40,7 +40,7 @@
         class="left-col"
         (click)="clickSubscription(tipItem.did)"
       >
-        <div  class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
+        <div  class="feedAvatar1" [class.dark-feedAvatar1]="theme.darkMode">
         <img [src] = "pageItemMap[tipItem.did].avatar" *ngIf="pageItemMap[tipItem.did] != null && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].avatar != null && pageItemMap[tipItem.did].avatar != undefined && pageItemMap[tipItem.did].avatar != ''">
       </div>
       </ion-col>
@@ -54,7 +54,7 @@
         ......
       </ion-label>
       <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].name != '' && pageItemMap[tipItem.did].name != undefined">
-        {{ pageItemMap[tipItem.did].name | translate }}
+       @{{ pageItemMap[tipItem.did].name | translate }}
       </ion-label>
       <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].name != '' && pageItemMap[tipItem.did].name != undefined">
         {{ 'PosttiplistPage.tip' | translate }}: {{tipItem.amount}} ELA

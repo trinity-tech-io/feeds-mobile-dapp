@@ -156,7 +156,6 @@ export class PostdetailPage implements OnInit {
   public postTipCountMap: any = {};
   private isLoadingPostTipCountMap: any = {};
   private postTipAdressMap: any = {};
-
   constructor(
     private platform: Platform,
     private popoverController: PopoverController,
