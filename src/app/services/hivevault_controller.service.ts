@@ -2415,37 +2415,43 @@ export class HiveVaultController {
   getUserProfileFromLocal(userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
-        const localProfile = await this.getLocalUserProfile(userDid);
-        if (!localProfile) {
-          resolve(null);
+        const user: FeedsData.UserProfile = await this.dataHelper.getUserProfileData(userDid);
+        if (!user) {
+          const displayName = await this.dataHelper.getDisplayNameByUserDid(userDid);
+          const newUser: FeedsData.UserProfile = {
+            did: userDid,
+            resolvedName: '',
+            resolvedAvatar: '',
+            resolvedBio: '',
+            displayName: displayName,
+            name: '',
+            avatar: '',
+            bio: '',
+            updatedAt: 0
+          }
+          this.dataHelper.addUserProfile(newUser);
+          resolve(newUser);
           return;
         }
-        resolve(localProfile);
 
-        try {
-          if (!localProfile.updatedAt || localProfile.updatedAt == 0)
-            this.getRemoteUserProfileWithSave(userDid);
-        } catch (error) {
+        if (!user.displayName) {
+          const displayName = await this.dataHelper.getDisplayNameByUserDid(userDid);
+          const newUser: FeedsData.UserProfile = {
+            did: userDid,
+            resolvedName: user.resolvedName,
+            resolvedAvatar: user.resolvedAvatar,
+            resolvedBio: user.resolvedBio,
+            displayName: displayName,
+            name: user.name,
+            avatar: user.avatar,
+            bio: user.bio,
+            updatedAt: user.updatedAt
+          }
+          this.dataHelper.addUserProfile(newUser);
+          resolve(newUser);
+          return;
         }
-
-        try {
-          if (!localProfile.resolvedName && !localProfile.resolvedBio && !localProfile.resolvedAvatar)
-            this.syncUserProfileFromDidDocument(userDid);
-        } catch (error) {
-        }
-
-        // try {
-        //   const remoteProfile = await this.getRemoteUserProfileWithSave(userDid);
-        //   if (remoteProfile) {
-        //     resolve(remoteProfile);
-        //     return;
-        //   }
-        // } catch (error) {
-        // }
-
-
-        // const newLocalProfile = await this.getLocalUserProfile(userDid);
-        // resolve(newLocalProfile);
+        resolve(user);
       } catch (error) {
         reject(error);
       }
@@ -2911,7 +2917,7 @@ export class HiveVaultController {
           resolve(null);
           return;
         }
-        resolve(subscribedChannels);
+        resolve(result);
       } catch (error) {
         Logger.error(TAG, error);
         reject(error);
