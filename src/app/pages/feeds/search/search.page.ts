@@ -64,6 +64,8 @@ export class SearchPage implements OnInit {
   public subscribedChannelMap: any = {};
   private pageSize: number = 9;
   private channelNftTotalNum: number = 0;
+  private isCache: boolean = false;
+  private totalCache: any = [];
   constructor(
     private feedService: FeedService,
     private events: Events,
@@ -167,8 +169,8 @@ export class SearchPage implements OnInit {
     }
 
     let channelCollectionPageList = this.dataHelper.getChannelCollectionPageList() || [];
-    console.log("=======channelCollectionPageList=======", channelCollectionPageList);
     if (channelCollectionPageList.length === 0) {
+      this.isCache = false;
       this.handleRefresherInfinite(true);
       try {
         this.pageNum = 1;
@@ -187,14 +189,22 @@ export class SearchPage implements OnInit {
         this.handleRefresherInfinite(false);
       }
     } else {
+      this.isCache = true;
+      this.pageNum = 1;
       this.handleRefresherInfinite(true);
       try {
-        this.channelCollectionPageList = channelCollectionPageList;
+        this.totalCache = channelCollectionPageList;
+        let data = UtilService.getPageData(this.pageNum, this.pageSize, this.totalCache);
+        if (data.currentPage === data.totalPage) {
+          this.channelCollectionPageList = data.items;
+        } else {
+          this.channelCollectionPageList = data.items;
+        }
+        //this.channelCollectionPageList = channelCollectionPageList;
         this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
         this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
         this.isLoading = false;
         this.handleRefresherInfinite(false);
-        this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
       } catch (error) {
         this.isLoading = false;
         this.handleRefresherInfinite(false);
@@ -306,15 +316,21 @@ export class SearchPage implements OnInit {
 
   async doRefresh(event: any) {
     try {
+      this.isCache = false;
       this.pageNum = 1;
       this.channelCollectionPageList = await this.getChannelNftList();
+      if (this.pageNum * this.pageSize < this.channelNftTotalNum) {
+        this.pageNum++;
+      }
       this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
       this.dataHelper.setChannelCollectionPageList(this.channelCollectionPageList);
       this.removeObserveList();
       this.refreshChannelCollectionAvatar(this.channelCollectionPageList);
       event.target.complete();
+      this.handleRefresherInfinite(false);
     } catch (error) {
       event.target.complete();
+      this.handleRefresherInfinite(false);
     }
   }
 
@@ -461,7 +477,7 @@ export class SearchPage implements OnInit {
       if (postItem === null) {
         return;
       }
-      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.channelSource + "-" + index + '-search';
+      let postGridId = postItem.destDid + "-" + postItem.channelId + "-" + postItem.channelSource + '-search';
       let exit = this.searchObserver[postGridId] || null;
       if (exit != null) {
         continue;
@@ -491,10 +507,9 @@ export class SearchPage implements OnInit {
         let destDid: string = arr[0];
         let channelId: string = arr[1];
         let channelSource: string = arr[2];
-        let channelIndex: number = arr[3];
         this.getDisplayName(destDid, channelId, destDid);
         this.handleSearchAvatarV2(destDid, channelId, channelSource);
-        this.checkChannelHiveValutStatus(destDid, channelId, channelIndex);
+        this.checkChannelHiveValutStatus(destDid, channelId);
       });
 
       this.searchObserver[postGridId].observe(item);
@@ -544,7 +559,6 @@ export class SearchPage implements OnInit {
                         }
                         this.searchIsLoadimage[id] = '13';
                       } else {
-
                         srcData = await UtilService.blobToDataURL(avatar);
                         let finalresult = srcData;
                         if (srcData.startsWith('data:null;base64,'))
@@ -633,18 +647,30 @@ export class SearchPage implements OnInit {
   }
 
   async loadData(event: any) {
+    if (this.isCache) {
+      this.pageNum++;
+      let data = UtilService.getPageData(this.pageNum, this.pageSize, this.totalCache);
+      if (data.currentPage === data.totalPage) {
+        this.channelCollectionPageList = this.channelCollectionPageList.concat(data.items);
+        this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+        this.refreshChannelCollectionAvatar(data.items);
+        event.target.disabled = true;
+      } else {
+        this.channelCollectionPageList = this.channelCollectionPageList.concat(data.items);
+        this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
+        this.refreshChannelCollectionAvatar(data.items);
+      }
+      event.target.complete();
+      return;
+    }
     try {
-      if (this.pageNum * this.pageSize >= this.channelNftTotalNum) {
-        if (event != null) {
-          event.target.complete();
-        }
+      if (this.channelCollectionPageList.length >= this.channelNftTotalNum) {
+        event.target.complete();
         return;
       }
       let channelCollectionPageList = [];
       channelCollectionPageList = await this.getChannelNftList() || [];
-      if (this.pageNum * this.pageSize < this.channelNftTotalNum) {
-        this.pageNum++;
-      }
+      this.pageNum++;
       if (channelCollectionPageList.length > 0) {
         this.channelCollectionPageList = this.channelCollectionPageList.concat(channelCollectionPageList);
         this.searchChannelCollectionPageList = _.cloneDeep(this.channelCollectionPageList);
@@ -729,27 +755,32 @@ export class SearchPage implements OnInit {
         newChannelInfo.avatar = channelNft.data.avatar || '';
         newChannelInfo.displayName = channelNft.data.cname || '';
         newChannelInfo.tipping_address = channelNft.receiptAddr || '';
-        console.log('==========', channelNftIndex, newChannelInfo);
         newArr.push(newChannelInfo);
       }
     }
     return newArr;
   }
 
-  checkChannelHiveValutStatus(destDid: string, channelId: string, channelIndex: number) {
-    try {
-      this.hiveVaultController.getChannelV3ByIdFromRemote(destDid, channelId).then((channelInfo: any) => {
-        channelInfo = channelInfo || null;
-        if (channelInfo === null) {
+  checkChannelHiveValutStatus(destDid: string, channelId: string) {
+    let channelIndex = _.findIndex(this.channelCollectionPageList, (item: any) => {
+      return item.channelId === channelId
+    });
+    let hiveVault = this.channelCollectionPageList[channelIndex].hiveVault || '';
+    if (hiveVault === '') {
+      try {
+        this.hiveVaultController.getChannelV3ByIdFromRemote(destDid, channelId).then((channelInfo: any) => {
+          channelInfo = channelInfo || null;
+          if (channelInfo === null) {
+            this.channelCollectionPageList[channelIndex].hiveVault = "noExit";
+          } else {
+            this.channelCollectionPageList[channelIndex].hiveVault = "exit";
+          }
+        }).catch((err) => {
           this.channelCollectionPageList[channelIndex].hiveVault = "noExit";
-        } else {
-          this.channelCollectionPageList[channelIndex].hiveVault = "exit";
-        }
-      }).catch((err) => {
+        });
+      } catch (error) {
         this.channelCollectionPageList[channelIndex].hiveVault = "noExit";
-      });
-    } catch (error) {
-      this.channelCollectionPageList[channelIndex].hiveVault = "noExit";
+      }
     }
   }
 }
