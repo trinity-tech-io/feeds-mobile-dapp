@@ -2739,9 +2739,7 @@ export class HiveVaultHelper {
     private querySubscribedChannels(targetDid: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log('targetDid====>', targetDid);
                 let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_SUBSCRIBED_CHANNELS, {})
-                console.log('result====>', result);
                 resolve(result)
             } catch (error) {
                 Logger.error(TAG, 'Call query subscribed channels error:', error)

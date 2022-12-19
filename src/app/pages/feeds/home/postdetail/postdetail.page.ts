@@ -501,12 +501,12 @@ export class PostdetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.zone.run(() => {
-      const initTimmer = setTimeout(() => {
+    //this.zone.run(() => {
+      //const initTimmer = setTimeout(() => {
         this.initial();
-        clearTimeout(initTimmer);
-      }, 300);
-    });
+        //clearTimeout(initTimmer);
+      //}, 300);
+    //});
   }
 
   ionViewWillLeave() {
