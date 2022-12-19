@@ -30,7 +30,6 @@ let TAG: string = 'Feeds-postview';
   styleUrls: ['./postdetail.page.scss'],
 })
 export class PostdetailPage implements OnInit {
-  @ViewChild('comment', { static: false }) comment: IonTextarea;
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonInfiniteScroll, { static: true })
   infiniteScroll: IonInfiniteScroll;
@@ -502,10 +501,10 @@ export class PostdetailPage implements OnInit {
 
   ionViewWillEnter() {
     //this.zone.run(() => {
-      //const initTimmer = setTimeout(() => {
-        this.initial();
-        //clearTimeout(initTimmer);
-      //}, 300);
+    //const initTimmer = setTimeout(() => {
+    this.initial();
+    //clearTimeout(initTimmer);
+    //}, 300);
     //});
   }
 
@@ -586,11 +585,10 @@ export class PostdetailPage implements OnInit {
     if (this.hideComment) {
       this.hideComment = false;
     } else {
-      let comment1: any = document.getElementById("newComment") || null;
-      if (comment1 != null) {
-        comment1.setFocus();
-      }
-
+      //  let comment1:any =  document.getElementById("newComment") || null;
+      //  if(comment1 != null){
+      //     comment1.setFocus();
+      //  }
     }
 
     if (comment === null) {

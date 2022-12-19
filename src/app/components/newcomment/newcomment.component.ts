@@ -55,11 +55,11 @@ export class NewcommentComponent implements OnInit {
       this.isAndroid = "android";
     }
     //this.parseAvatar();
-    this.clearSetFocusSid();
-    this.setFocusSid = setTimeout(() => {
-      this.comment.setFocus();
-      this.clearSetFocusSid();
-    }, 500);
+    // this.clearSetFocusSid();
+    // this.setFocusSid = setTimeout(() => {
+    //   this.comment.setFocus();
+    //   this.clearSetFocusSid();
+    // }, 500);
   }
 
   clearSetFocusSid() {
@@ -147,18 +147,18 @@ export class NewcommentComponent implements OnInit {
         this.clickButton = false;
         //this.hideComponent();
         this.events.publish(FeedsEvent.PublishType.getCommentFinish, comment);
-        this.comment.setFocus();
+        //this.comment.setFocus();
       }).catch((error) => {
         this.native.handleHiveError(error, 'common.createCommentFail');
         this.clickButton = false;
         this.native.hideLoading();
-        this.comment.setFocus();
+        //this.comment.setFocus();
       })
     } catch (error) {
       this.native.handleHiveError(error, 'common.createCommentFail');
       this.clickButton = false;
       this.native.hideLoading();
-      this.comment.setFocus();
+      //this.comment.setFocus();
     }
 
   }
