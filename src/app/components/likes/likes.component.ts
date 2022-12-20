@@ -183,14 +183,6 @@ export class LikesComponent implements OnInit {
     });
   }
 
-  async parseAvatar(destDid: string, channelId: string): Promise<string> {
-
-    let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(destDid, channelId) || null;
-
-    if (channel === null) return './assets/icon/reserve.svg';
-    return channel.avatar;
-  }
-
   handleDisplayTime(postId: string, createTime: number) {
     let newPostTime = this.postTime[postId] || null;
     if (newPostTime != null) {

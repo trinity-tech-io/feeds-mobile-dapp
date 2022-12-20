@@ -5,7 +5,6 @@
     <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
         Trinity Tech Co., Ltd.
     </author>
-    <allow-navigation href="*" />
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />

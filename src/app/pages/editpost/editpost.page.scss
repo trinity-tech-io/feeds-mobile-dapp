@@ -27,7 +27,10 @@
         position: relative;
         width: 45%;
         height: 100px;
-
+        -o-object-fit: cover;
+        object-fit: cover;
+        background-color: #0A0710;
+        border-radius: 9px;
         img {
             width: 100%;
             height: 100%;

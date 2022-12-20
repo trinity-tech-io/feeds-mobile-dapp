@@ -203,7 +203,7 @@ export class EditPostPage implements OnInit {
   }
 
   getImage(post: FeedsData.PostV3) {
-    this.imgUrl = './assets/icon/reserve.svg';//set Reserve Image
+    //this.imgUrl = './assets/icon/reserve.svg';//set Reserve Image
     let mediaDatas = post.content.mediaData;
     const elements = mediaDatas[0];
     let thumbnailKey = elements.thumbnailPath;

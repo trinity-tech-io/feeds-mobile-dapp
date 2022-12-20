@@ -59,9 +59,9 @@
         <ion-col size="0.5"></ion-col>
       </ion-row>
        <!--img video--->
-      <ion-row class="mid-row">
+      <ion-row class="mid-row" *ngIf="mediaType === 1 || mediaType === 2">
         <ion-col size="12">
-          <div style="position:relative;width: 100%;">
+          <div class="noLoadImgStyle" style="margin-top: 10px">
             <app-percentageloading
             *ngIf="isImgPercentageLoading"
             [ngStyle]="imgloadingStyleObj"

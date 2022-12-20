@@ -22,12 +22,12 @@
     <ion-textarea  #newPostIonTextarea  autoGrow="true"  placeholder="{{'CreatenewpostPage.des'|translate}}" [(ngModel)]="editContent"  [ngClass]="{'borderGradient':isBorderGradient}"  (ionBlur)="ionBlur()" (ionFocus)="ionFocus()">
     </ion-textarea>
     </div>
-    <div *ngIf="imgUrl !== ''" class="img-container">
+    <div *ngIf="mediaType === 1 && imgUrl !== ''" class="img-container">
       <img src="{{imgUrl}}" (click)="showBigImage(imgUrl)" />
     </div>
 
 
-    <div *ngIf="posterImg!==''" style="width: 320px;height:200px;margin: 0 auto;">
+    <div *ngIf="mediaType === 2 && posterImg!==''" style="width: 320px;height:200px;margin: 0 auto;">
 
       <vg-player>
         <vg-overlay-play id={{destDid+channelId+postId}}vgoverlayplayeditpost></vg-overlay-play>

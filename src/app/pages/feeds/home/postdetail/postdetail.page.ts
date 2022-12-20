@@ -179,6 +179,11 @@ export class PostdetailPage implements OnInit {
 
 
   async initData(isInit: boolean) {
+
+    if(this.channelAvatar === ''){
+      this.channelAvatar = './assets/images/loading.svg'
+    }
+
     try {
       this.getDisplayName(this.destDid, this.channelId, this.destDid);
     } catch (error) {
@@ -197,11 +202,11 @@ export class PostdetailPage implements OnInit {
     if (!channel) {
       channel = await this.hiveVaultController.getChannelV3ByIdFromRemote(this.destDid, this.channelId);
     }
+
     this.channelOwner = channel.destDid || '';
     this.channelOwnerName = this.indexText(channel.destDid);
     this.channelWName = channel['displayName'] || channel['name'] || '';
     this.channelName = channel['displayName'] || channel['name'] || '';
-    //this.userNameMap[this.channelOwner] = this.channelName;
     let channelAvatarUri = channel['avatar'] || '';
     if (channelAvatarUri != '') {
       this.channelAvatarUri = channelAvatarUri;
@@ -241,9 +246,6 @@ export class PostdetailPage implements OnInit {
 
   handleChannelAvatar(channelAvatarUri: string) {
     let fileName: string = channelAvatarUri.split("@")[0];
-    if (this.channelAvatar === '') {
-      this.channelAvatar = './assets/images/loading.svg';
-    }
     this.hiveVaultController.getV3Data(this.destDid, channelAvatarUri, fileName, "0")
       .then((result) => {
         result = result || '';
@@ -795,7 +797,6 @@ export class PostdetailPage implements OnInit {
   }
 
   getImage(post: FeedsData.PostV3) {
-    this.postImage = './assets/icon/reserve.svg';//set Reserve Image
     let mediaDatas = post.content.mediaData;
     const elements = mediaDatas[0];
     //原图
