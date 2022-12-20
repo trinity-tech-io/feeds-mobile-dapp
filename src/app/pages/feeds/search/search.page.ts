@@ -549,14 +549,14 @@ export class SearchPage implements OnInit {
       }
       let nenChannel = this.channelCollectionPageList[channelIndex] || null;
       if (nenChannel != null) {
-        if (nenChannel.avatar === './assets/images/loading.svg') {
+        if (nenChannel.avatar === '') {
           this.channelAvatarMap[id] = './assets/images/profile-0.svg';
         } else {
           if (nenChannel.avatar.indexOf("feeds:image:") > -1) {
-            let channelAvatar = this.channelAvatarMap[id] || '';
-            if (channelAvatar === '') {
-              this.channelAvatarMap[id] = './assets/images/loading.svg';
-            }
+            // let channelAvatar = this.channelAvatarMap[id] || '';
+            // if (channelAvatar === '') {
+            //   this.channelAvatarMap[id] = './assets/images/loading.svg';
+            // }
             let avatarUri = nenChannel.avatar.replace('feeds:image:', '');
             let fetchUrl = this.ipfsService.getNFTGetUrl() + avatarUri;
             this.fileHelperService.getNFTAvatar(fetchUrl, avatarUri)
