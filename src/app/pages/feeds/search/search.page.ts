@@ -67,6 +67,9 @@ export class SearchPage implements OnInit {
   private isCache: boolean = false;
   private totalCache: any = [];
   private isLoadHiveStatus: any = {};
+  private unsubscribeDialog: any = null;
+  private destDid: string = "";
+  private channelId: string = "";
   constructor(
     private feedService: FeedService,
     private events: Events,
@@ -676,7 +679,9 @@ export class SearchPage implements OnInit {
 
       if (destDid != userDid) {
         let channelName = channelCollection.displayName || channelCollection.name || '';
-        this.menuService.showChannelMenu(destDid, channelId, userDid, channelName);
+        this.destDid = destDid;
+        this.channelId = channelId;
+        await this.showUnsubscribeDialog(channelName);
       } else {
         this.native.toast_trans('common.unableUnsubscribe');
       }
@@ -761,5 +766,54 @@ export class SearchPage implements OnInit {
         this.isLoadHiveStatus[channelId] = "";
       }
     }
+  }
+
+  async showUnsubscribeDialog(channelName: string) {
+
+    this.unsubscribeDialog = await this.popupProvider.ionicConfirm(
+      this,
+      'common.unsubscribeChannel',
+      'common.unsubscribeChannelDes',
+      this.unsubscribeDialogCancel,
+      this.unsubscribeDialogConfirm,
+      './assets/images/unsubscribeChannel.svg',
+      'common.yes',
+      '',
+      channelName
+    );
+  }
+
+  async unsubscribeDialogCancel(that: any){
+    if (that.unsubscribeDialog != null) {
+      await that.unsubscribeDialog.dismiss();
+      that.unsubscribeDialog = null;
+    }
+  }
+
+  async unsubscribeDialogConfirm(that: any){
+    if (that.unsubscribeDialog != null) {
+      await that.unsubscribeDialog.dismiss();
+      that.unsubscribeDialog = null;
+    }
+    //
+    that.native.showLoading("common.waitMoment").then(() => {
+      try {
+        that.hiveVaultController.unSubscribeChannel(
+          that.destDid, that.channelId
+        ).then(async (result) => {
+          let channel: FeedsData.BackupSubscribedChannelV3 = {
+            destDid: that.destDid,
+            channelId: that.channelId
+          };
+          that.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+          that.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
+          that.native.hideLoading();
+        }).catch(() => {
+          that.native.hideLoading();
+        });
+      } catch (error) {
+        that.native.hideLoading();
+      }
+    });
   }
 }
