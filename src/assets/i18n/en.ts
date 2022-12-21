@@ -226,7 +226,7 @@ export const en = {
     tippingFailed: 'Tipping Failed',
     tippingSucess: 'Tipping Sucess',
     post: 'Post',
-    unsubscribeChannel: 'unsubscribe',
+    unsubscribeChannel: 'Unsubscribe',
     unsubscribeChannelDes: 'Are you sure you want to unsubscribe channel?',
     tipPostTimeoutDesc: 'Tipping post timeout, you can confirm later'
   },
