@@ -5,7 +5,9 @@
     </ion-col>
     <ion-col size="12" *ngIf="channelAvatar!=''" style="display:flex;justify-content: center;">
       <div class="feedAvatar" [class.dark-feedAvatar]="theme.darkMode">
-        <img src={{channelAvatar}}>
+        <img
+        class="customizeAvatar"
+        src={{channelAvatar}}>
       </div>
     </ion-col>
     <ion-col size="12" *ngIf="channelName!=''">
