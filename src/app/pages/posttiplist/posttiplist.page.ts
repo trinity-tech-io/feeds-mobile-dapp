@@ -156,14 +156,17 @@ export class PosttiplistPage implements OnInit {
 
   setAvatarUI(userDid: string, avatarUrl: string) {
     if (avatarUrl) {
-      let fileName: string = userDid.replace('did:elastos:', '');
-      this.hiveVaultController.getV3HiveUrlData(userDid)
+      this.hiveVaultController.getV3HiveUrlData(avatarUrl)
         .then((image) => {
-          this.setUserAvatar(userDid, image);
+          if (!image || image == 'null') {
+            this.setUserAvatar(userDid);
+          } else {
+            this.setUserAvatar(userDid, image);
+          }
         }).catch((err) => {
-           this.setUserAvatar(userDid);
+          this.setUserAvatar(userDid);
         })
-    }else{
+    } else {
       this.setUserAvatar(userDid);
     }
   }

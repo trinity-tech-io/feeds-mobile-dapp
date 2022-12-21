@@ -41,7 +41,9 @@
         (click)="clickSubscription(tipItem.did)"
       >
         <div  class="feedAvatar1" [class.dark-feedAvatar1]="theme.darkMode">
-        <img [src] = "pageItemMap[tipItem.did].avatar" *ngIf="pageItemMap[tipItem.did] != null && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].avatar != null && pageItemMap[tipItem.did].avatar != undefined && pageItemMap[tipItem.did].avatar != ''">
+        <img
+        class="customizeAvatar"
+        [src] = "pageItemMap[tipItem.did].avatar" *ngIf="pageItemMap[tipItem.did] != null && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].avatar != null && pageItemMap[tipItem.did].avatar != undefined && pageItemMap[tipItem.did].avatar != ''">
       </div>
       </ion-col>
       <ion-col
@@ -56,11 +58,11 @@
       <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].name != '' && pageItemMap[tipItem.did].name != undefined">
        @{{ pageItemMap[tipItem.did].name | translate }}
       </ion-label>
-      <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].name != '' && pageItemMap[tipItem.did].name != undefined">
-        {{ 'PosttiplistPage.tip' | translate }}: {{tipItem.amount}} ELA
-      </ion-label>
-      <div class="displayName" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].description != '' && pageItemMap[tipItem.did].description != undefined">
+      <div class="displayDes" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].description != '' && pageItemMap[tipItem.did].description != undefined">
         {{  pageItemMap[tipItem.did].description }}
+      </div>
+      <div class="displayDes" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].name != '' && pageItemMap[tipItem.did].name != undefined">
+        {{ 'PosttiplistPage.tip' | translate }}: {{tipItem.amount}} ELA
       </div>
       </ion-col>
       <ion-ripple-effect></ion-ripple-effect>
