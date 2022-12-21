@@ -147,6 +147,7 @@ export class NewcommentComponent implements OnInit {
         this.clickButton = false;
         //this.hideComponent();
         this.events.publish(FeedsEvent.PublishType.getCommentFinish, comment);
+        this.newComment = '';
         //this.comment.setFocus();
       }).catch((error) => {
         this.native.handleHiveError(error, 'common.createCommentFail');

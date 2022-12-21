@@ -1655,6 +1655,8 @@ export class PostdetailPage implements OnInit {
       }).catch(() => {
         this.showComment(null);
       })
+    }else{
+      this.showComment(null);
     }
   }
 
