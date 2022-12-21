@@ -240,7 +240,8 @@ export const en = {
     settings: 'Settings',
     privacyPolicy: 'Privacy Policy',
     deleteAccount: 'Delete Account',
-    termsOfService: 'Terms of Service'
+    termsOfService: 'Terms of Service',
+    credentials: 'Credentials'
   },
   SigninPage: {
     signIn: 'Sign In',

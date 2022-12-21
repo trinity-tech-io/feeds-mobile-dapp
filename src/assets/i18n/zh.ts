@@ -240,7 +240,8 @@ export const zh = {
     settings: '设置',
     privacyPolicy: '隐私政策',
     deleteAccount: '删除账号',
-    termsOfService: '条款'
+    termsOfService: '条款',
+    credentials: '凭证'
   },
   SigninPage: {
     signIn: '登录',
