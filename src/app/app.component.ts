@@ -911,4 +911,7 @@ export class MyApp {
 
   preventDefault(e: any) { e.preventDefault(); };
 
+  navToCredentialsSettingPage() {
+    this.native.navigateForward('credentials', '');
+  }
 }

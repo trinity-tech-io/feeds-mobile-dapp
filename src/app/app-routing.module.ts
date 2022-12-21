@@ -241,6 +241,10 @@ const routes: Routes = [
     path: 'posttiplist',
     loadChildren: () => import('./pages/posttiplist/posttiplist.module').then(m => m.PosttiplistPageModule)
   },
+  {
+    path: 'credentials',
+    loadChildren: () => import('./pages/credentials/credentials.module').then( m => m.CredentialsPageModule)
+  },
 ];
 
 @NgModule({
