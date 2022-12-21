@@ -16,6 +16,7 @@ export class ConfirmdialogComponent implements OnInit {
   public that: any;
   public imgPath: string = '';
   public channelName: string = '';
+  public isShowHeight: boolean = false;
   constructor(public theme: ThemeService, private navParams: NavParams) {
     this.that = this.navParams.get('that');
     this.title = this.navParams.get('title') || 'common.confirmDialog';
@@ -29,6 +30,10 @@ export class ConfirmdialogComponent implements OnInit {
     this.imgPath =
       this.navParams.get('imgageName') || './assets/images/tskth.svg';
     this.channelName =  this.navParams.get('channelName') || '';
+
+    if(this.imgPath === './assets/images/finish.gif'){
+      this.isShowHeight = true;
+    }
   }
 
   ngOnInit() {}

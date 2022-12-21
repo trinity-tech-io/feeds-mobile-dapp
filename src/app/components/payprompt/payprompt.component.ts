@@ -157,7 +157,7 @@ export class PaypromptComponent implements OnInit {
       'common.editedContentDes',
       this.cancelButton,
       this.okButton,
-      './assets/images/finish.svg',
+      './assets/images/finish.gif',
       'common.editedContentDes1',
       "common.editedContentDes2"
     );

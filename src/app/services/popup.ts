@@ -117,6 +117,7 @@ export class PopupProvider {
     cancelText?: string,
     channelName?: string,
   ): Promise<HTMLIonPopoverElement> {
+    channelName = channelName || '';
     this.popover = await this.popoverController.create({
       mode: 'ios',
       cssClass: 'ConfirmdialogComponent',
