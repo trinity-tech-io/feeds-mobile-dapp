@@ -892,5 +892,9 @@ export const en = {
     title: 'Post Tip List',
     tip: 'Tipping',
     allempty: 'No one has tipping yet'
+  },
+  Credentials: {
+    desc: 'Please choose any DID credentials you wish to display on your public profile.',
+    kycme: 'KYC-me'
   }
 };
