@@ -61,7 +61,7 @@ export class ChannelTippingContractService {
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        Logger.log(TAG, 'burn params ', channelId, postId, paidToken, amount, senderUri, memo);
+        Logger.log(TAG, 'makeTipping params ', channelId, postId, paidToken, amount, senderUri, memo);
         const makeTippingdata = this.channelTippingContract.methods
           .makeTipping(channelId, postId, paidToken, amount, senderUri, memo)
           .encodeABI();
@@ -101,7 +101,7 @@ export class ChannelTippingContractService {
           resolve(info);
         });
       } catch (error) {
-        Logger.error(TAG, 'burn error', error);
+        Logger.error(TAG, 'makeTipping error', error);
         reject(error);
       }
     });

@@ -227,7 +227,8 @@ export const en = {
     tippingSucess: 'Tipping Sucess',
     post: 'Post',
     unsubscribeChannel: 'unsubscribe',
-    unsubscribeChannelDes: 'Are you sure you want to unsubscribe channel?'
+    unsubscribeChannelDes: 'Are you sure you want to unsubscribe channel?',
+    tipPostTimeoutDesc: 'Tipping post timeout, you can confirm later'
   },
   app: {
     profileDetails: 'Profile Details',

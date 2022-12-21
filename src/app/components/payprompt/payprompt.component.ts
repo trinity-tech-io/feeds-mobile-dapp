@@ -207,7 +207,7 @@ export class PaypromptComponent implements OnInit {
      textObj.isLoading = false;
      this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
      this.clearTippingChannelSid();
-     this.popupProvider.showSelfCheckDialog('common.burningNFTSTimeoutDesc');
+     this.popupProvider.showSelfCheckDialog('common.tipPostTimeoutDesc');
    }, Config.WAIT_TIME_BURN_NFTS);
 
    let channelId = '0x'+this.channelId;
