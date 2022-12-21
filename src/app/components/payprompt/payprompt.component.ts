@@ -73,10 +73,9 @@ export class PaypromptComponent implements OnInit {
       }
     }
     this.amount = this.navParams.get('amount') || "";
-    this.elaAddress = this.navParams.get('elaAddress');
+    this.elaAddress = this.navParams.get('elaAddress') || '';
     this.memo = this.defalutMemo = this.navParams.get('defalutMemo') || "";
     this.title = this.navParams.get('title');
-
     if (this.defalutMemo != '') {
       this.isAdvancedSetting = true;
     }
@@ -170,6 +169,7 @@ export class PaypromptComponent implements OnInit {
       that.events.publish(FeedsEvent.PublishType.openPayPrompt, {
         destDid: that.destDid,
         channelId: that.channelId,
+        postId: that.postId,
         elaAddress: that.elaAddress,
         amount: that.amount,
         memo: that.memo
