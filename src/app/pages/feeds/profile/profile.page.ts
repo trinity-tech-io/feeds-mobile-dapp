@@ -570,7 +570,7 @@ export class ProfilePage implements OnInit {
       // if (!this.collectiblesList || this.collectiblesList.length == 0) {
       //   await this.getCollectiblesList();
       // }
-
+      this.isLoadingPostTipCountMap = {};
       this.addProflieEvent();
       this.isAddProfile = true;
     });
@@ -663,6 +663,7 @@ export class ProfilePage implements OnInit {
 
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
+    this.isLoadingPostTipCountMap = {};
     this.isInitComment = {};
     this.curItem = {};
     this.curPostId = '';
@@ -2744,8 +2745,11 @@ export class ProfilePage implements OnInit {
             postTipCountMap[postId] = postTipCont;
             this.dataHelper.setPostTipCountMap(postTipCountMap);
           }).catch((err) => {
-            this.postTipCountMap[postId] = 0;
-            postTipCountMap[postId] = 0;
+            let postTipCount = postTipCountMap[postId] || '';
+            if(postTipCount === ''){
+              this.postTipCountMap[postId] = 0;
+              postTipCountMap[postId] = 0;
+            }
             this.dataHelper.setPostTipCountMap(postTipCountMap);
           });
       } else {

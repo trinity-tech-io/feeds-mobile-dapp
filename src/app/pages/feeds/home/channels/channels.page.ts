@@ -595,6 +595,7 @@ export class ChannelsPage implements OnInit {
     this.isInitLikeNum = {};
     this.isInitLikeStatus = {};
     this.isInitComment = {};
+    this.isLoadingPostTipCountMap = {};
     this.postMap = {};
     this.pinnedPostMap = {};
     this.isLoadPinnedPost = {};
@@ -1752,8 +1753,11 @@ export class ChannelsPage implements OnInit {
             postTipCountMap[postId] = postTipCont;
             this.dataHelper.setPostTipCountMap(postTipCountMap);
           }).catch((err) => {
-            this.postTipCountMap[postId] = 0;
-            postTipCountMap[postId] = 0;
+            let postTipCount = postTipCountMap[postId] || '';
+            if(postTipCount === ''){
+              this.postTipCountMap[postId] = 0;
+              postTipCountMap[postId] = 0;
+            }
             this.dataHelper.setPostTipCountMap(postTipCountMap);
           });
       } else {

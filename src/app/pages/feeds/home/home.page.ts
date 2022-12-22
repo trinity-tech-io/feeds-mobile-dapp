@@ -412,6 +412,7 @@ export class HomePage implements OnInit {
 
     this.events.subscribe(FeedsEvent.PublishType.updateTab, isInit => {
       this.zone.run(() => {
+        this.isLoadingPostTipCountMap = {};
         if (isInit) {
           this.initPostListData(true);
           return;
@@ -658,7 +659,7 @@ export class HomePage implements OnInit {
     this.isInitLikeStatus = {};
     this.isInitComment = {};
     this.postTime = {};
-
+    this.isLoadingPostTipCountMap = {};
     let isImgPercentageLoadingkeys: string[] = Object.keys(this.isImgPercentageLoading) || [];
     for (let index = 0; index < isImgPercentageLoadingkeys.length; index++) {
       const key = isImgPercentageLoadingkeys[index];
@@ -2648,8 +2649,11 @@ export class HomePage implements OnInit {
             postTipCountMap[postId] = postTipCont;
             this.dataHelper.setPostTipCountMap(postTipCountMap);
           }).catch((err) => {
-            this.postTipCountMap[postId] = 0;
-            postTipCountMap[postId] = 0;
+            let postTipCount = postTipCountMap[postId] || '';
+            if(postTipCount === ''){
+              this.postTipCountMap[postId] = 0;
+              postTipCountMap[postId] = 0;
+            }
             this.dataHelper.setPostTipCountMap(postTipCountMap);
           });
       } else {
