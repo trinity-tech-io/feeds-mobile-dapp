@@ -660,6 +660,7 @@ export class SearchPage implements OnInit {
       }
       event.target.complete();
     } catch (error) {
+      this.pageNum--;
       event.target.complete();
     }
   }
