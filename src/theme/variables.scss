@@ -935,6 +935,10 @@ ion-row {
       }
     }
   }
+  .post-text-body{
+    padding-left: calc((1/24)*100%);
+    padding-right: calc((1/24)*100%);
+  }
 }
 
 .darkPostGrid {

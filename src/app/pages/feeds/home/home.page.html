@@ -107,7 +107,7 @@
 
   <!-- HAS POSTS  -->
   <div *ngIf="postList.length > 0 && !this.isPostLoading && syncHiveDataStatus === 6">
-    <div  *ngFor="let post of postList let i=index" >
+    <div *ngFor="let post of postList let i=index" >
     <ion-grid style="padding-top: 0px;" class="post-grid ion-activatable ripple" [class.darkPostGrid]="theme.darkMode"
       [class.removeBorder]="post === postList[postList.length - 1]" [class.blur]="!hideComment"
       id={{post.destDid}}-{{post.channelId}}-{{post.postId}}-{{post.content.mediaType}}-home>
@@ -151,10 +151,7 @@
       </ion-row>
       <!--- text -->
       <ion-row *ngIf="post.content.content !='' ">
-        <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')">
-
-        </ion-col>
-        <ion-col size="11" class="postText">
+        <ion-col size="12" class="postText post-text-body">
           <h2 *ngIf="post.status!=1">
             <div *ngIf="getPostContentTextSize(post.content.content)<=maxTextSize"
               (click)="navToPostDetail(post.destDid, post.channelId, post.postId,$event)">
@@ -169,9 +166,6 @@
           <h2 (click)="navToPostDetail(post.destDid, post.channelId, post.postId, '')" *ngIf="post.status===1">
             <pre>{{'common.deleted' | translate}}</pre>
           </h2>
-        </ion-col>
-        <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId,'')">
-
         </ion-col>
       </ion-row>
      <!--- img  video-->
