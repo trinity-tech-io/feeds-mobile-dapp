@@ -122,10 +122,7 @@
       </ion-row>
       <!--text-->
       <ion-row *ngIf="post.content.content !='' ">
-        <ion-col size="0.5">
-
-        </ion-col>
-        <ion-col size="11" class="postText">
+        <ion-col size="12" class="postText post-text-body">
           <h2 *ngIf="post.status === 1"  (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
             <pre>{{'common.deleted' | translate}}</pre>
           </h2>
@@ -138,9 +135,6 @@
               <pre  style="color:#368bff;">{{"common.fulltext" | translate }}</pre>
             </div>
           </h2>
-        </ion-col>
-        <ion-col size="0.5" (click)="navToPostDetail(post.destDid, post.channelId, post.postId)">
-
         </ion-col>
       </ion-row>
       <!--img video-->
