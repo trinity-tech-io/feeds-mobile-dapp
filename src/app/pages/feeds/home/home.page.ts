@@ -326,7 +326,7 @@ export class HomePage implements OnInit {
     this.sortType = this.dataHelper.getFeedsSortType();
     this.homeTittleBar = this.elmRef.nativeElement.querySelector("#homeTittleBar");
     this.homeTab = this.elmRef.nativeElement.querySelector("#homeTab");
-    this.elaPrice = this.dataHelper.getElaUsdPrice();
+    //this.elaPrice = this.dataHelper.getElaUsdPrice();
     if (this.platform.is('ios')) {
       this.isAndroid = false;
     }
@@ -2452,8 +2452,9 @@ export class HomePage implements OnInit {
         }
         this.handlePostAvatarV2(destDid, channelId, postId);//获取头像
         this.getDisplayName(destDid, channelId, destDid);
-        this.getPostTipCount(channelId, postId);
-
+        if(this.isAndroid){
+          this.getPostTipCount(channelId, postId);
+        }
         if (mediaType === '1') {
           this.handlePostImgV2(destDid, channelId, postId);
         }

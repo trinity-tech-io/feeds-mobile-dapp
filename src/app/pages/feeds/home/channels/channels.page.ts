@@ -1525,7 +1525,9 @@ export class ChannelsPage implements OnInit {
               this.postTipAdressMap[channelId] = '';
              });
         }
-        this.getPostTipCount(channelId,postId);
+        if(this.isAndroid){
+          this.getPostTipCount(channelId,postId);
+        }
         if (mediaType === '1') {
           this.handlePostImgV2(destDid, channelId, postId);
         }

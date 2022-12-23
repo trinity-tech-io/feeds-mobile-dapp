@@ -291,7 +291,9 @@ export class PostdetailPage implements OnInit {
 
     this.getChannelTippingAddress(this.channelId, false).then((postTipAdress: string) => {
       this.postTipAdressMap[this.channelId] = postTipAdress;
-      this.getPostTipCount(this.channelId, this.postId);
+      if(this.isAndroid){
+        this.getPostTipCount(this.channelId, this.postId);
+      }
     }).catch((err) => {
       this.postTipAdressMap[this.channelId] = '';
     });

@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild, ElementRef } from '@angular/core';
-import { IonRefresher, ModalController, PopoverController } from '@ionic/angular';
+import { IonRefresher, ModalController, Platform, PopoverController } from '@ionic/angular';
 import { Events } from 'src/app/services/events.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { IonInfiniteScroll } from '@ionic/angular';
@@ -209,8 +209,9 @@ export class ProfilePage implements OnInit {
 
   private isLoadingPostTipAdressMap: any = {};
   private postTipAdressMap: any = {};
-
+  public isAndroid: boolean = true;
   constructor(
+    private platform: Platform,
     private elmRef: ElementRef,
     public theme: ThemeService,
     private events: Events,
@@ -562,6 +563,9 @@ export class ProfilePage implements OnInit {
   async ionViewWillEnter() {
     this.theme.setTheme1();//改变状态栏
     this.initTitleBar();
+    if (this.platform.is('ios')) {
+      this.isAndroid = false;
+    }
     this.userDid = (await this.dataHelper.getSigninData()).did || '';
     // this.elaPrice = this.dataHelper.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {
@@ -2442,7 +2446,9 @@ export class ProfilePage implements OnInit {
                   this.postTipAdressMap[channelId] = '';
              });
         }
-        this.getPostTipCount(channelId,postId);
+        if(this.isAndroid){
+          this.getPostTipCount(channelId,postId);
+        }
         this.handlePostAvatarV2(destDid, channelId);
         if (mediaType === '1') {
           this.handlePostImgV2(destDid, channelId, postId);
