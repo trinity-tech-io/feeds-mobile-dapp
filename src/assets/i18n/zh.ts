@@ -498,6 +498,7 @@ export const zh = {
     supportFeeds: '支持Feeds',
     elaAddress: 'ELA地址',
     channelName: '频道名称',
+    tippingAddress: '打赏地址'
   },
   GalleriahivePage: {
     title: '登录 Hive 中',

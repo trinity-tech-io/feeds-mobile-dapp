@@ -502,6 +502,7 @@ export const en = {
     supportFeeds: 'Support Feeds',
     elaAddress: 'ELA Address',
     channelName: 'Channel Name',
+    tippingAddress: 'Tipping Address'
   },
   GalleriahivePage: {
     title: 'Log in to Hive',
