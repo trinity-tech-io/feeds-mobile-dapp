@@ -197,9 +197,9 @@ export class PaypromptComponent implements OnInit {
     let textObj = {
      "isLoading": true,
      "loadingTitle": 'common.waitMoment',
-     "loadingText": 'common.uploadingData',
-     "loadingCurNumber": '1',
-     "loadingMaxNumber": '2'
+     "loadingText": 'common.makeTipping',
+     "loadingCurNumber": '',
+     "loadingMaxNumber": ''
    }
    this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
    this.tippingChannelSid = setTimeout(() => {
@@ -219,11 +219,11 @@ export class PaypromptComponent implements OnInit {
    this.uploadData()
    .then(async (result) => {
      Logger.log(TAG, 'Upload Result', result);
-     textObj.loadingCurNumber = "1";
-     textObj.loadingText = "common.uploadDataSuccess";
+     textObj.loadingCurNumber = "";
+     textObj.loadingText = "common.makeTipping";
      this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
      let senderUri = result.jsonHash;
-     textObj.loadingCurNumber = "2";
+     textObj.loadingCurNumber = "";
      textObj.loadingText = "common.makeTipping";
      this.events.publish(FeedsEvent.PublishType.nftLoadingUpdateText, textObj);
      return this.nftContractControllerService.getChannelTippingContractService()

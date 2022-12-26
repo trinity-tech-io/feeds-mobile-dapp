@@ -222,7 +222,7 @@ export const en = {
     twitterError3: 'Unable to connect to Twitter. Please check the network and try again',
     unableUnsubscribe: 'Unable to unsubscribe from your own channel',
     channelError: 'Please use the wallet you used to public this channel',
-    makeTipping: 'Tipping, please wait',
+    makeTipping: 'Processing transaction...please wait',
     tippingFailed: 'Tipping failed',
     tippingSucess: 'Tipping success',
     post: 'Post',
