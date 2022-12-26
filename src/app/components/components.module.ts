@@ -31,6 +31,7 @@ import { PercentageloadingComponent } from './percentageloading/percentageloadin
 import { AddassetComponent } from './addasset/addasset.component';
 import { AssetitemComponent } from './assetitem/assetitem.component';
 import { NewassetitemComponent } from './newassetitem/newassetitem.component';
+import { HeartbtnComponent } from './heartbtn/heartbtn.component';
 import { ChannelcardComponent } from './channelcard/channelcard.component';
 import { VideofullscreenComponent } from './videofullscreen/videofullscreen.component';
 
@@ -87,6 +88,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     AssetitemComponent,
     VideostyleComponent,
     NewassetitemComponent,
+    HeartbtnComponent,
     ChannelcardComponent,
     NftloadingComponent,
     NfttransferdialogComponent,
@@ -118,6 +120,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     AssetitemComponent,
     VideostyleComponent,
     NewassetitemComponent,
+    HeartbtnComponent,
     ChannelcardComponent,
     NftloadingComponent,
   ],
