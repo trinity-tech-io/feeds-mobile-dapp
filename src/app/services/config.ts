@@ -20,7 +20,7 @@ export class Config {
     public static PASAR_ADDRESS: string = '0x02E8AD0687D583e2F6A7e5b82144025f30e26aA0';
     public static DIAMOND_ADDRESS: string = '0x2C8010Ae4121212F836032973919E8AeC9AEaEE5';
     public static CHANNEL_ADDRESS: string = '0xF5c140100F1E8475bc5097FF9D5689d043d9BE12';
-    public static CHANNEL_TIPPTING_PAYMENT_ADDRESS: string = '';
+    public static CHANNEL_TIPPTING_PAYMENT_ADDRESS: string = '0xaE66506Fb41F066f962555D3187e2b5F8D027e5E';
 
     public static CONTRACT_URI = 'https://api.' + Config.BASE_API + '/eth';
     public static CONTRACT_CHAINID: number = 20;
