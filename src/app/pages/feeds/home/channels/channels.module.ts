@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
+import { IconModule } from '@visurel/iconify-angular';
 
 import { ChannelsPage } from './channels.page';
 import { ComponentsModule } from 'src/app/components/components.module';
@@ -32,6 +33,7 @@ const routes: Routes = [
     IonicModule,
     ComponentsModule,
     ShareModule,
+    IconModule,
     RouterModule.forChild(routes),
   ],
   declarations: [ChannelsPage],

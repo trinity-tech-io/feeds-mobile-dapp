@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { IonRefresher, ModalController, Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
+import ChatBubbleIcon from '@iconify/icons-clarity/chat-bubble-line';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -36,6 +37,7 @@ export class ChannelsPage implements OnInit {
   @ViewChild(IonInfiniteScroll, { static: true }) infiniteScroll: IonInfiniteScroll;
   @ViewChild(IonRefresher, { static: false }) refresher: IonRefresher;
   public images = {};
+  chatIcon = ChatBubbleIcon
   public isShowPrompt: boolean = false;
   public popover: any;
   public channelAvatar: string = '';
