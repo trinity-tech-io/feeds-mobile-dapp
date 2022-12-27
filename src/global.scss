@@ -676,6 +676,20 @@ audio::-webkit-media-controls {
   right: 4px;
 }
 
-
+ic-icon {
+  display: flex;
+  svg {
+    fill: url(#linearColors);
+    transition: transform .2s;
+    path {
+      &[stroke=currentColor] {
+        stroke: url(#linearColors);
+      }
+      &[fill=currentColor] {
+        fill: unset
+      }
+    }
+  }
+}
 
 
