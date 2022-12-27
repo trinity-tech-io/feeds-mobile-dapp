@@ -2562,7 +2562,9 @@ export class HomePage implements OnInit {
     channelNft.channelEntry = channelInfo[2];
     channelNft.receiptAddr = channelInfo[3];
     channelNft.ownerAddr = channelInfo[4];
+    console.log("============0",channelInfo[1]);
     let uri = channelInfo[1].replace('feeds:json:', '');
+    console.log("============1",channelInfo[1]);
     let result: any = await this.ipfsService
       .nftGet(this.ipfsService.getNFTGetUrl() + uri);
     channelNft.description = result.description;
@@ -2592,7 +2594,7 @@ export class HomePage implements OnInit {
         let channelTippingAddressMap = this.dataHelper.getChannelTippingAddressMap() || {};
         channelTippingAddressMap[channelId] = tokenInfo[3];
         this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
-        return channelTippingAddressMap[channelId];
+        return tokenInfo;
       }
       return null;
     } catch (error) {
