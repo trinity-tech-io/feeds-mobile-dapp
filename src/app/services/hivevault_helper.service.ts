@@ -2402,7 +2402,7 @@ export class HiveVaultHelper {
     /** create profile end */
 
     /** update profile start */
-    private updateDataToProfileDB(did: string, name: string, description: string, avatarHiveUrl: string, updatedAt: number): Promise<UpdateResult> {
+    private updateDataToProfileDB(did: string, name: string, description: string, avatarHiveUrl: string, updatedAt: number, credentials: string): Promise<UpdateResult> {
         return new Promise(async (resolve, reject) => {
             try {
                 const doc =
@@ -2412,6 +2412,7 @@ export class HiveVaultHelper {
                     "description": description,
                     "avatar_url": avatarHiveUrl,
                     "updated_at": updatedAt,
+                    "credentials": credentials
                 }
                 const option = new UpdateOptions(false, true)
                 let filter = { "did": did };
@@ -2427,12 +2428,12 @@ export class HiveVaultHelper {
         })
     }
 
-    private async updateProfileData(name: string, description: string, avatarHiveUrl: string): Promise<{ updatedAt: number }> {
+    private async updateProfileData(name: string, description: string, avatarHiveUrl: string, credentials: string): Promise<{ updatedAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const signinDid = (await this.dataHelper.getSigninData()).did;
                 const updatedAt = UtilService.getCurrentTimeNum();
-                const result = await this.updateDataToProfileDB(signinDid, name, description, avatarHiveUrl, updatedAt);
+                const result = await this.updateDataToProfileDB(signinDid, name, description, avatarHiveUrl, updatedAt, credentials);
                 if (!result) {
                     const errorMsg = 'Update profile result null';
                     Logger.error(TAG, errorMsg);
@@ -2447,8 +2448,8 @@ export class HiveVaultHelper {
 
     }
 
-    updateProfile(name: string, description: string, avatarHiveUrl: string) {
-        return this.updateProfileData(name, description, avatarHiveUrl);
+    updateProfile(name: string, description: string, avatarHiveUrl: string, credentials: string) {
+        return this.updateProfileData(name, description, avatarHiveUrl, credentials);
     }
     /** update profile end */
 

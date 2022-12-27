@@ -1113,7 +1113,8 @@ declare namespace FeedsData {
     name: string,
     avatar: string,
     bio: string,
-    updatedAt: number
+    updatedAt: number,
+    credentials: string
   }
 
   type ChannelContractInfo = {

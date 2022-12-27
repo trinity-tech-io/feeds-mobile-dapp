@@ -329,7 +329,7 @@ export class HiveVaultResultParse {
   }
   /** parse backup subscribed channel result end */
 
-  public static parseProfileResult(result: any): { did: string, name: string, description: string, avatar: string, updatedAt: number } {
+  public static parseProfileResult(result: any): { did: string, name: string, description: string, avatar: string, updatedAt: number, credentials: string } {
     try {
       /**
        * avatar_url: "hive://did:elastos:iXB82Mixxx@did:elastos:iqtWRVjzxxx/4255689d13e5dxx?params={"empty":0}"
@@ -350,7 +350,8 @@ export class HiveVaultResultParse {
         name: profiles[0].name,
         description: profiles[0].description,
         avatar: profiles[0].avatar_url,
-        updatedAt: profiles[0].updated_at
+        updatedAt: profiles[0].updated_at,
+        credentials: profiles[0].credentials || ''
       }
       return profileResult;
     } catch (error) {

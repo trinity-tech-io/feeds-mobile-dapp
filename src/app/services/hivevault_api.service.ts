@@ -261,8 +261,8 @@ export class HiveVaultApi {
     return this.hiveVaultHelper.uploadProfile(name, description, avatarAddress);
   }
 
-  updateSelfProfile(name: string, description: string, avatarHiveUrl: string) {
-    return this.hiveVaultHelper.updateProfile(name, description, avatarHiveUrl);
+  updateSelfProfile(name: string, description: string, avatarHiveUrl: string, credentials: string) {
+    return this.hiveVaultHelper.updateProfile(name, description, avatarHiveUrl, credentials);
   }
 
   deleteSelfProfile() {

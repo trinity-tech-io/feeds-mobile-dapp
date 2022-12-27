@@ -2427,7 +2427,8 @@ export class HiveVaultController {
             name: '',
             avatar: '',
             bio: '',
-            updatedAt: 0
+            updatedAt: 0,
+            credentials: ''
           }
           this.dataHelper.addUserProfile(newUser);
           resolve(newUser);
@@ -2445,7 +2446,8 @@ export class HiveVaultController {
             name: user.name,
             avatar: user.avatar,
             bio: user.bio,
-            updatedAt: user.updatedAt
+            updatedAt: user.updatedAt,
+            credentials: user.credentials
           }
           this.dataHelper.addUserProfile(newUser);
           resolve(newUser);
@@ -2474,7 +2476,8 @@ export class HiveVaultController {
             name: '',
             avatar: '',
             bio: '',
-            updatedAt: 0
+            updatedAt: 0,
+            credentials: ''
           }
           this.dataHelper.addUserProfile(newUser);
           resolve(newUser);
@@ -2492,7 +2495,8 @@ export class HiveVaultController {
             name: user.name,
             avatar: user.avatar,
             bio: user.bio,
-            updatedAt: user.updatedAt
+            updatedAt: user.updatedAt,
+            credentials: user.credentials
           }
           this.dataHelper.addUserProfile(newUser);
           resolve(newUser);
@@ -2539,13 +2543,15 @@ export class HiveVaultController {
         let originAvatar = '';
         let originBio = '';
         let originUpdatedAt = 0;
+        let originCredentials = '';
 
         if (originUserProfile) {
           originName = originUserProfile.name;
           originDisplayName = originUserProfile.displayName;
           originAvatar = originUserProfile.avatar;
           originBio = originUserProfile.bio;
-          originUpdatedAt = originUserProfile.updatedAt
+          originUpdatedAt = originUserProfile.updatedAt;
+          originCredentials = originUserProfile.credentials;
         }
 
         const newUserProfile: FeedsData.UserProfile = {
@@ -2557,7 +2563,8 @@ export class HiveVaultController {
           name: originName,
           avatar: originAvatar,
           bio: originBio,
-          updatedAt: originUpdatedAt
+          updatedAt: originUpdatedAt,
+          credentials: originCredentials
         }
         await this.dataHelper.addUserProfile(newUserProfile);
         resolve(newUserProfile);
@@ -2642,7 +2649,8 @@ export class HiveVaultController {
           name: result.name,
           avatar: result.avatar,
           bio: result.description,
-          updatedAt: result.updatedAt
+          updatedAt: result.updatedAt,
+          credentials: originProfile.credentials
         }
         this.dataHelper.addUserProfile(userProfile);
         resolve(userProfile)
@@ -2651,7 +2659,7 @@ export class HiveVaultController {
     });
   }
 
-  updateUserProfile(did: string, name: string, description: string, avatar: string): Promise<FeedsData.UserProfile> {
+  updateUserProfile(did: string, name: string, description: string, avatar: string, newCredentials: string = ''): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
         let avatarHiveUrl = '';
@@ -2660,7 +2668,15 @@ export class HiveVaultController {
         }
 
         const originProfile = await this.getUserProfileFromLocal(did);
-        const result = await this.hiveVaultApi.updateSelfProfile(name, description, avatarHiveUrl);
+
+        let credentials = ''
+        if (!newCredentials) {
+          credentials = originProfile.credentials;
+        } else {
+          credentials = newCredentials;
+        }
+
+        const result = await this.hiveVaultApi.updateSelfProfile(name, description, avatarHiveUrl, credentials);
         if (!result) {
           Logger.error(TAG, 'Update profile result null');
           reject('Update profile result null');
@@ -2676,7 +2692,8 @@ export class HiveVaultController {
           name: name,
           avatar: avatarHiveUrl,
           bio: description,
-          updatedAt: result.updatedAt
+          updatedAt: result.updatedAt,
+          credentials: newCredentials
         }
 
         if (avatarHiveUrl != originProfile.avatar) {
@@ -2718,7 +2735,8 @@ export class HiveVaultController {
           name: profile.name,
           avatar: profile.avatar,
           bio: profile.description,
-          updatedAt: profile.updatedAt
+          updatedAt: profile.updatedAt,
+          credentials: profile.credentials
         }
 
         resolve(userProfile);
@@ -2768,6 +2786,7 @@ export class HiveVaultController {
           const name = localUserProfile.name || localUserProfile.resolvedName || localUserProfile.displayName;
           const description = localUserProfile.bio || localUserProfile.resolvedBio;
           const avatar = localUserProfile.avatar || localUserProfile.resolvedAvatar;
+          const credentials = localUserProfile.credentials || '';
 
           let finalName = ''
           if (!name) {
@@ -2776,7 +2795,7 @@ export class HiveVaultController {
             finalName = name;
           }
           if (!name || !description || !avatar) {
-            const updatedProfile = await this.updateUserProfile(userDid, finalName, description, avatar);
+            const updatedProfile = await this.updateUserProfile(userDid, finalName, description, avatar, credentials);
             resolve(updatedProfile);
             return;
           }
@@ -3262,6 +3281,7 @@ export class HiveVaultController {
         const signinData = (await this.dataHelper.getSigninData());
         const selfDid = signinData.did
         const userProfile = await this.getUserProfileWithSaveFromRemote(selfDid);
+        const credentials = userProfile.credentials || '';
         let name = ''
         if (!userProfile.name) {
           name = signinData.name;
@@ -3269,7 +3289,7 @@ export class HiveVaultController {
           name = userProfile.name;
         }
         if (!userProfile.avatar) {
-          await this.updateUserProfile(selfDid, name, userProfile.bio, avatarImage);
+          await this.updateUserProfile(selfDid, name, userProfile.bio, avatarImage, credentials);
           resolve('FINISH');
         } else {
           resolve('FINISH');

@@ -20,6 +20,7 @@ export class FeedsSqliteHelper {
   private readonly TABLE_POST_NEW330: string = 'postsnew330';
   private readonly TABLE_USER: string = 'users';
   private readonly TABLE_USER_NEW: string = 'usersnew';
+  private readonly TABLE_USER_NEW350: string = 'usersnew350';
   // private readonly TABLE_PINPOST: string = 'pinpost';
 
   private readonly TABLE_SUBSCRIBED_CHANNELS: string = 'subscribed_channels';
@@ -527,6 +528,21 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_USER;
+        const params = [];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const users = this.parseUserData(result);
+        resolve(users);
+      } catch (error) {
+        Logger.error(TAG, 'query userdata data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  queryOriginNewUserListById(dbUserDid: string): Promise<FeedsData.UserProfile[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_USER_NEW;
         const params = [];
         const result = await this.executeSql(dbUserDid, statement, params);
         const users = this.parseUserData(result);
@@ -1210,8 +1226,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  //User
-  private createUserProfileTable(dbUserDid: string): Promise<any> {
+  private createUserNewProfileTable(dbUserDid: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'create table if not exists ' + this.TABLE_USER_NEW
@@ -1229,7 +1244,25 @@ export class FeedsSqliteHelper {
     });
   }
 
-  insertUserProfile(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
+  //User
+  private createUserProfileTable(dbUserDid: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'create table if not exists ' + this.TABLE_USER_NEW350
+          + '('
+          + 'did VARCHAR(64) UNIQUE, resolved_name VARCHAR(64), resolved_avatar TEXT, resolved_bio TEXT, display_name VARCHAR(64), name VARCHAR(64), avatar TEXT, bio TEXT, updated_at REAL(64), credentials TEXT'
+          + ')';
+        const result = await this.executeSql(dbUserDid, statement);
+        Logger.log(TAG, 'Create users table result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Create users table error', error);
+        reject(error);
+      }
+    });
+  }
+
+  insertUserNewProfile(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'INSERT INTO ' + this.TABLE_USER_NEW
@@ -1248,14 +1281,32 @@ export class FeedsSqliteHelper {
     });
   }
 
+  insertUserProfile(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'INSERT INTO ' + this.TABLE_USER_NEW350
+          + '(did, resolved_name, resolved_avatar, resolved_bio, display_name, name, avatar, bio, updated_at, credentials) VALUES'
+          + '(?,?,?,?,?,?,?,?,?,?)';
+
+        const params = [user.did, user.resolvedName, user.avatar, user.resolvedBio, user.displayName, user.name, user.avatar, user.bio, user.updatedAt, user.credentials];
+
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Insert users data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Insert users date error', error);
+        reject(error);
+      }
+    });
+  }
+
   updateUserProfile(dbUserDid: string, user: FeedsData.UserProfile): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'UPDATE ' + this.TABLE_USER_NEW
-          + ' SET resolved_name=?, resolved_avatar=?, resolved_bio=?, display_name=?, name=?, avatar=?, bio=?, updated_at=? WHERE did=?';
-        const params = [user.resolvedName, user.resolvedAvatar, user.resolvedBio, user.displayName, user.name, user.avatar, user.bio, user.updatedAt, user.did];
+        const statement = 'UPDATE ' + this.TABLE_USER_NEW350
+          + ' SET resolved_name=?, resolved_avatar=?, resolved_bio=?, display_name=?, name=?, avatar=?, bio=?, updated_at=?, credentials=? WHERE did=?';
+        const params = [user.resolvedName, user.resolvedAvatar, user.resolvedBio, user.displayName, user.name, user.avatar, user.bio, user.updatedAt, user.credentials, user.did];
         const result = await this.executeSql(dbUserDid, statement, params);
-
         Logger.log(TAG, 'update users data result: ', result)
         resolve('SUCCESS');
       } catch (error) {
@@ -1268,7 +1319,7 @@ export class FeedsSqliteHelper {
   queryUserProfileById(dbUserDid: string, userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
-        const statement = 'SELECT * FROM ' + this.TABLE_USER_NEW + ' WHERE did=?';
+        const statement = 'SELECT * FROM ' + this.TABLE_USER_NEW350 + ' WHERE did=?';
         const params = [userDid];
         const result = await this.executeSql(dbUserDid, statement, params);
         const users = this.parseUserData(result);
@@ -1284,6 +1335,21 @@ export class FeedsSqliteHelper {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'DELETE FROM ' + this.TABLE_USER + ' WHERE did=?'
+        const params = [userDid];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        Logger.log(TAG, 'Remove subscribed channel data result is', result);
+        resolve('SUCCESS');
+      } catch (error) {
+        Logger.error(TAG, 'Remove subscribed channel data error', error);
+        reject(error);
+      }
+    });
+  }
+
+  deleteNewUserProfileById(dbUserDid: string, userDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'DELETE FROM ' + this.TABLE_USER_NEW + ' WHERE did=?'
         const params = [userDid];
         const result = await this.executeSql(dbUserDid, statement, params);
         Logger.log(TAG, 'Remove subscribed channel data result is', result);
@@ -1934,7 +2000,7 @@ export class FeedsSqliteHelper {
   restoreSqlData340(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const updateUsersPromise = this.updateUsersDataStructure(dbUserDid);
+        const updateUsersPromise = this.updateUsersDataStructure340(dbUserDid);
         const updateSubscribedChannelPromise = this.updateSubscribedChannelDataStructure(dbUserDid);
 
         Promise.allSettled([updateUsersPromise, updateSubscribedChannelPromise])
@@ -1945,10 +2011,54 @@ export class FeedsSqliteHelper {
     });
   }
 
-  updateUsersDataStructure(dbUserDid: string): Promise<string> {
+  restoreSqlData350(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.updateUsersDataStructure350(dbUserDid);
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  updateUsersDataStructure350(dbUserDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         await this.createUserProfileTable(dbUserDid);
+        let userProfileList: FeedsData.UserProfile[] = [];
+        try {
+          userProfileList = await this.queryOriginNewUserListById(dbUserDid);
+        } catch (error) {
+        }
+        userProfileList.forEach((userProfile: FeedsData.UserProfile) => {
+          const newProfile: FeedsData.UserProfile = {
+            did: userProfile.did,
+            resolvedName: userProfile.resolvedName,
+            resolvedAvatar: userProfile.resolvedAvatar,
+            resolvedBio: userProfile.resolvedBio,
+            displayName: userProfile.displayName,
+            name: userProfile.name,
+            avatar: userProfile.avatar,
+            bio: userProfile.bio,
+            updatedAt: userProfile.updatedAt || 0,
+            credentials: userProfile.credentials || ''
+          }
+          this.insertUserProfile(dbUserDid, newProfile);
+          this.deleteNewUserProfileById(dbUserDid, userProfile.did);
+        });
+        resolve('FINISH');
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+
+  updateUsersDataStructure340(dbUserDid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.createUserNewProfileTable(dbUserDid);
 
         let userProfileList: FeedsData.UserProfile[] = [];
         try {
@@ -1966,9 +2076,10 @@ export class FeedsSqliteHelper {
             name: userProfile.name,
             avatar: userProfile.avatar,
             bio: userProfile.bio,
-            updatedAt: userProfile.updatedAt || 0
+            updatedAt: userProfile.updatedAt || 0,
+            credentials: userProfile.credentials
           }
-          this.insertUserProfile(dbUserDid, newProfile);
+          this.insertUserNewProfile(dbUserDid, newProfile);
           this.deleteOriginUserProfileById(dbUserDid, userProfile.did);
         });
         resolve('FINISH');
@@ -2036,12 +2147,19 @@ export class FeedsSqliteHelper {
           await this.restoreSqlData340(dbUserDid);
         }
 
+        if (sqlversion < Config.SQL_VERSION350 && sqlversion > 0) {
+          await this.restoreSqlData350(dbUserDid);
+        }
+
         if (sqlversion == 0) {
           const restore311 = this.restoreSqlData311(dbUserDid);
           const restore320 = this.restoreSqlData320(dbUserDid);
           const restore330 = this.restoreSqlData330(dbUserDid);
-          const restore340 = this.restoreSqlData340(dbUserDid);
-          await Promise.allSettled([restore311, restore320, restore330, restore340]);
+
+
+          await Promise.allSettled([restore311, restore320, restore330]);
+          await this.restoreSqlData340(dbUserDid);
+          await this.restoreSqlData350(dbUserDid);
         }
 
         resolve('FINISH');
@@ -2089,6 +2207,7 @@ export class FeedsSqliteHelper {
       const avatar = element['avatar'];
       const bio = element['bio'];
       const updatedAt = element['updated_at'];
+      const credentials = element['credentials'] || '';
 
       let user: FeedsData.UserProfile = {
         did: did,
@@ -2099,7 +2218,8 @@ export class FeedsSqliteHelper {
         name: name,
         avatar: avatar,
         bio: bio,
-        updatedAt: updatedAt
+        updatedAt: updatedAt,
+        credentials: credentials
       }
       list.push(user);
     }
