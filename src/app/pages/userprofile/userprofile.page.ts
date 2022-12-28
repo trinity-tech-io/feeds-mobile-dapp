@@ -40,6 +40,8 @@ export class UserprofilePage implements OnInit {
   public pageSize: number = 1;
   public pageNumber: number = 5;
   private originUserProfile = null;
+
+  public isShowKycIcon = false;
   // Sign in data
   public name: string = '';
   public avatar: string = '';
@@ -1771,6 +1773,13 @@ export class UserprofilePage implements OnInit {
     const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
     this.setUserNameUI(userProfile.did, name);
     this.setAvatarUI(userProfile.did, avatarUrl);
+
+    const credentials = userProfile.credentials;
+    if (!credentials) {
+      this.isShowKycIcon = false;
+    } else {
+      this.isShowKycIcon = true;
+    }
   }
 
   setUserNameUI(userDid: string, name: string) {

@@ -19,7 +19,8 @@
        [ngClass]="{'customizeAvatar': avatar.indexOf('default-contact.svg') === -1 }"
        [src]="avatar"/>
       </div>
-      <div class="cardTitle">{{name}}</div>
+      <div class="cardTitle">{{name}} <img *ngIf="isShowKycIcon" style="margin-left: 7px;"  src="./assets/images/credentials/kycme.svg"></div>
+      
       <div class="card-subtitle" *ngIf="isOwner&&walletAddressStr!=''">
         <span style="text-transform: none" (click)="clickWalletAddr()">{{walletAddressStr}}</span>
         <img  (click)="copyWalletAddr()" src="./assets/images/darkmode/copy.svg">
