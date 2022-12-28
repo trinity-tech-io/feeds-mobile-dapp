@@ -4,14 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
-import { PostdetailPage } from './postdetail.page';
-import { ComponentsModule } from 'src/app/components/components.module';
-
 import { VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
+import { IconModule } from '@visurel/iconify-angular';
 
+import { PostdetailPage } from './postdetail.page';
+import { ComponentsModule } from 'src/app/components/components.module';
 import { ShareModule } from 'src/app/share/share.module';
 
 const routes: Routes = [
@@ -33,6 +33,7 @@ const routes: Routes = [
     IonicModule,
     ShareModule,
     ComponentsModule,
+    IconModule,
     RouterModule.forChild(routes),
   ],
   declarations: [PostdetailPage],

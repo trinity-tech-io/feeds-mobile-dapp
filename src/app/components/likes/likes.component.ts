@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import ChatBubbleIcon from '@iconify/icons-clarity/chat-bubble-line';
 import { ThemeService } from '../../services/theme.service';
 import { UtilService } from '../../services/utilService';
 import { NativeService } from '../../services/NativeService';
@@ -53,6 +54,7 @@ export class LikesComponent implements OnInit {
   @Output() toPage = new EventEmitter();
   public styleObj: any = { width: '' };
   public maxTextSize = 240;
+  chatIcon = ChatBubbleIcon
   public isPress: boolean = false;
   public isAndroid: boolean = true;
 

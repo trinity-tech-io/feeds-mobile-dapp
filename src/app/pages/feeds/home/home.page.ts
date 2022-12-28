@@ -13,6 +13,7 @@ import {
   IonInfiniteScroll,
   IonRefresher
 } from '@ionic/angular';
+import ChatBubbleIcon from '@iconify/icons-clarity/chat-bubble-line';
 import { Events } from 'src/app/services/events.service';
 import { MenuService } from 'src/app/services/MenuService';
 import { FeedsPage } from '../feeds.page';
@@ -62,6 +63,7 @@ export class HomePage implements OnInit {
   public images = {};
 
   public styleObj: any = { width: '' };
+  chatIcon = ChatBubbleIcon
 
   public hideComment = true;
 

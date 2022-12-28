@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ModalController, Platform } from '@ionic/angular';
+import ChatBubbleIcon from '@iconify/icons-clarity/chat-bubble-line';
 import { Events } from 'src/app/services/events.service';
 import { NativeService } from 'src/app/services/NativeService';
 import { MenuService } from 'src/app/services/MenuService';
@@ -33,6 +34,7 @@ export class PostdetailPage implements OnInit {
   infiniteScroll: IonInfiniteScroll;
   public postImage: string = 'assets/images/loading.png';
   public avatar: string = '';
+  chatIcon = ChatBubbleIcon
 
   public channelAvatar: string = '';
   public channelName: string = '';

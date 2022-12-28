@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
+import { IconModule } from '@visurel/iconify-angular';
 import { PaypromptComponent } from './payprompt/payprompt.component';
 import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
 import { TipdialogComponent } from './tipdialog/tipdialog.component';
@@ -59,6 +60,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     ShareModule,
     QRCodeModule,
     RoundProgressModule,
+    IconModule,
   ],
 
   declarations: [
