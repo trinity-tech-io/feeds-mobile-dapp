@@ -283,6 +283,8 @@ export class DIDHelperService {
   resolveUserProfile(userDid: string): Promise<{ name: string, avatar: string, description: string }> {
     return new Promise(async (resolve, reject) => {
       try {
+        this.init();
+
         const didDocument = await this.resolveDidDocument(userDid);
         const name = await this.resolveNameFromDidDocument(didDocument);
         const avatar = await this.resolveAvatarFromDidDocument(didDocument);

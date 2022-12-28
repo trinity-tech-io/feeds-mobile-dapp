@@ -2367,26 +2367,35 @@ export class HiveVaultController {
   getUserProfile(userDid: string, syncRemote: boolean = false): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
-        const localProfile = await this.getUserProfileFromLocal(userDid);
-        if (!localProfile) {
-          resolve(null);
-          return;
-        }
-
-        try {
-          if (!localProfile.resolvedName && !localProfile.resolvedBio && !localProfile.resolvedAvatar) {
-            const profile = await this.syncUserProfileFromDidDocument(userDid);
-            resolve(profile);
+        if (!syncRemote) {
+          const localProfile = await this.getUserProfileFromLocal(userDid);
+          if (!localProfile) {
+            resolve(null);
+            return;
           }
-        } catch (error) {
-        }
 
-        try {
-          if (!localProfile.updatedAt || localProfile.updatedAt == 0)
-            this.getUserProfileWithSaveFromRemote(userDid).catch(() => { });
-        } catch (error) {
+          try {
+            if (!localProfile.resolvedName && !localProfile.resolvedBio && !localProfile.resolvedAvatar) {
+              const profile = await this.syncUserProfileFromDidDocument(userDid);
+              resolve(profile);
+            }
+          } catch (error) {
+          }
+
+          try {
+            if (!localProfile.updatedAt || localProfile.updatedAt == 0)
+              this.getUserProfileWithSaveFromRemote(userDid).catch(() => { });
+          } catch (error) {
+          }
+          resolve(localProfile);
+        } else {
+          let remoteProfile = null;
+          try {
+            remoteProfile = await this.getUserProfileWithSaveFromRemote(userDid).catch(() => { });
+          } catch (error) {
+          }
+          resolve(remoteProfile);
         }
-        resolve(localProfile);
       } catch (error) {
         reject(error);
       }
