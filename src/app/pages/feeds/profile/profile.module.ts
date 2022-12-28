@@ -4,13 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
-
-import { ProfilePage } from './profile.page';
-
 import { VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 
+import { ProfilePage } from './profile.page';
 import { ComponentsModule } from '../../../components/components.module';
 const routes: Routes = [
   {
