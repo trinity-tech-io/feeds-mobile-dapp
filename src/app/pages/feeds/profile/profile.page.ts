@@ -54,6 +54,7 @@ export class ProfilePage implements OnInit {
   public selectType: string = 'ProfilePage.myFeeds';
   public followers = 0;
 
+  public isShowKycIcon = false;
   // Sign in data
   public name: string = '';
   public avatar: string = '';
@@ -2437,17 +2438,17 @@ export class ProfilePage implements OnInit {
 
         }
         this.getDisplayName(destDid, channelId, destDid);
-        let isLoadingPostTipAdress =  this.isLoadingPostTipAdressMap[channelId] || '';
-        if(isLoadingPostTipAdress === ''){
-             this.isLoadingPostTipAdressMap[channelId] = "11";
-             this.getChannelTippingAddress(channelId,false).then((postTipAdress: string)=>{
-                  this.postTipAdressMap[channelId] = postTipAdress;
-             }).catch((err)=>{
-                  this.postTipAdressMap[channelId] = '';
-             });
+        let isLoadingPostTipAdress = this.isLoadingPostTipAdressMap[channelId] || '';
+        if (isLoadingPostTipAdress === '') {
+          this.isLoadingPostTipAdressMap[channelId] = "11";
+          this.getChannelTippingAddress(channelId, false).then((postTipAdress: string) => {
+            this.postTipAdressMap[channelId] = postTipAdress;
+          }).catch((err) => {
+            this.postTipAdressMap[channelId] = '';
+          });
         }
-        if(this.isAndroid){
-          this.getPostTipCount(channelId,postId);
+        if (this.isAndroid) {
+          this.getPostTipCount(channelId, postId);
         }
         this.handlePostAvatarV2(destDid, channelId);
         if (mediaType === '1') {
@@ -2706,6 +2707,13 @@ export class ProfilePage implements OnInit {
     const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
     this.setUserNameUI(userProfile.did, name);
     this.setAvatarUI(userProfile.did, avatarUrl);
+
+    const credentials = userProfile.credentials;
+    if (!credentials) {
+      this.isShowKycIcon = false;
+    } else {
+      this.isShowKycIcon = true;
+    }
   }
 
   setUserNameUI(userDid: string, name: string) {
@@ -2752,7 +2760,7 @@ export class ProfilePage implements OnInit {
             this.dataHelper.setPostTipCountMap(postTipCountMap);
           }).catch((err) => {
             let postTipCount = postTipCountMap[postId] || '';
-            if(postTipCount === ''){
+            if (postTipCount === '') {
               this.postTipCountMap[postId] = 0;
               postTipCountMap[postId] = 0;
             }
@@ -2768,32 +2776,32 @@ export class ProfilePage implements OnInit {
     try {
       let channelTippingAddressMap = this.dataHelper.getChannelTippingAddressMap() || {};
       let channelTippingAddress = channelTippingAddressMap[channelId] || '';
-      if(channelTippingAddress != ''){
+      if (channelTippingAddress != '') {
         return channelTippingAddress;
       }
       let tokenId: string = "0x" + channelId;
       Logger.log(TAG, "tokenId:", tokenId);
       tokenId = UtilService.hex2dec(tokenId);
       Logger.log(TAG, "tokenIdHex2dec:", tokenId);
-      if(isLoad){
+      if (isLoad) {
         await this.native.showLoading("common.waitMoment");
       }
       let tokenInfo = await this.nftContractControllerService.getChannel().channelInfo(tokenId);
       Logger.log(TAG, "tokenInfo:", tokenInfo);
       if (tokenInfo[0] != '0') {
-        if(isLoad){
+        if (isLoad) {
           this.native.hideLoading();
         }
         channelTippingAddressMap[channelId] = tokenInfo[3];
         this.dataHelper.setChannelTippingAddressMap(channelTippingAddressMap);
         return channelTippingAddressMap[channelId];
       }
-      if(isLoad){
+      if (isLoad) {
         this.native.hideLoading();
       }
       return null;
     } catch (error) {
-      if(isLoad){
+      if (isLoad) {
         this.native.hideLoading();
       }
       return null;
