@@ -195,7 +195,9 @@ declare namespace FeedsEvent {
     unpinPostFinish = 'feeds:unpinPostFinish',
 
     refreshUserProfile = 'feeds:refreshUserProfile',
-    updatePostTipCount = 'feeds:updatePostTipCount'
+    updatePostTipCount = 'feeds:updatePostTipCount',
+
+    credentialChanged = "feeds:credentialChanged",
   }
 
   type TipDialogData = {

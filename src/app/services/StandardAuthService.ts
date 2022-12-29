@@ -79,31 +79,31 @@ export class StandardAuthService {
     });
   }
 
-  async requestKYCCredentials(): Promise<any> {
+  requestKYCCredentials(): Promise<DIDPlugin.VerifiablePresentation> {
     const didAccess = new DID.DIDAccess();
     const TrustedKYCProviders = "did:elastos:iqjN3CLRjd7a4jGCZe6B3isXyeLy7KKDuK"// Trinity. Tech KYC DID
-    return await didAccess.requestCredentials({
+    return didAccess.requestCredentials({
       claims: [
         DID.claimDescription("Your name", true).withAnyOfClaims([
           DID.typeClaim("NameCredential")
             .withIssuers([TrustedKYCProviders])
         ]).withNoMatchRecommendations([
           { title: "KYC-me.io", url: "https://kyc-me.io", urlTarget: "internal" }]),
-        DID.claimDescription("Your birth date", true).withAnyOfClaims([
-          DID.typeClaim("BirthDateCredential")
-            .withIssuers([TrustedKYCProviders])
-        ]).withNoMatchRecommendations([
-          { title: "KYC-me.io", url: "https://kyc-me.io", urlTarget: "internal" }]),
-        DID.claimDescription("Your gender", true).withAnyOfClaims([
-          DID.typeClaim("GenderCredential")
-            .withIssuers([TrustedKYCProviders])
-        ]).withNoMatchRecommendations([
-          { title: "KYC-me.io", url: "https://kyc-me.io", urlTarget: "internal" }]),
-        DID.claimDescription("Your country", true).withAnyOfClaims([
-          DID.typeClaim("NationalityCredential")
-            .withIssuers([TrustedKYCProviders])
-        ]).withNoMatchRecommendations([
-          { title: "KYC-me.io", url: "https://kyc-me.io", urlTarget: "internal" }])
+        // DID.claimDescription("Your birth date", true).withAnyOfClaims([
+        //   DID.typeClaim("BirthDateCredential")
+        //     .withIssuers([TrustedKYCProviders])
+        // ]).withNoMatchRecommendations([
+        //   { title: "KYC-me.io", url: "https://kyc-me.io", urlTarget: "internal" }]),
+        // DID.claimDescription("Your gender", true).withAnyOfClaims([
+        //   DID.typeClaim("GenderCredential")
+        //     .withIssuers([TrustedKYCProviders])
+        // ]).withNoMatchRecommendations([
+        //   { title: "KYC-me.io", url: "https://kyc-me.io", urlTarget: "internal" }]),
+        // DID.claimDescription("Your country", true).withAnyOfClaims([
+        //   DID.typeClaim("NationalityCredential")
+        //     .withIssuers([TrustedKYCProviders])
+        // ]).withNoMatchRecommendations([
+        //   { title: "KYC-me.io", url: "https://kyc-me.io", urlTarget: "internal" }])
       ]
     });
   }

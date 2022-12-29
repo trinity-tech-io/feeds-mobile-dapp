@@ -6,6 +6,9 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { NativeService } from 'src/app/services/NativeService';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
+import { HiveVaultController } from 'src/app/services/hivevault_controller.service';
+import { Events } from 'src/app/services/events.service';
+import { DataHelper } from 'src/app/services/DataHelper';
 
 @Component({
   selector: 'app-credentials',
@@ -15,6 +18,7 @@ import { DIDHelperService } from 'src/app/services/did_helper.service';
 export class CredentialsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   public isKycmePublic: boolean = false;
+  private userDid: string = '';
   constructor(
     private translate: TranslateService,
     public theme: ThemeService,
@@ -22,7 +26,10 @@ export class CredentialsPage implements OnInit {
     private native: NativeService,
     private zone: NgZone,
     private standardAuthService: StandardAuthService,
-    private didHelperService: DIDHelperService
+    private didHelperService: DIDHelperService,
+    private hiveVaultController: HiveVaultController,
+    private dataHelper: DataHelper,
+    private events: Events
   ) { }
 
   ngOnInit() {
@@ -40,31 +47,59 @@ export class CredentialsPage implements OnInit {
     this.titleBarService.setTitleBarBackKeyShown(this.titleBar, true);
   }
 
+  async initData() {
+    this.userDid = (await this.dataHelper.getSigninData()).did
+    if (this.userDid) {
+      this.hiveVaultController.getUserProfile(this.userDid).then((profile: FeedsData.UserProfile) => {
+        if (!profile.credentials) {
+          this.isKycmePublic = false;
+        } else {
+          this.isKycmePublic = true;
+        }
+      })
+    }
+  }
+
   toggleKycmeStatus() {
     this.zone.run(() => {
       this.isKycmePublic = !this.isKycmePublic;
-      this.native.toast('this.isKycmePublic = ' + this.isKycmePublic);
+      if (!this.isKycmePublic) {
+        this.standardAuthService.requestKYCCredentials().then(async (result) => {
+          if (!result) {
+            this.isKycmePublic = false;
+            return;
+          } else {
+            this.isKycmePublic = true;
+            this.updateCredential('newCredential');
+          }
 
-      const request = this.standardAuthService.requestKYCCredentials().then(async (result) => {
-        if (!result) {
-          this.isKycmePublic = false;
-          return;
-        }
-
-        console.log('result is', result);
-        console.log('result type is', typeof result);
+          console.log('result is', result);
+          console.log('result type is', typeof result);
 
 
-        const json = await result.toJson();
-        console.log('json result type is', typeof json);
-        console.log('json result is', json);
+          const json = await result.toJson();
+          console.log('json result type is', typeof json);
+          console.log('json result is', json);
 
-        const tmp = result.toString();
-        console.log('tmp json', typeof tmp);
-        console.log('tmp json', tmp);
-      }).catch((error) => {
-        console.log('result error', error);
-      });
+          const tmp = result.toString();
+          console.log('tmp json', typeof tmp);
+          console.log('tmp json', tmp);
+        }).catch((error) => {
+          console.log('result error', error);
+        });
+      } else {
+        this.isKycmePublic = false;
+        this.updateCredential('');
+      }
+
     });
+  }
+
+  updateCredential(newCredential: string) {
+    this.hiveVaultController.getUserProfile(this.userDid).then((userProfile: FeedsData.UserProfile) => {
+      this.hiveVaultController.updateUserProfile(userProfile.did, userProfile.name, userProfile.bio, userProfile.avatar, newCredential).then(() => {
+        this.events.publish(FeedsEvent.PublishType.credentialChanged, userProfile.did);
+      });
+    })
   }
 }
