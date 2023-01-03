@@ -33,6 +33,7 @@ export class CredentialsPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.initData();
   }
 
   ionViewWillEnter() {
@@ -48,7 +49,7 @@ export class CredentialsPage implements OnInit {
   }
 
   async initData() {
-    this.userDid = (await this.dataHelper.getSigninData()).did
+    this.userDid = (await this.dataHelper.getSigninData()).did;
     if (this.userDid) {
       this.hiveVaultController.getUserProfile(this.userDid).then((profile: FeedsData.UserProfile) => {
         if (!profile.credentials) {
@@ -56,14 +57,15 @@ export class CredentialsPage implements OnInit {
         } else {
           this.isKycmePublic = true;
         }
-      })
+      });
+    } else {
     }
   }
 
   toggleKycmeStatus() {
     this.zone.run(() => {
       this.isKycmePublic = !this.isKycmePublic;
-      if (!this.isKycmePublic) {
+      if (this.isKycmePublic) {
         this.standardAuthService.requestKYCCredentials().then(async (result) => {
           if (!result) {
             this.isKycmePublic = false;
@@ -74,16 +76,6 @@ export class CredentialsPage implements OnInit {
           }
 
           console.log('result is', result);
-          console.log('result type is', typeof result);
-
-
-          const json = await result.toJson();
-          console.log('json result type is', typeof json);
-          console.log('json result is', json);
-
-          const tmp = result.toString();
-          console.log('tmp json', typeof tmp);
-          console.log('tmp json', tmp);
         }).catch((error) => {
           console.log('result error', error);
         });
@@ -98,8 +90,10 @@ export class CredentialsPage implements OnInit {
   updateCredential(newCredential: string) {
     this.hiveVaultController.getUserProfile(this.userDid).then((userProfile: FeedsData.UserProfile) => {
       this.hiveVaultController.updateUserProfile(userProfile.did, userProfile.name, userProfile.bio, userProfile.avatar, newCredential).then(() => {
-        this.events.publish(FeedsEvent.PublishType.credentialChanged, userProfile.did);
+        this.events.publish(FeedsEvent.PublishType.kycCredentialChanged, userProfile.did);
+      }).catch((error) => {
       });
+    }).catch((error) => {
     })
   }
 }

@@ -353,6 +353,10 @@ export class ProfilePage implements OnInit {
 
   async addProflieEvent() {
     this.updateWalletAddress(null);
+    this.events.subscribe(FeedsEvent.PublishType.kycCredentialChanged, (userDid: string) => {
+      this.initUserProfile();
+    });
+
     this.events.subscribe(FeedsEvent.PublishType.updateTitle, () => {
       this.initTitleBar();
     });
@@ -637,6 +641,7 @@ export class ProfilePage implements OnInit {
     this.isAddProfile = false;
     this.hideSharMenuComponent = false;
     document.getElementById("feedstab").style.display = "block";
+    this.events.unsubscribe(FeedsEvent.PublishType.kycCredentialChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.updateLikeList);
     this.events.unsubscribe(FeedsEvent.PublishType.channelsDataUpdate);
 

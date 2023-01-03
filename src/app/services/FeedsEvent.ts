@@ -197,7 +197,7 @@ declare namespace FeedsEvent {
     refreshUserProfile = 'feeds:refreshUserProfile',
     updatePostTipCount = 'feeds:updatePostTipCount',
 
-    credentialChanged = "feeds:credentialChanged",
+    kycCredentialChanged = "feeds:kycCredentialChanged",
   }
 
   type TipDialogData = {

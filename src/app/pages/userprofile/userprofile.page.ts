@@ -195,6 +195,11 @@ export class UserprofilePage implements OnInit {
   }
 
   addEvents() {
+    this.events.subscribe(FeedsEvent.PublishType.kycCredentialChanged, (userDid: string) => {
+      if (this.userDid == userDid) {
+        this.initUserProfile(this.userDid);
+      }
+    });
     this.events.subscribe(
       FeedsEvent.PublishType.walletAccountChanged,
       (walletAccount) => {
@@ -267,6 +272,7 @@ export class UserprofilePage implements OnInit {
   }
 
   removeEvent() {
+    this.events.unsubscribe(FeedsEvent.PublishType.kycCredentialChanged);
     this.events.unsubscribe(FeedsEvent.PublishType.deletePostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.editPostFinish);
     this.events.unsubscribe(FeedsEvent.PublishType.getCommentFinish);

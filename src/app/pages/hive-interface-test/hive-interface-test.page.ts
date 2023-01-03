@@ -626,12 +626,10 @@ export class HiveInterfaceTestPage implements OnInit {
 
   async updateProfile() {
     const result = await this.hiveVaultController.updateUserProfile('did:elastos:ir4X7GswUfYnfx55qdQEATA64zD7GUw4cv', '66', '', '', '');
-    console.log('result ====>', result);
   }
 
   async queryProfile() {
     const result = await this.hiveVaultController.getUserProfile('did:elastos:ir4X7GswUfYnfx55qdQEATA64zD7GUw4cv', true);
-    console.log('result ====>', result);
   }
 
 }

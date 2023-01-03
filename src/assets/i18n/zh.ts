@@ -889,5 +889,9 @@ export const zh = {
     title: '微说打赏列表',
     tip: '打赏',
     allempty: '还没有人打赏'
+  },
+  Credentials: {
+    desc: 'Please choose any DID credentials you wish to display on your public profile.',
+    kycme: 'KYC-me'
   }
 };
