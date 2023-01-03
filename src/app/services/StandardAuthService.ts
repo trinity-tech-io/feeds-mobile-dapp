@@ -217,7 +217,7 @@ export class StandardAuthService {
   }
 
   async getAppId(): Promise<string> {
-    let userDid = (await this.dataHelper.getSigninData()).did
+    let userDid = await this.dataHelper.getUserDid()
     let appid = await this.storeService.get(userDid + 'appDid');
     return appid
   }
@@ -289,7 +289,7 @@ export class StandardAuthService {
         return;
       }
 
-      let userDid = (await this.dataHelper.getSigninData()).did
+      let userDid = await this.dataHelper.getUserDid()
       const userDIDCredential = await this.getUserDIDCredential(userDid);
 
 

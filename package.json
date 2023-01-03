@@ -14,6 +14,11 @@
   },
   "private": true,
   "dependencies": {
+    "@teamhive/lottie-player": "1.0.0",
+    "bip39": "^3.0.4",
+    "@awesome-cordova-plugins/clipboard": "5.37.3",
+    "moment": "2.29.2",
+    "base-58": "^0.0.1",
     "@angular/common": "^11.0.7",
     "@angular/core": "^11.0.7",
     "@angular/forms": "^11.0.7",

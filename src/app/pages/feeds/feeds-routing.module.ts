@@ -1,3 +1,11 @@
+/*
+ * @Author: liaihong
+ * @Date: 2022-12-06 18:19:22
+ * @LastEditors: liaihong 
+ * @LastEditTime: 2022-12-21 17:18:58
+ * @FilePath: /feeds-mobile-dapp-2/src/app/pages/feeds/feeds-routing.module.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -21,6 +29,18 @@ const routes: Routes = [
           },
         ],
       },
+      // {
+      //   path: 'home',
+      //   children: [
+      //     {
+      //       path: '',
+      //       loadChildren: () =>
+      //         import('./importdid/importdid.module').then(
+      //           m => m.ImportdidPageModule,
+      //         ),
+      //     },
+      //   ],
+      // },
       // 2nd Tab
       {
         path: 'profile',

@@ -153,7 +153,7 @@ export class CreatenewfeedPage implements OnInit {
     this.avatar = this.feedService.parseChannelAvatar(this.channelAvatar);
 
     this.clickButton = true;
-    const signinDid = (await this.dataHelper.getSigninData()).did;
+    const signinDid = await this.dataHelper.getUserDid();
     const channelId = UtilService.generateChannelId(signinDid,  nameValue);
     await this.native.showLoading('common.waitMoment');
     try {

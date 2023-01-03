@@ -8,6 +8,7 @@ import { PaypromptComponent } from './payprompt/payprompt.component';
 import { NftdialogComponent } from './../components/nftdialog/nftdialog.component';
 import { TipdialogComponent } from './tipdialog/tipdialog.component';
 import { MorenameComponent } from './morename/morename.component';
+import { MnemonicPassCheckComponent } from 'src/app/pages/feeds/mnemonicPassCheckComponent/mnemonicpasscheck.component';
 
 import { ConfirmdialogComponent } from './confirmdialog/confirmdialog.component';
 import { AlertdialogComponent } from './alertdialog/alertdialog.component';
@@ -61,6 +62,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
   ],
 
   declarations: [
+    MnemonicPassCheckComponent,
     AlertdialogComponent,
     ConfirmdialogComponent,
     DeleteaccountdialogComponent,
@@ -93,6 +95,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
     NftdisclaimerComponent,
   ],
   exports: [
+    MnemonicPassCheckComponent,
     AlertdialogComponent,
     ConfirmdialogComponent,
     DeleteaccountdialogComponent,
@@ -124,6 +127,7 @@ import { VideostyleComponent } from './videostyle/videostyle.component';
 
   providers: [],
   entryComponents: [
+    MnemonicPassCheckComponent,
     VideofullscreenComponent,
     AlertdialogComponent,
     ConfirmdialogComponent,

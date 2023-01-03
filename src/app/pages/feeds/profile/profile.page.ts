@@ -576,7 +576,7 @@ export class ProfilePage implements OnInit {
   async ionViewWillEnter() {
     this.theme.setTheme1();//改变状态栏
     this.initTitleBar();
-    this.userDid = (await this.dataHelper.getSigninData()).did || '';
+    this.userDid = await this.dataHelper.getUserDid() || '';
     // this.elaPrice = this.dataHelper.getElaUsdPrice();
     this.events.subscribe(FeedsEvent.PublishType.addProflieEvent, async () => {
       this.theme.setTheme1();//改变状态栏
@@ -732,7 +732,7 @@ export class ProfilePage implements OnInit {
       case 'ProfilePage.myFeeds':
         try {
 
-          const did = (await this.dataHelper.getSigninData()).did;
+          const did = await this.dataHelper.getUserDid();
           const selfchannels = await this.hiveVaultController.syncSelfChannel(did);
 
           for (let index = 0; index < selfchannels.length; index++) {
@@ -1781,7 +1781,7 @@ export class ProfilePage implements OnInit {
       this.dataHelper.setSelsectIndex(index);
       this.dataHelper.setProfileIamge(feedAvatar);
     }
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    let ownerDid: string = await this.dataHelper.getUserDid();
     this.dataHelper.setChannelInfo({
       destDid: destDid,
       channelId: channelId,

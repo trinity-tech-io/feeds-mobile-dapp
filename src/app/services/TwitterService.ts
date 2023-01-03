@@ -77,7 +77,7 @@ export class TwitterService {
   }
 
   private async fetchTokenFromTwitter(params: any) {
-    const userDid = (await this.dataHelper.getSigninData()).did
+    const userDid = await this.dataHelper.getUserDid()
     let header = {}
     this.http.setDataSerializer('json')
     try {

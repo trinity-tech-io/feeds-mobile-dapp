@@ -99,7 +99,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         let commentList = [];
-        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const selfDid = await this.dataHelper.getUserDid();
         const subscribedChannels = await this.dataHelper.getSubscribedChannelByUser(selfDid);
         if (!subscribedChannels) {
           resolve(commentList);
@@ -128,7 +128,7 @@ export class HiveVaultController {
   syncPostFromChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const selfDid = await this.dataHelper.getUserDid();
         let postList = [];
         if (destDid == selfDid) {
           const posts = await this.syncSelfPostsByChannel(channelId);
@@ -187,7 +187,7 @@ export class HiveVaultController {
   syncAllLikeData(): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const selfDid = await this.dataHelper.getUserDid();
         const subscribedChannels = await this.dataHelper.getSubscribedChannelByUser(selfDid);
         let likeList = [];
         let likePromiseList: Promise<any>[] = [];
@@ -374,7 +374,7 @@ export class HiveVaultController {
 
   refreshSubscription(): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const selfDid = (await this.dataHelper.getSigninData()).did;
+      const selfDid = await this.dataHelper.getUserDid();
       const subscribedChannels = await this.dataHelper.getSubscribedChannelByUser(selfDid);
       let subscribedPromise: Promise<any>[] = [];
       for (let index = 0; index < subscribedChannels.length; index++) {
@@ -398,7 +398,7 @@ export class HiveVaultController {
   getSelfSubscriptionChannel(targetDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const selfDid = await this.dataHelper.getUserDid();
         const result = await this.hiveVaultApi.querySubscriptionInfoByUserDID(targetDid, selfDid);
         Logger.log(TAG, 'Query user subscription info result is', result);
 
@@ -443,7 +443,7 @@ export class HiveVaultController {
   checkSubscriptionStatusFromRemote(targetDid: string, channelId: string): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const selfDid = await this.dataHelper.getUserDid();
         const result = await this.hiveVaultApi.querySubscriptionByUserDIDAndChannelId(targetDid, selfDid, channelId);
         Logger.log(TAG, 'Check subscription status from remote result is', result);
         if (!result) {
@@ -647,7 +647,7 @@ export class HiveVaultController {
   publishPost(channelId: string, postText: string, imagesBase64: string[], videoData: FeedsData.videoData, from: number, tag: string, type: string = 'public', status: number = FeedsData.PostCommentStatus.available, memo: string = '', proof: string = ''): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const userDid = (await this.dataHelper.getSigninData()).did
+        const userDid = await this.dataHelper.getUserDid()
 
         if (localStorage.getItem(userDid + "isSyncToTwitter") === "true") {
           await this.twitterService.postTweet(postText);
@@ -763,7 +763,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         //check local store
-        const targetDid = (await this.dataHelper.getSigninData()).did;
+        const targetDid = await this.dataHelper.getUserDid();
         const channelId = UtilService.generateChannelId(targetDid, channelName);
         const localChannel = await this.dataHelper.getChannelV3ById(targetDid, channelId);
         if (localChannel) {
@@ -807,7 +807,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         // 处理avatar
-        const signinDid = (await this.dataHelper.getSigninData()).did;
+        const signinDid = await this.dataHelper.getUserDid();
         const originChannel = await this.dataHelper.getChannelV3ById(signinDid, channelId);
         const updatedAt = UtilService.getCurrentTimeNum();
         let avatarHiveURL = '';
@@ -958,7 +958,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         // 检测本地是否存在
-        let userDid = (await this.dataHelper.getSigninData()).did
+        let userDid = await this.dataHelper.getUserDid()
         let avatar = await this.dataHelper.loadUserAvatar(userDid);
         if (avatar) {
           resolve(avatar);
@@ -991,7 +991,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       let userDid = '';
       try {
-        userDid = (await this.dataHelper.getSigninData()).did
+        userDid = await this.dataHelper.getUserDid()
         const loadKey = UtilService.getESSAvatarKey(userDid);
         let essavatar = await this.dataHelper.loadUserAvatar(loadKey) || null;
         if (essavatar) {
@@ -1010,7 +1010,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       let userDid = '';
       try {
-        userDid = (await this.dataHelper.getSigninData()).did
+        userDid = await this.dataHelper.getUserDid()
         let customAvatar = await this.dataHelper.loadUserAvatar(userDid)
         if (customAvatar) {
           resolve({ userDid: userDid, customAvatar: customAvatar });
@@ -1263,7 +1263,7 @@ export class HiveVaultController {
   syncSelfPosts(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const did = (await this.dataHelper.getSigninData()).did;
+        const did = await this.dataHelper.getUserDid();
         const postResult = await this.hiveVaultApi.querySelfPosts();
         Logger.log('Query self posts result', postResult);
         if (!postResult) {
@@ -1297,7 +1297,7 @@ export class HiveVaultController {
   getSelfPostsByChannel(channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const did = (await this.dataHelper.getSigninData()).did;
+        const did = await this.dataHelper.getUserDid();
         const postResult = await this.hiveVaultApi.querySelfPostsByChannel(channelId);
         Logger.log('Query self post result', postResult);
         if (!postResult) {
@@ -1377,7 +1377,7 @@ export class HiveVaultController {
         //TODO
         //1.query
         //2.if null add else update ,toast warn
-        const createrDid = (await this.dataHelper.getSigninData()).did;
+        const createrDid = await this.dataHelper.getUserDid();
         const likeId = UtilService.generateLikeId(postId, commentId, createrDid);
 
         const result = await this.hiveVaultApi.querySelfLikeById(destDid, channelId, likeId);
@@ -1432,7 +1432,7 @@ export class HiveVaultController {
   removeLike(destDid: string, channelId: string, postId: string, commentId: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const createrDid = (await this.dataHelper.getSigninData()).did;
+        const createrDid = await this.dataHelper.getUserDid();
         const like = await this.dataHelper.getLikeV3ByUser(postId, commentId, createrDid);
         if (!like) {
           resolve(null);
@@ -1459,7 +1459,7 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
 
-        const did = (await this.dataHelper.getSigninData()).did;
+        const did = await this.dataHelper.getUserDid();
         const result = await this.hiveVaultApi.unSubscribeChannel(destDid, channelId);
         console.log('unSubscribeChannel result', result);
 
@@ -1857,7 +1857,7 @@ export class HiveVaultController {
   getSelfChannel(): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const did = (await this.dataHelper.getSigninData()).did;
+        const did = await this.dataHelper.getUserDid();
         const channelsResult = await this.hiveVaultApi.querySelfChannels();
         Logger.log(TAG, 'Query self channels result', channelsResult);
         if (channelsResult) {
@@ -2018,7 +2018,7 @@ export class HiveVaultController {
   syncSubscribedChannelFromRemote(): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const ownerDid: string = (await this.dataHelper.getSigninData()).did;
+        const ownerDid: string = await this.dataHelper.getUserDid();
         const subscribedChannelList = await this.restoreSubscibedChannelFromRemote(ownerDid) || [];
         if (!subscribedChannelList || subscribedChannelList.length == 0) {
           const newSubscribedChannelList = await this.restoreSubscribedChannelFromRemoteBackupSubscribedChannel(ownerDid);
@@ -2677,20 +2677,27 @@ export class HiveVaultController {
 
   syncSelfProfileWithRemote(): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
-      const userDid: string = (await this.dataHelper.getSigninData()).did;
+      const userDid: string = await this.dataHelper.getUserDid();
+      console.log("旧 -1 ：syncSelfProfileWithRemote userDid = ", userDid)
       try {
         let remoteProfile = null;
         try {
           remoteProfile = await this.getRemoteUserProfileWithoutSave(userDid);
+          console.log("旧 -2：syncSelfProfileWithRemote remoteProfile = ", remoteProfile)
         } catch (error) {
+          console.log("旧 -3 error：syncSelfProfileWithRemote error = ", error)
         }
 
         try {
+          console.log("旧 -4 ")
           await this.syncUserProfileFromDidDocument(userDid);
+          console.log("旧 -5 ：syncSelfProfileWithRemote ")
         } catch (error) {
+          console.log("旧 -6 error = ", error)
         }
-
+        console.log("旧 -7 ：syncSelfProfileWithRemote ")
         const localUserProfile = await this.getUserProfileFromLocal(userDid);
+        console.log("旧 -8 ：syncSelfProfileWithRemote localUserProfile = ", localUserProfile)
         if (!remoteProfile || !remoteProfile.updatedAt) {
           const name = localUserProfile.name || localUserProfile.resolvedName || localUserProfile.displayName;
           const description = localUserProfile.bio || localUserProfile.resolvedBio;
@@ -2743,7 +2750,7 @@ export class HiveVaultController {
   uploadUserProfileAvatar(avatarData: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.dataHelper.getSigninData()).did;
+        const selfDid = await this.dataHelper.getUserDid();
         const scriptName = await this.hiveVaultApi.uploadDataWithScriptName(Config.FEEDS_HIVE_CUSTOM_AVATAR_PATH, avatarData, (process: number) => { });
         const hiveUrl = UtilService.createHiveUrl(selfDid, scriptName);
 
@@ -3158,7 +3165,7 @@ export class HiveVaultController {
       try {
         await this.syncSubscribedChannelFromRemote();
         await this.refreshSubscription();
-        const did = (await this.dataHelper.getSigninData()).did;
+        const did = await this.dataHelper.getUserDid();
         this.syncSelfChannel(did).catch(() => { });
         this.asyncGetAllChannelInfo().catch(() => { });
         this.asyncGetAllPost(callback).catch(() => { });

@@ -34,7 +34,7 @@ export class ScanPage{
       this.light = false;
   }
 
-  ionViewWillEnter(){
+  ionViewWillEnter() {
   }
 
   ionViewDidEnter(){

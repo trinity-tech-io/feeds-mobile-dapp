@@ -133,6 +133,8 @@ export class TitleBarService {
         return;
       }
 
+      this.event.publish(FeedsEvent.PublishType.startScan);
+
     });
   }
 

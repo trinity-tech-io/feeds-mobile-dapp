@@ -116,7 +116,7 @@ export class AssetdetailsPage implements OnInit {
     //this.activatedRoute.queryParams.subscribe(queryParams => {
     let queryParams = this.dataHelper.getAssetPageAssetItem();
     this.assItem = _.cloneDeep(queryParams);
-    let did = (await this.dataHelper.getSigninData()).did;
+    let did = await this.dataHelper.getUserDid();
     this.imageType = queryParams.type || "";
     this.owner = queryParams.name || '';
     this.name = queryParams.name || '';

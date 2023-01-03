@@ -91,7 +91,7 @@ export class MyApp {
         if (!this.avatar) {
           this.avatar = './assets/images/loading.svg';
 
-          const userDid = (await this.dataHelper.getSigninData()).did
+          const userDid = await this.dataHelper.getUserDid()
           if (userDid) {
             this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
               if (userProfile) {
@@ -143,7 +143,7 @@ export class MyApp {
     this.platform.ready()
       .then(() => {
         // // 测试twitter 记得删除
-        // const userDid = (await this.dataHelper.getSigninData()).did
+        // const userDid = await this.dataHelper.getUserDid()
         // this.dataHelper.removeTwitterToken(userDid)
         return this.dataHelper.loadApiProvider();
       }).then(() => {
@@ -283,7 +283,7 @@ export class MyApp {
           },
         );
         this.initPages();
-        this.initConnector();
+        // this.initConnector();
         this.initIpfs();
         this.initAssist();
         await this.initUserDidUri();
@@ -483,33 +483,33 @@ export class MyApp {
   }
 
   async confirm(that: any) {
-    if (this.popover != null) {
-      await this.popover.dismiss();
-      this.popover = null;
-    }
-    try {
-      await that.dataHelper.removeData("feeds.initHive");
-    } catch (error) {
+    // if (this.popover != null) {
+    //   await this.popover.dismiss();
+    //   this.popover = null;
+    // }
+    // try {
+    //   await that.dataHelper.removeData("feeds.initHive");
+    // } catch (error) {
 
-    }
-    try {
-      that.disconnectWallet();
-    } catch (error) {
+    // }
+    // try {
+    //   that.disconnectWallet();
+    // } catch (error) {
 
-    }
+    // }
 
-    try {
-      const activeConnector = connectivity.getActiveConnector();
-      if (activeConnector.name == 'local-identity') {
-        connectivity.unregisterConnector('local-identity');
-        persistenceService.reset();
-      } else {
-        connectivity.unregisterConnector('essentials');
-      }
-    } catch (error) {
+    // try {
+    //   const activeConnector = connectivity.getActiveConnector();
+    //   if (activeConnector.name == 'local-identity') {
+    //     connectivity.unregisterConnector('local-identity');
+    //     persistenceService.reset();
+    //   } else {
+    //     connectivity.unregisterConnector('essentials');
+    //   }
+    // } catch (error) {
 
-    }
-    that.clearData();
+    // }
+    // that.clearData();
   }
 
   async removeTwitterToken() {

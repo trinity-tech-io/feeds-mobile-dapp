@@ -879,5 +879,18 @@ export const en = {
   },
   UserprofileinfoPage: {
     title: 'User Profile Details'
-  }
+  },
+  prepare: {
+    signIntitle: 'Signing in...',
+    signInIntro: 'Importing identity, but takes a few seconds',
+    signInHiveTitle: 'Signing in Hive',
+    signInHiveIntro: 'Please wait a moment',
+    storageTitle: 'Making storage for your apps',
+    storageIntro: 'Creating a local cache space',
+    scriptTitle: 'Registering script',
+    scriptIntro: 'Please wait a moment',
+    doneTitle: 'You are all set!',
+    doneIntro: 'Your identity is now fully ready. You can start using Feeds.',
+    continue: "continue"
+  },
 };

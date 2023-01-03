@@ -219,7 +219,7 @@ export class ChannelsPage implements OnInit {
     }
 
     try {
-      const userDid = (await this.dataHelper.getSigninData()).did || '';
+      const userDid = await this.dataHelper.getUserDid() || '';
 
       if (this.destDid != userDid) {
         this.menuService.showChannelMenu(this.destDid, this.channelId, userDid);
@@ -305,7 +305,7 @@ export class ChannelsPage implements OnInit {
     if (this.followStatus) {
       posts = await this.dataHelper.getPostListV3FromChannel(this.destDid, this.channelId);
     } else {
-      const selfDid = (await this.dataHelper.getSigninData()).did || '';
+      const selfDid = await this.dataHelper.getUserDid() || '';
       if (selfDid && this.destDid == selfDid) {
         posts = await this.hiveVaultController.getSelfPostsByChannel(this.channelId);
       } else {
@@ -545,7 +545,7 @@ export class ChannelsPage implements OnInit {
       this.isRefresh = true;
       this.initRefresh();
     })
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    let ownerDid: string = await this.dataHelper.getUserDid();
     //if (this.destDid === ownerDid) {
       this.getChannelPublicStatus(this.destDid, this.channelId);
     //}
@@ -820,7 +820,7 @@ export class ChannelsPage implements OnInit {
 
   async checkChannelIsMine() {
 
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    let ownerDid: string = await this.dataHelper.getUserDid();
     if (this.destDid != ownerDid) {
       return 0;
     }
@@ -1370,7 +1370,7 @@ export class ChannelsPage implements OnInit {
       this.dataHelper.setSelsectIndex(index);
       this.dataHelper.setProfileIamge(this.channelAvatar);
     }
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    let ownerDid: string = await this.dataHelper.getUserDid();
     this.dataHelper.setChannelInfo({
       destDid: this.destDid,
       channelId: this.channelId,

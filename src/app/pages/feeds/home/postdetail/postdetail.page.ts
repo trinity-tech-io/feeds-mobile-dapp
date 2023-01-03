@@ -187,7 +187,7 @@ export class PostdetailPage implements OnInit {
       this.channelAvatarUri = channelAvatarUri;
       this.handleChannelAvatar(channelAvatarUri);
     }
-    let userDid = (await this.dataHelper.getSigninData()).did;
+    let userDid = await this.dataHelper.getUserDid();
     this.setMainUserAvatar(userDid);
     try {
       this.getDisplayName(userDid, this.channelId, userDid);
@@ -212,7 +212,7 @@ export class PostdetailPage implements OnInit {
   }
 
   async initRelyCommentExtradata() {
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    let ownerDid: string = await this.dataHelper.getUserDid();
     for (let key in this.replyCommentsMap) {
       let commentList: FeedsData.CommentV3[] = this.replyCommentsMap[key] || [];
       this.checkRelyCommentIsMine(commentList, ownerDid);
@@ -267,7 +267,7 @@ export class PostdetailPage implements OnInit {
 
   async initOwnCommentObj() {
     let captainCommentList = _.cloneDeep(this.captainCommentList);
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    let ownerDid: string = await this.dataHelper.getUserDid();
     _.each(captainCommentList, (item: FeedsData.CommentV3) => {
       let key = item.commentId;
       this.userNameList[key] = item.destDid;
@@ -883,7 +883,7 @@ export class PostdetailPage implements OnInit {
 
   async checkChannelIsMine() {
 
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    let ownerDid: string = await this.dataHelper.getUserDid();
     if (this.destDid != ownerDid) {
       return 0;
     }
@@ -1318,7 +1318,7 @@ export class PostdetailPage implements OnInit {
   async handleLikeAndCommentV2(destDid: string, channelId: string, postId: string, commentId: string, userDid: string) {
     let ownerDid = this.ownerDid || "";
     if (ownerDid === "") {
-      ownerDid = (await this.dataHelper.getSigninData()).did;
+      ownerDid = await this.dataHelper.getUserDid();
       this.ownerDid = ownerDid;
     }
 
@@ -1352,7 +1352,7 @@ export class PostdetailPage implements OnInit {
 
     let ownerDid = this.ownerDid || "";
     if (ownerDid === "") {
-      ownerDid = (await this.dataHelper.getSigninData()).did;
+      ownerDid = await this.dataHelper.getUserDid();
       this.ownerDid = ownerDid;
     }
 

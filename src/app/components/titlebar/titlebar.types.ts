@@ -15,7 +15,7 @@ export type TitleBarIcon = {
    * Path to an icon picture illustrating this menu item. Path can be either a built-in value to use
    * built-in icons, or a path to a custom icon (ex: "assets/...")
    */
-  iconPath: string;
+  iconPath: string | BuiltInIcon
 };
 
 export type TitleBarSlotItem = TitleBarIcon & {
@@ -76,4 +76,40 @@ export enum TitleBarNavigationMode {
   CLOSE = 1,
   /** No predefined outer left icon. All slots can be configured */
   CUSTOM = 2,
+}
+
+/**
+ * Built-in convenience icons that can be used as icon paths instead fo providing a custom icon path.
+ */
+export enum BuiltInIcon {
+  /** Elastos default icon */
+  ELASTOS = "elastos",
+  /** House */
+  HOME = "home",
+  /** Go back */
+  BACK = "back",
+  /** Close cross */
+  CLOSE = "close",
+  /** Scan a QR code */
+  SCAN = "scan",
+  /** Plus / Add */
+  ADD = "add",
+  /** Bin / Delete */
+  DELETE = "delete",
+  /** Settings wheel */
+  SETTINGS = "settings",
+  /** Help bubble */
+  HELP = "help",
+  /** Horizontal "3 dots" */
+  HORIZONTAL_MENU = "horizontal_menu",
+  /** Vertical "3 dots" */
+  VERTICAL_MENU = "vertical_menu",
+  /** Edit, a pen */
+  EDIT = "edit",
+  /** Favorite, a bookmark */
+  FAVORITE = "favorite",
+  /** Notifications */
+  NOTIFICATIONS = "notifications",
+  /** Network */
+  NETWORK = "network"
 }

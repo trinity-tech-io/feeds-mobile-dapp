@@ -875,5 +875,18 @@ export const zh = {
   },
   UserprofileinfoPage: {
     title: '用户档案详情'
-  }
+  },
+  prepare: {
+    signIntitle: '登录中',
+    signInIntro: '正在导入身份，请稍后...',
+    signInHiveTitle: '登录Hive中',
+    signInHiveIntro: '请稍后...',
+    storageTitle: '为应用程序准备一些存储空间',
+    storageIntro: '正在创建本地缓存空间...',
+    scriptTitle: '注册Script中',
+    scriptIntro: '请稍后...',
+    doneTitle: '全部完成',
+    doneIntro: '您的身份现在已经完全准备好了。您可以开始使用Feeds。',
+    continue: "继续"
+  },
 };

@@ -1,0 +1,124 @@
+
+.spinner-container {
+  position: fixed;
+  z-index: 2;
+  top: 40%;
+  left: 47%;
+
+  ion-spinner {
+    transform: scale(2);
+  }
+}
+
+.container {
+  padding: 25px;
+
+  .header-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+      margin: 10px;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .btn-row {
+    padding-top: 20px;
+    width: 100%;
+
+    ion-button {
+      height: 50px;
+      width: 100%;
+      --background: linear-gradient(to bottom, #732dcf, #640fd4);
+      --border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+  }
+
+  #first-input-row {
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
+  .input-row {
+    display: flex;
+    flex-direction: column;
+
+    ion-input {
+      height: 50px;
+      width: 100%;
+      background: #f0f1ff;
+      --padding-start: 12px;
+      --padding-top: 13px;
+      --padding-bottom: 13px;
+      border-radius: 8px;
+      font-size: 14px;
+      letter-spacing: -0.5px;
+    }
+
+    .password-failed-info {
+      color: #FF6464;
+      font-weight:700;
+      font-size: 10px;
+      margin-top: 5px;
+    }
+  }
+}
+
+.dark-container {
+  .header-row {
+    h1 {
+      color: #fdfeff;
+    }
+  }
+
+  .input-row {
+    ion-input {
+      background: #212021;
+      color: #ffffff;
+    }
+  }
+}
+
+.didsessions-mnemonicpasscheck-component {
+  --height: 350px;
+  //--background: #ffffff;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+.didsessions-mnemonicpasscheck-component-dark {
+  --height: 350px;
+  //--background: #121212;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+

@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { PopoverController, Platform } from '@ionic/angular';
 import { TitlebarmenuitemComponent } from '../titlebarmenuitem/titlebarmenuitem.component';
 import {
+  BuiltInIcon,
   TitleBarTheme,
   TitleBarSlotItem,
   TitleBarMenuItem,
@@ -163,6 +164,19 @@ export class TitleBarComponent {
       this.icons[iconSlot].key = null;
       this.icons[iconSlot].iconPath = null;
     }
+  }
+
+  public setNavigationMode(navigationMode: TitleBarNavigationMode, customIcon?: TitleBarIcon) {
+    this.navigationMode = navigationMode;
+
+    if (navigationMode == TitleBarNavigationMode.BACK)
+      this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: "back", iconPath: BuiltInIcon.BACK });
+    else if (navigationMode == TitleBarNavigationMode.CLOSE)
+      this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: "close", iconPath: BuiltInIcon.CLOSE });
+    else if (navigationMode == TitleBarNavigationMode.CUSTOM && customIcon)
+      this.setIcon(TitleBarIconSlot.INNER_LEFT, { key: customIcon.key, iconPath: customIcon.iconPath });
+    else
+      this.setIcon(TitleBarIconSlot.INNER_LEFT, null);
   }
 
   getIconPath(iconSlot: TitleBarIconSlot) {

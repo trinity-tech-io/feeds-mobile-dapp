@@ -62,7 +62,7 @@ export class HiveInterfaceTestPage implements OnInit {
 
   async createCollection() {
     // this.hiveVaultApi.createAllCollections();
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     // this.sqliteHelper.queryPostData(selfDid);
 
     const list = ["e7e37c148eee68863995e67f285fc37eda9114fa6879f3829e95cc40a47dce57", "1190262f8fbf1a0e1d8016ddcf05f23496a464b3af0c1a67c726c71d69b774e1"]
@@ -198,7 +198,7 @@ export class HiveInterfaceTestPage implements OnInit {
     // this.hiveVaultApi.findLikeById();
     this.hiveVaultApi.queryLikeByChannel('did:elastos:iXB82Mii9LMEPn3U7cLECswLmex9KkZL8D', 'b473b33e385f4a4dea1d4ed55eaa1d57c70888b43432cd1c63bddbd605d6a8a9');
 
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     console.log('......');
     const list = await this.sqliteHelper.queryLikeData(selfDid);
     console.log('......queryLikeData = ', list);
@@ -234,7 +234,7 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   async syncSelfChannel() {
-    const did = (await this.dataHelper.getSigninData()).did;
+    const did = await this.dataHelper.getUserDid();
     this.hiveVaultController.syncSelfChannel(did);
   }
 
@@ -287,7 +287,7 @@ export class HiveInterfaceTestPage implements OnInit {
   async createTables() {
     console.log('createTables');
     try {
-      const selfDid = (await this.dataHelper.getSigninData()).did;
+      const selfDid = await this.dataHelper.getUserDid();
       await this.sqliteHelper.createTables(selfDid);
     } catch (error) {
 
@@ -296,13 +296,13 @@ export class HiveInterfaceTestPage implements OnInit {
 
   async queryPostData() {
     console.log('queryPostData');
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     this.sqliteHelper.queryPostData(selfDid);
   }
 
   async queryPostDataByID() {
     console.log('queryPostDataByID');
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     this.sqliteHelper.queryPostDataByID(selfDid, 'testPostId');
   }
 
@@ -341,13 +341,13 @@ export class HiveInterfaceTestPage implements OnInit {
       pinStatus: FeedsData.PinStatus.PINNED,
       from: FeedsData.Device.ANDROID
     }
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     this.sqliteHelper.insertPostData(selfDid, post)
   }
 
   async queryPostDataByTime() {
     console.log('queryPostDataByTime');
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     this.sqliteHelper.queryPostDataByTime(selfDid, 1648801128610, 1648803967893)
   }
 
@@ -537,7 +537,7 @@ export class HiveInterfaceTestPage implements OnInit {
 
 
   async insertSubscribedChannelData() {
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     const subscribedChannelV3: FeedsData.SubscribedChannelV3 = {
       userDid: selfDid,
       targetDid: "targetDid",
@@ -574,7 +574,7 @@ export class HiveInterfaceTestPage implements OnInit {
 
 
   async updateSubscribedChannelData() {
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     const subscribedChannelV3: FeedsData.SubscribedChannelV3 = {
       userDid: selfDid,
       targetDid: "targetDid",
@@ -593,32 +593,32 @@ export class HiveInterfaceTestPage implements OnInit {
   }
 
   async queryAllSubscribedChannelData() {
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     const result = await this.sqliteHelper.queryAllSubscribedChannelData(selfDid);
   }
 
   async querySubscribedChannelDataByUserDid() {
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     const result = await this.sqliteHelper.querySubscribedChannelDataByUserDid(selfDid, selfDid);
   }
 
   async deleteSubscribedChannelDataById() {
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     this.sqliteHelper.deleteSubscribedChannelDataById(selfDid, selfDid, "targetDid", "channelId",);
   }
 
   async deleteSubscribedChannelDataByUser() {
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     this.sqliteHelper.deleteSubscribedChannelDataByUser(selfDid, selfDid);
   }
 
   async cleanSubscribedChannelData() {
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     this.sqliteHelper.cleanSubscribedChannelData(selfDid);
   }
 
   async removeSelfProfile() {
-    const selfDid = (await this.dataHelper.getSigninData()).did;
+    const selfDid = await this.dataHelper.getUserDid();
     await this.hiveVaultApi.deleteSelfProfile();
     this.hiveVaultApi.queryProfile(selfDid);
   }

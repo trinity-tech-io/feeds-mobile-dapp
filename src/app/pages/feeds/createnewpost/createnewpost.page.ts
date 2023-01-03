@@ -123,7 +123,7 @@ export class CreatenewpostPage implements OnInit {
   }
 
   async checkBoxClick(event) {
-    const userDid = (await this.dataHelper.getSigninData()).did
+    const userDid = await this.dataHelper.getUserDid()
     if (event.detail.checked === true) {
       this.twitterService.checkTwitterIsExpiredWithToast().then(async (result) => {
         if (result === null) {
@@ -205,11 +205,11 @@ export class CreatenewpostPage implements OnInit {
     this.twitterService.checkTwitterIsExpired().then(async (result) => {
       if (result != null) {
         this.isPostTwitter = true
-        const userDid = (await this.dataHelper.getSigninData()).did
+        const userDid = await this.dataHelper.getUserDid()
         localStorage.setItem(userDid + "isSyncToTwitter", "true");
       } else {
         this.isPostTwitter = false
-        const userDid = (await this.dataHelper.getSigninData()).did
+        const userDid = await this.dataHelper.getUserDid()
         localStorage.setItem(userDid + "isSyncToTwitter", "false");
       }
     })
@@ -217,12 +217,12 @@ export class CreatenewpostPage implements OnInit {
     try {
       this.redditService.checkRedditIsExpired().then(async (token) => {
         if (token === null) {
-          const userDid = (await this.dataHelper.getSigninData()).did;
+          const userDid = await this.dataHelper.getUserDid();
           this.isPostReddit = false;
           localStorage.setItem(userDid + "isSyncToReddit", "false")
           return;
         }
-        const userDid = (await this.dataHelper.getSigninData()).did;
+        const userDid = await this.dataHelper.getUserDid();
         const isSubscribeElastos = this.dataHelper.getRedditIsSubscribeElastos(userDid);
         if (isSubscribeElastos === false) {
           try {
@@ -764,7 +764,7 @@ export class CreatenewpostPage implements OnInit {
 
   async clickTwitter() {
 
-    const userDid = (await this.dataHelper.getSigninData()).did
+    const userDid = await this.dataHelper.getUserDid()
     if (this.isPostTwitter) {
       this.isPostTwitter = false;
       localStorage.setItem(userDid + "isSyncToTwitter", "false");
@@ -781,7 +781,7 @@ export class CreatenewpostPage implements OnInit {
 
   async clickReddit() {
     // this.isPostReddit = !this.isPostReddit;
-    const userDid = (await this.dataHelper.getSigninData()).did
+    const userDid = await this.dataHelper.getUserDid()
     if (this.isPostReddit) {
       this.isPostReddit = false;
       localStorage.setItem(userDid + "isSyncToReddit", "false");

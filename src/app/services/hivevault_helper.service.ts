@@ -358,7 +358,7 @@ export class HiveVaultHelper {
     private insertChannelData(channelName: string, displayName: string, intro: string, avatarAddress: string, tippingAddress: string, type: string, nft: string, memo: string, category: string, proof: string): Promise<{ [x: string]: string | number | boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
-                const signinDid = (await this.dataHelper.getSigninData()).did;
+                const signinDid = await this.dataHelper.getUserDid();
                 const createdAt = UtilService.getCurrentTimeNum();
                 const updatedAt = UtilService.getCurrentTimeNum();
                 const channelId = UtilService.generateChannelId(signinDid, channelName);
@@ -502,7 +502,7 @@ export class HiveVaultHelper {
     private insertPostData(channelId: string, tag: string, content: string, type: string, status: number, memo: string, proof: string, from: number): Promise<{ targetDid: string, postId: string, createdAt: number, updatedAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
-                const signinDid = (await this.dataHelper.getSigninData()).did;
+                const signinDid = await this.dataHelper.getUserDid();
 
                 const createdAt = UtilService.getCurrentTimeNum();
                 const updatedAt = UtilService.getCurrentTimeNum();
@@ -1232,7 +1232,7 @@ export class HiveVaultHelper {
     createComment(targetDid: string, channelId: string, postId: string, refcommentId: string, content: string): Promise<{ commentId: string, createrDid: string, createdAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
-                const signinDid = (await this.dataHelper.getSigninData()).did;
+                const signinDid = await this.dataHelper.getUserDid();
                 const commentId = UtilService.generateCommentId(signinDid, postId, refcommentId, content);
                 const createdAt = UtilService.getCurrentTimeNum();
                 const result = await this.callCreateComment(targetDid, commentId, channelId, postId, refcommentId, content, createdAt);
@@ -1953,10 +1953,14 @@ export class HiveVaultHelper {
     private callScript(targetDid: string, scriptName: string, params: any): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
+                console.log("旧-1： callScript result = ", targetDid, " scriptName = ", scriptName, " params = ", params)
                 const appid = Config.APPLICATION_DID;
                 Logger.log(TAG, 'Call script params is targetDid:', targetDid, 'scriptName:', scriptName, 'params:', params);
-                let userDid = (await this.dataHelper.getSigninData()).did;
+                console.log("旧-2： callScript appid = ", appid)
+                let userDid = await this.dataHelper.getUserDid();
+                console.log("旧-3： callScript userDid = ", userDid)
                 let result = await this.hiveService.callScript(scriptName, params, targetDid, appid, userDid);
+                console.log("旧-4： callScript result = ", result)
                 Logger.log('Call script result is', result);
                 resolve(result);
             } catch (error) {
@@ -2335,7 +2339,7 @@ export class HiveVaultHelper {
     deleteSelfProfile() {
         return new Promise(async (resolve, reject) => {
             try {
-                const signinDid = (await this.dataHelper.getSigninData()).did;
+                const signinDid = await this.dataHelper.getUserDid();
                 const filter = {
                     "did": signinDid
                 }
@@ -2374,7 +2378,7 @@ export class HiveVaultHelper {
     private insertSelfProfileData(name: string, description: string, avatarAddress: string): Promise<{ did: string, name: string, description: string, avatar: string, updatedAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
-                const signinDid = (await this.dataHelper.getSigninData()).did;
+                const signinDid = await this.dataHelper.getUserDid();
                 const updatedAt = UtilService.getCurrentTimeNum();
                 let result = await this.insertSelfProfileToProfileDB(signinDid, name, description, avatarAddress, updatedAt);
                 if (result) {
@@ -2430,7 +2434,7 @@ export class HiveVaultHelper {
     private async updateProfileData(name: string, description: string, avatarHiveUrl: string): Promise<{ updatedAt: number }> {
         return new Promise(async (resolve, reject) => {
             try {
-                const signinDid = (await this.dataHelper.getSigninData()).did;
+                const signinDid = await this.dataHelper.getUserDid();
                 const updatedAt = UtilService.getCurrentTimeNum();
                 const result = await this.updateDataToProfileDB(signinDid, name, description, avatarHiveUrl, updatedAt);
                 if (!result) {
@@ -2471,7 +2475,9 @@ export class HiveVaultHelper {
     private callQueryProfile(targetDid: string) {
         return new Promise(async (resolve, reject) => {
             try {
+                console.log("旧：callQueryProfile targetDid = ", targetDid)
                 let result = await this.callScript(targetDid, HiveVaultHelper.SCRIPT_QUERY_PROFILE, { "did": targetDid })
+                console.log("旧：callQueryProfile result = ", result)
                 resolve(result)
             } catch (error) {
                 // Logger.error(TAG, 'Call query profile Scripting error:', error)
@@ -2483,7 +2489,9 @@ export class HiveVaultHelper {
     queryProfile(targetDid: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
+                console.log("旧：queryProfile ==== targetDid = ", targetDid)
                 const result = await this.callQueryProfile(targetDid);
+                console.log("旧：queryProfile ==== result = ", result)
                 resolve(result);
             } catch (error) {
                 // Logger.error(TAG, 'Query profile error', error);

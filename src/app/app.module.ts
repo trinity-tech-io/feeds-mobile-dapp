@@ -95,6 +95,7 @@ import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { TwitterService } from 'src/app/services/TwitterService';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
 import { RedditService } from 'src/app/services/RedditService';
+import { IdentityService } from 'src/app/pages/feeds/importdid/identity.service';
 
 Sentry.init({
   dsn:
@@ -270,8 +271,9 @@ export function TranslateLoaderFactory() {
     DIDHelperService,
     SQLite,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: ErrorHandler, useClass: SentryErrorHandler }
+    { provide: ErrorHandler, useClass: SentryErrorHandler },
     // { provide: ErrorHandler, useClass: ErrorHandler },
+    IdentityService
   ],
 })
 export class AppModule { }

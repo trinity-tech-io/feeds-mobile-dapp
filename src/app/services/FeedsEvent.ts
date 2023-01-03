@@ -168,6 +168,7 @@ declare namespace FeedsEvent {
     channelRightMenu = "feeds:channelRightMenu",
     channelInfoRightMenu = "feeds:channelInfoRightMenu",
     editProfileInfoRightMenu = "feeds:editProfileInfoRightMenu",
+    startScan = "feeds:startScan",
 
     savePicture = "feeds:savePicture",
     clickDialog = "feeds:clickDialog",

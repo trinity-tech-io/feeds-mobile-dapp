@@ -197,6 +197,11 @@ export class DataHelper {
     return this.loadData(FeedsData.PersistenceKey.signInData);
   }
 
+  getUserDid() {
+    console.log("getUserDid ==>> this.storageService === ", this.storageService)
+    return this.storageService.get("signInData-new")
+  }
+
   ////channelsMap
   setChannelsMap(channelsMap: { [nodeChannelId: string]: FeedsData.Channels }) {
     this.channelsMap = channelsMap;
@@ -2903,7 +2908,7 @@ export class DataHelper {
         if (userDid) {
           selfDid = userDid
         } else {
-          selfDid = (await this.getSigninData()).did;
+          selfDid = await this.getUserDid();
         }
 
         if (!selfDid) {
@@ -2969,7 +2974,7 @@ export class DataHelper {
   addBackupSubscribedChannelV3(subscribedChannel: FeedsData.BackupSubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.insertBackupSubscribedChannelData(selfDid, subscribedChannel);
         resolve(result);
       } catch (error) {
@@ -2982,7 +2987,7 @@ export class DataHelper {
   removeBackupSubscribedChannelV3(subscribedChannel: FeedsData.BackupSubscribedChannelV3) {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.deleteBackupSubscribedChannelData(selfDid, subscribedChannel);
         resolve(result);
       } catch (error) {
@@ -2995,7 +3000,7 @@ export class DataHelper {
   // cleanBackupSubscribedChannelData(): Promise<string> {
   //   return new Promise(async (resolve, reject) => {
   //     try {
-  //       const selfDid = (await this.getSigninData()).did;
+  //       const selfDid = await this.getUserDid();
   //       const result = await this.sqliteHelper.cleanBackupSubscribedChannelData(selfDid);
   //       resolve(result);
   //     } catch (error) {
@@ -3008,7 +3013,7 @@ export class DataHelper {
   getBackupSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         let subscribedList = await this.sqliteHelper.queryBackupSubscribedChannelData(selfDid);
         const resultList = await this.filterBackupSubscribedChannelV3(subscribedList, subscribedChannelType);
         resolve(resultList);
@@ -3035,7 +3040,7 @@ export class DataHelper {
   private async filterBackupSubscribedChannelV3(list: FeedsData.BackupSubscribedChannelV3[], subscribedChannelType: FeedsData.SubscribedChannelType): Promise<FeedsData.BackupSubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const signinDid = (await this.getSigninData()).did;
+        const signinDid = await this.getUserDid();
         switch (subscribedChannelType) {
           case FeedsData.SubscribedChannelType.ALL_CHANNEL:
             resolve(list);
@@ -3065,7 +3070,7 @@ export class DataHelper {
   getBackupSubscribedChannelV3ByKey(destDid: string, channelId: string): Promise<FeedsData.BackupSubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         let queryList = await this.sqliteHelper.queryBackupSubscribedChannelDataByChannelId(selfDid, channelId)
         resolve(queryList[0])
       } catch (error) {
@@ -3093,7 +3098,7 @@ export class DataHelper {
   private addSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         await this.sqliteHelper.insertSubscriptionData(selfDid, subscription)
         resolve('FINISH');
       } catch (error) {
@@ -3126,7 +3131,7 @@ export class DataHelper {
   private updateSubscriptionV3Data(subscription: FeedsData.SubscriptionV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         await this.sqliteHelper.updateSubscriptionData(selfDid, subscription);
         resolve('FINISH');
       }
@@ -3160,7 +3165,7 @@ export class DataHelper {
   cleanSubscriptionsV3Data(): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.cleanSubscriptionData(selfDid);
         resolve(result);
       } catch (error) {
@@ -3173,7 +3178,7 @@ export class DataHelper {
   deleteSubscriptionData(channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.deleteSubscriptionData(selfDid, channelId);
         resolve(result);
       } catch (error) {
@@ -3186,7 +3191,7 @@ export class DataHelper {
   getDistinctSubscriptionV3NumByChannelId(destDid: string, channelId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryDistinnctSubscriptionNumByChannelId(selfDid, channelId);
         resolve(result);
       }
@@ -3200,7 +3205,7 @@ export class DataHelper {
   getSubscriptionV3DataByChannelId(channelId: string): Promise<FeedsData.SubscriptionV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.querySubscriptionDataByChannelId(selfDid, channelId) || [];
         if (result) {
           resolve(result);
@@ -3218,7 +3223,7 @@ export class DataHelper {
   getDistinctSubscriptionV3UserListByChannelId(channelId: string): Promise<string[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryDistinctSubscriptionUserListByChannelId(selfDid, channelId) || [];
         if (result) {
           resolve(result);
@@ -3236,7 +3241,7 @@ export class DataHelper {
   getDisplayNameByUserDid(userDid: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const displayName = await this.sqliteHelper.queryDisplayNameByUserDid(selfDid, userDid) || '';
         if (!displayName) {
           resolve('');
@@ -3296,7 +3301,7 @@ export class DataHelper {
   private addChannelV3(channel: FeedsData.ChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = this.sqliteHelper.insertChannelData(selfDid, channel);
         resolve(result);
       } catch (error) {
@@ -3326,7 +3331,7 @@ export class DataHelper {
   }
 
   private async updateChannelV3(channel: FeedsData.ChannelV3) {
-    const selfDid = (await this.getSigninData()).did;
+    const selfDid = await this.getUserDid();
     // update 的时候更新updateTime
     return await this.sqliteHelper.updateChannelData(selfDid, channel);
   }
@@ -3354,7 +3359,7 @@ export class DataHelper {
   getChannelV3ById(destDid: string, channelId: string): Promise<FeedsData.ChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryChannelDataByChannelId(selfDid, channelId)
 
         resolve(result[0]);
@@ -3390,7 +3395,7 @@ export class DataHelper {
   getSelfChannelListV3(): Promise<FeedsData.ChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const selfChannelList = await this.sqliteHelper.queryChannelWithDid(selfDid, selfDid) || [];
         resolve(selfChannelList);
       } catch (error) {
@@ -3449,7 +3454,7 @@ export class DataHelper {
   private addPostV3(post: FeedsData.PostV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.insertPostData(selfDid, post);
         resolve(result);
       } catch (error) {
@@ -3485,7 +3490,7 @@ export class DataHelper {
   private updatePostV3(post: FeedsData.PostV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = this.sqliteHelper.updatePostData(selfDid, post)
         resolve(result);
       } catch (error) {
@@ -3529,7 +3534,7 @@ export class DataHelper {
   removeChannelPostData(channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.removePostDataByChannel(selfDid, channelId);
         resolve(result);
       } catch (error) {
@@ -3541,7 +3546,7 @@ export class DataHelper {
   getPostV3ById(postId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryPostDataByID(selfDid, postId)
         resolve(result[0]);
       } catch (error) {
@@ -3553,7 +3558,7 @@ export class DataHelper {
   getPostListV3FromChannel(destDid: string, channelId: string): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryPostDataByChannelId(selfDid, channelId)
         let sortList = [];
         sortList = _.sortBy(result, (item: any) => {
@@ -3570,7 +3575,7 @@ export class DataHelper {
   getPostListByChannelList(channelList: string[]): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const postList = await this.sqliteHelper.queryPostListByChannelList(selfDid, channelList)
 
         let sortList = [];
@@ -3588,7 +3593,7 @@ export class DataHelper {
   getPostV3List(): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         let list = [];
         list = await this.sqliteHelper.queryPostData(selfDid)
         let sortList = [];
@@ -3605,7 +3610,7 @@ export class DataHelper {
   queryPostDataByTime(start: number, end: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         let list = await this.sqliteHelper.queryPostDataByTime(selfDid, start, end) || [];
         resolve(list);
       } catch (error) {
@@ -3617,7 +3622,7 @@ export class DataHelper {
   queryPostDataByChannelIdByTime(channelId: string, start: number, end: number): Promise<FeedsData.PostV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         let list = await this.sqliteHelper.queryChannelPostDataByTime(selfDid, channelId, start, end) || [];
         resolve(list);
       } catch (error) {
@@ -3671,7 +3676,7 @@ export class DataHelper {
   private async addCommentV3(comment: FeedsData.CommentV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.insertCommentData(selfDid, comment)
         resolve('FINISH');
       } catch (error) {
@@ -3684,7 +3689,7 @@ export class DataHelper {
   private updateCommentV3(comment: FeedsData.CommentV3): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.updateCommentData(selfDid, comment)
         resolve(comment);
       } catch (error) {
@@ -3717,7 +3722,7 @@ export class DataHelper {
   getCommentV3ById(postId: string, commentId: string): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryCommentById(selfDid, postId, commentId);
         resolve(result);
       } catch (error) {
@@ -3729,7 +3734,7 @@ export class DataHelper {
   getCommentsV3ByRefId(postId: string, refCommentId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryCommentByRefId(selfDid, postId, refCommentId);
         resolve(result);
       } catch (error) {
@@ -3765,7 +3770,7 @@ export class DataHelper {
   getCommentNum(destDid: string, channelId: string, postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const num = this.sqliteHelper.queryCommentNum(selfDid, commentId);
         resolve(num);
       } catch (error) {
@@ -3835,7 +3840,7 @@ export class DataHelper {
   private addLikeV3(like: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = this.sqliteHelper.insertLike(selfDid, like)
         resolve(result);
       } catch (error) {
@@ -3872,7 +3877,7 @@ export class DataHelper {
           resolve('FINISH');
           return;
         }
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.updateLike(selfDid, like);
 
         resolve('FINISH');
@@ -3906,7 +3911,7 @@ export class DataHelper {
   removeLikeV3(like: FeedsData.LikeV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         await this.sqliteHelper.deleteLike(selfDid, like)
         resolve('FINISH')
       }
@@ -3920,7 +3925,7 @@ export class DataHelper {
   getLikeV3ById(postId: string, commentId: string): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryLikeDataById(selfDid, postId, commentId)
         resolve(result)
       }
@@ -3934,7 +3939,7 @@ export class DataHelper {
   getLikeV3ByUser(postId: string, commentId: string, userDid: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryUserLikeData(selfDid, postId, commentId, userDid);
         resolve(result[0]);
       } catch (error) {
@@ -3947,7 +3952,7 @@ export class DataHelper {
   getSelfAllLikeV3Data(): Promise<FeedsData.LikeV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryUserAllLikeData(selfDid, selfDid) || [];
         resolve(result);
       } catch (error) {
@@ -3960,7 +3965,7 @@ export class DataHelper {
   getSelfLikeV3(postId: string, commentId: string): Promise<FeedsData.LikeV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.getLikeV3ByUser(postId, commentId, selfDid);
         resolve(result);
       } catch (error) {
@@ -3985,7 +3990,7 @@ export class DataHelper {
   getLikeNum(postId: string, commentId: string): Promise<number> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const num = await this.sqliteHelper.queryLikeNum(selfDid, postId, commentId);
         resolve(num);
       } catch (error) {
@@ -4007,7 +4012,7 @@ export class DataHelper {
   deletePostData(postId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.deletePostData(selfDid, postId);
         resolve(result);
       } catch (error) {
@@ -4403,7 +4408,7 @@ export class DataHelper {
   queryChannelPinPostData(channelId: string): Promise<FeedsData.PostV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         let queryList = await this.sqliteHelper.queryChannelPinPostData(selfDid, channelId)
         resolve(queryList[0])
       } catch (error) {
@@ -4455,7 +4460,7 @@ export class DataHelper {
   private addUserProfileData(user: FeedsData.UserProfile) {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.insertUserProfile(selfDid, user);
         resolve(result);
       } catch (error) {
@@ -4467,7 +4472,7 @@ export class DataHelper {
   private updateUserProfileData(user: FeedsData.UserProfile) {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.updateUserProfile(selfDid, user);
         resolve(result);
       } catch (error) {
@@ -4479,7 +4484,7 @@ export class DataHelper {
   getUserProfileData(userDid: string): Promise<FeedsData.UserProfile> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.queryUserProfileById(selfDid, userDid);
         resolve(result);
       } catch (error) {
@@ -4573,7 +4578,7 @@ export class DataHelper {
   private addSubscribedChannelData(subscribedChannel: FeedsData.SubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.insertSubscribedChannelData(selfDid, subscribedChannel);
         resolve(result);
       } catch (error) {
@@ -4585,7 +4590,7 @@ export class DataHelper {
   private updateSubscribedChannel(subscribedChannel: FeedsData.SubscribedChannelV3): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.updateSubscribedChannelData(selfDid, subscribedChannel);
         resolve(result);
       } catch (error) {
@@ -4597,7 +4602,7 @@ export class DataHelper {
   removeSubscribedChannelByID(userDid: string, targetDid: string, channelId: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.deleteSubscribedChannelDataById(selfDid, userDid, targetDid, channelId);
         resolve(result);
       } catch (error) {
@@ -4609,7 +4614,7 @@ export class DataHelper {
   getSubscribedChannelByID(userDid: string, targetDid: string, channelId: string): Promise<FeedsData.SubscribedChannelV3> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const result = await this.sqliteHelper.querySubscribedChannelDataById(selfDid, userDid, targetDid, channelId);
         resolve(result);
       } catch (error) {
@@ -4621,7 +4626,7 @@ export class DataHelper {
   getSubscribedChannelByUser(userDid: string): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const subscribedList = await this.sqliteHelper.querySubscribedChannelDataByUserDid(selfDid, userDid);
         resolve(subscribedList);
       } catch (error) {
@@ -4634,7 +4639,7 @@ export class DataHelper {
   getAllSubscribedChannels(): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         const subscribedList = await this.sqliteHelper.queryAllSubscribedChannelData(selfDid);
         resolve(subscribedList);
       } catch (error) {
@@ -4648,7 +4653,7 @@ export class DataHelper {
   getSelfSubscribedChannelV3List(subscribedChannelType: FeedsData.SubscribedChannelType = FeedsData.SubscribedChannelType.ALL_CHANNEL): Promise<FeedsData.SubscribedChannelV3[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         let subscribedList = await this.getSubscribedChannelByUser(selfDid);
         const resultList = await this.filterSubscribedChannelV3(selfDid, subscribedList, subscribedChannelType);
 
@@ -4691,7 +4696,7 @@ export class DataHelper {
   resetOwnSubscribedChannel(subscibedChannelList: FeedsData.SubscribedChannelV3[]): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const selfDid = (await this.getSigninData()).did;
+        const selfDid = await this.getUserDid();
         await this.sqliteHelper.deleteSubscribedChannelDataByUser(selfDid, selfDid);
         await this.addSubscribedChannels(subscibedChannelList);
         resolve('FINISH');

@@ -312,7 +312,7 @@ export class SubscriptionsPage implements OnInit {
       this.dataHelper.setSelsectIndex(index);
       this.dataHelper.setProfileIamge(feedAvatar);
     }
-    let ownerDid: string = (await this.dataHelper.getSigninData()).did;
+    let ownerDid: string = await this.dataHelper.getUserDid();
     this.dataHelper.setChannelInfo({
       destDid: destDid,
       channelId: channelId,

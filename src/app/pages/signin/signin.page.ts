@@ -133,10 +133,13 @@ export class SigninPage implements OnInit {
       return;
     }
 
-    connectivity.setActiveConnector('essentials').then(async () => {
-      await this.doSignin(false);
-    }).catch((err) => {
-    });
+    this.native.navigateForward(['/importdid'], '');
+
+    // connectivity.setActiveConnector('essentials').then(async () => {
+    //   await this.doSignin(false);
+    // }).catch((err) => {
+
+    // });
   }
 
   async doSignin(forceCreate: boolean) {
@@ -212,9 +215,9 @@ export class SigninPage implements OnInit {
   }
 
   guest() {
-    connectivity.setActiveConnector('local-identity').then(async () => {
-      await this.doSignin(false);
-    }).catch((err) => {
-    });
+    // connectivity.setActiveConnector('local-identity').then(async () => {
+    //   await this.doSignin(false);
+    // }).catch((err) => {
+    // });
   }
 }

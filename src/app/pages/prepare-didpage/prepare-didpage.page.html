@@ -1,0 +1,104 @@
+<!--
+ * @Author: liaihong 
+ * @Date: 2022-12-21 21:49:14
+ * @LastEditors: liaihong 
+ * @LastEditTime: 2022-12-29 00:52:29
+ * @FilePath: /feeds-mobile-dapp-2/src/app/pages/prepare-didpage/prepare-didpage.page.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<app-titlebar></app-titlebar>
+<ion-content>
+  <ion-grid class="container ion-text-center">
+
+    <ion-row class="slide-bar-row">
+      <ion-col size="2.2">
+        <div [class.fillBar]="slideIndex >= 0"></div>
+      </ion-col>
+      <ion-col size="2.2">
+        <div [class.fillBar]="slideIndex >= 1"></div>
+      </ion-col>
+      <ion-col size="2.2">
+        <div [class.fillBar]="slideIndex >= 2"></div>
+      </ion-col>
+      <ion-col size="2.2">
+        <div [class.fillBar]="slideIndex >= 3"></div>
+      </ion-col>
+      <ion-col size="2.2">
+        <div [class.fillBar]="slideIndex >= 4"></div>
+      </ion-col>
+    </ion-row>
+
+    <ion-slides #slide [options]="slideOpts" [class.hidden]="hidden">
+      <ion-slide class="ion-text-center">
+        <div class="slide-card">
+          <img
+            [src]="!theme.darkMode ? 'assets/didsessions/onboard/slide1.svg' : 'assets/didsessions/onboard/dark_mode/slide1.svg'">
+          <h1>{{ 'prepare.signIntitle' | translate }}</h1>
+          <p>{{ 'prepare.signInIntro' | translate }}</p>
+          <!-- <div class="error-box" *ngIf="publishError">
+            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
+            <span class="error">{{ publishError }}</span>
+          </div> -->
+        </div>
+      </ion-slide>
+
+      <ion-slide class="ion-text-center">
+        <div class="slide-card">
+          <img src="assets/didsessions/onboard/slide2.svg">
+          <h1>{{ 'prepare.signInHiveTitle' | translate }}</h1>
+          <p>{{ 'prepare.signInHiveIntro' | translate }}</p>
+          <!-- <div class="error-box" *ngIf="signInError">
+            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
+            <span class="error">{{ signInError }}</span>
+          </div> -->
+        </div>
+      </ion-slide>
+
+      <ion-slide class="ion-text-center">
+        <div class="slide-card">
+          <img src="assets/didsessions/onboard/slide3.svg">
+          <h1>{{ 'prepare.storageTitle' | translate }}</h1>
+          <p>{{ 'prepare.storageIntro' | translate }}</p>
+          <!-- <div class="error-box" *ngIf="hiveError">
+            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
+            <span class="error">{{ hiveError }}</span>
+          </div> -->
+        </div>
+      </ion-slide>
+
+      <ion-slide class="ion-text-center">
+        <div class="slide-card">
+          <img src="assets/didsessions/onboard/slide4.svg">
+          <h1>{{ 'prepare.scriptTitle' | translate }}</h1>
+          <p>{{ 'prepare.scriptIntro' | translate }}</p>
+          <!-- <div class="error-box" *ngIf="signInError">
+            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
+            <span class="error">{{ signInError }}</span>
+          </div> -->
+        </div>
+      </ion-slide>
+
+      <ion-slide class="ion-text-center">
+        <div class="slide-card">
+          <img src="assets/didsessions/onboard/slide5.svg">
+          <h1>{{ 'prepare.doneTitle' | translate }}</h1>
+          <p>{{ 'prepare.doneIntro' | translate }}</p>
+          <ion-button (click)="finalizePreparation()">
+            <ion-label> {{'prepare.continue'|translate}}</ion-label>
+          </ion-button>
+        </div>
+      </ion-slide>
+
+    </ion-slides>
+
+    <ion-row *ngIf="(slideIndex < 4)"
+              class="slide-circle-row">
+              <ion-col size="12">
+                <lottie-player src="../../../assets/identity/animations/block-loader.json" background="transparent" speed="1"
+                  style="width: 160x; height: 160px;" autoplay loop></lottie-player>
+                <span>请稍后</span>
+              </ion-col>
+            </ion-row>
+    </ion-grid>
+
+</ion-content>

@@ -233,6 +233,14 @@ const routes: Routes = [
     path: 'userprofileinfo',
     loadChildren: () => import('./pages/userprofileinfo/userprofileinfo.module').then( m => m.UserprofileinfoPageModule)
   },
+  {
+    path: 'importdid',
+    loadChildren: () => import('./pages/feeds/importdid/importdid.module').then(m => m.ImportdidPageModule)
+  },
+  {
+    path: 'prepare-didpage',
+    loadChildren: () => import('./pages/prepare-didpage/prepare-didpage.module').then( m => m.PrepareDIDPagePageModule)
+  },
 ];
 
 @NgModule({

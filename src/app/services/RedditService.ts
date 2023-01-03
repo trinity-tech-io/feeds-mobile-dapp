@@ -75,7 +75,7 @@ export class RedditService {
   }
 
   private async fetchTokenFromReddit(params: any) {
-    const userDid = (await this.dataHelper.getSigninData()).did
+    const userDid = await this.dataHelper.getUserDid()
     let header = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Authorization': 'Basic ' + btoa("HeRDPm57bP09VIhD-FbfMA" + ':' + "s1Bw_UhxiYvxGbVOUKx76YxiAS5CXQ")
@@ -180,7 +180,7 @@ export class RedditService {
       const jsonResult = JSON.parse(result.data)
       Logger.log(TAG, 'get subReddit success result.data = >>>>>>>>>>>>>>>>>>>>>>>>>>>> ', result.data)
       const children = jsonResult.data.children
-      const userDid = (await this.dataHelper.getSigninData()).did
+      const userDid = await this.dataHelper.getUserDid()
       let containsElastos = false
       children.forEach(async item => {
         const elastosUrl = "/r/Elastos/"

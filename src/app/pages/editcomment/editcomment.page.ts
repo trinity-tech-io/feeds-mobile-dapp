@@ -79,7 +79,7 @@ export class EditCommentPage implements OnInit {
 
   async ionViewWillEnter() {
     this.initTitle();
-    this.userDid = (await this.dataHelper.getSigninData()).did;
+    this.userDid = await this.dataHelper.getUserDid();
     let channel: FeedsData.ChannelV3 = await this.dataHelper.getChannelV3ById(this.destDid, this.channelId);
     //this.channelName = channel['displayName'] || channel['name'] || '';
     try {

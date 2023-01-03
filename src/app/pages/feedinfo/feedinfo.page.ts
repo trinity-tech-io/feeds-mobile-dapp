@@ -269,7 +269,7 @@ export class FeedinfoPage implements OnInit {
     }
 
     try {
-      const userDid = (await this.dataHelper.getSigninData()).did || '';
+      const userDid = await this.dataHelper.getUserDid() || '';
       if (this.destDid != userDid) {
         this.menuService.showUnsubscribeMenuWithoutName(this.destDid, this.channelId, userDid);
       } else {

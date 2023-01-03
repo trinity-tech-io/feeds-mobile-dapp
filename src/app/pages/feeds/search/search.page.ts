@@ -862,7 +862,7 @@ export class SearchPage implements OnInit {
     }
 
     try {
-      const userDid = (await this.dataHelper.getSigninData()).did || '';
+      const userDid = await this.dataHelper.getUserDid() || '';
 
       if (destDid != userDid) {
         this.menuService.showChannelMenu(destDid, channelId, userDid);

@@ -1,0 +1,506 @@
+// Declared components with custom css properties
+
+/********************** ALERT CONTROLLER **********************/
+.alert {
+  z-index: 100000 !important;
+  --ion-color-step-600: var(--ion-text-color); // subtext color
+}
+
+ion-card {
+  box-shadow: none;
+}
+
+ion-card-subtitle {
+  --ion-color-step-600: var(--ion-text-color);
+}
+
+ion-footer {
+  background-color: var(--ion-background-color);
+  box-shadow: none;
+}
+
+a {
+  color: var(--ion-text-color);
+}
+
+/********************** OPTIONS POPUP **********************/
+.options-component {
+  //--background: #ffffff;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.dark-options-component {
+  //--background: #212021;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+/********************** TITLEBAR MENU POPUP **********************/
+.titlebarmenu-component {
+  --background: transparent;
+  --width: 250px;
+}
+
+/********************** LOADER **********************/
+.custom-loader {
+  --spinner-color: #121212;
+  --background: #ffffff;
+  color: #121212;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.dark-custom-loader {
+  --spinner-color: white;
+  --background: #121212;
+  color: white;
+}
+
+/********************** LAUNCHER **********************/
+.launcher-options-component {
+  //--background: #ffffff;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.launcher-options-component-dark {
+  //--background: #212021;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.launcher-address-chooser-component {
+  //--background: #ffffff;
+  --width: 70vw;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.launcher-address-chooser-component-dark {
+  //--background: #212021;
+  --width: 70vw;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+/********************** DIDSESSSIONS **********************/
+.didsessions-printoptions-component {
+  --height: 300px;
+  //--background: #ffffff;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+.didsessions-mnemonicpasscheck-component {
+  --height: 350px;
+  //--background: #ffffff;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+.didsessions-mnemonicpasscheck-component-dark {
+  --height: 350px;
+  //--background: #121212;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+.didsessions-warning-component {
+  --min-height: 302px;
+  --width: 100%;
+  --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
+
+  animation: didsessionsWarningAnimate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes didsessionsWarningAnimate {
+    0% {
+      bottom: -1000px;
+    }
+    100% {
+      bottom: 0px;
+    }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
+  }
+}
+
+/********************** IDENTITY **********************/
+.identity-showqrcode-component {
+  --height: 55%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+.identity-showqrcode-component-dark {
+  --height: 60%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+  }
+}
+
+.identity-mnemonickeypad-component {
+  --height: 280px;
+  align-items: flex-end;
+}
+
+.identity-mnemonickeypad-component-dark {
+  --height: 280px;
+  align-items: flex-end;
+}
+
+.identity-publishmode-component-base {
+  --height: 35%;
+  --width: 100%;
+}
+
+.identity-warning-component {
+  --min-height: 302px;
+  --width: 100%;
+  --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
+
+  animation: identityWarningAnimate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes identityWarningAnimate {
+    0% {
+      bottom: -1000px;
+    }
+    100% {
+      bottom: 0px;
+    }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
+  }
+}
+
+/********************** NETWORK SWITCH MODAL **********************/
+
+.switch-network-component {
+  --height: 55%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+.switch-network-component-dark {
+  --height: 60%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+  }
+}
+
+.switch-network-component-base {
+  --height: 35%;
+  --min-height: 280px;
+}
+
+/********************** WALLET **********************/
+.wallet-help-component {
+  --width: 66.6%;
+  --background: linear-gradient(to bottom, #4a118d, #39136a);
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
+}
+
+.wallet-tx-component {
+  --width: 100%;
+  --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
+
+  animation: walletTxAnimate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes walletTxAnimate {
+    0% {
+      bottom: -1000px;
+    }
+    100% {
+      bottom: 0px;
+    }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
+  }
+}
+
+.wallet-warning-component {
+  --min-height: 302px;
+  --width: 100%;
+  --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
+
+  animation: walletWarningAnimate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes walletWarningAnimate {
+    0% {
+      bottom: -1000px;
+    }
+    100% {
+      bottom: 0px;
+    }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
+  }
+}
+
+.wallet-loader {
+  --spinner-color: var(--ion-text-color);
+  --background: var(--ion-background-color);
+  color: var(--ion-text-color);
+}
+
+.wallet-component-base {
+  --height: 35%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+/********************** CONTACTS **********************/
+.contacts-qrcode-component {
+  --height: 55%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+  }
+}
+
+.contacts-qrcode-component-dark {
+  --height: 60%;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+  }
+}
+
+.contacts-warning-component {
+  --min-height: 302px;
+  --width: 100%;
+  --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
+
+  animation: contactsWarningAnimate;
+  animation-duration: 300ms;
+  animation-fill-mode: forwards;
+
+  @keyframes contactsWarningAnimate {
+    0% {
+      bottom: -1000px;
+    }
+    100% {
+      bottom: 0px;
+    }
+  }
+
+  ion-backdrop {
+    background: transparent !important;
+  }
+
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
+  }
+}
+
+/********************** VOTING **********************/
+.milestone-options-component {
+  --background: #ffffff;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.milestone-options-component-dark {
+  --background: #212021;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+/********************** DEVELOPER TOOLS **********************/
+.developertools-help-component {
+  --background: linear-gradient(to bottom, #181d20 0%, #21313d 100%);
+  --width: 60%;
+  box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
+}
+
+.developertools-delete-component {
+  --width: 100%;
+  --min-height: 302px;
+  --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  --offset-x: -5px;
+  --ion-safe-area-left: 0px;
+
+  ion-backdrop {
+    opacity: 0.1 !important;
+  }
+
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
+  }
+}
+
+@media screen and (max-height: 670px) {
+  .contacts-qrcode-component {
+    --height: 60%;
+  }
+
+  .contacts-qrcode-component-dark {
+    --height: 65%;
+  }
+}
+
+/************ RED PACKET COMPONENTS *************/
+
+.grab-packet-popover-component {
+  --width: 100%;
+  --background: transparent !important;
+  // For some android 9 phone.
+  // TODO: to improve
+  //--offset-x: -5px; // BPI: not ok to use this. this makes the popup not horizontally centered on most phones
+  --ion-safe-area-left: 0px;
+  --ion-background-color-rgb: transparent; // ion-popover background is black in red packets - make it transparent
+
+  backdrop-filter: blur(5px);
+
+  .popover-viewport {
+    position: relative !important;
+    margin: 0 auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: 85vw !important;
+    max-width: 400px;
+  }
+}

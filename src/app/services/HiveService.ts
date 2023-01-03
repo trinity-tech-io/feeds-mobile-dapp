@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Executable, InsertOptions, File as HiveFile, ScriptRunner, Vault, AppContext, Logger as HiveLogger, UpdateResult, UpdateOptions, Condition, InsertResult } from "@elastosfoundation/hive-js-sdk";
-import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential } from '@elastosfoundation/did-js-sdk';
+import { Claims, DIDDocument, JWTParserBuilder, DID, DIDBackend, DefaultDIDAdapter, JSONObject, VerifiableCredential, DIDStore } from '@elastosfoundation/did-js-sdk';
 import { StandardAuthService } from 'src/app/services/StandardAuthService';
 import { FileService } from 'src/app/services/FileService';
 import { Logger } from 'src/app/services/logger';
@@ -11,6 +11,7 @@ import { Config } from './config';
 import { DIDHelperService } from 'src/app/services/did_helper.service';
 import { base64ImageToBuffer } from 'src/app/services/picture.helpers';
 import { UtilService } from './utilService';
+import { IdentityService } from 'src/app/pages/feeds/importdid/identity.service'; 
 
 @Injectable()
 export class HiveService {
@@ -31,7 +32,8 @@ export class HiveService {
     private fileService: FileService,
     private dataHelper: DataHelper,
     private events: Events,
-    private didHelperService: DIDHelperService
+    private didHelperService: DIDHelperService,
+    private identityService: IdentityService
   ) {
   }
 
@@ -69,10 +71,12 @@ export class HiveService {
             return new Promise(async (resolve, reject) => {
               try {
                 Logger.log(TAG, 'Get authorization jwtToken is', jwtToken);
-                const authToken = await self.standardAuthService.generateHiveAuthPresentationJWT(jwtToken)
+                const authToken = await self.identityService.generateHiveAuthPresentationJWT(jwtToken)
+                console.log("新： 结束 getAuthorization authToken = ", authToken)
                 Logger.log(TAG, 'Get authorization authToken is', authToken);
                 resolve(authToken)
               } catch (error) {
+                console.log("新： 结束 getAuthorization error = ", error)
                 Logger.error(TAG, "get Authorization Error: ", error)
                 reject(error)
               }
@@ -87,9 +91,15 @@ export class HiveService {
     })
   }
   async creatScriptRunner(userDid: string, targetDid: string) {
-    const appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
-    const context = await this.creatAppContext(appinstanceDocument, userDid)
+    // const appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
+    const appinstanceDocument = await this.identityService.getOrCreateAppInstanceDIDDocument()
+    console.log("旧 -1 creatScriptRunner appinstanceDocument = ", appinstanceDocument.toString())
+    const context = await this.creatAppContext(appinstanceDocument.toString(), userDid)
+    console.log("旧 -2 creatScriptRunner context = ", context)
+
     const providerAddress = await AppContext.getProviderAddressByUserDid(targetDid);
+    console.log("旧 -3 creatScriptRunner providerAddress = ", providerAddress)
+
     const scriptRunner = new ScriptRunner(context, providerAddress)
     this.scriptRunners[targetDid] = scriptRunner
     return scriptRunner
@@ -97,9 +107,14 @@ export class HiveService {
 
   async creatVault() {
     try {
-      const userDid = (await this.dataHelper.getSigninData()).did
-      let appinstanceDocument = await this.standardAuthService.getInstanceDIDDoc()
-      const context = await this.creatAppContext(appinstanceDocument, userDid)
+      console.log("新1：creatVault")
+      const userDid = await this.dataHelper.getUserDid()
+      // const userDid = await this.dataHelper.getUserDid()
+      console.log("新2：creatVault: userDid = ", userDid)
+      let appinstanceDocument = await this.identityService.getOrCreateAppInstanceDIDDocument()
+      console.log("新3：creatVault: appinstanceDocument = ", appinstanceDocument)
+
+      const context = await this.creatAppContext(appinstanceDocument.toString(), userDid)
 
       // let scriptRunner = await this.creatScriptRunner(userDid)
       // this.scriptRunners[userDid] = scriptRunner
@@ -174,12 +189,19 @@ export class HiveService {
 
   async getScriptRunner(userDid: string, targetDid: string): Promise<ScriptRunner> {
     try {
+      console.log("旧-1 getScriptRunner ")
       let scriptRunner = this.scriptRunners[targetDid]
+      console.log("旧-2 getScriptRunner  scriptRunner = ", scriptRunner)
+
       if (!scriptRunner) {
+        console.log("旧-3 getScriptRunner  scriptRunner = ", scriptRunner)
         scriptRunner = await this.creatScriptRunner(userDid, targetDid)
+        console.log("旧-4 getScriptRunner  scriptRunner = ", scriptRunner)
       }
+      console.log("旧-5 getScriptRunner  scriptRunner = ", scriptRunner)
       return scriptRunner
     } catch (error) {
+      console.log("旧-5 getScriptRunner  error = ", error)
       throw error
     }
   }
@@ -246,8 +268,11 @@ export class HiveService {
   }
 
   async callScript(scriptName: string, document: any, targetDid: string, appid: string, userDid: string): Promise<any> {
+    console.log("旧-1 hiveservice callScript ")
     let scriptRunner = await this.getScriptRunner(userDid, targetDid);
+    console.log("旧-2 hiveservice callScript scriptRunner = ", scriptRunner)
     let result = await scriptRunner.callScript<any>(scriptName, document, targetDid, appid)
+    console.log("旧-3 hiveservice callScript scriptRunner = ", result)
     return result
   }
 
@@ -256,7 +281,7 @@ export class HiveService {
   }
 
   async uploadScriting(transactionId: string, data: string) {
-    const userDid = (await this.dataHelper.getSigninData()).did
+    const userDid = await this.dataHelper.getUserDid()
     const scriptRunner = await this.getScriptRunner(userDid, userDid)
     return scriptRunner.uploadFile(transactionId, data)
   }
@@ -273,7 +298,7 @@ export class HiveService {
       if (avatarParam === null || avatarParam === undefined) {
         return
       }
-      const userDid = (await this.dataHelper.getSigninData()).did
+      const userDid = await this.dataHelper.getUserDid()
       const scriptRunner = await this.getScriptRunner(userDid, targetDid)
       return await scriptRunner.callScript<any>(avatarScriptName, avatarParam, targetDid, tarAppDID)
     } catch (error) {
@@ -287,7 +312,7 @@ export class HiveService {
       if (hiveUrl === null || hiveUrl === undefined) {
         return
       }
-      let userDid = (await this.dataHelper.getSigninData()).did;
+      let userDid = await this.dataHelper.getUserDid();
       const scriptRunner = await this.getScriptRunner(userDid, targetDid);
       return await scriptRunner.downloadFileByHiveUrl(hiveUrl);
     } catch (error) {
@@ -298,7 +323,7 @@ export class HiveService {
 
   async downloadScripting(targetDid: string, transaction_id: string) {
     try {
-      const userDid = (await this.dataHelper.getSigninData()).did
+      const userDid = await this.dataHelper.getUserDid()
       const scriptRunner = await this.getScriptRunner(userDid, targetDid)
       return await scriptRunner.downloadFile(transaction_id)
     } catch (error) {
@@ -314,7 +339,7 @@ export class HiveService {
 
   async getUploadDataFromScript(targetDid: string, transactionId: string, img: any) {
     try {
-      const userDid = (await this.dataHelper.getSigninData()).did
+      const userDid = await this.dataHelper.getUserDid()
       const scriptRunner = await this.getScriptRunner(userDid, targetDid)
       return scriptRunner.uploadFile(transactionId, img)
     }
@@ -326,7 +351,7 @@ export class HiveService {
 
   async uploadDataFromScript(targetDid: string, transactionId: string, img: any) {
     try {
-      const userDid = (await this.dataHelper.getSigninData()).did
+      const userDid = await this.dataHelper.getUserDid()
       const scriptRunner = await this.getScriptRunner(userDid, targetDid)
       return scriptRunner.uploadFile(transactionId, img)
     }

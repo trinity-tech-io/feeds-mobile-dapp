@@ -42,6 +42,9 @@ import { CommonPageService } from 'src/app/services/common.page.service';
 import { Config } from 'src/app/services/config';
 import SparkMD5 from 'spark-md5';
 let TAG: string = 'Feeds-home';
+import { StandardAuthService } from 'src/app/services/StandardAuthService';
+import { IdentityService } from 'src/app/pages/feeds/importdid/identity.service';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -216,6 +219,8 @@ export class HomePage implements OnInit {
     private fileHelperService: FileHelperService,
     private feedsServiceApi: FeedsServiceApi,
     private hiveVaultController: HiveVaultController,
+    private standardAuthService: StandardAuthService,
+    private identityService: IdentityService,
 
   ) { }
 
@@ -314,6 +319,17 @@ export class HomePage implements OnInit {
 
   async ionViewWillEnter() {
     this.initTitleBar();
+    // console.log("ionViewWillEnter userDID ==== ", this.identityService.userDID)
+    // const info = await this.hiveVaultController.getRemoteUserProfileWithoutSave(this.identityService.userDID)
+    // console.log("ionViewWillEnter info ==== ", info)
+    // return
+    // console.log("开始 startImportingMnemonic ===================== ")
+    // const result = await this.standardAuthService.requestKYCCredentials()
+    // const mnemonic = "析 朋 冶 赤 溜 兼 溶 剑 绝 奴 鉴 仇"
+    // const pass = ""
+    // const result = await this.identityService.startImportingMnemonic(mnemonic, pass)
+    // console.log("结束 startImportingMnemonic ===================== ", result)
+    // return
     let syncHiveData = this.dataHelper.getSyncHiveData();
     this.syncHiveDataStatus = syncHiveData.status;
     this.syncHiveDataDes = syncHiveData.describe;
@@ -342,7 +358,7 @@ export class HomePage implements OnInit {
           this.isPostLoading = true;
           this.refreshPostList(true);
           try {
-            this.ownerDid = (await this.dataHelper.getSigninData()).did;
+            this.ownerDid = await this.dataHelper.getUserDid();
             let channelList = await this.dataHelper.getSelfChannelListV3() || [];
             this.owerCreatChannelNum = channelList.length;
           } catch (error) {
@@ -1853,22 +1869,24 @@ export class HomePage implements OnInit {
 
   async create() {
 
-    let connect = this.dataHelper.getNetworkStatus();
-    if (connect === FeedsData.ConnState.disconnected) {
-      this.native.toastWarn('common.connectionError');
-      return;
-    }
+    this.native.navigateForward(['importdid'], '');
 
-    this.pauseAllVideo();
-    this.clearData(true);
-    const channels = await this.dataHelper.getSelfChannelListV3();
-    if (channels.length === 0) {
-      this.native.navigateForward(['/createnewfeed'], '');
-      return;
-    }
+    // let connect = this.dataHelper.getNetworkStatus();
+    // if (connect === FeedsData.ConnState.disconnected) {
+    //   this.native.toastWarn('common.connectionError');
+    //   return;
+    // }
 
-    this.dataHelper.setSelsectNftImage("");
-    this.native.navigateForward(['createnewpost'], '');
+    // this.pauseAllVideo();
+    // this.clearData(true);
+    // const channels = await this.dataHelper.getSelfChannelListV3();
+    // if (channels.length === 0) {
+    //   this.native.navigateForward(['/createnewfeed'], '');
+    //   return;
+    // }
+
+    // this.dataHelper.setSelsectNftImage("");
+    // this.native.navigateForward(['createnewpost'], '');
   }
 
   createNft() {

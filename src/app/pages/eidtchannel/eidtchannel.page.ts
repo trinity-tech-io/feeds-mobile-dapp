@@ -217,7 +217,7 @@ export class EidtchannelPage implements OnInit {
 
     this.isClickConfirm = false;
     if (this.checkparms()) {
-      const signinDid = (await this.dataHelper.getSigninData()).did;
+      const signinDid = await this.dataHelper.getUserDid();
       this.clickButton = true;
 
       this.loadingCurNumber = "1";
