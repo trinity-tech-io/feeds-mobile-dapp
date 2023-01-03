@@ -15,9 +15,7 @@
                     [src]="avatar"
                     (click)="profiledetail()"/>
                 </div>
-                <div class="name">
-                     {{ name }}
-                </div>
+                <div class="name">{{ name }} <img *ngIf="isShowKycIcon" src="./assets/images/credentials/kycme.svg"></div>
                 <div class="did" (click) = "copyText(userDid)">
                     {{ userDidDisplay }}<img src="./assets/images/darkmode/copy.svg">
                 </div>

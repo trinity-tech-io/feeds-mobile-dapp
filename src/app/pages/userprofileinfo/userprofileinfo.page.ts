@@ -24,6 +24,7 @@ export class UserprofileinfoPage implements OnInit {
   public userDid: string = '';
   public avatar: string = '';
   public profileDetails: ProfileDetail[] = [];
+  public isShowKycIcon = false;
 
   constructor(
     private translate: TranslateService,
@@ -41,10 +42,18 @@ export class UserprofileinfoPage implements OnInit {
   }
 
   initProfile(userDid: string) {
-    this.hiveVaultController.getUserProfilePageItem(userDid).then(async (pageItem: { name: string, description: string, avatarHiveUrl: string }) => {
+    this.hiveVaultController.getUserProfilePageItem(userDid).then(async (pageItem: { name: string, description: string, avatarHiveUrl: string, credentials: string }) => {
       this.userName = pageItem.name || ' ';
       this.userDescription = pageItem.description || '';
       this.avatar = await this.hiveVaultController.getUserAvatarFromHiveUrl(pageItem.avatarHiveUrl);
+
+      const credentials = pageItem.credentials;
+      if (!credentials) {
+        this.isShowKycIcon = false;
+      } else {
+        this.isShowKycIcon = true;
+      }
+
       this.collectData();
     }).catch(() => {
     });
@@ -81,12 +90,11 @@ export class UserprofileinfoPage implements OnInit {
       type: 'ProfiledetailPage.name',
       details: this.userName,
     });
-    console.log("=========", this.userDescription);
+
     let description = this.userDescription || '';
     if (description === '') {
       description = this.translate.instant('DIDdata.NoDescription');
     }
-    console.log("=========", description);
 
     this.profileDetails.push({
       type: 'ProfiledetailPage.description',

@@ -39,6 +39,7 @@
 
     .cardTitle{
         position: absolute;
+        display: flex;
         width: 95%;
         top: 95px;
         font-style: normal;
@@ -51,6 +52,7 @@
         text-overflow: ellipsis;
         overflow: hidden;
         text-align: center;
+        justify-content: center;
     }
 
     .connectWallet{

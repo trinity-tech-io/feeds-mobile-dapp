@@ -56,6 +56,8 @@ export class MyApp {
   public userDidDisplay: string = '';
   private isReady: boolean = false;
   private receivedIntentList: IntentPlugin.ReceivedIntent[] = [];
+
+  public isShowKycIcon: boolean = false;
   constructor(
     private translate: TranslateService,
     private actionSheetController: ActionSheetController,
@@ -683,6 +685,13 @@ export class MyApp {
         this.hiveVaultController.getUserProfile(signInData.did).then((userProfile: FeedsData.UserProfile) => {
           wName = userProfile.name || userProfile.resolvedName || userProfile.displayName
           this.name = UtilService.moreNanme(wName, 15);
+
+          const credentials = userProfile.credentials;
+          if (!credentials) {
+            this.isShowKycIcon = false;
+          } else {
+            this.isShowKycIcon = true;
+          }
         }).catch((error) => { });
       },
       error => { },

@@ -2402,19 +2402,21 @@ export class HiveVaultController {
     });
   }
 
-  getUserProfilePageItem(userDid: string): Promise<{ name: string, description: string, avatarHiveUrl: string }> {
+  getUserProfilePageItem(userDid: string): Promise<{ name: string, description: string, avatarHiveUrl: string, credentials: string }> {
     return new Promise(async (resolve, reject) => {
       try {
         const userProfile = await this.getUserProfile(userDid);
         if (!userProfile) {
-          resolve({ name: '', description: '', avatarHiveUrl: '' })
+          resolve({ name: '', description: '', avatarHiveUrl: '', credentials: '' })
           return;
         }
 
         const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
         const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar;
         const description = userProfile.bio || userProfile.resolvedBio;
-        resolve({ name: name, description: description, avatarHiveUrl: avatarHiveUrl });
+
+        const credentials = userProfile.credentials || '';
+        resolve({ name: name, description: description, avatarHiveUrl: avatarHiveUrl, credentials: credentials });
       } catch (error) {
         reject(error);
       }

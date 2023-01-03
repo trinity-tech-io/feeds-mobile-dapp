@@ -63,6 +63,8 @@ export class ProfiledetailPage implements OnInit {
   public hidePictureMenuComponent: boolean = false;
   public isSupportGif: boolean = false;
   public isProfileSame: boolean = false;
+
+  public isShowKycIcon = false;
   constructor(
     private zone: NgZone,
     private native: NativeService,
@@ -140,6 +142,7 @@ export class ProfiledetailPage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    this.initUserProfile();
     document.body.addEventListener('touchmove', this.preventDefault, { passive: false });
 
     this.theme.setTheme1();
@@ -147,29 +150,10 @@ export class ProfiledetailPage implements OnInit {
       this.nftContractControllerService.getAccountAddress() || '';
     this.developerMode = this.feedService.getDeveloperMode();
     this.initTitle();
+
     this.events.subscribe(FeedsEvent.PublishType.editProfileInfoRightMenu, () => {
       this.clickEditProfileInfo();
     });
-
-    let signInData = await this.dataHelper.getSigninData();
-
-    this.userName = '';
-    this.userDescription = '';
-    this.userDid = signInData['did'];
-    this.did = this.feedService.rmDIDPrefix(this.userDid || '');
-    this.hiveVaultController.getUserProfile(signInData.did).then((userProfile: FeedsData.UserProfile) => {
-      this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || '';
-      this.userDescription = userProfile.bio || userProfile.resolvedBio || '';
-      this.userDid = userProfile.did;
-      this.did = this.feedService.rmDIDPrefix(this.userDid || '');
-      this.collectData();
-    });
-    this.collectData();
-    try {
-      this.avatar = await this.hiveVaultController.getUserAvatar();
-    } catch (error) {
-    }
-    this.handleImages()
   }
 
   ionViewDidEnter() { }
@@ -189,6 +173,36 @@ export class ProfiledetailPage implements OnInit {
   }
 
   ionViewWillUnload() { }
+
+  async initUserProfile() {
+    let signInData = await this.dataHelper.getSigninData();
+
+    this.userName = '';
+    this.userDescription = '';
+    this.userDid = signInData['did'];
+    this.did = this.feedService.rmDIDPrefix(this.userDid || '');
+    this.hiveVaultController.getUserProfile(signInData.did).then((userProfile: FeedsData.UserProfile) => {
+      this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || '';
+      this.userDescription = userProfile.bio || userProfile.resolvedBio || '';
+      this.userDid = userProfile.did;
+      this.did = this.feedService.rmDIDPrefix(this.userDid || '');
+
+      const credentials = userProfile.credentials;
+      if (!credentials) {
+        this.isShowKycIcon = false;
+      } else {
+        this.isShowKycIcon = true;
+      }
+
+      this.collectData();
+    });
+    this.collectData();
+    try {
+      this.avatar = await this.hiveVaultController.getUserAvatar();
+    } catch (error) {
+    }
+    this.handleImages()
+  }
 
   async ionViewWillLeave() {
     document.body.removeEventListener("touchmove", this.preventDefault, false);
