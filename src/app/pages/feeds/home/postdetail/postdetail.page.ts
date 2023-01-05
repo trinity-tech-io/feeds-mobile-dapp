@@ -233,6 +233,9 @@ export class PostdetailPage implements OnInit {
     let ownerDid: string = (await this.dataHelper.getSigninData()).did;
     for (let key in this.replyCommentsMap) {
       let commentList: FeedsData.CommentV3[] = this.replyCommentsMap[key] || [];
+
+      this.commentNum[key] = commentList.length;
+
       this.checkRelyCommentIsMine(commentList, ownerDid);
       this.getReplyCommentObserverList(commentList);
     }
@@ -1390,10 +1393,10 @@ export class PostdetailPage implements OnInit {
       id, this.hiveVaultController,
       this.isInitLikeNum, this.likedCommentNum);
     //处理post comment
-    CommonPageService.handleCommentNum(
-      id, this.hiveVaultController,
-      this.isInitComment, this.commentNum
-    )
+    // CommonPageService.handleCommentNum(
+    //   id, this.hiveVaultController,
+    //   this.isInitComment, this.commentNum
+    // )
 
   }
 
