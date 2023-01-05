@@ -180,7 +180,7 @@ export class PostdetailPage implements OnInit {
 
   async initData(isInit: boolean) {
 
-    if(this.channelAvatar === ''){
+    if (this.channelAvatar === '') {
       this.channelAvatar = './assets/images/loading.svg'
     }
 
@@ -220,7 +220,7 @@ export class PostdetailPage implements OnInit {
     }
 
     this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
-    this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMap(this.postId, this.hideDeletedComments);
+    this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMapPro(this.postId, this.hideDeletedComments);
     this.initRelyCommentExtradata();
     try {
       this.getChannelPublicStatus(this.destDid, this.channelId);
@@ -291,7 +291,7 @@ export class PostdetailPage implements OnInit {
 
     this.getChannelTippingAddress(this.channelId, false).then((postTipAdress: string) => {
       this.postTipAdressMap[this.channelId] = postTipAdress;
-      if(this.isAndroid){
+      if (this.isAndroid) {
         this.getPostTipCount(this.channelId, this.postId);
       }
     }).catch((err) => {
@@ -580,7 +580,6 @@ export class PostdetailPage implements OnInit {
   }
 
   showComment(comment: FeedsData.CommentV3) {
-
     let connectStatus = this.dataHelper.getNetworkStatus();
     if (connectStatus === FeedsData.ConnState.disconnected) {
       this.native.toastWarn('common.connectionError');
@@ -612,8 +611,6 @@ export class PostdetailPage implements OnInit {
         this.createrDid = comment.createrDid;
       }
     }
-
-
 
     this.pauseVideo();
   }
@@ -1658,7 +1655,7 @@ export class PostdetailPage implements OnInit {
       }).catch(() => {
         this.showComment(null);
       })
-    }else{
+    } else {
       this.showComment(null);
     }
   }
@@ -1759,7 +1756,7 @@ export class PostdetailPage implements OnInit {
             this.dataHelper.setPostTipCountMap(postTipCountMap);
           }).catch((err) => {
             let postTipCount = postTipCountMap[postId] || '';
-            if(postTipCount === ''){
+            if (postTipCount === '') {
               this.postTipCountMap[postId] = 0;
               postTipCountMap[postId] = 0;
             }

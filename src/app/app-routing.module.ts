@@ -243,7 +243,7 @@ const routes: Routes = [
   },
   {
     path: 'credentials',
-    loadChildren: () => import('./pages/credentials/credentials.module').then( m => m.CredentialsPageModule)
+    loadChildren: () => import('./pages/credentials/credentials.module').then(m => m.CredentialsPageModule)
   },
 ];
 

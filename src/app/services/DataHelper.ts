@@ -3741,6 +3741,17 @@ export class DataHelper {
     });
   }
 
+  getCommentsV3ByPostId(postId: string): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const selfDid = (await this.getSigninData()).did;
+        const result = await this.sqliteHelper.queryCommentByPostId(selfDid, postId);
+        resolve(result)
+      } catch (error) {
+        reject(error)
+      }
+    });
+  }
 
   getCommentsV3ByPost(postId: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {

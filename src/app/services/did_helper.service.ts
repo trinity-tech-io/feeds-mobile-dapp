@@ -286,12 +286,11 @@ export class DIDHelperService {
         this.init();
 
         const didDocument = await this.resolveDidDocument(userDid);
-        const name = await this.resolveNameFromDidDocument(didDocument);
-        const avatar = await this.resolveAvatarFromDidDocument(didDocument);
-        const description = await this.resolveDiscriptionFromDidDocument(didDocument);
+        const name = await this.resolveNameFromDidDocument(didDocument) || '';
+        const avatar = await this.resolveAvatarFromDidDocument(didDocument) || '';
+        const description = await this.resolveDiscriptionFromDidDocument(didDocument) || '';
 
         const resultObj = { name: name, avatar: avatar, description: description };
-
         resolve(resultObj);
       } catch (error) {
         Logger.error(TAG, 'Resolve User Profile error', error);

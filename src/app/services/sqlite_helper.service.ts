@@ -1018,6 +1018,23 @@ export class FeedsSqliteHelper {
     });
   }
 
+  queryCommentByPostId(dbUserDid: string, postId: string): Promise<FeedsData.CommentV3[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE post_id=?';
+        const params = [postId];
+        const result = await this.executeSql(dbUserDid, statement, params);
+        const commentList = this.parseCommentData(result);
+
+        Logger.log(TAG, 'query comment by post Id result is', commentList);
+        resolve(commentList);
+      } catch (error) {
+        Logger.error(TAG, 'query comment by post Id  error', error);
+        reject(error);
+      }
+    });
+  }
+
   queryCommentData(dbUserDid: string): Promise<FeedsData.CommentV3[]> {
     return new Promise(async (resolve, reject) => {
       try {

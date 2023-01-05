@@ -54,12 +54,6 @@ export class NewcommentComponent implements OnInit {
     } else {
       this.isAndroid = "android";
     }
-    //this.parseAvatar();
-    // this.clearSetFocusSid();
-    // this.setFocusSid = setTimeout(() => {
-    //   this.comment.setFocus();
-    //   this.clearSetFocusSid();
-    // }, 500);
   }
 
   clearSetFocusSid() {
@@ -96,11 +90,11 @@ export class NewcommentComponent implements OnInit {
       try {
         let userDid = (await this.dataHelper.getSigninData()).did;
         this.hiveVaultController.getUserAvatar(userDid).then((userAvatar: string) => {
-          userAvatar =  userAvatar || '';
+          userAvatar = userAvatar || '';
           resolve(userAvatar);
-        }).catch((err)=>{
-         let userAvatar = './assets/images/did-default-avatar.svg';
-         resolve(userAvatar);
+        }).catch((err) => {
+          let userAvatar = './assets/images/did-default-avatar.svg';
+          resolve(userAvatar);
         });
       } catch (err) {
         let userAvatar = './assets/images/did-default-avatar.svg';
