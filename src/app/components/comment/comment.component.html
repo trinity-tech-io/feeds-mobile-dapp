@@ -1,69 +1,71 @@
-<div id="commentMask" [class.mask]="!theme.darkMode" [class.darkMask]="theme.darkMode" (click)="hideComponent()"></div>
-<ion-footer [class.ionfooter]="isAndroid==='android'"  [class.ioniosfooter]="isAndroid==='ios'">
-  <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode">
-
-    <ion-item class="removeBorder" lines="none">
-      <ion-row class="channel-row ion-activatable ripple">
-        <ion-col size="2.5" sizeMd="1" sizeLg="1" class="left-col">
-
-          <div
-          class="feedAvatar1"
-          [class.dark-feedAvatar]="theme.darkMode" *ngIf="refcommentId!='0'">
-            <img
-            *ngIf="isBorder&&avatar"
-            class="customizeAvatar"
-            src= {{avatar}} />
-            <img
-            *ngIf="!isBorder&&avatar"
-            class="customizeAvatar"
-            src= {{avatar}} />
-          </div>
-
-          <div
-          class="feedAvatar1"
-          [class.dark-feedAvatar]="theme.darkMode" *ngIf="refcommentId==='0'">
-            <img
-            src={{avatar}}
-            class="customizeAvatar"
-            *ngIf="avatar">
-          </div>
-        </ion-col>
-        <ion-col size="8" sizeMd="9.5" sizeLg="9.5"  class="middle-col">
-          <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{'PostdetailPage.replyingto'|translate}} @{{ channelName }}</ion-label>
-          <!-- <p>Comments</p> -->
-        </ion-col>
-        <ion-col size="1.5" class="right-col" (click)="hideComponent()">
-          <ion-icon src="assets/icons/cross.svg"></ion-icon>
+<div class="comment-box">
+  <div id="commentMask" [class.mask]="!theme.darkMode" [class.darkMask]="theme.darkMode" (click)="hideComponent()"></div>
+  <ion-footer [class.ionfooter]="isAndroid==='android'"  [class.ioniosfooter]="isAndroid==='ios'">
+    <ion-list class="channel-list" [class.darkChannelList]="theme.darkMode">
+  
+      <ion-item class="removeBorder" lines="none">
+        <ion-row class="channel-row ion-activatable ripple">
+          <ion-col size="2.5" sizeMd="1" sizeLg="1" class="left-col">
+  
+            <div
+            class="feedAvatar1"
+            [class.dark-feedAvatar]="theme.darkMode" *ngIf="refcommentId!='0'">
+              <img
+              *ngIf="isBorder&&avatar"
+              class="customizeAvatar"
+              src= {{avatar}} />
+              <img
+              *ngIf="!isBorder&&avatar"
+              class="customizeAvatar"
+              src= {{avatar}} />
+            </div>
+  
+            <div
+            class="feedAvatar1"
+            [class.dark-feedAvatar]="theme.darkMode" *ngIf="refcommentId==='0'">
+              <img
+              src={{avatar}}
+              class="customizeAvatar"
+              *ngIf="avatar">
+            </div>
+          </ion-col>
+          <ion-col size="8" sizeMd="9.5" sizeLg="9.5"  class="middle-col">
+            <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{'PostdetailPage.replyingto'|translate}} @{{ channelName }}</ion-label>
+            <!-- <p>Comments</p> -->
+          </ion-col>
+          <ion-col size="1.5" class="right-col" (click)="hideComponent()">
+            <ion-icon src="assets/icons/cross.svg"></ion-icon>
+          </ion-col>
+        </ion-row>
+      </ion-item>
+  
+      <ion-row class="input-row">
+        <ion-col offset="1.5" size="10.5">
+          <ion-textarea
+            #comment
+            autofocus="true"
+            rows="6" cols="20"
+            [(ngModel)]="newComment"
+            placeholder="{{'CommentPage.inputComment'|translate}}"
+            [ngClass]="{'borderGradient':isBorderGradient}"
+            (ionBlur)="ionBlur()"
+            (ionFocus)="ionFocus()"
+          >
+          </ion-textarea>
         </ion-col>
       </ion-row>
-    </ion-item>
-
-    <ion-row class="input-row">
-      <ion-col offset="1.5" size="10.5">
-        <ion-textarea
-          #comment
-          autofocus="true"
-          rows="6" cols="20"
-          [(ngModel)]="newComment"
-          placeholder="{{'CommentPage.inputComment'|translate}}"
-          [ngClass]="{'borderGradient':isBorderGradient}"
-          (ionBlur)="ionBlur()"
-          (ionFocus)="ionFocus()"
-        >
-        </ion-textarea>
-      </ion-col>
-    </ion-row>
-
-    <ion-row class="submit-row">
-      <ion-col offset="1.5" size="4" class="left-col">
-      </ion-col>
-      <ion-col class="right-col" size="6.5">
-        <ion-button (click)="sendComment()" [disabled]="clickButton">
-          <ion-label *ngIf="!clickButton">{{ 'CommentPage.publishComment' | translate }}</ion-label>
-          <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
-        </ion-button>
-      </ion-col>
-    </ion-row>
-
-  </ion-list>
-</ion-footer>
+  
+      <ion-row class="submit-row">
+        <ion-col offset="1.5" size="4" class="left-col">
+        </ion-col>
+        <ion-col class="right-col" size="6.5">
+          <ion-button (click)="sendComment()" [disabled]="clickButton">
+            <ion-label *ngIf="!clickButton">{{ 'CommentPage.publishComment' | translate }}</ion-label>
+            <ion-spinner name="crescent"  *ngIf="clickButton"></ion-spinner>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+  
+    </ion-list>
+  </ion-footer>
+</div>
