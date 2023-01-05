@@ -78,34 +78,37 @@
             ion-icon {
                 color: #368bff;
             }
-
-            #image {
-                margin-left: 0px;
-                width: 33.4px;
-                height: 24.7px;
-                margin-right: 15px;
+            ic-icon {
+                margin-right: 16px
             }
 
-            #camera {
-                width: 33.4px;
-                height: 24.7px;
-                margin-right:6px;
-                z-index: 2;
-            }
+            // #image {
+            //     margin-left: 0px;
+            //     width: 33.4px;
+            //     height: 24.7px;
+            //     margin-right: 15px;
+            // }
 
-            #selectvideo{
-                width: 33.4px;
-                height: 24.7px;
-                margin-right: 15px;
-                margin-left: 9px;
-            }
+            // #camera {
+            //     width: 33.4px;
+            //     height: 24.7px;
+            //     margin-right:6px;
+            //     z-index: 2;
+            // }
 
-            #videocam {
-                width: 33.4px;
-                height: 22.7px;
-                margin-top: 2px;
-                margin-right:15px;
-            }
+            // #selectvideo{
+            //     width: 33.4px;
+            //     height: 24.7px;
+            //     margin-right: 15px;
+            //     margin-left: 9px;
+            // }
+
+            // #videocam {
+            //     width: 33.4px;
+            //     height: 22.7px;
+            //     margin-top: 2px;
+            //     margin-right:15px;
+            // }
         }
 
         .right-col {

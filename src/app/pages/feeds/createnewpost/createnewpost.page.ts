@@ -1,12 +1,18 @@
 import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
 import { NavController, ModalController, Platform, IonTextarea, PopoverController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { VideoEditor } from '@ionic-native/video-editor/ngx';
+import SparkMD5 from 'spark-md5';
+import PictureLineIcon from '@iconify/icons-clarity/picture-line';
+import CameraIcon from '@iconify/icons-clarity/camera-line';
+import VideoGalleryIcon from '@iconify/icons-clarity/video-gallery-line';
+import VideoCameraIcon from '@iconify/icons-clarity/video-camera-line';
+
 import { Events } from 'src/app/services/events.service';
 import { FeedService } from '../../../services/FeedService';
 import { NativeService } from '../../../services/NativeService';
 import { CameraService } from '../../../services/CameraService';
 import { ThemeService } from '../../../services/theme.service';
-import { TranslateService } from '@ngx-translate/core';
-import { VideoEditor } from '@ionic-native/video-editor/ngx';
 import { AppService } from '../../../services/AppService';
 import { UtilService } from '../../../services/utilService';
 import { StorageService } from '../../../services/StorageService';
@@ -23,7 +29,6 @@ import { MorenameComponent } from 'src/app/components/morename/morename.componen
 import { RedditService } from 'src/app/services/RedditService';
 import { NFTContractControllerService } from 'src/app/services/nftcontract_controller.service';
 import { IPFSService } from 'src/app/services/ipfs.service';
-import SparkMD5 from 'spark-md5';
 import { PopupProvider } from 'src/app/services/popup';
 
 let TAG: string = 'Feeds-createpost';
@@ -37,6 +42,10 @@ export class CreatenewpostPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild('newPostIonTextarea', { static: false })
   newPostIonTextarea: IonTextarea;
+  photoIcon = PictureLineIcon
+  cameraIcon = CameraIcon
+  videoIcon = VideoGalleryIcon
+  videoCameraIcon = VideoCameraIcon
   public isLoading: boolean = false;
   public loadingTitle: string = "common.waitMoment";
   public loadingText: string = "common.uploading";

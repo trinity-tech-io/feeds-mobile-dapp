@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
+import { IconModule } from '@visurel/iconify-angular';
 
 import { CreatenewpostPage } from './createnewpost.page';
 import { VgCoreModule } from '@videogular/ngx-videogular/core';
@@ -30,6 +31,7 @@ const routes: Routes = [
     FormsModule,
     TranslateModule,
     IonicModule,
+    IconModule,
     RouterModule.forChild(routes),
   ],
   declarations: [CreatenewpostPage],
