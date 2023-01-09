@@ -984,7 +984,7 @@ export class FeedsSqliteHelper {
     });
   }
 
-  queryCommentById(dbUserDid: string, postId: string, commentId: string): Promise<FeedsData.CommentV3> {
+  queryCommentById(dbUserDid: string, commentId: string): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const statement = 'SELECT * FROM ' + this.TABLE_COMMENT + ' WHERE comment_id=?';

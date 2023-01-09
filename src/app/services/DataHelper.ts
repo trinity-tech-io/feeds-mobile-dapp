@@ -3632,7 +3632,7 @@ export class DataHelper {
   addComment(newComment: FeedsData.CommentV3) {
     return new Promise(async (resolve, reject) => {
       try {
-        let originComment = await this.getCommentV3ById(newComment.postId, newComment.commentId);
+        let originComment = await this.getCommentV3ById(newComment.commentId);
         if (!originComment) {
           try {
             await this.addCommentV3(newComment);
@@ -3717,11 +3717,11 @@ export class DataHelper {
     });
   }
 
-  getCommentV3ById(postId: string, commentId: string): Promise<FeedsData.CommentV3> {
+  getCommentV3ById(commentId: string): Promise<FeedsData.CommentV3> {
     return new Promise(async (resolve, reject) => {
       try {
         const selfDid = (await this.getSigninData()).did;
-        const result = await this.sqliteHelper.queryCommentById(selfDid, postId, commentId);
+        const result = await this.sqliteHelper.queryCommentById(selfDid, commentId);
         resolve(result);
       } catch (error) {
         reject(error);

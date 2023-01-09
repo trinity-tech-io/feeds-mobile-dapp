@@ -94,13 +94,13 @@ export class EditCommentPage implements OnInit {
   async getDisplayName(userDid: string) {
     let text = userDid.replace('did:elastos:', '');
     this.channelName = UtilService.shortenDid(text);
-      this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
-        const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
-        if (name) {
-           this.channelName = name;
-        }
-      }).catch(() => {
-      })
+    this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+      const name = userProfile.name || userProfile.resolvedName || userProfile.displayName
+      if (name) {
+        this.channelName = name;
+      }
+    }).catch(() => {
+    })
   }
 
   ionViewDidEnter() {
@@ -112,13 +112,13 @@ export class EditCommentPage implements OnInit {
     }
     try {
       this.hiveVaultController.getUserAvatar(userDid).then((userAvatar: string) => {
-        userAvatar =  userAvatar || '';
-        if(userAvatar != ''){
+        userAvatar = userAvatar || '';
+        if (userAvatar != '') {
           this.channelAvatar = userAvatar;
-        }else{
+        } else {
           this.channelAvatar = './assets/images/did-default-avatar.svg';
         }
-      }).catch((err)=>{
+      }).catch((err) => {
         this.channelAvatar == './assets/images/did-default-avatar.svg';
       });
     } catch (err) {
@@ -169,7 +169,7 @@ export class EditCommentPage implements OnInit {
   private async editComment() {
     try {
 
-      const originComment = await this.dataHelper.getCommentV3ById(this.postId, this.commentId);
+      const originComment = await this.dataHelper.getCommentV3ById(this.commentId);
       this.hiveVaultController.updateComment(originComment, this.newComment)
         .then(() => {
           let postId: string = originComment.postId;

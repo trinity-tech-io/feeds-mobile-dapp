@@ -3379,4 +3379,11 @@ export class HiveVaultController {
     });
   }
 
+  getCommentByIdFromLocal(commentId: string): Promise<FeedsData.CommentV3> {
+    return this.dataHelper.getCommentV3ById(commentId);
+  }
+
+  getCommentsV3ByPostIdFromLocal(postId: string) {
+    return this.dataHelper.getCommentsV3ByPostId(postId);
+  }
 }
