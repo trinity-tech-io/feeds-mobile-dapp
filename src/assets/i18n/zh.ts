@@ -891,7 +891,7 @@ export const zh = {
     allempty: '还没有人打赏'
   },
   Credentials: {
-    desc: 'Please choose any DID credentials you wish to display on your public profile.',
+    desc: '请选择您希望在公共个人资料上显示的任何DID凭据。',
     kycme: 'KYC-me'
   }
 };
