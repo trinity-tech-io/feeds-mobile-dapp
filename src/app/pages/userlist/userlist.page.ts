@@ -98,9 +98,12 @@ export class UserlistPage implements OnInit {
     const name = userProfile.name || userProfile.resolvedName || userProfile.displayName;
     const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
     const description = userProfile.bio || userProfile.resolvedBio || '';
+    const credentials = userProfile.credentials || '';
+
     this.setUserNameUI(userProfile.did, name);
     this.setAvatarUI(userProfile.did, avatarUrl);
     this.setUserDescription(userProfile.did, description);
+    this.setCredentialUI(userProfile.did, credentials);
   }
 
   setUserNameUI(userDid: string, name: string) {
@@ -128,6 +131,14 @@ export class UserlistPage implements OnInit {
     }
   }
 
+  setCredentialUI(userDid: string, credentials: string) {
+    if (!credentials) {
+      this.setCredentials(userDid, false);
+    } else {
+      this.setCredentials(userDid, true);
+    }
+  }
+
   setUserAvatar(userDid: string, avatar = './assets/images/did-default-avatar.svg') {
     if (!this.pageItemMap[userDid])
       this.pageItemMap[userDid] = this.generatePageItem(userDid);
@@ -146,8 +157,14 @@ export class UserlistPage implements OnInit {
     this.pageItemMap[userDid].description = userDescription
   }
 
+  setCredentials(userDid: string, isShowKycIcon: boolean = false) {
+    if (!this.pageItemMap[userDid])
+      this.pageItemMap[userDid] = this.generatePageItem(userDid);
+    this.pageItemMap[userDid].isShowKycIcon = isShowKycIcon;
+  }
+
   generatePageItem(userDid: string): PageItem {
-    return { did: userDid, name: '', avatar: '', description: '' }
+    return { did: userDid, name: '', avatar: '', description: '', isShowKycIcon: false };
   }
 
   initUserObserVerList(userDidList = []) {
@@ -340,5 +357,6 @@ type PageItem = {
   did: string,
   name: string,
   avatar: string,
-  description: string
+  description: string,
+  isShowKycIcon: boolean
 }
