@@ -198,8 +198,6 @@ export class EditprofileinfoPage implements OnInit {
     if (this.userDes != this.originUserDes) {
       isChanged = true;
     }
-    console.log('this.avatar====>', this.avatar);
-    console.log('this.originUserAvatar====>', this.originUserAvatar);
     if (this.avatar != this.originUserAvatar) {
       isChanged = true;
     }

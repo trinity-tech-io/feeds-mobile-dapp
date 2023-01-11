@@ -222,14 +222,12 @@ export class PostdetailPage implements OnInit {
 
     this.hideDeletedComments = this.dataHelper.getHideDeletedComments();
     this.replyCommentsMap = await this.hiveVaultController.getReplyCommentListMapPro(this.postId, this.hideDeletedComments);
-    console.log('111111111====>');
+
     const allCommentList = await this.hiveVaultController.getCommentsV3ByPostIdFromLocal(this.postId);
     for (let index = 0; index < allCommentList.length; index++) {
       const comment = allCommentList[index];
       this.allCommentMap[comment.commentId] = comment;
     }
-
-    console.log('this.allCommentMap====>', this.allCommentMap);
 
     this.initRelyCommentExtradata().catch((error) => { });
     try {
@@ -1785,30 +1783,6 @@ export class PostdetailPage implements OnInit {
   clickDashangList(channelId: string, postId: string) {
     this.native.navigateForward(['/posttiplist'], { queryParams: { "channelId": channelId, "postId": postId } });
   }
-
-  async test(replyComment) {
-    // console.log('userNameMap====>', this.userNameMap);
-    // console.log('replyCommentsMap====>', this.replyCommentsMap);
-    // console.log('replyComment====>', replyComment);
-    // console.log('replyCommentsMap====>', this.replyCommentsMap[replyComment.refcommentId]);
-    // const comment = await this.hiveVaultController.getCommentByIdFromLocal(replyComment.refcommentId);
-    // console.log('userNameMap[replyCommentsMap[replyComment.refcommentId].createrDid]====>', this.userNameMap[comment.createrDid]);
-    // // userNameMap[replyCommentsMap[replyComment.refcommentId].createrDid]
-    // return this.userNameMap[comment.createrDid];
-    // console.log('replyComment====>', replyComment);
-    // console.log('replyComment.refcommentId====>', replyComment.refcommentId);
-    // console.log('this.allCommentMap[replyComment.refcommentId]====>', this.allCommentMap[replyComment.refcommentId]);
-    // console.log('this.allCommentMap[replyComment.refcommentId].createrDid====>', this.allCommentMap[replyComment.refcommentId].createrDid);
-    // console.log('replyComment====>', replyComment);
-    // console.log('replyComment.refcommentId====>', replyComment.refcommentId);
-    // console.log('replyComment.allCommentMap====>', this.allCommentMap);
-    // console.log('replyComment.allCommentMap replyComment.refcommentId====>', this.allCommentMap[replyComment.refcommentId]);
-    // console.log('replyComment.allCommentMap replyComment.refcommentId createrDid====>', this.allCommentMap[replyComment.refcommentId].createrDid);
-
-    console.log('userNameMap[allCommentMap[replyComment.refcommentId].createrDid]====>', this.userNameMap[this.allCommentMap[replyComment.refcommentId].createrDid]);
-  }
-
-
 }
 
 

@@ -1825,8 +1825,49 @@ export class HiveVaultController {
           const comment = firstLevelCommentList[index];
           const replyCommentList = await this.getCommentList(comment.postId, comment.commentId);
           let resultList = [];
+          let replyList = await this.getReplyList(replyCommentList) || [];
+          resultList = _.unionWith(replyList, replyCommentList, _.isEqual);
+          resultList = _.sortBy(resultList, (item: FeedsData.CommentV3) => {
+            return -Number(item.createdAt);
+          });
 
-          let replyList = await this.getReplyList(replyCommentList);
+          if (!hideDeletedComments) {
+            resultList = _.filter(resultList, (item: any) => {
+              return item.status != 1;
+            });
+          }
+          replyCommentsMap[comment.commentId] = resultList;
+        }
+
+        if (!replyCommentsMap || Object.keys(replyCommentsMap).length == 0) {
+          resolve({});
+          return;
+        }
+        resolve(replyCommentsMap);
+        return;
+      } catch (error) {
+        Logger.error(TAG, 'Get reply comment list error', error);
+        reject(error);
+      }
+    });
+  }
+
+  getReplyCommentListMapPro2(postId: string, hideDeletedComments: boolean): Promise<{ [refCommentId: string]: FeedsData.CommentV3[] }> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const firstLevelCommentList = await this.getCommentList(postId, '0');
+        if (!firstLevelCommentList || firstLevelCommentList.length == 0) {
+          resolve({});
+          return;
+        }
+
+        let replyCommentsMap: { [replyCommentId: string]: FeedsData.CommentV3[] } = {};
+        for (let index = 0; index < firstLevelCommentList.length; index++) {
+          const comment = firstLevelCommentList[index];
+          const replyCommentList = await this.getCommentList(comment.postId, comment.commentId);
+          let resultList = [];
+
+          let replyList = await this.getReplyList(replyCommentList) || [];
           resultList = _.unionWith(replyList, replyCommentList, _.isEqual);
 
           resultList = _.sortBy(resultList, (item: FeedsData.CommentV3) => {
@@ -1858,16 +1899,15 @@ export class HiveVaultController {
     return new Promise(async (resolve, reject) => {
       try {
         let resultList = [];
-
         for (let index = 0; index < commentList.length; index++) {
           const comment = commentList[index];
           let replyCommentList = await this.getCommentList(comment.postId, comment.commentId);
-
           if (!replyCommentList || replyCommentList.length == 0) {
             continue;
           } else {
+            resultList = _.unionWith(resultList, replyCommentList, _.isEqual);
             const replyList = await this.getReplyList(replyCommentList);
-            resultList = _.unionWith(replyList, replyCommentList, _.isEqual);
+            resultList = _.unionWith(resultList, replyList, _.isEqual);
           }
         }
         resolve(resultList);
