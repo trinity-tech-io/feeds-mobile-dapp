@@ -30,6 +30,8 @@ export class EditprofileinfoPage implements OnInit {
   public lightThemeType: number = 3;
   public clickButton: boolean = false;
 
+  private credentials: string = '';
+
   private originUserName: string = '';
   private originUserDes: string = '';
   private originUserAvatar: string = '';
@@ -86,6 +88,8 @@ export class EditprofileinfoPage implements OnInit {
       this.userName = userProfile.name || userProfile.resolvedName || userProfile.displayName || '';
       this.userDes = userProfile.bio || userProfile.resolvedBio || '';
       const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
+
+      this.credentials = userProfile.credentials || '';
       await this.setAvatarUI(this.userDid, avatarUrl);
 
       this.originUserName = this.userName;
@@ -178,7 +182,7 @@ export class EditprofileinfoPage implements OnInit {
     if (this.checkParams()) {
       await this.native.showLoading('common.waitMoment');
       try {
-        await this.hiveVaultController.updateUserProfile(this.userDid, this.userName, this.userDes, this.avatar);
+        await this.hiveVaultController.updateUserProfile(this.userDid, this.userName, this.userDes, this.avatar, this.credentials);
         this.cleanClipImage(this.avatar);
       } catch (error) {
       } finally {
