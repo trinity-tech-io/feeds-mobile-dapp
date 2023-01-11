@@ -228,7 +228,8 @@ export const zh = {
     post: '发布',
     unsubscribeChannel: '取消订阅',
     unsubscribeChannelDes: '您确定要取消订阅频道吗？',
-    tipPostTimeoutDesc: '打赏微说超时，稍候您可自行确认'
+    tipPostTimeoutDesc: '打赏微说超时，稍候您可自行确认',
+    updateUserProfileFaild: '更新用户信息失败'
   },
   app: {
     profileDetails: '档案详情',

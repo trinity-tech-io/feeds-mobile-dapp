@@ -179,15 +179,20 @@ export class EditprofileinfoPage implements OnInit {
   }
 
   async updateProfile() {
+    let isFinish = false;
     if (this.checkParams()) {
       await this.native.showLoading('common.waitMoment');
       try {
         await this.hiveVaultController.updateUserProfile(this.userDid, this.userName, this.userDes, this.avatar, this.credentials);
         this.cleanClipImage(this.avatar);
+        isFinish = true;
       } catch (error) {
+        this.native.toastWarn('common.updateUserProfileFaild');
       } finally {
         this.native.hideLoading();
-        this.native.pop();
+        if (isFinish) {
+          this.native.pop();
+        }
       }
     } else {
       this.native.toastWarn('EditprofileinfoPage.notChange');

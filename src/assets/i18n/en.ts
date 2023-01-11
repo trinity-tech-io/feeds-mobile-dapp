@@ -228,7 +228,8 @@ export const en = {
     post: 'Post',
     unsubscribeChannel: 'Unsubscribe',
     unsubscribeChannelDes: 'Are you sure you want to unsubscribe channel?',
-    tipPostTimeoutDesc: 'Tipping post timeout, you can confirm later'
+    tipPostTimeoutDesc: 'Tipping post timeout, you can confirm later',
+    updateUserProfileFaild: 'Update User Profile Faild'
   },
   app: {
     profileDetails: 'Profile Details',
