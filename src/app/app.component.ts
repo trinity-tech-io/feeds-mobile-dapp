@@ -129,23 +129,32 @@ export class MyApp {
     const userDid = (await this.dataHelper.getSigninData()).did
     if (userDid) {
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
+        if (!userProfile) {
+          this.avatar = './assets/images/did-default-avatar.svg';;
+          return;
+        }
+
         const isEqual = _.isEqual(this.originUserProfile, userProfile);
-        if (!isEqual && userProfile) {
+        if (!isEqual) {
           const avatarHiveUrl = userProfile.avatar || userProfile.resolvedAvatar || '';
           this.hiveVaultController.getV3HiveUrlData(avatarHiveUrl).then((base64Image: string) => {
             this.avatar = base64Image;
-            if (!this.avatar) {
+            if (!this.avatar || this.avatar == './assets/images/loading.svg' || this.avatar == 'null') {
               this.avatar = './assets/images/did-default-avatar.svg';
             }
           }).catch(() => {
-            if (!this.avatar) {
+            if (!this.avatar || this.avatar == './assets/images/loading.svg' || this.avatar == 'null') {
               this.avatar = './assets/images/did-default-avatar.svg';
             }
           });
         }
 
         this.originUserProfile = userProfile;
-      }).catch(() => { });
+      }).catch(() => {
+        if (!this.avatar || this.avatar == './assets/images/loading.svg' || this.avatar == 'null') {
+          this.avatar = './assets/images/did-default-avatar.svg';
+        }
+      });
     }
   }
 

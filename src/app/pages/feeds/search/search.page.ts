@@ -523,7 +523,7 @@ export class SearchPage implements OnInit {
         let channelIndex = _.findIndex(this.channelCollectionPageList, (item: any) => {
           return item.channelId === channelId
         });
-        if(channelIndex > -1){
+        if (channelIndex > -1) {
           this.handleSearchAvatarV2(destDid, channelId, channelSource, channelIndex);
           this.checkChannelHiveValutStatus(destDid, channelId, channelIndex);
         }
@@ -746,7 +746,7 @@ export class SearchPage implements OnInit {
 
   checkChannelHiveValutStatus(destDid: string, channelId: string, channelIndex: number) {
 
-    let isLoad  = this.isLoadHiveStatus[channelId] || '';
+    let isLoad = this.isLoadHiveStatus[channelId] || '';
     if (isLoad === '') {
       this.isLoadHiveStatus[channelId] = "11";
       try {
@@ -783,14 +783,14 @@ export class SearchPage implements OnInit {
     );
   }
 
-  async unsubscribeDialogCancel(that: any){
+  async unsubscribeDialogCancel(that: any) {
     if (that.unsubscribeDialog != null) {
       await that.unsubscribeDialog.dismiss();
       that.unsubscribeDialog = null;
     }
   }
 
-  async unsubscribeDialogConfirm(that: any){
+  async unsubscribeDialogConfirm(that: any) {
     if (that.unsubscribeDialog != null) {
       await that.unsubscribeDialog.dismiss();
       that.unsubscribeDialog = null;
