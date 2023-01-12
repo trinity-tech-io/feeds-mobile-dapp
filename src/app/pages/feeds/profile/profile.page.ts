@@ -2695,15 +2695,15 @@ export class ProfilePage implements OnInit {
     }
     this.description = signInData['description'] || '';
 
-    try {
-      if (this.avatar === '') {
-        this.avatar = './assets/images/loading.svg';
-      }
-    } catch (error) {
+    if (this.avatar === '') {
+      this.avatar = './assets/images/loading.svg';
     }
-
     this.hiveVaultController.getUserProfile(signInData.did).then((userProfile: FeedsData.UserProfile) => {
       this.setProfileUI(userProfile);
+    }).catch((error) => {
+      this.setUserName(signInData.did);
+      this.setUserAvatar(signInData.did);
+      this.isShowKycIcon = false;
     });
   }
 
@@ -2730,15 +2730,19 @@ export class ProfilePage implements OnInit {
   }
 
   setAvatarUI(userDid: string, avatarUrl: string) {
-    if (avatarUrl) {
+    if (!avatarUrl) {
+      this.setUserAvatar(userDid);
+    } else {
       this.hiveVaultController.getV3HiveUrlData(avatarUrl)
         .then((image) => {
-          this.setUserAvatar(userDid, image);
+          if (!image || image == 'null') {
+            this.setUserAvatar(userDid);
+          } else {
+            this.setUserAvatar(userDid, image);
+          }
         }).catch((err) => {
           this.setUserAvatar(userDid);
         })
-    } else {
-      this.setUserAvatar(userDid);
     }
   }
 
