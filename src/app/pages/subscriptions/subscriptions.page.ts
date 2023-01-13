@@ -195,7 +195,9 @@ export class SubscriptionsPage implements OnInit {
     return new Promise(async (resolve, reject) => {
       this.hiveVaultController.getChannelListFromOwner(this.userDid, FeedsData.SubscribedChannelType.OTHER_CHANNEL, (localChannelList: FeedsData.ChannelV3[]) => {
       }).then((channelList: FeedsData.ChannelV3[]) => {
-        this.initUIData(channelList);
+        const uniqList = _.uniqWith(channelList, _.isEqual);
+        this.initUIData(uniqList);
+
         resolve();
       }).catch((error) => {
         reject(error);
