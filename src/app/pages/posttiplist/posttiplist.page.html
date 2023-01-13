@@ -57,11 +57,14 @@
       </ion-label>
       <ion-label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].name != '' && pageItemMap[tipItem.did].name != undefined">
        @{{ pageItemMap[tipItem.did].name | translate }}
+       <img *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined 
+       && pageItemMap[tipItem.did].isShowKycIcon != '' && pageItemMap[tipItem.did].isShowKycIcon != undefined 
+       && pageItemMap[tipItem.did].isShowKycIcon" style="margin-left: 7px;"  src="./assets/images/credentials/kycme.svg">
       </ion-label>
       <div class="displayDes" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].description != '' && pageItemMap[tipItem.did].description != undefined">
         {{  pageItemMap[tipItem.did].description }}
       </div>
-      <div class="displayDes" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].name != '' && pageItemMap[tipItem.did].name != undefined">
+      <div class="displayDes" *ngIf="pageItemMap[tipItem.did] != '' && pageItemMap[tipItem.did] != undefined && pageItemMap[tipItem.did].tip != '' && pageItemMap[tipItem.did].tip != undefined">
         {{ 'PosttiplistPage.tip' | translate }}: {{tipItem.amount}} ELA
       </div>
       </ion-col>

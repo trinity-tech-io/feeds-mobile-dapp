@@ -11,11 +11,11 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { TitleBarService } from 'src/app/services/TitleBarService';
 import { UtilService } from 'src/app/services/utilService';
 type postTipItem = {
-  channelId : string,
+  channelId: string,
   postId: string,
   paidFrom: string,
   paidTo: string,
-  paidToken : string,
+  paidToken: string,
   amount: string,
   senderUri: string,
   memo: string,
@@ -36,11 +36,11 @@ export class PosttiplistPage implements OnInit {
   public postId: string = '';
   private maxCount: number = 0;
   private startIndex: number = 0;
-  public  postTipList: postTipItem[]  = [];
+  public postTipList: postTipItem[] = [];
   private userAvatarSid: any = null;
   private userObserver: any = {};
   private isLoadUsers: any = {};
-  public  isLoading: boolean = true;
+  public isLoading: boolean = true;
   private pageNumber = 15;
   private pageSize = 1;
   private isMaxConut: boolean = false;
@@ -98,7 +98,7 @@ export class PosttiplistPage implements OnInit {
     for (let index = 0; index < userDidList.length; index++) {
       let postTipItem = userDidList[index] || null;
       if (postTipItem === null) {
-         continue;
+        continue;
       }
       let userDid = postTipItem.did;
       let observerId = userDid + '-userList-tip';
@@ -128,7 +128,7 @@ export class PosttiplistPage implements OnInit {
         let arr = newId.split("-");
         let userDid: string = arr[0];
         let isLoad = this.isLoadUsers[userDid] || ''
-        if(isLoad === ''){
+        if (isLoad === '') {
           this.isLoadUsers[userDid] = "loaded"
           this.setPageItemData(userDid);
         }
@@ -141,9 +141,12 @@ export class PosttiplistPage implements OnInit {
     const name = userProfile.name || userProfile.resolvedName || userProfile.displayName;
     const avatarUrl = userProfile.avatar || userProfile.resolvedAvatar;
     const description = userProfile.bio || userProfile.resolvedBio || '';
+    const credentials = userProfile.credentials || '';
+
     this.setUserNameUI(userProfile.did, name);
     this.setAvatarUI(userProfile.did, avatarUrl);
     this.setUserDescription(userProfile.did, description);
+    this.setCredentialUI(userProfile.did, credentials);
   }
 
   setUserNameUI(userDid: string, name: string) {
@@ -169,6 +172,20 @@ export class PosttiplistPage implements OnInit {
     } else {
       this.setUserAvatar(userDid);
     }
+  }
+
+  setCredentialUI(userDid: string, credentials: string) {
+    if (!credentials) {
+      this.setCredentials(userDid, false);
+    } else {
+      this.setCredentials(userDid, true);
+    }
+  }
+
+  setCredentials(userDid: string, isShowKycIcon: boolean = false) {
+    if (!this.pageItemMap[userDid])
+      this.pageItemMap[userDid] = this.generatePageItem(userDid);
+    this.pageItemMap[userDid].isShowKycIcon = isShowKycIcon;
   }
 
   setUserAvatar(userDid: string, avatar = './assets/images/did-default-avatar.svg') {
@@ -201,14 +218,14 @@ export class PosttiplistPage implements OnInit {
       }
       this.hiveVaultController.getUserProfile(userDid).then((userProfile: FeedsData.UserProfile) => {
         this.setUserNameAndAvatarUI(userProfile);
-      }).catch(err=>{
+      }).catch(err => {
         this.setUserAvatar(userDid);
       });
     }
   }
 
   generatePageItem(userDid: string): PageItem {
-    return { did: userDid, name: '', avatar: '', description: '' }
+    return { did: userDid, name: '', avatar: '', description: '', isShowKycIcon: false }
   }
 
 
@@ -236,41 +253,41 @@ export class PosttiplistPage implements OnInit {
   }
 
   async getPostTipList(postTipListMap: any) {
-      try {
+    try {
       let postTipList = postTipListMap[this.postId] || '';
-      if(postTipList === ''){
+      if (postTipList === '') {
         this.pageSize = 1;
         this.maxCount = await this.nftContractControllerService.getChannelTippingContractService().getPosTippingCount(this.channelId, this.postId);
         let count = 0;
-        if(this.maxCount > this.pageNumber){
-           this.startIndex = this.maxCount - this.pageNumber;
-           count = this.pageNumber;
-           this.pageSize++;
-           this.isMaxConut = false;
-        }else{
-           count = this.maxCount;
-           this.startIndex = 0;
-           this.isMaxConut = true;
+        if (this.maxCount > this.pageNumber) {
+          this.startIndex = this.maxCount - this.pageNumber;
+          count = this.pageNumber;
+          this.pageSize++;
+          this.isMaxConut = false;
+        } else {
+          count = this.maxCount;
+          this.startIndex = 0;
+          this.isMaxConut = true;
         }
-        let list =  await this.nftContractControllerService
-        .getChannelTippingContractService()
-        .getPosTippingList(this.channelId, this.postId,this.startIndex,count);
+        let list = await this.nftContractControllerService
+          .getChannelTippingContractService()
+          .getPosTippingList(this.channelId, this.postId, this.startIndex, count);
         this.postTipList = await this.handleList(list);
         postTipListMap[this.postId] = this.postTipList;
         this.dataHelper.setPostTipListMap(postTipListMap);
-        this.dataHelper.saveData("feedsNetWork:post.tip.list",postTipListMap);
-      }else {
+        this.dataHelper.saveData("feedsNetWork:post.tip.list", postTipListMap);
+      } else {
         this.postTipList = postTipList;
       }
 
-      } catch (error) {
+    } catch (error) {
 
-      }
+    }
   }
 
-async handleList(list:[]) {
-  let arr = [];
-  for(let index=0;index<list.length;index++){
+  async handleList(list: []) {
+    let arr = [];
+    for (let index = 0; index < list.length; index++) {
       let info = list[index];
       let item: postTipItem = {
         channelId: '',
@@ -296,7 +313,7 @@ async handleList(list:[]) {
       item.memo = info[7];
       try {
         let uri = item.senderUri.replace('feeds:json:', '');
-        let result:any = await this.ipfsService
+        let result: any = await this.ipfsService
           .nftGet(this.ipfsService.getNFTGetUrl() + uri);
         item.did = result.did;
         item.version = result.version || '1';
@@ -306,60 +323,60 @@ async handleList(list:[]) {
       } catch (error) {
 
       }
+    }
+
+    return arr.reverse();
   }
 
-  return arr.reverse();
-}
+  clickSubscription(userDid: string) {
 
-clickSubscription(userDid: string){
+  }
 
-}
-
-doRefresh(event: any) {
-  let sId = setTimeout(async () => {
-    try {
-      await this.getPostTipList({});
-      this.removeObserveList();
-      this.isLoadUsers = {};
-      this.initUserObserVerList(this.postTipList);
-    } catch (error) {
-    }
-    event.target.complete();
-    clearTimeout(sId);
-  }, 200)
-}
-
-loadData(event: any) {
-  let sId = setTimeout(async () => {
-    if (this.isMaxConut || this.maxCount === 0) {
+  doRefresh(event: any) {
+    let sId = setTimeout(async () => {
+      try {
+        await this.getPostTipList({});
+        this.removeObserveList();
+        this.isLoadUsers = {};
+        this.initUserObserVerList(this.postTipList);
+      } catch (error) {
+      }
       event.target.complete();
       clearTimeout(sId);
-      return;
-    }
-    let count = 0;
-    if(this.maxCount > this.pageSize*this.pageNumber){
-      this.startIndex = this.maxCount - this.pageSize*this.pageNumber;
-      count = this.pageNumber;
-      this.pageSize++;
-      this.isMaxConut = false;
-    }else{
-      count = this.maxCount - (this.pageSize - 1)*this.pageNumber;
-      this.startIndex = 0;
-      this.isMaxConut = true;
-    }
-    let newLoadedList =  await this.nftContractControllerService
-    .getChannelTippingContractService()
-    .getPosTippingList(this.channelId, this.postId,this.startIndex,count);
-    let newPostTipList = await this.handleList(newLoadedList);
-    this.postTipList = this.postTipList.concat(newPostTipList);
-    let postTipListMap = this.dataHelper.getPostTipListMap() || {};
-    postTipListMap[this.postId] = this.postTipList;
-    this.dataHelper.saveData("feedsNetWork:post.tip.list",postTipListMap);
-    this.initUserObserVerList(newPostTipList);
-    event.target.complete();
-    clearTimeout(sId);
-  }, 500);
-}
+    }, 200)
+  }
+
+  loadData(event: any) {
+    let sId = setTimeout(async () => {
+      if (this.isMaxConut || this.maxCount === 0) {
+        event.target.complete();
+        clearTimeout(sId);
+        return;
+      }
+      let count = 0;
+      if (this.maxCount > this.pageSize * this.pageNumber) {
+        this.startIndex = this.maxCount - this.pageSize * this.pageNumber;
+        count = this.pageNumber;
+        this.pageSize++;
+        this.isMaxConut = false;
+      } else {
+        count = this.maxCount - (this.pageSize - 1) * this.pageNumber;
+        this.startIndex = 0;
+        this.isMaxConut = true;
+      }
+      let newLoadedList = await this.nftContractControllerService
+        .getChannelTippingContractService()
+        .getPosTippingList(this.channelId, this.postId, this.startIndex, count);
+      let newPostTipList = await this.handleList(newLoadedList);
+      this.postTipList = this.postTipList.concat(newPostTipList);
+      let postTipListMap = this.dataHelper.getPostTipListMap() || {};
+      postTipListMap[this.postId] = this.postTipList;
+      this.dataHelper.saveData("feedsNetWork:post.tip.list", postTipListMap);
+      this.initUserObserVerList(newPostTipList);
+      event.target.complete();
+      clearTimeout(sId);
+    }, 500);
+  }
 
 }
 
@@ -367,5 +384,6 @@ type PageItem = {
   did: string,
   name: string,
   avatar: string,
-  description: string
+  description: string,
+  isShowKycIcon: boolean
 }
