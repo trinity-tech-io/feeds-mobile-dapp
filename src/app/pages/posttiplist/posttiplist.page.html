@@ -25,7 +25,7 @@
 <div *ngIf="postTipList.length === 0 && !isLoading" class="new-empty-container">
     <img src="./assets/images/profile-no-channel.svg">
     <h1 style="margin-top: 20px;">{{ 'PosttiplistPage.allempty' | translate }}</h1>
-    <p>{{ 'UserlistPage.emptyDes' | translate }}</p>
+    <!-- <p>{{ 'UserlistPage.emptyDes' | translate }}</p> -->
 </div>
 
 <ion-list  class="channel-list" [class.darkChannelList]="theme.darkMode" *ngIf="postTipList.length > 0">
