@@ -904,21 +904,19 @@ export class MenuService {
       await that.unsubscribeDialog.dismiss();
       that.unsubscribeDialog = null;
     }
-    //
 
-
-    this.hiveVaultController.unSubscribeChannelFlow(
+    that.hiveVaultController.unSubscribeChannelFlow(
       that.destDid, that.channelId
     ).then(async (result) => {
     }).catch(() => {
-      this.native.toastWarnWithMoreInfo('common.unsubscribedChannelFail', ':c/' + that.channelName);
+      that.native.toastWarnWithMoreInfo('common.unsubscribedChannelFail', ':c/' + that.channelName);
     });
     const channel: FeedsData.BackupSubscribedChannelV3 = {
       destDid: that.destDid,
       channelId: that.channelId
     };
-    this.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
-    this.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
+    that.events.publish(FeedsEvent.PublishType.unfollowFeedsFinish, channel);
+    that.events.publish(FeedsEvent.PublishType.unsubscribeFinish, channel);
 
     // that.native.showLoading("common.waitMoment").then(() => {
     //   try {
