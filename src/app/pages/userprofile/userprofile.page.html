@@ -47,7 +47,7 @@
     *ngIf="selectType == 'ProfilePage.myFeeds'"
     (toFeedPage)="toPage($event)"
     (subsciptions)="subsciptions()"
-    [channels] = "channels"
+    [channels] = "channelList"
     [pageName] = "pageName"
     [isOwner] = "isOwner"
     (fromChild)="showMenuMore($event)"
