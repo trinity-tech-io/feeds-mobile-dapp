@@ -17,13 +17,14 @@ declare let intentManager: IntentPlugin.IntentManager;
 
 @Injectable()
 export class IntentService {
-  private static BASEURL_CHANNEL: string = 'https://feeds.trinity-feeds.app/v3channel';
-  private static BASEURL_POST: string = 'https://feeds.trinity-feeds.app/v3post';
-  private static BASEURL_PASAR: string = 'https://feeds.trinity-feeds.app/pasar';
-  private static BASEURL_NAV: string = 'https://feeds.trinity-feeds.app/nav';
-  private static BASEURL_SHORTEN: string = 'https://s.trinity-feeds.app/api/v2/action/shorten?key=9fa8ef7f86a28829f53375abcb0af5';
-  private static BASEURL_TWITTER: string = "https://feeds.trinity-feeds.app/login-from-twitter"
-  private static BASEURL_REDDIT: string = "https://feeds.trinity-feeds.app/reddit"
+  private static BASEURL_CHANNEL: string = 'https://feeds.feedsnetwork.io/v3channel';
+  private static BASEURL_POST: string = 'https://feeds.feedsnetwork.io/v3post';
+  private static BASEURL_PASAR: string = 'https://feeds.feedsnetwork.io/pasar';
+  private static BASEURL_NAV: string = 'https://feeds.feedsnetwork.io/nav';
+  private static BASEURL_SHORTEN: string = 'https://s.feedsnetwork.io/api/v2/action/shorten?key=9fa8ef7f86a28829f53375abcb0af5';
+  private static BASEURL_TWITTER: string = "https://feeds.feedsnetwork.io/login-from-twitter"
+  private static BASEURL_REDDIT: string = "https://feeds.feedsnetwork.io/reddit"
+  private static BASEURL: string = 'https://feeds.feedsnetwork.io';
 
 
   constructor(
@@ -302,6 +303,7 @@ export class IntentService {
         this.handlePasarIntent(params);
         break;
       case IntentService.BASEURL_NAV:
+      case IntentService.BASEURL:
         // https://feeds.trinity-feeds.app/nav/?page=home
         break;
       default:
@@ -570,19 +572,19 @@ export class IntentService {
 
   didsign(params: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
-          try {
-            let url = 'https://did.elastos.net/didsign';
-            Logger.log(TAG, 'Call intent didsign result is params', params, url);
-           let res = await intentManager.sendIntent(url, params);
-           if (res) {
-            resolve(res);
-            return;
-            }
-            reject(null);
-          } catch (error) {
-            Logger.log(TAG, 'Call intent didsign result is params', error);
-            reject(null);
-          }
+      try {
+        let url = 'https://did.elastos.net/didsign';
+        Logger.log(TAG, 'Call intent didsign result is params', params, url);
+        let res = await intentManager.sendIntent(url, params);
+        if (res) {
+          resolve(res);
+          return;
+        }
+        reject(null);
+      } catch (error) {
+        Logger.log(TAG, 'Call intent didsign result is params', error);
+        reject(null);
+      }
     });
   }
 }

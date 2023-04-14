@@ -40,7 +40,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="feeds.trinity-feeds.app" android:pathPattern="/.*" android:scheme="https" />
+                <data android:host="feeds.feedsnetwork.io" android:pathPattern="/.*" android:scheme="https" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -78,17 +78,17 @@
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
     </platform>
     <platform name="ios">
-        <preference name="IntentRedirecturlFilter" value="https://feeds.trinity-feeds.app" />
+        <preference name="IntentRedirecturlFilter" value="https://feeds.feedsnetwork.io" />
         <preference name="SwiftVersion" value="5.2" />
         <preference name="UseSwiftLanguageVersion" value="5.2" />
         <config-file parent="com.apple.developer.associated-domains" target="*-Debug.plist">
             <array>
-                <string>applinks:feeds.trinity-feeds.app</string>
+                <string>applinks:feeds.feedsnetwork.io</string>
             </array>
         </config-file>
         <config-file parent="com.apple.developer.associated-domains" target="*-Release.plist">
             <array>
-                <string>applinks:feeds.trinity-feeds.app</string>
+                <string>applinks:feeds.feedsnetwork.io</string>
             </array>
         </config-file>
         <allow-intent href="itms:*" />
