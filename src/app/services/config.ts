@@ -45,7 +45,7 @@ export class Config {
     /** TestNet IPFS */
     public static IPFS_TEST_SERVER: string = 'https://ipfs-test.pasarprotocol.io/';
 
-    public static readonly scriptVersion = "3.5.0";
+    public static readonly scriptVersion = "3.5.1";
 
     //30101 update channel sql -> add display_name
     //30200 update post sql -> add pin_status
